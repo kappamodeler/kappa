@@ -1,0 +1,7 @@
+CLEANUP=rm -f *.o *.a *.cm* *~ yacc.ml lexeur.ml 
+
+clean:
+	cd contact_map ; $(CLEANUP);
+	cd parse_comment ; $(CLEANUP);
+	cd XML ; $(CLEANUP) ;
+	cd HTML ; $(CLEANUP)

@@ -1,0 +1,980 @@
+diff -rc ocaml-3.10.2 2/asmcomp/amd64/emit.mlp ocaml-3.10.2/asmcomp/amd64/emit.mlp
+*** ocaml-3.10.2 2/asmcomp/amd64/emit.mlp	Tue Oct 23 05:09:43 2007
+--- ocaml-3.10.2/asmcomp/amd64/emit.mlp	Tue Jul 15 16:01:14 2008
+***************
+*** 23,28 ****
+--- 23,36 ----
+  open Linearize
+  open Emitaux
+  
++ (* The things that MacOSX need *)
++ let setcnt = ref (-1)
++ let macosx =
++   match Config.system with
++   | "macosx" -> true
++   | _ -> false
++ 
++ 
+  (* Tradeoff between code size and code speed *)
+  
+  let fastcode_flag = ref true
+***************
+*** 54,60 ****
+  (* Symbols *)
+  
+  let emit_symbol s =
+!   Emitaux.emit_symbol '$' s
+  
+  (* Output a label *)
+  
+--- 62,69 ----
+  (* Symbols *)
+  
+  let emit_symbol s =
+!     if macosx then emit_string "_"; 
+!     Emitaux.emit_symbol '$' s
+  
+  (* Output a label *)
+  
+***************
+*** 64,69 ****
+--- 73,79 ----
+  (* Output a .align directive. *)
+  
+  let emit_align n =
++     let n = if macosx then Misc.log2 n else n in
+    `	.align	{emit_int n}\n`
+  
+  let emit_Llabel fallthrough lbl =
+***************
+*** 568,574 ****
+          end else begin
+            `	jmp	*{emit_label lbl}(, {emit_reg i.arg.(0)}, 8)\n`
+          end;
+!         `	.section .rodata\n`;
+          emit_align 8;
+          `{emit_label lbl}:`;
+          for i = 0 to Array.length jumptbl - 1 do
+--- 578,585 ----
+          end else begin
+            `	jmp	*{emit_label lbl}(, {emit_reg i.arg.(0)}, 8)\n`
+          end;
+!         if macosx then `	.section .rodata,\"\"\n`
+!         else `	.section .rodata\n`;
+          emit_align 8;
+          `{emit_label lbl}:`;
+          for i = 0 to Array.length jumptbl - 1 do
+***************
+*** 650,656 ****
+    List.iter emit_call_gc !call_gc_sites;
+    emit_call_bound_errors ();
+    if !float_constants <> [] then begin
+!     `	.section	.rodata.cst8,\"a\",@progbits\n`;
+      List.iter emit_float_constant !float_constants
+    end
+  
+--- 661,668 ----
+    List.iter emit_call_gc !call_gc_sites;
+    emit_call_bound_errors ();
+    if !float_constants <> [] then begin
+!     if macosx then `	.section	.rodata.cst8,\"a\"\n`
+!     else `	.section	.rodata.cst8,\"a\",@progbits\n`;
+      List.iter emit_float_constant !float_constants
+    end
+  
+***************
+*** 722,727 ****
+        efa_word = (fun n -> `	.quad	{emit_int n}\n`);
+        efa_align = emit_align;
+        efa_label_rel = (fun lbl ofs ->
+!                            `	.long	({emit_label lbl} - .) + {emit_int32 ofs}\n`);
+        efa_def_label = (fun l -> `{emit_label l}:\n`);
+        efa_string = (fun s -> emit_string_directive "	.asciz	" s) }
+--- 734,744 ----
+        efa_word = (fun n -> `	.quad	{emit_int n}\n`);
+        efa_align = emit_align;
+        efa_label_rel = (fun lbl ofs ->
+!                           incr setcnt;
+!                           if macosx then
+!                            `	.set	L$set${emit_int !setcnt},({emit_label lbl} - .) + {emit_int32 ofs}\n	.long L$set${emit_int !setcnt}\n`
+!                            else
+!                            `	.set	({emit_label lbl} - .) + {emit_int32 ofs}\n	.long L$set${emit_int !setcnt}\n`
+!                            );
+        efa_def_label = (fun l -> `{emit_label l}:\n`);
+        efa_string = (fun s -> emit_string_directive "	.asciz	" s) }
+diff -rc ocaml-3.10.2 2/asmcomp/amd64/proc.ml ocaml-3.10.2/asmcomp/amd64/proc.ml
+*** ocaml-3.10.2 2/asmcomp/amd64/proc.ml	Mon Jan 29 07:10:50 2007
+--- ocaml-3.10.2/asmcomp/amd64/proc.ml	Sun Jul 13 13:55:13 2008
+***************
+*** 195,201 ****
+  let contains_calls = ref false
+  
+  (* Calling the assembler *)
+  
+  let assemble_file infile outfile =
+!   Ccomp.command ("as -o " ^ outfile ^ " " ^ infile)
+  
+--- 195,203 ----
+  let contains_calls = ref false
+  
+  (* Calling the assembler *)
++ let assembler_arch = 
++     if Config.system = "macosx" then " -arch x86_64 " else "" 
+  
+  let assemble_file infile outfile =
+!   Ccomp.command ("as " ^ assembler_arch ^ " -o " ^ outfile ^ " " ^ infile)
+  
+diff -rc ocaml-3.10.2 2/asmrun/amd64.S ocaml-3.10.2/asmrun/amd64.S
+*** ocaml-3.10.2 2/asmrun/amd64.S	Mon Jan 29 07:10:52 2007
+--- ocaml-3.10.2/asmrun/amd64.S	Sun Jul 13 14:03:48 2008
+***************
+*** 16,26 ****
+  /* Asm part of the runtime system, AMD64 processor */
+  /* Must be preprocessed by cpp */
+  
+  #define FUNCTION_ALIGN 4
+  
+  #define FUNCTION(name) \
+          .globl name; \
+-         .type  name,@function; \
+          .align FUNCTION_ALIGN; \
+          name:
+  
+--- 16,35 ----
+  /* Asm part of the runtime system, AMD64 processor */
+  /* Must be preprocessed by cpp */
+  
++ #ifdef SYS_macosx
++ #define FUNCTION_ALIGN 2
++ #define EIGHT 3
++ #define SIXTEEN 4
++ #define PREPARE_SYMBOL(r) _##r
++ #else
+  #define FUNCTION_ALIGN 4
++ #define PREPARE_SYMBOL(r) r
++ #define EIGHT 8
++ #define SIXTEEN 16
++ #endif
+  
+  #define FUNCTION(name) \
+          .globl name; \
+          .align FUNCTION_ALIGN; \
+          name:
+  
+***************
+*** 28,44 ****
+  
+  /* Allocation */
+  
+! FUNCTION(caml_call_gc)
+      /* Record lowest stack address and return address */
+          movq    0(%rsp), %rax
+!         movq    %rax, caml_last_return_address(%rip)
+          leaq    8(%rsp), %rax
+!         movq    %rax, caml_bottom_of_stack(%rip)
+  .L105:  
+!     /* Save caml_young_ptr, caml_exception_pointer */
+! 	movq	%r15, caml_young_ptr(%rip)
+! 	movq	%r14, caml_exception_pointer(%rip)
+!     /* Build array of registers, save it into caml_gc_regs */
+          pushq   %r13
+          pushq   %r12
+          pushq   %rbp
+--- 37,53 ----
+  
+  /* Allocation */
+  
+! FUNCTION(PREPARE_SYMBOL(caml_call_gc))
+      /* Record lowest stack address and return address */
+          movq    0(%rsp), %rax
+!         movq    %rax, PREPARE_SYMBOL(caml_last_return_address)(%rip)
+          leaq    8(%rsp), %rax
+!         movq    %rax, PREPARE_SYMBOL(caml_bottom_of_stack)(%rip)
+  .L105:  
+!     /* Save PREPARE_SYMBOL(caml_young_ptr), PREPARE_SYMBOL(caml_exception_pointer) */
+! 	movq	%r15, PREPARE_SYMBOL(caml_young_ptr)(%rip)
+! 	movq	%r14, PREPARE_SYMBOL(caml_exception_pointer)(%rip)
+!     /* Build array of registers, save it into PREPARE_SYMBOL(caml_gc_regs) */
+          pushq   %r13
+          pushq   %r12
+          pushq   %rbp
+***************
+*** 52,58 ****
+          pushq   %rdi
+          pushq   %rbx
+          pushq   %rax
+!         movq    %rsp, caml_gc_regs(%rip)
+      /* Save floating-point registers */
+          subq    $(16*8), %rsp
+          movlpd  %xmm0, 0*8(%rsp)
+--- 61,67 ----
+          pushq   %rdi
+          pushq   %rbx
+          pushq   %rax
+!         movq    %rsp, PREPARE_SYMBOL(caml_gc_regs)(%rip)
+      /* Save floating-point registers */
+          subq    $(16*8), %rsp
+          movlpd  %xmm0, 0*8(%rsp)
+***************
+*** 72,78 ****
+          movlpd  %xmm14, 14*8(%rsp)
+          movlpd  %xmm15, 15*8(%rsp)
+      /* Call the garbage collector */
+!         call    caml_garbage_collection
+      /* Restore all regs used by the code generator */
+          movlpd  0*8(%rsp), %xmm0
+          movlpd  1*8(%rsp), %xmm1
+--- 81,87 ----
+          movlpd  %xmm14, 14*8(%rsp)
+          movlpd  %xmm15, 15*8(%rsp)
+      /* Call the garbage collector */
+!         call    PREPARE_SYMBOL(caml_garbage_collection)
+      /* Restore all regs used by the code generator */
+          movlpd  0*8(%rsp), %xmm0
+          movlpd  1*8(%rsp), %xmm1
+***************
+*** 104,196 ****
+          popq    %rbp
+          popq    %r12
+          popq    %r13
+!     /* Restore caml_young_ptr, caml_exception_pointer */
+! 	movq	caml_young_ptr(%rip), %r15
+! 	movq	caml_exception_pointer(%rip), %r14
+      /* Return to caller */
+          ret
+  
+! FUNCTION(caml_alloc1)
+          subq    $16, %r15
+!         cmpq    caml_young_limit(%rip), %r15
+          jb      .L100
+          ret
+  .L100:
+          movq    0(%rsp), %rax
+!         movq    %rax, caml_last_return_address(%rip)
+          leaq    8(%rsp), %rax
+!         movq    %rax, caml_bottom_of_stack(%rip)
+  	subq	$8, %rsp
+          call    .L105
+  	addq	$8, %rsp
+!         jmp     caml_alloc1
+  
+! FUNCTION(caml_alloc2)
+          subq    $24, %r15
+!         cmpq    caml_young_limit(%rip), %r15
+          jb      .L101
+          ret
+  .L101:
+          movq    0(%rsp), %rax
+!         movq    %rax, caml_last_return_address(%rip)
+          leaq    8(%rsp), %rax
+!         movq    %rax, caml_bottom_of_stack(%rip)
+  	subq	$8, %rsp
+          call    .L105
+  	addq	$8, %rsp
+!         jmp     caml_alloc2
+  
+! FUNCTION(caml_alloc3)
+          subq    $32, %r15
+!         cmpq    caml_young_limit(%rip), %r15
+          jb      .L102
+          ret
+  .L102:
+          movq    0(%rsp), %rax
+!         movq    %rax, caml_last_return_address(%rip)
+          leaq    8(%rsp), %rax
+!         movq    %rax, caml_bottom_of_stack(%rip)
+  	subq	$8, %rsp
+          call    .L105
+  	addq	$8, %rsp
+!         jmp     caml_alloc3
+  
+! FUNCTION(caml_allocN)
+          subq    %rax, %r15
+!         cmpq    caml_young_limit(%rip), %r15
+          jb      .L103
+          ret
+  .L103:
+          pushq   %rax                       /* save desired size */
+          movq    8(%rsp), %rax
+!         movq    %rax, caml_last_return_address(%rip)
+          leaq    16(%rsp), %rax
+!         movq    %rax, caml_bottom_of_stack(%rip)
+          call    .L105
+          popq    %rax                      /* recover desired size */
+!         jmp     caml_allocN
+  
+  /* Call a C function from Caml */
+  
+! FUNCTION(caml_c_call)
+      /* Record lowest stack address and return address */
+          popq    %r12
+!         movq    %r12, caml_last_return_address(%rip)
+!         movq    %rsp, caml_bottom_of_stack(%rip)
+      /* Make the exception handler and alloc ptr available to the C code */
+! 	movq	%r15, caml_young_ptr(%rip)
+! 	movq	%r14, caml_exception_pointer(%rip)
+      /* Call the function (address in %rax) */
+          call    *%rax
+      /* Reload alloc ptr */
+! 	movq	caml_young_ptr(%rip), %r15
+      /* Return to caller */
+  	pushq	%r12
+  	ret
+  
+  /* Start the Caml program */
+  
+! FUNCTION(caml_start_program)
+      /* Save callee-save registers */
+          pushq   %rbx
+          pushq   %rbp
+--- 113,205 ----
+          popq    %rbp
+          popq    %r12
+          popq    %r13
+!     /* Restore PREPARE_SYMBOL(caml_young_ptr), PREPARE_SYMBOL(caml_exception_pointer) */
+! 	movq	PREPARE_SYMBOL(caml_young_ptr)(%rip), %r15
+! 	movq	PREPARE_SYMBOL(caml_exception_pointer)(%rip), %r14
+      /* Return to caller */
+          ret
+  
+! FUNCTION(PREPARE_SYMBOL(caml_alloc1))
+          subq    $16, %r15
+!         cmpq    PREPARE_SYMBOL(caml_young_limit)(%rip), %r15
+          jb      .L100
+          ret
+  .L100:
+          movq    0(%rsp), %rax
+!         movq    %rax, PREPARE_SYMBOL(caml_last_return_address)(%rip)
+          leaq    8(%rsp), %rax
+!         movq    %rax, PREPARE_SYMBOL(caml_bottom_of_stack)(%rip)
+  	subq	$8, %rsp
+          call    .L105
+  	addq	$8, %rsp
+!         jmp     PREPARE_SYMBOL(caml_alloc1)
+  
+! FUNCTION(PREPARE_SYMBOL(caml_alloc2))
+          subq    $24, %r15
+!         cmpq    PREPARE_SYMBOL(caml_young_limit)(%rip), %r15
+          jb      .L101
+          ret
+  .L101:
+          movq    0(%rsp), %rax
+!         movq    %rax, PREPARE_SYMBOL(caml_last_return_address)(%rip)
+          leaq    8(%rsp), %rax
+!         movq    %rax, PREPARE_SYMBOL(caml_bottom_of_stack)(%rip)
+  	subq	$8, %rsp
+          call    .L105
+  	addq	$8, %rsp
+!         jmp     PREPARE_SYMBOL(caml_alloc2)
+  
+! FUNCTION(PREPARE_SYMBOL(caml_alloc3))
+          subq    $32, %r15
+!         cmpq    PREPARE_SYMBOL(caml_young_limit)(%rip), %r15
+          jb      .L102
+          ret
+  .L102:
+          movq    0(%rsp), %rax
+!         movq    %rax, PREPARE_SYMBOL(caml_last_return_address)(%rip)
+          leaq    8(%rsp), %rax
+!         movq    %rax, PREPARE_SYMBOL(caml_bottom_of_stack)(%rip)
+  	subq	$8, %rsp
+          call    .L105
+  	addq	$8, %rsp
+!         jmp     PREPARE_SYMBOL(caml_alloc3)
+  
+! FUNCTION(PREPARE_SYMBOL(caml_allocN))
+          subq    %rax, %r15
+!         cmpq    PREPARE_SYMBOL(caml_young_limit)(%rip), %r15
+          jb      .L103
+          ret
+  .L103:
+          pushq   %rax                       /* save desired size */
+          movq    8(%rsp), %rax
+!         movq    %rax, PREPARE_SYMBOL(caml_last_return_address)(%rip)
+          leaq    16(%rsp), %rax
+!         movq    %rax, PREPARE_SYMBOL(caml_bottom_of_stack)(%rip)
+          call    .L105
+          popq    %rax                      /* recover desired size */
+!         jmp     PREPARE_SYMBOL(caml_allocN)
+  
+  /* Call a C function from Caml */
+  
+! FUNCTION(PREPARE_SYMBOL(caml_c_call))
+      /* Record lowest stack address and return address */
+          popq    %r12
+!         movq    %r12, PREPARE_SYMBOL(caml_last_return_address)(%rip)
+!         movq    %rsp, PREPARE_SYMBOL(caml_bottom_of_stack)(%rip)
+      /* Make the exception handler and alloc ptr available to the C code */
+! 	movq	%r15, PREPARE_SYMBOL(caml_young_ptr)(%rip)
+! 	movq	%r14, PREPARE_SYMBOL(caml_exception_pointer)(%rip)
+      /* Call the function (address in %rax) */
+          call    *%rax
+      /* Reload alloc ptr */
+! 	movq	PREPARE_SYMBOL(caml_young_ptr)(%rip), %r15
+      /* Return to caller */
+  	pushq	%r12
+  	ret
+  
+  /* Start the Caml program */
+  
+! FUNCTION(PREPARE_SYMBOL(caml_start_program))
+      /* Save callee-save registers */
+          pushq   %rbx
+          pushq   %rbp
+***************
+*** 199,216 ****
+          pushq   %r14
+          pushq   %r15
+  	subq	$8, %rsp	/* stack 16-aligned */
+!     /* Initial entry point is caml_program */
+!         leaq    caml_program(%rip), %r12
+!     /* Common code for caml_start_program and caml_callback* */
+  .L106:
+      /* Build a callback link */
+  	subq	$8, %rsp	/* stack 16-aligned */
+!         pushq   caml_gc_regs(%rip)
+!         pushq   caml_last_return_address(%rip)
+!         pushq   caml_bottom_of_stack(%rip)
+      /* Setup alloc ptr and exception ptr */
+! 	movq	caml_young_ptr(%rip), %r15
+! 	movq	caml_exception_pointer(%rip), %r14
+      /* Build an exception handler */
+          lea     .L108(%rip), %r13
+          pushq   %r13
+--- 208,225 ----
+          pushq   %r14
+          pushq   %r15
+  	subq	$8, %rsp	/* stack 16-aligned */
+!     /* Initial entry point is PREPARE_SYMBOL(caml_program) */
+!         leaq    PREPARE_SYMBOL(caml_program)(%rip), %r12
+!     /* Common code for PREPARE_SYMBOL(caml_start_program) and PREPARE_SYMBOL(caml_callback)* */
+  .L106:
+      /* Build a callback link */
+  	subq	$8, %rsp	/* stack 16-aligned */
+!         pushq   PREPARE_SYMBOL(caml_gc_regs)(%rip)
+!         pushq   PREPARE_SYMBOL(caml_last_return_address)(%rip)
+!         pushq   PREPARE_SYMBOL(caml_bottom_of_stack)(%rip)
+      /* Setup alloc ptr and exception ptr */
+! 	movq	PREPARE_SYMBOL(caml_young_ptr)(%rip), %r15
+! 	movq	PREPARE_SYMBOL(caml_exception_pointer)(%rip), %r14
+      /* Build an exception handler */
+          lea     .L108(%rip), %r13
+          pushq   %r13
+***************
+*** 224,235 ****
+          popq    %r12    /* dummy register */
+  .L109:
+      /* Update alloc ptr and exception ptr */
+! 	movq	%r15, caml_young_ptr(%rip)
+! 	movq	%r14, caml_exception_pointer(%rip)
+      /* Pop the callback link, restoring the global variables */
+!         popq    caml_bottom_of_stack(%rip)
+!         popq    caml_last_return_address(%rip)
+!         popq    caml_gc_regs(%rip)
+  	addq	$8, %rsp
+      /* Restore callee-save registers. */
+  	addq	$8, %rsp
+--- 233,244 ----
+          popq    %r12    /* dummy register */
+  .L109:
+      /* Update alloc ptr and exception ptr */
+! 	movq	%r15, PREPARE_SYMBOL(caml_young_ptr)(%rip)
+! 	movq	%r14, PREPARE_SYMBOL(caml_exception_pointer)(%rip)
+      /* Pop the callback link, restoring the global variables */
+!         popq    PREPARE_SYMBOL(caml_bottom_of_stack)(%rip)
+!         popq    PREPARE_SYMBOL(caml_last_return_address)(%rip)
+!         popq    PREPARE_SYMBOL(caml_gc_regs)(%rip)
+  	addq	$8, %rsp
+      /* Restore callee-save registers. */
+  	addq	$8, %rsp
+***************
+*** 249,256 ****
+  
+  /* Raise an exception from Caml */
+  
+! FUNCTION(caml_raise_exn)
+!         testl   $1, caml_backtrace_active(%rip)
+          jne     .L110
+          movq    %r14, %rsp
+          popq    %r14
+--- 258,265 ----
+  
+  /* Raise an exception from Caml */
+  
+! FUNCTION(PREPARE_SYMBOL(caml_raise_exn))
+!         testl   $1, PREPARE_SYMBOL(caml_backtrace_active)(%rip)
+          jne     .L110
+          movq    %r14, %rsp
+          popq    %r14
+***************
+*** 261,267 ****
+          movq    0(%rsp), %rsi         /* arg 2: pc of raise */
+          leaq    8(%rsp), %rdx         /* arg 3: sp of raise */
+          movq    %r14, %rcx            /* arg 4: sp of handler */
+!         call    caml_stash_backtrace
+          movq    %r12, %rax            /* Recover exception bucket */
+          movq    %r14, %rsp
+          popq    %r14
+--- 270,276 ----
+          movq    0(%rsp), %rsi         /* arg 2: pc of raise */
+          leaq    8(%rsp), %rdx         /* arg 3: sp of raise */
+          movq    %r14, %rcx            /* arg 4: sp of handler */
+!         call    PREPARE_SYMBOL(caml_stash_backtrace)
+          movq    %r12, %rax            /* Recover exception bucket */
+          movq    %r14, %rsp
+          popq    %r14
+***************
+*** 269,298 ****
+  
+  /* Raise an exception from C */
+  
+! FUNCTION(caml_raise_exception)
+!         testl   $1, caml_backtrace_active(%rip)
+          jne     .L111
+          movq    %rdi, %rax
+!         movq    caml_exception_pointer(%rip), %rsp
+          popq    %r14                  /* Recover previous exception handler */
+!         movq    caml_young_ptr(%rip), %r15 /* Reload alloc ptr */
+          ret
+  .L111:
+          movq    %rdi, %r12            /* Save exception bucket */
+                                        /* arg 1: exception bucket */
+!         movq    caml_last_return_address(%rip), %rsi /* arg 2: pc of raise */
+!         movq    caml_bottom_of_stack(%rip), %rdx /* arg 3: sp of raise */
+!         movq    caml_exception_pointer(%rip), %rcx /* arg 4: sp of handler */
+!         call    caml_stash_backtrace
+          movq    %r12, %rax            /* Recover exception bucket */
+!         movq    caml_exception_pointer(%rip), %rsp
+          popq    %r14                  /* Recover previous exception handler */
+!         movq    caml_young_ptr(%rip), %r15 /* Reload alloc ptr */
+          ret
+  
+  /* Callback from C to Caml */
+  
+! FUNCTION(caml_callback_exn)
+      /* Save callee-save registers */
+          pushq   %rbx
+          pushq   %rbp
+--- 278,307 ----
+  
+  /* Raise an exception from C */
+  
+! FUNCTION(PREPARE_SYMBOL(caml_raise_exception))
+!         testl   $1, PREPARE_SYMBOL(caml_backtrace_active)(%rip)
+          jne     .L111
+          movq    %rdi, %rax
+!         movq    PREPARE_SYMBOL(caml_exception_pointer)(%rip), %rsp
+          popq    %r14                  /* Recover previous exception handler */
+!         movq    PREPARE_SYMBOL(caml_young_ptr)(%rip), %r15 /* Reload alloc ptr */
+          ret
+  .L111:
+          movq    %rdi, %r12            /* Save exception bucket */
+                                        /* arg 1: exception bucket */
+!         movq    PREPARE_SYMBOL(caml_last_return_address)(%rip), %rsi /* arg 2: pc of raise */
+!         movq    PREPARE_SYMBOL(caml_bottom_of_stack)(%rip), %rdx /* arg 3: sp of raise */
+!         movq    PREPARE_SYMBOL(caml_exception_pointer)(%rip), %rcx /* arg 4: sp of handler */
+!         call    PREPARE_SYMBOL(caml_stash_backtrace)
+          movq    %r12, %rax            /* Recover exception bucket */
+!         movq    PREPARE_SYMBOL(caml_exception_pointer)(%rip), %rsp
+          popq    %r14                  /* Recover previous exception handler */
+!         movq    PREPARE_SYMBOL(caml_young_ptr)(%rip), %r15 /* Reload alloc ptr */
+          ret
+  
+  /* Callback from C to Caml */
+  
+! FUNCTION(PREPARE_SYMBOL(caml_callback_exn))
+      /* Save callee-save registers */
+          pushq   %rbx
+          pushq   %rbp
+***************
+*** 307,313 ****
+          movq    0(%rbx), %r12   /* code pointer */
+          jmp     .L106
+  
+! FUNCTION(caml_callback2_exn)
+      /* Save callee-save registers */
+          pushq   %rbx
+          pushq   %rbp
+--- 316,322 ----
+          movq    0(%rbx), %r12   /* code pointer */
+          jmp     .L106
+  
+! FUNCTION(PREPARE_SYMBOL(caml_callback2_exn))
+      /* Save callee-save registers */
+          pushq   %rbx
+          pushq   %rbp
+***************
+*** 320,329 ****
+          /* closure stays in %rdi */
+          movq    %rsi, %rax               /* first argument */
+          movq    %rdx, %rbx               /* second argument */
+!         leaq    caml_apply2(%rip), %r12  /* code pointer */
+          jmp     .L106
+  
+! FUNCTION(caml_callback3_exn)
+      /* Save callee-save registers */
+          pushq   %rbx
+          pushq   %rbp
+--- 329,338 ----
+          /* closure stays in %rdi */
+          movq    %rsi, %rax               /* first argument */
+          movq    %rdx, %rbx               /* second argument */
+!         leaq    PREPARE_SYMBOL(caml_apply2)(%rip), %r12  /* code pointer */
+          jmp     .L106
+  
+! FUNCTION(PREPARE_SYMBOL(caml_callback3_exn))
+      /* Save callee-save registers */
+          pushq   %rbx
+          pushq   %rbp
+***************
+*** 337,368 ****
+          movq    %rdx, %rbx               /* second argument */
+          movq    %rdi, %rsi               /* closure */
+          movq    %rcx, %rdi               /* third argument */
+!         leaq    caml_apply3(%rip), %r12  /* code pointer */
+          jmp     .L106
+  
+! FUNCTION(caml_ml_array_bound_error)
+!         leaq    caml_array_bound_error(%rip), %rax
+!         jmp     caml_c_call
+  
+          .data
+!         .globl  caml_system__frametable
+!         .type   caml_system__frametable,@object
+!         .align  8
+! caml_system__frametable:
+          .quad   1           /* one descriptor */
+          .quad   .L107       /* return address into callback */
+          .value  -1          /* negative frame size => use callback link */
+          .value  0           /* no roots here */
+!         .align  8
+  
+! 	.section	.rodata.cst8,"a",@progbits
+!         .globl  caml_negf_mask
+!         .type   caml_negf_mask,@object
+!         .align  16
+! caml_negf_mask:
+  	.quad	0x8000000000000000, 0
+!         .globl  caml_absf_mask
+!         .type   caml_absf_mask,@object
+!         .align  16
+! caml_absf_mask:
+  	.quad	0x7FFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF
+--- 346,378 ----
+          movq    %rdx, %rbx               /* second argument */
+          movq    %rdi, %rsi               /* closure */
+          movq    %rcx, %rdi               /* third argument */
+!         leaq    PREPARE_SYMBOL(caml_apply3)(%rip), %r12  /* code pointer */
+          jmp     .L106
+  
+! FUNCTION(PREPARE_SYMBOL(caml_ml_array_bound_error))
+!         leaq    PREPARE_SYMBOL(caml_array_bound_error)(%rip), %rax
+!         jmp     PREPARE_SYMBOL(caml_c_call)
+  
+          .data
+!         .globl  PREPARE_SYMBOL(caml_system__frametable)
+!         .align  EIGHT
+! PREPARE_SYMBOL(caml_system__frametable):
+          .quad   1           /* one descriptor */
+          .quad   .L107       /* return address into callback */
+          .value  -1          /* negative frame size => use callback link */
+          .value  0           /* no roots here */
+!         .align  EIGHT
+  
+! #ifdef SYS_macosx
+! 	.section    __TEXT,__eh_frame,coalesced,no_toc+strip_static_syms+live_support
+! #else
+! 	.section    .rodata.cst8,"a",@progbits
+! #endif
+!         .globl  PREPARE_SYMBOL(caml_negf_mask)
+!         .align  SIXTEEN
+! PREPARE_SYMBOL(caml_negf_mask):
+  	.quad	0x8000000000000000, 0
+!         .globl  PREPARE_SYMBOL(caml_absf_mask)
+!         .align  SIXTEEN
+! PREPARE_SYMBOL(caml_absf_mask):
+  	.quad	0x7FFFFFFFFFFFFFFF, 0xFFFFFFFFFFFFFFFF
+diff -rc ocaml-3.10.2 2/asmrun/i386.S ocaml-3.10.2/asmrun/i386.S
+*** ocaml-3.10.2 2/asmrun/i386.S	Tue Oct  9 09:32:25 2007
+--- ocaml-3.10.2/asmrun/i386.S	Sun Jul 13 11:29:56 2008
+***************
+*** 27,98 ****
+  
+  #if defined(SYS_linux_elf) || defined(SYS_bsd_elf) \
+   || defined(SYS_solaris) || defined(SYS_beos) || defined(SYS_gnu)
+! #define G(x) x
+! #define LBL(x) CONCAT(.L,x)
+! #else
+! #define G(x) CONCAT(_,x)
+! #define LBL(x) CONCAT(L,x)
+! #endif
+! 
+! #if defined(SYS_linux_elf) || defined(SYS_bsd_elf) \
+!  || defined(SYS_solaris) || defined(SYS_beos) || defined(SYS_cygwin) \
+!  || defined(SYS_mingw) || defined(SYS_gnu)
+! #define FUNCTION_ALIGN 4
+! #else
+! #define FUNCTION_ALIGN 2
+! #endif
+! 
+! #if defined(PROFILING)
+! #if defined(SYS_linux_elf) || defined(SYS_gnu)
+! #define PROFILE_CAML \
+!         pushl %ebp; movl %esp, %ebp; pushl %eax; pushl %ecx; pushl %edx; \
+!         call mcount; \
+!         popl %edx; popl %ecx; popl %eax; popl %ebp
+! #define PROFILE_C \
+!         pushl %ebp; movl %esp, %ebp; call mcount; popl %ebp
+! #elif defined(SYS_bsd_elf)
+! #define PROFILE_CAML \
+!         pushl %ebp; movl %esp, %ebp; pushl %eax; pushl %ecx; pushl %edx; \
+!         call .mcount; \
+!         popl %edx; popl %ecx; popl %eax; popl %ebp
+! #define PROFILE_C \
+!         pushl %ebp; movl %esp, %ebp; call .mcount; popl %ebp
+! #elif defined(SYS_macosx)
+! #define PROFILE_CAML \
+!         pushl %ebp; movl %esp, %ebp; pushl %eax; pushl %ecx; pushl %edx; \
+!         call Lmcount$stub;  \
+!         popl %edx; popl %ecx; popl %eax; popl %ebp
+! #define PROFILE_C \
+!         pushl %ebp; movl %esp, %ebp; call Lmcount$stub; popl %ebp
+! #endif
+! #else
+! #define PROFILE_CAML
+! #define PROFILE_C
+! #endif
+! 
+! #ifdef SYS_macosx
+! #define ALIGN_STACK(amount) subl $ amount, %esp
+! #define UNDO_ALIGN_STACK(amount) addl $ amount, %esp
+! #else
+! #define ALIGN_STACK(amount)
+! #define UNDO_ALIGN_STACK(amount)
+! #endif
+! 
+! /* Allocation */
+! 
+!         .text
+!         .globl  G(caml_call_gc)
+!         .globl  G(caml_alloc1)
+!         .globl  G(caml_alloc2)
+!         .globl  G(caml_alloc3)
+!         .globl  G(caml_allocN)
+! 
+!         .align  FUNCTION_ALIGN
+! G(caml_call_gc):
+!         PROFILE_CAML
+!     /* Record lowest stack address and return address */
+!         movl    0(%esp), %eax
+!         movl    %eax, G(caml_last_return_address)
+          leal    4(%esp), %eax
+          movl    %eax, G(caml_bottom_of_stack)
+      /* Build array of registers, save it into caml_gc_regs */
+--- 27,33 ----
+  
+  #if defined(SYS_linux_elf) || defined(SYS_bsd_elf) \
+   || defined(SYS_solaris) || defined(SYS_beos) || defined(SYS_gnu)
+! #define G(caml_last_return_address)
+          leal    4(%esp), %eax
+          movl    %eax, G(caml_bottom_of_stack)
+      /* Build array of registers, save it into caml_gc_regs */
+diff -rc ocaml-3.10.2 2/asmrun/signals_osdep.h ocaml-3.10.2/asmrun/signals_osdep.h
+*** ocaml-3.10.2 2/asmrun/signals_osdep.h	Mon Nov 26 11:58:51 2007
+--- ocaml-3.10.2/asmrun/signals_osdep.h	Tue Jul 15 16:01:52 2008
+***************
+*** 34,41 ****
+  
+  /****************** AMD64, Linux */
+  
+- #elif defined(TARGET_amd64) && defined (SYS_linux)
+- 
+    #define DECLARE_SIGNAL_HANDLER(name) \
+      static void name(int sig, siginfo_t * info, ucontext_t * context)
+  
+--- 34,39 ----
+***************
+*** 49,54 ****
+--- 47,75 ----
+    #define CONTEXT_YOUNG_PTR (context->uc_mcontext.gregs[REG_R15])
+    #define CONTEXT_FAULTING_ADDRESS ((char *) context->uc_mcontext.gregs[REG_CR2])
+  
++ /****************** AMD64, MacOSX */
++ #elif defined(TARGET_amd64) && defined (SYS_macosx)
++ 
++   #define DECLARE_SIGNAL_HANDLER(name) \
++     static void name(int sig, siginfo_t * info, void * context)
++ 
++   #define SET_SIGACT(sigact,name) \
++      sigact.sa_sigaction = (name); \
++      sigact.sa_flags = SA_SIGINFO
++ 
++   #include <sys/ucontext.h>
++   #include <AvailabilityMacros.h>
++ 
++ #if !defined(MAC_OS_X_VERSION_10_5) || MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
++     #define CONTEXT_REG(r) r
++   #else
++     #define CONTEXT_REG(r) __##r
++   #endif
++ 
++   #define CONTEXT_STATE (((ucontext_t *)context)->uc_mcontext->CONTEXT_REG(ss))
++   #define CONTEXT_PC (CONTEXT_STATE.CONTEXT_REG(rip))
++   #define CONTEXT_FAULTING_ADDRESS ((char *) info->si_addr)
++ 
+  /****************** I386, Linux */
+  
+  #elif defined(TARGET_i386) && defined(SYS_linux_elf)
+diff -rc ocaml-3.10.2 2/configure ocaml-3.10.2/configure
+*** ocaml-3.10.2 2/configure	Fri Jan  4 08:26:38 2008
+--- ocaml-3.10.2/configure	Sun Jul 13 14:46:36 2008
+***************
+*** 247,252 ****
+--- 247,260 ----
+      # Almost the same as NeXTStep
+      bytecccompopts="-fno-defer-pop $gcc_warnings -DSHRINKED_GNUC"
+      mathlib="";;
++   *,x86_64-*-darwin*)
++     bytecc="$bytecc -arch x86_64"
++     bytecccompopts="-fno-defer-pop -no-cpp-precomp $gcc_warnings"
++     # Tell gcc that we can use 32-bit code addresses for threaded code
++     # unless we are compiled for a shared library (-fPIC option)
++     echo "#ifndef __PIC__" >> m.h
++     echo "#  define ARCH_CODE32" >> m.h
++     echo "#endif" >> m.h;;
+    *,*-*-darwin*)
+      bytecccompopts="-fno-defer-pop -no-cpp-precomp $gcc_warnings"
+      mathlib=""
+***************
+*** 541,547 ****
+        byteccrpath="-Wl,-rpath,"
+        mksharedlibrpath="-rpath "
+        shared_libraries_supported=true;;
+!     *-apple-darwin*)
+        mksharedlib="$bytecc -bundle -flat_namespace -undefined suppress -o"
+        bytecccompopts="$dl_defs $bytecccompopts"
+        #sharedcccompopts="-fnocommon"
+--- 549,561 ----
+        byteccrpath="-Wl,-rpath,"
+        mksharedlibrpath="-rpath "
+        shared_libraries_supported=true;;
+!     x86_64-apple-darwin*)
+!       mksharedlib="$bytecc -bundle -flat_namespace -undefined suppress -o"
+!       bytecccompopts="$dl_defs $bytecccompopts"
+!       #sharedcccompopts="-fnocommon"
+!       dl_needs_underscore=false
+!       shared_libraries_supported=true;;
+!     i386-apple-darwin*)
+        mksharedlib="$bytecc -bundle -flat_namespace -undefined suppress -o"
+        bytecccompopts="$dl_defs $bytecccompopts"
+        #sharedcccompopts="-fnocommon"
+***************
+*** 553,559 ****
+  # Further machine-specific hacks
+  
+  case "$host" in
+!   ia64-*-linux*|alpha*-*-linux*|x86_64-*-linux*|sparc64-*-linux*)
+      echo "Will use mmap() instead of malloc() for allocation of major heap chunks."
+      echo "#define USE_MMAP_INSTEAD_OF_MALLOC" >> s.h;;
+  esac
+--- 567,573 ----
+  # Further machine-specific hacks
+  
+  case "$host" in
+!   x86_64-*-darwin*|ia64-*-linux*|alpha*-*-linux*|x86_64-*-linux*|sparc64-*-linux*)
+      echo "Will use mmap() instead of malloc() for allocation of major heap chunks."
+      echo "#define USE_MMAP_INSTEAD_OF_MALLOC" >> s.h;;
+  esac
+***************
+*** 604,609 ****
+--- 618,624 ----
+    x86_64-*-freebsd*)            arch=amd64; system=freebsd;;
+    x86_64-*-netbsd*)             arch=amd64; system=netbsd;;
+    x86_64-*-openbsd*)            arch=amd64; system=openbsd;;
++   x86_64-*-darwin*)             arch=amd64; system=macosx;;
+  esac
+  
+  # Some platforms exist both in 32-bit and 64-bit variants, not distinguished
+***************
+*** 642,647 ****
+--- 657,663 ----
+    *,*,rhapsody,*)      nativecccompopts="$gcc_warnings -DDARWIN_VERSION_6 $dl_defs"
+                         if $arch64; then partialld="ld -r -arch ppc64"; fi;;
+    *,gcc*,cygwin,*)     nativecccompopts="$gcc_warnings -U_WIN32";;
++   amd64,gcc*,macosx,*) partialld="ld -r -arch x86_64";;
+    *,gcc*,*,*)          nativecccompopts="$gcc_warnings";;
+  esac
+  
+***************
+*** 676,681 ****
+--- 692,698 ----
+    arm,*,gnu)        aspp='gcc'; asppflags='-c -DSYS_$(SYSTEM)';;
+    ia64,*,*)         asflags=-xexplicit
+                      aspp='gcc'; asppflags='-c -DSYS_$(SYSTEM) -Wa,-xexplicit';;
++   amd64,*,macosx)   aspp='gcc'; asppflags='-c -arch x86_64 -DSYS_$(SYSTEM)';;
+    amd64,*,*)        aspp='gcc'; asppflags='-c -DSYS_$(SYSTEM)';;
+  esac
+  
+***************
+*** 685,690 ****
+--- 702,708 ----
+    i386,*,linux_elf) profiling='prof';;
+    i386,*,gnu) profiling='prof';;
+    i386,*,bsd_elf) profiling='prof';;
++   amd64,*,macosx) profiling='prof';;
+    i386,*,macosx) profiling='prof';;
+    sparc,*,solaris)
+      profiling='prof'
+***************
+*** 988,994 ****
+    echo "#define HAS_LOCALE" >> s.h
+  fi
+  
+! if sh ./hasgot -i mach-o/dyld.h && sh ./hasgot NSLinkModule; then
+    echo "NSLinkModule() found. Using darwin dynamic loading."
+    echo "#define HAS_NSLINKMODULE" >> s.h
+  elif sh ./hasgot $dllib dlopen; then
+--- 1006,1012 ----
+    echo "#define HAS_LOCALE" >> s.h
+  fi
+  
+! if test "$arch" != "amd64" && sh ./hasgot -i mach-o/dyld.h && sh ./hasgot NSLinkModule; then
+    echo "NSLinkModule() found. Using darwin dynamic loading."
+    echo "#define HAS_NSLINKMODULE" >> s.h
+  elif sh ./hasgot $dllib dlopen; then
+***************
+*** 1045,1057 ****
+  # Determine if system stack overflows can be detected
+  
+  case "$arch,$system" in
+!   i386,linux_elf|amd64,linux|power,rhapsody|i386,macosx)
+      echo "System stack overflow can be detected."
+      echo "#define HAS_STACK_OVERFLOW_DETECTION" >> s.h;;
+    *)
+      echo "Cannot detect system stack overflow.";;
+  esac
+  
+  # Determine the target architecture for the "num" library
+  
+  case "$host" in
+--- 1063,1082 ----
+  # Determine if system stack overflows can be detected
+  
+  case "$arch,$system" in
+!   i386,linux_elf|amd64,linux|power,rhapsody|amd64,macosx|i386,macosx)
+      echo "System stack overflow can be detected."
+      echo "#define HAS_STACK_OVERFLOW_DETECTION" >> s.h;;
+    *)
+      echo "Cannot detect system stack overflow.";;
+  esac
+  
++ #Remap the MAP_ANONYMOUS for macosx amd64
++ case "$arch,$system" in
++   amd64,macosx)
++     echo "#define MAP_ANONYMOUS MAP_ANON" >> s.h;;
++   *);;
++ esac
++ 
+  # Determine the target architecture for the "num" library
+  
+  case "$host" in

@@ -1,0 +1,1954 @@
+"ocamlbuild/pathname.ml" 22 916 920 "ocamlbuild/pathname.ml" 22 916 933
+type(
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/pathname.ml" 22 916 936 "ocamlbuild/pathname.ml" 22 916 946
+type(
+  (Format.formatter -> string -> unit) ->
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/pathname.ml" 22 916 947 "ocamlbuild/pathname.ml" 22 916 959
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/pathname.ml" 22 916 936 "ocamlbuild/pathname.ml" 22 916 959
+type(
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/pathname.ml" 24 961 965 "ocamlbuild/pathname.ml" 24 961 971
+type(
+  string -> string -> string
+)
+"ocamlbuild/pathname.ml" 24 961 974 "ocamlbuild/pathname.ml" 24 961 989
+type(
+  string -> string -> string
+)
+"ocamlbuild/pathname.ml" 26 991 995 "ocamlbuild/pathname.ml" 26 991 1002
+type(
+  'a -> 'a -> int
+)
+"ocamlbuild/pathname.ml" 26 991 1005 "ocamlbuild/pathname.ml" 26 991 1012
+type(
+  'a -> 'a -> int
+)
+"ocamlbuild/pathname.ml" 28 1014 1018 "ocamlbuild/pathname.ml" 28 1014 1023
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/pathname.ml" 28 1014 1026 "ocamlbuild/pathname.ml" 28 1014 1041
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/pathname.ml" 30 1043 1047 "ocamlbuild/pathname.ml" 30 1043 1049
+type(
+  'a -> 'a
+)
+"ocamlbuild/pathname.ml" 30 1043 1050 "ocamlbuild/pathname.ml" 30 1043 1051
+type(
+  'a
+)
+"ocamlbuild/pathname.ml" 30 1043 1054 "ocamlbuild/pathname.ml" 30 1043 1055
+type(
+  'a
+)
+"ocamlbuild/pathname.ml" 32 1057 1061 "ocamlbuild/pathname.ml" 32 1057 1064
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 32 1057 1067 "ocamlbuild/pathname.ml" 32 1057 1077
+type(
+  unit -> string
+)
+"ocamlbuild/pathname.ml" 32 1057 1078 "ocamlbuild/pathname.ml" 32 1057 1080
+type(
+  unit
+)
+"ocamlbuild/pathname.ml" 32 1057 1067 "ocamlbuild/pathname.ml" 32 1057 1080
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 34 1082 1086 "ocamlbuild/pathname.ml" 34 1082 1099
+type(
+  string -> string -> string
+)
+"ocamlbuild/pathname.ml" 34 1082 1100 "ocamlbuild/pathname.ml" 34 1082 1103
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 34 1082 1104 "ocamlbuild/pathname.ml" 34 1082 1105
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 34 1082 1108 "ocamlbuild/pathname.ml" 34 1082 1109
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 34 1082 1110 "ocamlbuild/pathname.ml" 34 1082 1111
+type(
+  string -> string -> string
+)
+"ocamlbuild/pathname.ml" 34 1082 1112 "ocamlbuild/pathname.ml" 34 1082 1115
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 34 1082 1116 "ocamlbuild/pathname.ml" 34 1082 1117
+type(
+  string -> string -> string
+)
+"ocamlbuild/pathname.ml" 34 1082 1118 "ocamlbuild/pathname.ml" 34 1082 1121
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 34 1082 1112 "ocamlbuild/pathname.ml" 34 1082 1121
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 34 1082 1108 "ocamlbuild/pathname.ml" 34 1082 1121
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 36 1123 1127 "ocamlbuild/pathname.ml" 36 1123 1142
+type(
+  string -> string -> bool
+)
+"ocamlbuild/pathname.ml" 36 1123 1143 "ocamlbuild/pathname.ml" 36 1123 1144
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 36 1123 1145 "ocamlbuild/pathname.ml" 36 1123 1148
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 37 1151 1157 "ocamlbuild/pathname.ml" 37 1151 1159
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 37 1151 1162 "ocamlbuild/pathname.ml" 37 1151 1175
+type(
+  string -> int
+)
+"ocamlbuild/pathname.ml" 37 1151 1176 "ocamlbuild/pathname.ml" 37 1151 1177
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 37 1151 1162 "ocamlbuild/pathname.ml" 37 1151 1177
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 37 1151 1182 "ocamlbuild/pathname.ml" 37 1151 1186
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 37 1151 1189 "ocamlbuild/pathname.ml" 37 1151 1202
+type(
+  string -> int
+)
+"ocamlbuild/pathname.ml" 37 1151 1203 "ocamlbuild/pathname.ml" 37 1151 1206
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 37 1151 1189 "ocamlbuild/pathname.ml" 37 1151 1206
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 38 1210 1212 "ocamlbuild/pathname.ml" 38 1210 1214
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 38 1210 1215 "ocamlbuild/pathname.ml" 38 1210 1216
+type(
+  int -> int -> bool
+)
+"ocamlbuild/pathname.ml" 38 1210 1217 "ocamlbuild/pathname.ml" 38 1210 1221
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 38 1210 1222 "ocamlbuild/pathname.ml" 38 1210 1223
+type(
+  int -> int -> int
+)
+"ocamlbuild/pathname.ml" 38 1210 1224 "ocamlbuild/pathname.ml" 38 1210 1225
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 38 1210 1217 "ocamlbuild/pathname.ml" 38 1210 1225
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 38 1210 1212 "ocamlbuild/pathname.ml" 38 1210 1225
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 38 1210 1226 "ocamlbuild/pathname.ml" 38 1210 1228
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/pathname.ml" 38 1210 1229 "ocamlbuild/pathname.ml" 38 1210 1230
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 38 1210 1232 "ocamlbuild/pathname.ml" 38 1210 1234
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 38 1210 1235 "ocamlbuild/pathname.ml" 38 1210 1236
+type(
+  int -> int -> int
+)
+"ocamlbuild/pathname.ml" 38 1210 1237 "ocamlbuild/pathname.ml" 38 1210 1241
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 38 1210 1232 "ocamlbuild/pathname.ml" 38 1210 1241
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 38 1210 1242 "ocamlbuild/pathname.ml" 38 1210 1243
+type(
+  int -> int -> int
+)
+"ocamlbuild/pathname.ml" 38 1210 1244 "ocamlbuild/pathname.ml" 38 1210 1245
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 38 1210 1232 "ocamlbuild/pathname.ml" 38 1210 1245
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 38 1210 1229 "ocamlbuild/pathname.ml" 38 1210 1246
+type(
+  char
+)
+"ocamlbuild/pathname.ml" 38 1210 1247 "ocamlbuild/pathname.ml" 38 1210 1248
+type(
+  char -> char -> bool
+)
+"ocamlbuild/pathname.ml" 38 1210 1249 "ocamlbuild/pathname.ml" 38 1210 1252
+type(
+  char
+)
+"ocamlbuild/pathname.ml" 38 1210 1229 "ocamlbuild/pathname.ml" 38 1210 1252
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 38 1210 1253 "ocamlbuild/pathname.ml" 38 1210 1255
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/pathname.ml" 38 1210 1256 "ocamlbuild/pathname.ml" 38 1210 1272
+type(
+  string -> string -> bool
+)
+"ocamlbuild/pathname.ml" 38 1210 1273 "ocamlbuild/pathname.ml" 38 1210 1274
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 38 1210 1275 "ocamlbuild/pathname.ml" 38 1210 1278
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 38 1210 1256 "ocamlbuild/pathname.ml" 38 1210 1278
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 38 1210 1229 "ocamlbuild/pathname.ml" 38 1210 1278
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 38 1210 1212 "ocamlbuild/pathname.ml" 38 1210 1278
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 37 1151 1153 "ocamlbuild/pathname.ml" 38 1210 1278
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 41 1306 1312 "ocamlbuild/pathname.ml" 41 1306 1317
+type(
+  string -> string -> string
+)
+"ocamlbuild/pathname.ml" 41 1306 1320 "ocamlbuild/pathname.ml" 41 1306 1326
+type(
+  string -> string -> string
+)
+"ocamlbuild/pathname.ml" 42 1327 1333 "ocamlbuild/pathname.ml" 42 1327 1340
+type(
+  string -> string -> string
+)
+"ocamlbuild/pathname.ml" 42 1327 1341 "ocamlbuild/pathname.ml" 42 1327 1345
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 42 1327 1346 "ocamlbuild/pathname.ml" 42 1327 1349
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 42 1327 1352 "ocamlbuild/pathname.ml" 42 1327 1365
+type(
+  string -> string -> string
+)
+"ocamlbuild/pathname.ml" 42 1327 1366 "ocamlbuild/pathname.ml" 42 1327 1369
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 42 1327 1370 "ocamlbuild/pathname.ml" 42 1327 1374
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 42 1327 1352 "ocamlbuild/pathname.ml" 42 1327 1374
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 46 1395 1399 "ocamlbuild/pathname.ml" 46 1395 1404
+type(
+  'a -> 'a -> bool
+)
+"ocamlbuild/pathname.ml" 46 1395 1405 "ocamlbuild/pathname.ml" 46 1395 1406
+type(
+  'a
+)
+"ocamlbuild/pathname.ml" 46 1395 1407 "ocamlbuild/pathname.ml" 46 1395 1408
+type(
+  'a
+)
+"ocamlbuild/pathname.ml" 46 1395 1411 "ocamlbuild/pathname.ml" 46 1395 1412
+type(
+  'a
+)
+"ocamlbuild/pathname.ml" 46 1395 1413 "ocamlbuild/pathname.ml" 46 1395 1414
+type(
+  'a -> 'a -> bool
+)
+"ocamlbuild/pathname.ml" 46 1395 1415 "ocamlbuild/pathname.ml" 46 1395 1416
+type(
+  'a
+)
+"ocamlbuild/pathname.ml" 46 1395 1411 "ocamlbuild/pathname.ml" 46 1395 1416
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 48 1418 1422 "ocamlbuild/pathname.ml" 48 1418 1431
+type(
+  'a -> 'a
+)
+"ocamlbuild/pathname.ml" 48 1418 1432 "ocamlbuild/pathname.ml" 48 1418 1433
+type(
+  'a
+)
+"ocamlbuild/pathname.ml" 48 1418 1436 "ocamlbuild/pathname.ml" 48 1418 1437
+type(
+  'a
+)
+"ocamlbuild/pathname.ml" 50 1439 1443 "ocamlbuild/pathname.ml" 50 1439 1450
+type(
+  string -> bool
+)
+"ocamlbuild/pathname.ml" 50 1439 1453 "ocamlbuild/pathname.ml" 50 1439 1466
+type(
+  string -> bool
+)
+"ocamlbuild/pathname.ml" 51 1467 1471 "ocamlbuild/pathname.ml" 51 1467 1479
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 51 1467 1482 "ocamlbuild/pathname.ml" 51 1467 1496
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 52 1497 1501 "ocamlbuild/pathname.ml" 52 1497 1513
+type(
+  string -> bool
+)
+"ocamlbuild/pathname.ml" 52 1497 1514 "ocamlbuild/pathname.ml" 52 1497 1515
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 53 1518 1525 "ocamlbuild/pathname.ml" 53 1518 1537
+type(
+  string -> My_unix.stats
+)
+"ocamlbuild/pathname.ml" 53 1518 1538 "ocamlbuild/pathname.ml" 53 1518 1539
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 53 1518 1524 "ocamlbuild/pathname.ml" 53 1518 1540
+type(
+  My_unix.stats
+)
+"ocamlbuild/pathname.ml" 53 1518 1524 "ocamlbuild/pathname.ml" 53 1518 1563
+type(
+  My_unix.file_kind
+)
+"ocamlbuild/pathname.ml" 53 1518 1564 "ocamlbuild/pathname.ml" 53 1518 1565
+type(
+  My_unix.file_kind -> My_unix.file_kind -> bool
+)
+"ocamlbuild/pathname.ml" 53 1518 1566 "ocamlbuild/pathname.ml" 53 1518 1580
+type(
+  My_unix.file_kind
+)
+"ocamlbuild/pathname.ml" 53 1518 1524 "ocamlbuild/pathname.ml" 53 1518 1580
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 54 1581 1598 "ocamlbuild/pathname.ml" 54 1581 1599
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 54 1581 1588 "ocamlbuild/pathname.ml" 54 1581 1599
+type(
+  exn
+)
+"ocamlbuild/pathname.ml" 54 1581 1603 "ocamlbuild/pathname.ml" 54 1581 1608
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 53 1518 1520 "ocamlbuild/pathname.ml" 54 1581 1608
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 55 1609 1613 "ocamlbuild/pathname.ml" 55 1609 1620
+type(
+  string -> string array
+)
+"ocamlbuild/pathname.ml" 55 1609 1621 "ocamlbuild/pathname.ml" 55 1609 1622
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 55 1609 1625 "ocamlbuild/pathname.ml" 55 1609 1637
+type(
+  (string array, exn) My_std.Outcome.t -> string array
+)
+"ocamlbuild/pathname.ml" 55 1609 1639 "ocamlbuild/pathname.ml" 55 1609 1650
+type(
+  string -> (string array, exn) My_std.Outcome.t
+)
+"ocamlbuild/pathname.ml" 55 1609 1651 "ocamlbuild/pathname.ml" 55 1609 1652
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 55 1609 1638 "ocamlbuild/pathname.ml" 55 1609 1653
+type(
+  (string array, exn) My_std.Outcome.t
+)
+"ocamlbuild/pathname.ml" 55 1609 1625 "ocamlbuild/pathname.ml" 55 1609 1653
+type(
+  string array
+)
+"ocamlbuild/pathname.ml" 57 1655 1659 "ocamlbuild/pathname.ml" 57 1655 1667
+type(
+  char list
+)
+"ocamlbuild/pathname.ml" 57 1655 1671 "ocamlbuild/pathname.ml" 57 1655 1674
+type(
+  char
+)
+"ocamlbuild/pathname.ml" 57 1655 1675 "ocamlbuild/pathname.ml" 57 1655 1679
+type(
+  char
+)
+"ocamlbuild/pathname.ml" 57 1655 1670 "ocamlbuild/pathname.ml" 57 1655 1680
+type(
+  char list
+)
+"ocamlbuild/pathname.ml" 58 1702 1706 "ocamlbuild/pathname.ml" 58 1702 1724
+type(
+  Glob.globber
+)
+"ocamlbuild/pathname.ml" 58 1702 1727 "ocamlbuild/pathname.ml" 58 1702 1737
+type(
+  ?dir:string -> string -> Glob.globber
+)
+"ocamlbuild/pathname.ml" 58 1702 1738 "ocamlbuild/pathname.ml" 58 1702 1755
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 58 1702 1727 "ocamlbuild/pathname.ml" 58 1702 1755
+type(
+  Glob.globber
+)
+"ocamlbuild/pathname.ml" 60 1757 1761 "ocamlbuild/pathname.ml" 60 1757 1767
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 60 1757 1768 "ocamlbuild/pathname.ml" 60 1757 1769
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 60 1757 1772 "ocamlbuild/pathname.ml" 60 1757 1778
+type(
+  string -> string -> string
+)
+"ocamlbuild/pathname.ml" 60 1757 1779 "ocamlbuild/pathname.ml" 60 1757 1794
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 60 1757 1795 "ocamlbuild/pathname.ml" 60 1757 1796
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 60 1757 1772 "ocamlbuild/pathname.ml" 60 1757 1796
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 62 1798 1802 "ocamlbuild/pathname.ml" 62 1798 1807
+type(
+  string -> string * string list
+)
+"ocamlbuild/pathname.ml" 62 1798 1808 "ocamlbuild/pathname.ml" 62 1798 1809
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 63 1812 1822 "ocamlbuild/pathname.ml" 63 1812 1824
+type(
+  string -> string list -> string * string list
+)
+"ocamlbuild/pathname.ml" 63 1812 1825 "ocamlbuild/pathname.ml" 63 1812 1826
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 63 1812 1827 "ocamlbuild/pathname.ml" 63 1812 1830
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 64 1833 1841 "ocamlbuild/pathname.ml" 64 1833 1844
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 64 1833 1847 "ocamlbuild/pathname.ml" 64 1833 1854
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 64 1833 1855 "ocamlbuild/pathname.ml" 64 1833 1856
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 64 1833 1847 "ocamlbuild/pathname.ml" 64 1833 1856
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 65 1860 1867 "ocamlbuild/pathname.ml" 65 1860 1870
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 65 1860 1871 "ocamlbuild/pathname.ml" 65 1860 1872
+type(
+  string -> string -> bool
+)
+"ocamlbuild/pathname.ml" 65 1860 1873 "ocamlbuild/pathname.ml" 65 1860 1874
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 65 1860 1867 "ocamlbuild/pathname.ml" 65 1860 1874
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 65 1860 1880 "ocamlbuild/pathname.ml" 65 1860 1883
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 65 1860 1885 "ocamlbuild/pathname.ml" 65 1860 1888
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 65 1860 1880 "ocamlbuild/pathname.ml" 65 1860 1888
+type(
+  string * string list
+)
+"ocamlbuild/pathname.ml" 66 1889 1898 "ocamlbuild/pathname.ml" 66 1889 1900
+type(
+  string -> string list -> string * string list
+)
+"ocamlbuild/pathname.ml" 66 1889 1901 "ocamlbuild/pathname.ml" 66 1889 1904
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 66 1889 1906 "ocamlbuild/pathname.ml" 66 1889 1914
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 66 1889 1915 "ocamlbuild/pathname.ml" 66 1889 1916
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 66 1889 1906 "ocamlbuild/pathname.ml" 66 1889 1916
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 66 1889 1920 "ocamlbuild/pathname.ml" 66 1889 1923
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 66 1889 1905 "ocamlbuild/pathname.ml" 66 1889 1924
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 66 1889 1898 "ocamlbuild/pathname.ml" 66 1889 1924
+type(
+  string * string list
+)
+"ocamlbuild/pathname.ml" 65 1860 1864 "ocamlbuild/pathname.ml" 66 1889 1924
+type(
+  string * string list
+)
+"ocamlbuild/pathname.ml" 64 1833 1837 "ocamlbuild/pathname.ml" 66 1889 1924
+type(
+  string * string list
+)
+"ocamlbuild/pathname.ml" 67 1925 1930 "ocamlbuild/pathname.ml" 67 1925 1932
+type(
+  string -> string list -> string * string list
+)
+"ocamlbuild/pathname.ml" 67 1925 1933 "ocamlbuild/pathname.ml" 67 1925 1934
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 67 1925 1935 "ocamlbuild/pathname.ml" 67 1925 1937
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 67 1925 1930 "ocamlbuild/pathname.ml" 67 1925 1937
+type(
+  string * string list
+)
+"ocamlbuild/pathname.ml" 63 1812 1814 "ocamlbuild/pathname.ml" 67 1925 1937
+type(
+  string * string list
+)
+"ocamlbuild/pathname.ml" 69 1939 1943 "ocamlbuild/pathname.ml" 69 1939 1947
+type(
+  string -> string list -> string
+)
+"ocamlbuild/pathname.ml" 69 1939 1948 "ocamlbuild/pathname.ml" 69 1939 1952
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 69 1939 1953 "ocamlbuild/pathname.ml" 69 1939 1958
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 70 1961 1967 "ocamlbuild/pathname.ml" 70 1961 1971
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 70 1961 1977 "ocamlbuild/pathname.ml" 70 1961 1981
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 70 1961 1982 "ocamlbuild/pathname.ml" 70 1961 1983
+type(
+  string -> string -> bool
+)
+"ocamlbuild/pathname.ml" 70 1961 1984 "ocamlbuild/pathname.ml" 70 1961 2000
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 70 1961 1977 "ocamlbuild/pathname.ml" 70 1961 2000
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 70 1961 2006 "ocamlbuild/pathname.ml" 70 1961 2008
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 70 1961 2014 "ocamlbuild/pathname.ml" 70 1961 2018
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 70 1961 1974 "ocamlbuild/pathname.ml" 70 1961 2018
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 71 2022 2024 "ocamlbuild/pathname.ml" 71 2022 2038
+type(
+  (string -> string -> string) -> string -> string list -> string
+)
+"ocamlbuild/pathname.ml" 71 2022 2039 "ocamlbuild/pathname.ml" 71 2022 2042
+type(
+  string -> string -> string
+)
+"ocamlbuild/pathname.ml" 71 2022 2043 "ocamlbuild/pathname.ml" 71 2022 2047
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 71 2022 2048 "ocamlbuild/pathname.ml" 71 2022 2053
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 71 2022 2024 "ocamlbuild/pathname.ml" 71 2022 2053
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 70 1961 1963 "ocamlbuild/pathname.ml" 71 2022 2053
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 73 2055 2059 "ocamlbuild/pathname.ml" 73 2055 2062
+type(
+  unit
+)
+"ocamlbuild/pathname.ml" 73 2055 2073 "ocamlbuild/pathname.ml" 73 2055 2089
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 73 2055 2090 "ocamlbuild/pathname.ml" 73 2055 2091
+type(
+  string -> string -> bool
+)
+"ocamlbuild/pathname.ml" 73 2055 2092 "ocamlbuild/pathname.ml" 73 2055 2095
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 73 2055 2072 "ocamlbuild/pathname.ml" 73 2055 2096
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 73 2055 2065 "ocamlbuild/pathname.ml" 73 2055 2096
+type(
+  unit
+)
+"ocamlbuild/pathname.ml" 74 2097 2101 "ocamlbuild/pathname.ml" 74 2097 2104
+type(
+  unit
+)
+"ocamlbuild/pathname.ml" 74 2097 2115 "ocamlbuild/pathname.ml" 74 2097 2130
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 74 2097 2131 "ocamlbuild/pathname.ml" 74 2097 2132
+type(
+  string -> string -> bool
+)
+"ocamlbuild/pathname.ml" 74 2097 2133 "ocamlbuild/pathname.ml" 74 2097 2137
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 74 2097 2114 "ocamlbuild/pathname.ml" 74 2097 2138
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 74 2097 2107 "ocamlbuild/pathname.ml" 74 2097 2138
+type(
+  unit
+)
+"ocamlbuild/pathname.ml" 77 2157 2165 "ocamlbuild/pathname.ml" 77 2157 2179
+type(
+  string list -> string list
+)
+"ocamlbuild/pathname.ml" 78 2191 2195 "ocamlbuild/pathname.ml" 78 2191 2197
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 78 2191 2201 "ocamlbuild/pathname.ml" 78 2191 2203
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 79 2204 2208 "ocamlbuild/pathname.ml" 79 2204 2211
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 79 2204 2215 "ocamlbuild/pathname.ml" 79 2204 2217
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 79 2204 2208 "ocamlbuild/pathname.ml" 79 2204 2217
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 79 2204 2221 "ocamlbuild/pathname.ml" 79 2204 2235
+type(
+  string list -> string list
+)
+"ocamlbuild/pathname.ml" 79 2204 2236 "ocamlbuild/pathname.ml" 79 2204 2238
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 79 2204 2221 "ocamlbuild/pathname.ml" 79 2204 2238
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 80 2239 2243 "ocamlbuild/pathname.ml" 80 2239 2247
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 80 2239 2251 "ocamlbuild/pathname.ml" 80 2239 2252
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 80 2239 2243 "ocamlbuild/pathname.ml" 80 2239 2252
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 80 2239 2256 "ocamlbuild/pathname.ml" 80 2239 2264
+type(
+  string -> string list
+)
+"ocamlbuild/pathname.ml" 80 2239 2265 "ocamlbuild/pathname.ml" 80 2239 2312
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 80 2239 2256 "ocamlbuild/pathname.ml" 80 2239 2312
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 81 2313 2317 "ocamlbuild/pathname.ml" 81 2313 2318
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 81 2313 2322 "ocamlbuild/pathname.ml" 81 2313 2326
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 81 2313 2330 "ocamlbuild/pathname.ml" 81 2313 2332
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 81 2313 2322 "ocamlbuild/pathname.ml" 81 2313 2332
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 81 2313 2317 "ocamlbuild/pathname.ml" 81 2313 2332
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 81 2313 2336 "ocamlbuild/pathname.ml" 81 2313 2350
+type(
+  string list -> string list
+)
+"ocamlbuild/pathname.ml" 81 2313 2351 "ocamlbuild/pathname.ml" 81 2313 2353
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 81 2313 2336 "ocamlbuild/pathname.ml" 81 2313 2353
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 82 2354 2358 "ocamlbuild/pathname.ml" 82 2354 2359
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 82 2354 2363 "ocamlbuild/pathname.ml" 82 2354 2365
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 82 2354 2358 "ocamlbuild/pathname.ml" 82 2354 2365
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 82 2354 2369 "ocamlbuild/pathname.ml" 82 2354 2370
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 82 2354 2374 "ocamlbuild/pathname.ml" 82 2354 2388
+type(
+  string list -> string list
+)
+"ocamlbuild/pathname.ml" 82 2354 2389 "ocamlbuild/pathname.ml" 82 2354 2391
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 82 2354 2374 "ocamlbuild/pathname.ml" 82 2354 2391
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 82 2354 2369 "ocamlbuild/pathname.ml" 82 2354 2391
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 77 2157 2182 "ocamlbuild/pathname.ml" 82 2354 2391
+type(
+  string list -> string list
+)
+"ocamlbuild/pathname.ml" 84 2393 2397 "ocamlbuild/pathname.ml" 84 2393 2406
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 84 2393 2407 "ocamlbuild/pathname.ml" 84 2393 2408
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 85 2411 2416 "ocamlbuild/pathname.ml" 85 2411 2425
+type(
+  Glob.globber -> string -> bool
+)
+"ocamlbuild/pathname.ml" 85 2411 2426 "ocamlbuild/pathname.ml" 85 2411 2444
+type(
+  Glob.globber
+)
+"ocamlbuild/pathname.ml" 85 2411 2445 "ocamlbuild/pathname.ml" 85 2411 2446
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 85 2411 2416 "ocamlbuild/pathname.ml" 85 2411 2446
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 86 2452 2460 "ocamlbuild/pathname.ml" 86 2452 2464
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 86 2452 2466 "ocamlbuild/pathname.ml" 86 2452 2471
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 86 2452 2460 "ocamlbuild/pathname.ml" 86 2452 2471
+type(
+  string * string list
+)
+"ocamlbuild/pathname.ml" 86 2452 2474 "ocamlbuild/pathname.ml" 86 2452 2479
+type(
+  string -> string * string list
+)
+"ocamlbuild/pathname.ml" 86 2452 2480 "ocamlbuild/pathname.ml" 86 2452 2481
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 86 2452 2474 "ocamlbuild/pathname.ml" 86 2452 2481
+type(
+  string * string list
+)
+"ocamlbuild/pathname.ml" 87 2485 2489 "ocamlbuild/pathname.ml" 87 2485 2493
+type(
+  string -> string list -> string
+)
+"ocamlbuild/pathname.ml" 87 2485 2494 "ocamlbuild/pathname.ml" 87 2485 2498
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 87 2485 2500 "ocamlbuild/pathname.ml" 87 2485 2514
+type(
+  string list -> string list
+)
+"ocamlbuild/pathname.ml" 87 2485 2515 "ocamlbuild/pathname.ml" 87 2485 2520
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 87 2485 2499 "ocamlbuild/pathname.ml" 87 2485 2521
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 87 2485 2489 "ocamlbuild/pathname.ml" 87 2485 2521
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 86 2452 2456 "ocamlbuild/pathname.ml" 87 2485 2521
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 88 2522 2529 "ocamlbuild/pathname.ml" 88 2522 2530
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 85 2411 2413 "ocamlbuild/pathname.ml" 88 2522 2530
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 91 2586 2590 "ocamlbuild/pathname.ml" 91 2586 2599
+type(
+  string -> string -> bool
+)
+"ocamlbuild/pathname.ml" 91 2586 2600 "ocamlbuild/pathname.ml" 91 2586 2601
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 91 2586 2602 "ocamlbuild/pathname.ml" 91 2586 2603
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 92 2606 2612 "ocamlbuild/pathname.ml" 92 2606 2614
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 92 2606 2617 "ocamlbuild/pathname.ml" 92 2606 2630
+type(
+  string -> int
+)
+"ocamlbuild/pathname.ml" 92 2606 2631 "ocamlbuild/pathname.ml" 92 2606 2632
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 92 2606 2617 "ocamlbuild/pathname.ml" 92 2606 2632
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 92 2606 2637 "ocamlbuild/pathname.ml" 92 2606 2639
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 92 2606 2642 "ocamlbuild/pathname.ml" 92 2606 2655
+type(
+  string -> int
+)
+"ocamlbuild/pathname.ml" 92 2606 2656 "ocamlbuild/pathname.ml" 92 2606 2657
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 92 2606 2642 "ocamlbuild/pathname.ml" 92 2606 2657
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 93 2661 2666 "ocamlbuild/pathname.ml" 93 2661 2668
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 93 2661 2669 "ocamlbuild/pathname.ml" 93 2661 2670
+type(
+  int -> int -> bool
+)
+"ocamlbuild/pathname.ml" 93 2661 2671 "ocamlbuild/pathname.ml" 93 2661 2673
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 93 2661 2666 "ocamlbuild/pathname.ml" 93 2661 2673
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 93 2661 2679 "ocamlbuild/pathname.ml" 93 2661 2680
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 93 2661 2681 "ocamlbuild/pathname.ml" 93 2661 2682
+type(
+  string -> string -> bool
+)
+"ocamlbuild/pathname.ml" 93 2661 2684 "ocamlbuild/pathname.ml" 93 2661 2697
+type(
+  string -> int -> string
+)
+"ocamlbuild/pathname.ml" 93 2661 2698 "ocamlbuild/pathname.ml" 93 2661 2699
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 93 2661 2700 "ocamlbuild/pathname.ml" 93 2661 2702
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 93 2661 2683 "ocamlbuild/pathname.ml" 93 2661 2703
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 93 2661 2679 "ocamlbuild/pathname.ml" 93 2661 2703
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 94 2704 2714 "ocamlbuild/pathname.ml" 94 2704 2716
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 94 2704 2717 "ocamlbuild/pathname.ml" 94 2704 2718
+type(
+  int -> int -> bool
+)
+"ocamlbuild/pathname.ml" 94 2704 2719 "ocamlbuild/pathname.ml" 94 2704 2721
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 94 2704 2714 "ocamlbuild/pathname.ml" 94 2704 2721
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 94 2704 2727 "ocamlbuild/pathname.ml" 94 2704 2728
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 94 2704 2729 "ocamlbuild/pathname.ml" 94 2704 2730
+type(
+  string -> string -> bool
+)
+"ocamlbuild/pathname.ml" 94 2704 2732 "ocamlbuild/pathname.ml" 94 2704 2745
+type(
+  string -> int -> string
+)
+"ocamlbuild/pathname.ml" 94 2704 2746 "ocamlbuild/pathname.ml" 94 2704 2747
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 94 2704 2748 "ocamlbuild/pathname.ml" 94 2704 2750
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 94 2704 2731 "ocamlbuild/pathname.ml" 94 2704 2751
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 94 2704 2727 "ocamlbuild/pathname.ml" 94 2704 2751
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 94 2704 2752 "ocamlbuild/pathname.ml" 94 2704 2754
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/pathname.ml" 94 2704 2755 "ocamlbuild/pathname.ml" 94 2704 2763
+type(
+  char -> char list -> bool
+)
+"ocamlbuild/pathname.ml" 94 2704 2764 "ocamlbuild/pathname.ml" 94 2704 2765
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 94 2704 2767 "ocamlbuild/pathname.ml" 94 2704 2769
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 94 2704 2764 "ocamlbuild/pathname.ml" 94 2704 2770
+type(
+  char
+)
+"ocamlbuild/pathname.ml" 94 2704 2771 "ocamlbuild/pathname.ml" 94 2704 2779
+type(
+  char list
+)
+"ocamlbuild/pathname.ml" 94 2704 2755 "ocamlbuild/pathname.ml" 94 2704 2779
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 94 2704 2727 "ocamlbuild/pathname.ml" 94 2704 2779
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 95 2780 2787 "ocamlbuild/pathname.ml" 95 2780 2792
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 94 2704 2711 "ocamlbuild/pathname.ml" 95 2780 2792
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 93 2661 2663 "ocamlbuild/pathname.ml" 95 2780 2792
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 92 2606 2608 "ocamlbuild/pathname.ml" 95 2780 2792
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 97 2794 2798 "ocamlbuild/pathname.ml" 97 2794 2809
+type(
+  string -> string -> bool
+)
+"ocamlbuild/pathname.ml" 97 2794 2810 "ocamlbuild/pathname.ml" 97 2794 2811
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 97 2794 2812 "ocamlbuild/pathname.ml" 97 2794 2815
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 97 2794 2818 "ocamlbuild/pathname.ml" 97 2794 2825
+type(
+  string -> bool
+)
+"ocamlbuild/pathname.ml" 97 2794 2826 "ocamlbuild/pathname.ml" 97 2794 2827
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 97 2794 2818 "ocamlbuild/pathname.ml" 97 2794 2827
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 97 2794 2828 "ocamlbuild/pathname.ml" 97 2794 2830
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/pathname.ml" 97 2794 2831 "ocamlbuild/pathname.ml" 97 2794 2840
+type(
+  string -> string -> bool
+)
+"ocamlbuild/pathname.ml" 97 2794 2841 "ocamlbuild/pathname.ml" 97 2794 2844
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 97 2794 2846 "ocamlbuild/pathname.ml" 97 2794 2854
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 97 2794 2855 "ocamlbuild/pathname.ml" 97 2794 2856
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 97 2794 2845 "ocamlbuild/pathname.ml" 97 2794 2857
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 97 2794 2831 "ocamlbuild/pathname.ml" 97 2794 2857
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 97 2794 2818 "ocamlbuild/pathname.ml" 97 2794 2857
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 99 2859 2863 "ocamlbuild/pathname.ml" 99 2859 2879
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 99 2859 2880 "ocamlbuild/pathname.ml" 99 2859 2881
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 100 2884 2890 "ocamlbuild/pathname.ml" 100 2884 2904
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 100 2884 2905 "ocamlbuild/pathname.ml" 100 2884 2906
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 100 2884 2890 "ocamlbuild/pathname.ml" 100 2884 2906
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 101 2907 2931 "ocamlbuild/pathname.ml" 101 2907 2932
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 101 2907 2914 "ocamlbuild/pathname.ml" 101 2907 2932
+type(
+  exn
+)
+"ocamlbuild/pathname.ml" 101 2907 2936 "ocamlbuild/pathname.ml" 101 2907 2937
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 100 2884 2886 "ocamlbuild/pathname.ml" 101 2907 2937
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 102 2938 2942 "ocamlbuild/pathname.ml" 102 2938 2955
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 102 2938 2956 "ocamlbuild/pathname.ml" 102 2938 2957
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 104 2966 2974 "ocamlbuild/pathname.ml" 104 2966 2977
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 104 2966 2980 "ocamlbuild/pathname.ml" 104 2966 2993
+type(
+  string -> char -> int
+)
+"ocamlbuild/pathname.ml" 104 2966 2994 "ocamlbuild/pathname.ml" 104 2966 2995
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 104 2966 2996 "ocamlbuild/pathname.ml" 104 2966 2999
+type(
+  char
+)
+"ocamlbuild/pathname.ml" 104 2966 2980 "ocamlbuild/pathname.ml" 104 2966 2999
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 105 3003 3007 "ocamlbuild/pathname.ml" 105 3003 3019
+type(
+  string -> int -> string
+)
+"ocamlbuild/pathname.ml" 105 3003 3020 "ocamlbuild/pathname.ml" 105 3003 3021
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 105 3003 3023 "ocamlbuild/pathname.ml" 105 3003 3026
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 105 3003 3027 "ocamlbuild/pathname.ml" 105 3003 3028
+type(
+  int -> int -> int
+)
+"ocamlbuild/pathname.ml" 105 3003 3029 "ocamlbuild/pathname.ml" 105 3003 3030
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 105 3003 3022 "ocamlbuild/pathname.ml" 105 3003 3031
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 105 3003 3007 "ocamlbuild/pathname.ml" 105 3003 3031
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 104 2966 2970 "ocamlbuild/pathname.ml" 105 3003 3031
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 106 3032 3039 "ocamlbuild/pathname.ml" 106 3032 3048
+type(
+  exn
+)
+"ocamlbuild/pathname.ml" 106 3032 3052 "ocamlbuild/pathname.ml" 106 3032 3054
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 103 2960 2962 "ocamlbuild/pathname.ml" 106 3032 3054
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 107 3055 3059 "ocamlbuild/pathname.ml" 107 3055 3075
+type(
+  string -> string -> string
+)
+"ocamlbuild/pathname.ml" 107 3055 3076 "ocamlbuild/pathname.ml" 107 3055 3079
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 107 3055 3080 "ocamlbuild/pathname.ml" 107 3055 3081
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 108 3084 3086 "ocamlbuild/pathname.ml" 108 3084 3099
+type(
+  string -> string -> string
+)
+"ocamlbuild/pathname.ml" 108 3084 3100 "ocamlbuild/pathname.ml" 108 3084 3103
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 108 3084 3105 "ocamlbuild/pathname.ml" 108 3084 3119
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 108 3084 3120 "ocamlbuild/pathname.ml" 108 3084 3121
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 108 3084 3104 "ocamlbuild/pathname.ml" 108 3084 3122
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 108 3084 3086 "ocamlbuild/pathname.ml" 108 3084 3122
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 110 3124 3128 "ocamlbuild/pathname.ml" 110 3124 3143
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 110 3124 3144 "ocamlbuild/pathname.ml" 110 3124 3145
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 111 3148 3154 "ocamlbuild/pathname.ml" 111 3148 3161
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 111 3148 3164 "ocamlbuild/pathname.ml" 111 3148 3171
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 111 3148 3172 "ocamlbuild/pathname.ml" 111 3148 3173
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 111 3148 3164 "ocamlbuild/pathname.ml" 111 3148 3173
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 111 3148 3178 "ocamlbuild/pathname.ml" 111 3148 3186
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 111 3148 3189 "ocamlbuild/pathname.ml" 111 3148 3197
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 111 3148 3198 "ocamlbuild/pathname.ml" 111 3148 3199
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 111 3148 3189 "ocamlbuild/pathname.ml" 111 3148 3199
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 113 3209 3217 "ocamlbuild/pathname.ml" 113 3209 3220
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 113 3209 3223 "ocamlbuild/pathname.ml" 113 3209 3235
+type(
+  string -> char -> int
+)
+"ocamlbuild/pathname.ml" 113 3209 3236 "ocamlbuild/pathname.ml" 113 3209 3244
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 113 3209 3245 "ocamlbuild/pathname.ml" 113 3209 3248
+type(
+  char
+)
+"ocamlbuild/pathname.ml" 113 3209 3223 "ocamlbuild/pathname.ml" 113 3209 3248
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 114 3252 3256 "ocamlbuild/pathname.ml" 114 3252 3263
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 114 3252 3264 "ocamlbuild/pathname.ml" 114 3252 3265
+type(
+  string -> string -> string
+)
+"ocamlbuild/pathname.ml" 114 3252 3267 "ocamlbuild/pathname.ml" 114 3252 3280
+type(
+  string -> int -> string
+)
+"ocamlbuild/pathname.ml" 114 3252 3281 "ocamlbuild/pathname.ml" 114 3252 3289
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 114 3252 3290 "ocamlbuild/pathname.ml" 114 3252 3293
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 114 3252 3266 "ocamlbuild/pathname.ml" 114 3252 3294
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 114 3252 3256 "ocamlbuild/pathname.ml" 114 3252 3294
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 113 3209 3213 "ocamlbuild/pathname.ml" 114 3252 3294
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 115 3295 3302 "ocamlbuild/pathname.ml" 115 3295 3311
+type(
+  exn
+)
+"ocamlbuild/pathname.ml" 115 3295 3315 "ocamlbuild/pathname.ml" 115 3295 3326
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 115 3295 3327 "ocamlbuild/pathname.ml" 115 3295 3359
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 115 3295 3315 "ocamlbuild/pathname.ml" 115 3295 3359
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 112 3203 3205 "ocamlbuild/pathname.ml" 115 3295 3359
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 111 3148 3150 "ocamlbuild/pathname.ml" 115 3295 3359
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 116 3360 3364 "ocamlbuild/pathname.ml" 116 3360 3381
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 116 3360 3382 "ocamlbuild/pathname.ml" 116 3360 3383
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 117 3386 3392 "ocamlbuild/pathname.ml" 117 3386 3407
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 117 3386 3408 "ocamlbuild/pathname.ml" 117 3386 3409
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 117 3386 3392 "ocamlbuild/pathname.ml" 117 3386 3409
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 118 3410 3434 "ocamlbuild/pathname.ml" 118 3410 3435
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 118 3410 3417 "ocamlbuild/pathname.ml" 118 3410 3435
+type(
+  exn
+)
+"ocamlbuild/pathname.ml" 118 3410 3439 "ocamlbuild/pathname.ml" 118 3410 3440
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 117 3386 3388 "ocamlbuild/pathname.ml" 118 3410 3440
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 119 3441 3445 "ocamlbuild/pathname.ml" 119 3441 3459
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 119 3441 3460 "ocamlbuild/pathname.ml" 119 3441 3461
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 120 3464 3470 "ocamlbuild/pathname.ml" 120 3464 3478
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 120 3464 3481 "ocamlbuild/pathname.ml" 120 3464 3489
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 120 3464 3490 "ocamlbuild/pathname.ml" 120 3464 3491
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 120 3464 3481 "ocamlbuild/pathname.ml" 120 3464 3491
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 122 3501 3509 "ocamlbuild/pathname.ml" 122 3501 3512
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 122 3501 3515 "ocamlbuild/pathname.ml" 122 3501 3527
+type(
+  string -> char -> int
+)
+"ocamlbuild/pathname.ml" 122 3501 3528 "ocamlbuild/pathname.ml" 122 3501 3536
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 122 3501 3537 "ocamlbuild/pathname.ml" 122 3501 3540
+type(
+  char
+)
+"ocamlbuild/pathname.ml" 122 3501 3515 "ocamlbuild/pathname.ml" 122 3501 3540
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 123 3544 3548 "ocamlbuild/pathname.ml" 123 3544 3560
+type(
+  string -> int -> string
+)
+"ocamlbuild/pathname.ml" 123 3544 3561 "ocamlbuild/pathname.ml" 123 3544 3569
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 123 3544 3571 "ocamlbuild/pathname.ml" 123 3544 3574
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 123 3544 3575 "ocamlbuild/pathname.ml" 123 3544 3576
+type(
+  int -> int -> int
+)
+"ocamlbuild/pathname.ml" 123 3544 3577 "ocamlbuild/pathname.ml" 123 3544 3578
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 123 3544 3570 "ocamlbuild/pathname.ml" 123 3544 3579
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 123 3544 3548 "ocamlbuild/pathname.ml" 123 3544 3579
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 122 3501 3505 "ocamlbuild/pathname.ml" 123 3544 3579
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 124 3580 3587 "ocamlbuild/pathname.ml" 124 3580 3596
+type(
+  exn
+)
+"ocamlbuild/pathname.ml" 124 3580 3600 "ocamlbuild/pathname.ml" 124 3580 3602
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 121 3495 3497 "ocamlbuild/pathname.ml" 124 3580 3602
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 120 3464 3466 "ocamlbuild/pathname.ml" 124 3580 3602
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 125 3603 3607 "ocamlbuild/pathname.ml" 125 3603 3624
+type(
+  string -> string -> string
+)
+"ocamlbuild/pathname.ml" 125 3603 3625 "ocamlbuild/pathname.ml" 125 3603 3628
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 125 3603 3629 "ocamlbuild/pathname.ml" 125 3603 3630
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 126 3633 3635 "ocamlbuild/pathname.ml" 126 3633 3648
+type(
+  string -> string -> string
+)
+"ocamlbuild/pathname.ml" 126 3633 3649 "ocamlbuild/pathname.ml" 126 3633 3652
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 126 3633 3654 "ocamlbuild/pathname.ml" 126 3633 3669
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 126 3633 3670 "ocamlbuild/pathname.ml" 126 3633 3671
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 126 3633 3653 "ocamlbuild/pathname.ml" 126 3633 3672
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 126 3633 3635 "ocamlbuild/pathname.ml" 126 3633 3672
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 128 3674 3678 "ocamlbuild/pathname.ml" 128 3674 3684
+type(
+  string -> bool
+)
+"ocamlbuild/pathname.ml" 128 3674 3687 "ocamlbuild/pathname.ml" 128 3674 3702
+type(
+  string -> bool
+)
+"ocamlbuild/pathname.ml" 130 3704 3708 "ocamlbuild/pathname.ml" 130 3704 3712
+type(
+  string -> string -> unit
+)
+"ocamlbuild/pathname.ml" 130 3704 3715 "ocamlbuild/pathname.ml" 130 3704 3723
+type(
+  string -> string -> unit
+)
+"ocamlbuild/pathname.ml" 131 3724 3728 "ocamlbuild/pathname.ml" 131 3724 3734
+type(
+  string -> unit
+)
+"ocamlbuild/pathname.ml" 131 3724 3737 "ocamlbuild/pathname.ml" 131 3724 3745
+type(
+  string -> unit
+)
+"ocamlbuild/pathname.ml" 132 3746 3750 "ocamlbuild/pathname.ml" 132 3746 3760
+type(
+  string -> unit
+)
+"ocamlbuild/pathname.ml" 132 3746 3761 "ocamlbuild/pathname.ml" 132 3746 3762
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 132 3746 3768 "ocamlbuild/pathname.ml" 132 3746 3774
+type(
+  string -> bool
+)
+"ocamlbuild/pathname.ml" 132 3746 3775 "ocamlbuild/pathname.ml" 132 3746 3776
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 132 3746 3768 "ocamlbuild/pathname.ml" 132 3746 3776
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 132 3746 3782 "ocamlbuild/pathname.ml" 132 3746 3790
+type(
+  string -> unit
+)
+"ocamlbuild/pathname.ml" 132 3746 3791 "ocamlbuild/pathname.ml" 132 3746 3792
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 132 3746 3782 "ocamlbuild/pathname.ml" 132 3746 3792
+type(
+  unit
+)
+"ocamlbuild/pathname.ml" 132 3746 3765 "ocamlbuild/pathname.ml" 132 3746 3792
+type(
+  unit
+)
+"ocamlbuild/pathname.ml" 133 3793 3797 "ocamlbuild/pathname.ml" 133 3793 3801
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 133 3793 3804 "ocamlbuild/pathname.ml" 133 3793 3813
+type(
+  string -> string
+)
+"ocamlbuild/pathname.ml" 135 3815 3819 "ocamlbuild/pathname.ml" 135 3815 3834
+type(
+  ?bin:bool -> string -> (in_channel -> 'a) -> 'a
+)
+"ocamlbuild/pathname.ml" 135 3815 3837 "ocamlbuild/pathname.ml" 135 3815 3852
+type(
+  ?bin:bool -> string -> (in_channel -> 'a) -> 'a
+)
+"ocamlbuild/pathname.ml" 137 3854 3858 "ocamlbuild/pathname.ml" 137 3854 3874
+type(
+  ?bin:bool -> string -> (out_channel -> 'a) -> 'a
+)
+"ocamlbuild/pathname.ml" 137 3854 3877 "ocamlbuild/pathname.ml" 137 3854 3893
+type(
+  ?bin:bool -> string -> (out_channel -> 'a) -> 'a
+)
+"ocamlbuild/pathname.ml" 139 3895 3899 "ocamlbuild/pathname.ml" 139 3895 3914
+type(
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/pathname.ml" 139 3895 3917 "ocamlbuild/pathname.ml" 139 3895 3927
+type(
+  (Format.formatter -> string -> unit) ->
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/pathname.ml" 139 3895 3928 "ocamlbuild/pathname.ml" 139 3895 3933
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/pathname.ml" 139 3895 3917 "ocamlbuild/pathname.ml" 139 3895 3933
+type(
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/pathname.ml" 141 3935 3939 "ocamlbuild/pathname.ml" 141 3935 3952
+type(
+  (string, string list) Hashtbl.t
+)
+"ocamlbuild/pathname.ml" 141 3935 3955 "ocamlbuild/pathname.ml" 141 3935 3969
+type(
+  int -> (string, string list) Hashtbl.t
+)
+"ocamlbuild/pathname.ml" 141 3935 3970 "ocamlbuild/pathname.ml" 141 3935 3973
+type(
+  int
+)
+"ocamlbuild/pathname.ml" 141 3935 3955 "ocamlbuild/pathname.ml" 141 3935 3973
+type(
+  (string, string list) Hashtbl.t
+)
+"ocamlbuild/pathname.ml" 143 3975 3983 "ocamlbuild/pathname.ml" 143 3975 3998
+type(
+  string -> string list
+)
+"ocamlbuild/pathname.ml" 143 3975 3999 "ocamlbuild/pathname.ml" 143 3975 4002
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 144 4005 4011 "ocamlbuild/pathname.ml" 144 4005 4023
+type(
+  (string, string list) Hashtbl.t -> string -> string list
+)
+"ocamlbuild/pathname.ml" 144 4005 4024 "ocamlbuild/pathname.ml" 144 4005 4037
+type(
+  (string, string list) Hashtbl.t
+)
+"ocamlbuild/pathname.ml" 144 4005 4038 "ocamlbuild/pathname.ml" 144 4005 4041
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 144 4005 4011 "ocamlbuild/pathname.ml" 144 4005 4041
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 145 4042 4049 "ocamlbuild/pathname.ml" 145 4042 4058
+type(
+  exn
+)
+"ocamlbuild/pathname.ml" 145 4042 4062 "ocamlbuild/pathname.ml" 145 4042 4065
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 145 4042 4069 "ocamlbuild/pathname.ml" 145 4042 4080
+type(
+  (string -> bool) -> string list -> string list
+)
+"ocamlbuild/pathname.ml" 145 4042 4086 "ocamlbuild/pathname.ml" 145 4042 4090
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 145 4042 4094 "ocamlbuild/pathname.ml" 145 4042 4097
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 145 4042 4098 "ocamlbuild/pathname.ml" 145 4042 4100
+type(
+  string -> string -> bool
+)
+"ocamlbuild/pathname.ml" 145 4042 4101 "ocamlbuild/pathname.ml" 145 4042 4105
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 145 4042 4094 "ocamlbuild/pathname.ml" 145 4042 4105
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 145 4042 4081 "ocamlbuild/pathname.ml" 145 4042 4106
+type(
+  string -> bool
+)
+"ocamlbuild/pathname.ml" 145 4042 4107 "ocamlbuild/pathname.ml" 145 4042 4108
+type(
+  string list ref -> string list
+)
+"ocamlbuild/pathname.ml" 145 4042 4108 "ocamlbuild/pathname.ml" 145 4042 4128
+type(
+  string list ref
+)
+"ocamlbuild/pathname.ml" 145 4042 4107 "ocamlbuild/pathname.ml" 145 4042 4128
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 145 4042 4069 "ocamlbuild/pathname.ml" 145 4042 4128
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 145 4042 4062 "ocamlbuild/pathname.ml" 145 4042 4128
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 144 4005 4007 "ocamlbuild/pathname.ml" 145 4042 4128
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 154 4277 4281 "ocamlbuild/pathname.ml" 154 4277 4295
+type(
+  string -> string list -> unit
+)
+"ocamlbuild/pathname.ml" 154 4277 4296 "ocamlbuild/pathname.ml" 154 4277 4299
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 154 4277 4300 "ocamlbuild/pathname.ml" 154 4277 4307
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 155 4310 4316 "ocamlbuild/pathname.ml" 155 4310 4319
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 155 4310 4325 "ocamlbuild/pathname.ml" 155 4310 4328
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 155 4310 4329 "ocamlbuild/pathname.ml" 155 4310 4330
+type(
+  string -> string -> bool
+)
+"ocamlbuild/pathname.ml" 155 4310 4331 "ocamlbuild/pathname.ml" 155 4310 4333
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 155 4310 4325 "ocamlbuild/pathname.ml" 155 4310 4333
+type(
+  bool
+)
+"ocamlbuild/pathname.ml" 155 4310 4339 "ocamlbuild/pathname.ml" 155 4310 4355
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 155 4310 4361 "ocamlbuild/pathname.ml" 155 4310 4364
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 155 4310 4322 "ocamlbuild/pathname.ml" 155 4310 4364
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 156 4368 4370 "ocamlbuild/pathname.ml" 156 4368 4385
+type(
+  (string, string list) Hashtbl.t -> string -> string list -> unit
+)
+"ocamlbuild/pathname.ml" 156 4368 4386 "ocamlbuild/pathname.ml" 156 4368 4399
+type(
+  (string, string list) Hashtbl.t
+)
+"ocamlbuild/pathname.ml" 156 4368 4400 "ocamlbuild/pathname.ml" 156 4368 4403
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 156 4368 4370 "ocamlbuild/pathname.ml" 156 4368 4403
+type(
+  string list -> unit
+)
+"ocamlbuild/pathname.ml" 156 4368 4403 "ocamlbuild/pathname.ml" 156 4368 4404
+type(
+  (string list -> unit) -> string list -> unit
+)
+"ocamlbuild/pathname.ml" 156 4368 4405 "ocamlbuild/pathname.ml" 156 4368 4415
+type(
+  string list -> string list -> string list
+)
+"ocamlbuild/pathname.ml" 156 4368 4416 "ocamlbuild/pathname.ml" 156 4368 4423
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 156 4368 4405 "ocamlbuild/pathname.ml" 156 4368 4423
+type(
+  string list -> string list
+)
+"ocamlbuild/pathname.ml" 156 4368 4423 "ocamlbuild/pathname.ml" 156 4368 4424
+type(
+  (string list -> string list) -> string list -> string list
+)
+"ocamlbuild/pathname.ml" 156 4368 4425 "ocamlbuild/pathname.ml" 156 4368 4440
+type(
+  string -> string list
+)
+"ocamlbuild/pathname.ml" 156 4368 4441 "ocamlbuild/pathname.ml" 156 4368 4444
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 156 4368 4425 "ocamlbuild/pathname.ml" 156 4368 4444
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 156 4368 4405 "ocamlbuild/pathname.ml" 156 4368 4444
+type(
+  string list
+)
+"ocamlbuild/pathname.ml" 156 4368 4370 "ocamlbuild/pathname.ml" 156 4368 4444
+type(
+  unit
+)
+"ocamlbuild/pathname.ml" 155 4310 4312 "ocamlbuild/pathname.ml" 156 4368 4444
+type(
+  unit
+)
+"ocamlbuild/pathname.ml" 158 4446 4450 "ocamlbuild/pathname.ml" 158 4446 4463
+type(
+  string -> string -> bool
+)
+"ocamlbuild/pathname.ml" 158 4446 4464 "ocamlbuild/pathname.ml" 158 4446 4465
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 158 4446 4466 "ocamlbuild/pathname.ml" 158 4446 4467
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 158 4446 4470 "ocamlbuild/pathname.ml" 158 4446 4481
+type(
+  string -> My_std.Digest.t
+)
+"ocamlbuild/pathname.ml" 158 4446 4482 "ocamlbuild/pathname.ml" 158 4446 4483
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 158 4446 4470 "ocamlbuild/pathname.ml" 158 4446 4483
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/pathname.ml" 158 4446 4484 "ocamlbuild/pathname.ml" 158 4446 4485
+type(
+  My_std.Digest.t -> My_std.Digest.t -> bool
+)
+"ocamlbuild/pathname.ml" 158 4446 4486 "ocamlbuild/pathname.ml" 158 4446 4497
+type(
+  string -> My_std.Digest.t
+)
+"ocamlbuild/pathname.ml" 158 4446 4498 "ocamlbuild/pathname.ml" 158 4446 4499
+type(
+  string
+)
+"ocamlbuild/pathname.ml" 158 4446 4486 "ocamlbuild/pathname.ml" 158 4446 4499
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/pathname.ml" 158 4446 4470 "ocamlbuild/pathname.ml" 158 4446 4499
+type(
+  bool
+)

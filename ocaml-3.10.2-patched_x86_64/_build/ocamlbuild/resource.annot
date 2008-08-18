@@ -1,0 +1,4449 @@
+"ocamlbuild/resource.ml" 21 944 948 "ocamlbuild/resource.ml" 21 944 953
+type(
+  Format.formatter -> Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 21 944 956 "ocamlbuild/resource.ml" 21 944 970
+type(
+  Format.formatter -> Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 23 972 976 "ocamlbuild/resource.ml" 23 972 981
+type(
+  'a -> 'a -> bool
+)
+"ocamlbuild/resource.ml" 23 972 984 "ocamlbuild/resource.ml" 23 972 987
+type(
+  'a -> 'a -> bool
+)
+"ocamlbuild/resource.ml" 24 988 992 "ocamlbuild/resource.ml" 24 988 999
+type(
+  'a -> 'a -> int
+)
+"ocamlbuild/resource.ml" 24 988 1002 "ocamlbuild/resource.ml" 24 988 1009
+type(
+  'a -> 'a -> int
+)
+"ocamlbuild/resource.ml" 26 1011 1015 "ocamlbuild/resource.ml" 26 1011 1028
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 26 1011 1029 "ocamlbuild/resource.ml" 26 1011 1030
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 27 1033 1038 "ocamlbuild/resource.ml" 27 1033 1058
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 27 1033 1059 "ocamlbuild/resource.ml" 27 1033 1060
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 27 1033 1038 "ocamlbuild/resource.ml" 27 1033 1060
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 27 1033 1066 "ocamlbuild/resource.ml" 27 1033 1078
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 27 1033 1078 "ocamlbuild/resource.ml" 27 1033 1079
+type(
+  Pathname.t -> Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 27 1033 1079 "ocamlbuild/resource.ml" 27 1033 1080
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 27 1033 1066 "ocamlbuild/resource.ml" 27 1033 1080
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 27 1033 1086 "ocamlbuild/resource.ml" 27 1033 1097
+type(
+  string -> Pathname.t
+)
+"ocamlbuild/resource.ml" 27 1033 1099 "ocamlbuild/resource.ml" 27 1033 1113
+type(
+  (Pathname.t -> string, unit, string) format -> Pathname.t -> string
+)
+"ocamlbuild/resource.ml" 27 1033 1114 "ocamlbuild/resource.ml" 27 1033 1133
+type(
+  (Pathname.t -> string, unit, string) format
+)
+"ocamlbuild/resource.ml" 27 1033 1134 "ocamlbuild/resource.ml" 27 1033 1135
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 27 1033 1098 "ocamlbuild/resource.ml" 27 1033 1136
+type(
+  string
+)
+"ocamlbuild/resource.ml" 27 1033 1086 "ocamlbuild/resource.ml" 27 1033 1136
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 27 1033 1035 "ocamlbuild/resource.ml" 27 1033 1136
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 29 1138 1142 "ocamlbuild/resource.ml" 29 1138 1154
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 29 1138 1155 "ocamlbuild/resource.ml" 29 1138 1156
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 30 1159 1164 "ocamlbuild/resource.ml" 30 1159 1184
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 30 1159 1185 "ocamlbuild/resource.ml" 30 1159 1186
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 30 1159 1164 "ocamlbuild/resource.ml" 30 1159 1186
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 30 1159 1192 "ocamlbuild/resource.ml" 30 1159 1193
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 31 1194 1201 "ocamlbuild/resource.ml" 31 1194 1212
+type(
+  string -> Pathname.t
+)
+"ocamlbuild/resource.ml" 31 1194 1214 "ocamlbuild/resource.ml" 31 1194 1228
+type(
+  (Pathname.t -> string, unit, string) format -> Pathname.t -> string
+)
+"ocamlbuild/resource.ml" 31 1194 1229 "ocamlbuild/resource.ml" 31 1194 1247
+type(
+  (Pathname.t -> string, unit, string) format
+)
+"ocamlbuild/resource.ml" 31 1194 1248 "ocamlbuild/resource.ml" 31 1194 1249
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 31 1194 1213 "ocamlbuild/resource.ml" 31 1194 1250
+type(
+  string
+)
+"ocamlbuild/resource.ml" 31 1194 1201 "ocamlbuild/resource.ml" 31 1194 1250
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 30 1159 1161 "ocamlbuild/resource.ml" 31 1194 1250
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 33 1252 1256 "ocamlbuild/resource.ml" 33 1252 1270
+type(
+  'a Slurp.entry -> 'a Slurp.entry
+)
+"ocamlbuild/resource.ml" 33 1252 1271 "ocamlbuild/resource.ml" 33 1252 1276
+type(
+  'a Slurp.entry
+)
+"ocamlbuild/resource.ml" 34 1279 1284 "ocamlbuild/resource.ml" 34 1279 1287
+type(
+  bool -> bool
+)
+"ocamlbuild/resource.ml" 34 1279 1288 "ocamlbuild/resource.ml" 34 1279 1289
+type(
+  bool ref -> bool
+)
+"ocamlbuild/resource.ml" 34 1279 1289 "ocamlbuild/resource.ml" 34 1279 1307
+type(
+  bool ref
+)
+"ocamlbuild/resource.ml" 34 1279 1288 "ocamlbuild/resource.ml" 34 1279 1307
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 34 1279 1284 "ocamlbuild/resource.ml" 34 1279 1307
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 34 1279 1313 "ocamlbuild/resource.ml" 34 1279 1318
+type(
+  'a Slurp.entry
+)
+"ocamlbuild/resource.ml" 35 1324 1326 "ocamlbuild/resource.ml" 35 1324 1338
+type(
+  (Pathname.t -> Pathname.t -> 'a -> bool) ->
+  'a Slurp.entry -> 'a Slurp.entry
+)
+"ocamlbuild/resource.ml" 35 1324 1349 "ocamlbuild/resource.ml" 35 1324 1353
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 35 1324 1354 "ocamlbuild/resource.ml" 35 1324 1358
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 35 1324 1359 "ocamlbuild/resource.ml" 35 1324 1360
+type(
+  'a
+)
+"ocamlbuild/resource.ml" 36 1364 1372 "ocamlbuild/resource.ml" 36 1364 1380
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 36 1364 1383 "ocamlbuild/resource.ml" 36 1364 1396
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 36 1364 1398 "ocamlbuild/resource.ml" 36 1364 1402
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 36 1364 1402 "ocamlbuild/resource.ml" 36 1364 1403
+type(
+  Pathname.t -> Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 36 1364 1403 "ocamlbuild/resource.ml" 36 1364 1407
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 36 1364 1397 "ocamlbuild/resource.ml" 36 1364 1408
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 36 1364 1383 "ocamlbuild/resource.ml" 36 1364 1408
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 37 1412 1419 "ocamlbuild/resource.ml" 37 1412 1439
+type(
+  Pathname.t -> Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 37 1412 1440 "ocamlbuild/resource.ml" 37 1412 1448
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 37 1412 1449 "ocamlbuild/resource.ml" 37 1412 1450
+type(
+  Pathname.t ref -> Pathname.t
+)
+"ocamlbuild/resource.ml" 37 1412 1450 "ocamlbuild/resource.ml" 37 1412 1467
+type(
+  Pathname.t ref
+)
+"ocamlbuild/resource.ml" 37 1412 1449 "ocamlbuild/resource.ml" 37 1412 1467
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 37 1412 1419 "ocamlbuild/resource.ml" 37 1412 1467
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 38 1473 1483 "ocamlbuild/resource.ml" 38 1473 1484
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 38 1473 1487 "ocamlbuild/resource.ml" 38 1473 1504
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 38 1473 1505 "ocamlbuild/resource.ml" 38 1473 1513
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 38 1473 1487 "ocamlbuild/resource.ml" 38 1473 1513
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 40 1594 1604 "ocamlbuild/resource.ml" 40 1594 1607
+type(
+  bool -> bool
+)
+"ocamlbuild/resource.ml" 40 1594 1609 "ocamlbuild/resource.ml" 40 1594 1624
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 40 1594 1625 "ocamlbuild/resource.ml" 40 1594 1626
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 40 1594 1608 "ocamlbuild/resource.ml" 40 1594 1627
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 40 1594 1604 "ocamlbuild/resource.ml" 40 1594 1627
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 41 1633 1641 "ocamlbuild/resource.ml" 41 1633 1649
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 41 1633 1650 "ocamlbuild/resource.ml" 41 1633 1658
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 41 1633 1641 "ocamlbuild/resource.ml" 41 1633 1658
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 40 1594 1601 "ocamlbuild/resource.ml" 41 1633 1658
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 41 1633 1660 "ocamlbuild/resource.ml" 41 1633 1665
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 40 1594 1600 "ocamlbuild/resource.ml" 41 1633 1666
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 38 1473 1479 "ocamlbuild/resource.ml" 41 1633 1666
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 42 1667 1676 "ocamlbuild/resource.ml" 42 1667 1680
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 37 1412 1416 "ocamlbuild/resource.ml" 42 1667 1680
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 36 1364 1368 "ocamlbuild/resource.ml" 42 1667 1680
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 35 1324 1339 "ocamlbuild/resource.ml" 43 1681 1686
+type(
+  Pathname.t -> Pathname.t -> 'a -> bool
+)
+"ocamlbuild/resource.ml" 43 1681 1687 "ocamlbuild/resource.ml" 43 1681 1692
+type(
+  'a Slurp.entry
+)
+"ocamlbuild/resource.ml" 35 1324 1326 "ocamlbuild/resource.ml" 43 1681 1692
+type(
+  'a Slurp.entry
+)
+"ocamlbuild/resource.ml" 34 1279 1281 "ocamlbuild/resource.ml" 43 1681 1692
+type(
+  'a Slurp.entry
+)
+"ocamlbuild/resource.ml" 45 1694 1698 "ocamlbuild/resource.ml" 45 1694 1720
+type(
+  unit -> unit
+)
+"ocamlbuild/resource.ml" 45 1694 1721 "ocamlbuild/resource.ml" 45 1694 1723
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 46 1726 1728 "ocamlbuild/resource.ml" 46 1726 1741
+type(
+  bool Slurp.entry option ref
+)
+"ocamlbuild/resource.ml" 46 1726 1742 "ocamlbuild/resource.ml" 46 1726 1744
+type(
+  bool Slurp.entry option ref -> bool Slurp.entry option -> unit
+)
+"ocamlbuild/resource.ml" 46 1726 1750 "ocamlbuild/resource.ml" 46 1726 1764
+type(
+  bool Slurp.entry -> bool Slurp.entry
+)
+"ocamlbuild/resource.ml" 46 1726 1766 "ocamlbuild/resource.ml" 46 1726 1769
+type(
+  bool Slurp.entry option -> bool Slurp.entry
+)
+"ocamlbuild/resource.ml" 46 1726 1770 "ocamlbuild/resource.ml" 46 1726 1771
+type(
+  bool Slurp.entry option ref -> bool Slurp.entry option
+)
+"ocamlbuild/resource.ml" 46 1726 1771 "ocamlbuild/resource.ml" 46 1726 1784
+type(
+  bool Slurp.entry option ref
+)
+"ocamlbuild/resource.ml" 46 1726 1770 "ocamlbuild/resource.ml" 46 1726 1784
+type(
+  bool Slurp.entry option
+)
+"ocamlbuild/resource.ml" 46 1726 1765 "ocamlbuild/resource.ml" 46 1726 1785
+type(
+  bool Slurp.entry
+)
+"ocamlbuild/resource.ml" 46 1726 1749 "ocamlbuild/resource.ml" 46 1726 1786
+type(
+  bool Slurp.entry
+)
+"ocamlbuild/resource.ml" 46 1726 1745 "ocamlbuild/resource.ml" 46 1726 1786
+type(
+  bool Slurp.entry option
+)
+"ocamlbuild/resource.ml" 46 1726 1728 "ocamlbuild/resource.ml" 46 1726 1786
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 48 1788 1792 "ocamlbuild/resource.ml" 48 1788 1834
+type(
+  My_std.StringSet.t lazy_t
+)
+"ocamlbuild/resource.ml" 50 1850 1854 "ocamlbuild/resource.ml" 50 1850 1876
+type(
+  unit -> unit
+)
+"ocamlbuild/resource.ml" 50 1850 1877 "ocamlbuild/resource.ml" 50 1850 1879
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 50 1850 1854 "ocamlbuild/resource.ml" 50 1850 1879
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 51 1881 1885 "ocamlbuild/resource.ml" 51 1881 1895
+type(
+  (Pathname.t ->
+   Pathname.t -> bool -> My_std.StringSet.t -> My_std.StringSet.t) ->
+  bool Slurp.entry -> My_std.StringSet.t -> My_std.StringSet.t
+)
+"ocamlbuild/resource.ml" 51 1881 1901 "ocamlbuild/resource.ml" 51 1881 1905
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 51 1881 1906 "ocamlbuild/resource.ml" 51 1881 1910
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 51 1881 1911 "ocamlbuild/resource.ml" 51 1881 1912
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 51 1881 1916 "ocamlbuild/resource.ml" 51 1881 1929
+type(
+  My_std.StringSet.elt -> My_std.StringSet.t -> My_std.StringSet.t
+)
+"ocamlbuild/resource.ml" 51 1881 1931 "ocamlbuild/resource.ml" 51 1881 1935
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 51 1881 1935 "ocamlbuild/resource.ml" 51 1881 1936
+type(
+  Pathname.t -> Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 51 1881 1936 "ocamlbuild/resource.ml" 51 1881 1940
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 51 1881 1930 "ocamlbuild/resource.ml" 51 1881 1941
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 51 1881 1916 "ocamlbuild/resource.ml" 51 1881 1941
+type(
+  My_std.StringSet.t -> My_std.StringSet.t
+)
+"ocamlbuild/resource.ml" 51 1881 1896 "ocamlbuild/resource.ml" 51 1881 1942
+type(
+  Pathname.t ->
+  Pathname.t -> bool -> My_std.StringSet.t -> My_std.StringSet.t
+)
+"ocamlbuild/resource.ml" 52 1943 1959 "ocamlbuild/resource.ml" 52 1943 1962
+type(
+  bool Slurp.entry option -> bool Slurp.entry
+)
+"ocamlbuild/resource.ml" 52 1943 1963 "ocamlbuild/resource.ml" 52 1943 1964
+type(
+  bool Slurp.entry option ref -> bool Slurp.entry option
+)
+"ocamlbuild/resource.ml" 52 1943 1964 "ocamlbuild/resource.ml" 52 1943 1977
+type(
+  bool Slurp.entry option ref
+)
+"ocamlbuild/resource.ml" 52 1943 1963 "ocamlbuild/resource.ml" 52 1943 1977
+type(
+  bool Slurp.entry option
+)
+"ocamlbuild/resource.ml" 52 1943 1958 "ocamlbuild/resource.ml" 52 1943 1978
+type(
+  bool Slurp.entry
+)
+"ocamlbuild/resource.ml" 52 1943 1979 "ocamlbuild/resource.ml" 52 1943 1994
+type(
+  My_std.StringSet.t
+)
+"ocamlbuild/resource.ml" 51 1881 1885 "ocamlbuild/resource.ml" 52 1943 1994
+type(
+  My_std.StringSet.t
+)
+"ocamlbuild/resource.ml" 49 1837 1844 "ocamlbuild/resource.ml" 53 1995 2000
+type(
+  My_std.StringSet.t
+)
+"ocamlbuild/resource.ml" 49 1837 1839 "ocamlbuild/resource.ml" 53 1995 2000
+type(
+  My_std.StringSet.t lazy_t
+)
+"ocamlbuild/resource.ml" 55 2002 2006 "ocamlbuild/resource.ml" 55 2002 2017
+type(
+  unit -> unit
+)
+"ocamlbuild/resource.ml" 55 2002 2018 "ocamlbuild/resource.ml" 55 2002 2020
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 56 2023 2028 "ocamlbuild/resource.ml" 56 2023 2030
+type(
+  bool Lazy.t -> bool
+)
+"ocamlbuild/resource.ml" 56 2023 2030 "ocamlbuild/resource.ml" 56 2023 2049
+type(
+  bool Lazy.t
+)
+"ocamlbuild/resource.ml" 56 2023 2028 "ocamlbuild/resource.ml" 56 2023 2049
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 57 2055 2059 "ocamlbuild/resource.ml" 57 2055 2061
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 59 2069 2073 "ocamlbuild/resource.ml" 59 2069 2079
+type(
+  unit -> unit
+)
+"ocamlbuild/resource.ml" 59 2069 2081 "ocamlbuild/resource.ml" 59 2069 2103
+type(
+  unit -> unit
+)
+"ocamlbuild/resource.ml" 59 2069 2104 "ocamlbuild/resource.ml" 59 2069 2106
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 59 2069 2080 "ocamlbuild/resource.ml" 59 2069 2107
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 59 2069 2073 "ocamlbuild/resource.ml" 59 2069 2107
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 56 2023 2025 "ocamlbuild/resource.ml" 59 2069 2107
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 61 2109 2113 "ocamlbuild/resource.ml" 61 2109 2133
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 61 2109 2134 "ocamlbuild/resource.ml" 61 2109 2135
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 62 2138 2143 "ocamlbuild/resource.ml" 62 2138 2145
+type(
+  bool Lazy.t -> bool
+)
+"ocamlbuild/resource.ml" 62 2138 2145 "ocamlbuild/resource.ml" 62 2138 2164
+type(
+  bool Lazy.t
+)
+"ocamlbuild/resource.ml" 62 2138 2143 "ocamlbuild/resource.ml" 62 2138 2164
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 62 2138 2170 "ocamlbuild/resource.ml" 62 2138 2185
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 62 2138 2187 "ocamlbuild/resource.ml" 62 2138 2200
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 62 2138 2201 "ocamlbuild/resource.ml" 62 2138 2202
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 62 2138 2186 "ocamlbuild/resource.ml" 62 2138 2203
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 62 2138 2170 "ocamlbuild/resource.ml" 62 2138 2203
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 63 2204 2211 "ocamlbuild/resource.ml" 63 2204 2224
+type(
+  My_std.StringSet.elt -> My_std.StringSet.t -> bool
+)
+"ocamlbuild/resource.ml" 63 2204 2225 "ocamlbuild/resource.ml" 63 2204 2226
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 63 2204 2227 "ocamlbuild/resource.ml" 63 2204 2229
+type(
+  My_std.StringSet.t Lazy.t -> My_std.StringSet.t
+)
+"ocamlbuild/resource.ml" 63 2204 2229 "ocamlbuild/resource.ml" 63 2204 2271
+type(
+  My_std.StringSet.t Lazy.t
+)
+"ocamlbuild/resource.ml" 63 2204 2227 "ocamlbuild/resource.ml" 63 2204 2271
+type(
+  My_std.StringSet.t
+)
+"ocamlbuild/resource.ml" 63 2204 2211 "ocamlbuild/resource.ml" 63 2204 2271
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 62 2138 2140 "ocamlbuild/resource.ml" 63 2204 2271
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 65 2273 2277 "ocamlbuild/resource.ml" 65 2273 2282
+type(
+  string -> unit
+)
+"ocamlbuild/resource.ml" 65 2273 2283 "ocamlbuild/resource.ml" 65 2273 2284
+type(
+  string
+)
+"ocamlbuild/resource.ml" 65 2273 2287 "ocamlbuild/resource.ml" 65 2273 2297
+type(
+  string -> unit
+)
+"ocamlbuild/resource.ml" 65 2273 2298 "ocamlbuild/resource.ml" 65 2273 2299
+type(
+  string
+)
+"ocamlbuild/resource.ml" 65 2273 2287 "ocamlbuild/resource.ml" 65 2273 2299
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 69 2324 2330 "ocamlbuild/resource.ml" 69 2324 2335
+type(
+  unit -> unit
+)
+"ocamlbuild/resource.ml" 69 2324 2336 "ocamlbuild/resource.ml" 69 2324 2338
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 69 2324 2341 "ocamlbuild/resource.ml" 69 2324 2352
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 69 2324 2353 "ocamlbuild/resource.ml" 69 2324 2365
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 69 2324 2341 "ocamlbuild/resource.ml" 69 2324 2365
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 69 2324 2367 "ocamlbuild/resource.ml" 69 2324 2378
+type(
+  string -> unit
+)
+"ocamlbuild/resource.ml" 69 2324 2379 "ocamlbuild/resource.ml" 69 2324 2380
+type(
+  string ref -> string
+)
+"ocamlbuild/resource.ml" 69 2324 2380 "ocamlbuild/resource.ml" 69 2324 2397
+type(
+  string ref
+)
+"ocamlbuild/resource.ml" 69 2324 2379 "ocamlbuild/resource.ml" 69 2324 2397
+type(
+  string
+)
+"ocamlbuild/resource.ml" 69 2324 2367 "ocamlbuild/resource.ml" 69 2324 2397
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 69 2324 2341 "ocamlbuild/resource.ml" 69 2324 2397
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 89 2762 2768 "ocamlbuild/resource.ml" 89 2762 2773
+type(
+  unit -> cache_entry
+)
+"ocamlbuild/resource.ml" 89 2762 2774 "ocamlbuild/resource.ml" 89 2762 2776
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 90 2779 2800 "ocamlbuild/resource.ml" 90 2779 2814
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 91 2816 2837 "ocamlbuild/resource.ml" 91 2816 2844
+type(
+  knowledge
+)
+"ocamlbuild/resource.ml" 92 2846 2867 "ocamlbuild/resource.ml" 92 2846 2882
+type(
+  Resources.t
+)
+"ocamlbuild/resource.ml" 90 2779 2783 "ocamlbuild/resource.ml" 92 2846 2884
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 94 2886 2892 "ocamlbuild/resource.ml" 94 2886 2907
+type(
+  Format.formatter -> knowledge -> unit
+)
+"ocamlbuild/resource.ml" 94 2886 2908 "ocamlbuild/resource.ml" 94 2886 2909
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 96 2925 2931 "ocamlbuild/resource.ml" 96 2925 2934
+type(
+  knowledge
+)
+"ocamlbuild/resource.ml" 96 2925 2938 "ocamlbuild/resource.ml" 96 2925 2953
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/resource.ml" 96 2925 2954 "ocamlbuild/resource.ml" 96 2925 2955
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 96 2925 2956 "ocamlbuild/resource.ml" 96 2925 2961
+type(
+  string
+)
+"ocamlbuild/resource.ml" 96 2925 2938 "ocamlbuild/resource.ml" 96 2925 2961
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 97 2962 2968 "ocamlbuild/resource.ml" 97 2962 2970
+type(
+  knowledge
+)
+"ocamlbuild/resource.ml" 97 2962 2975 "ocamlbuild/resource.ml" 97 2962 2990
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/resource.ml" 97 2962 2991 "ocamlbuild/resource.ml" 97 2962 2992
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 97 2962 2993 "ocamlbuild/resource.ml" 97 2962 2997
+type(
+  string
+)
+"ocamlbuild/resource.ml" 97 2962 2975 "ocamlbuild/resource.ml" 97 2962 2997
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 98 2998 3004 "ocamlbuild/resource.ml" 98 2998 3011
+type(
+  knowledge
+)
+"ocamlbuild/resource.ml" 98 2998 3015 "ocamlbuild/resource.ml" 98 2998 3030
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/resource.ml" 98 2998 3031 "ocamlbuild/resource.ml" 98 2998 3032
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 98 2998 3033 "ocamlbuild/resource.ml" 98 2998 3042
+type(
+  string
+)
+"ocamlbuild/resource.ml" 98 2998 3015 "ocamlbuild/resource.ml" 98 2998 3042
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 95 2912 2916 "ocamlbuild/resource.ml" 98 2998 3042
+type(
+  knowledge -> unit
+)
+"ocamlbuild/resource.ml" 100 3044 3050 "ocamlbuild/resource.ml" 100 3044 3068
+type(
+  Format.formatter -> build_status -> unit
+)
+"ocamlbuild/resource.ml" 100 3044 3069 "ocamlbuild/resource.ml" 100 3044 3070
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 102 3086 3092 "ocamlbuild/resource.ml" 102 3086 3098
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 102 3086 3102 "ocamlbuild/resource.ml" 102 3086 3117
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/resource.ml" 102 3086 3118 "ocamlbuild/resource.ml" 102 3086 3119
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 102 3086 3120 "ocamlbuild/resource.ml" 102 3086 3128
+type(
+  string
+)
+"ocamlbuild/resource.ml" 102 3086 3102 "ocamlbuild/resource.ml" 102 3086 3128
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 103 3129 3135 "ocamlbuild/resource.ml" 103 3129 3149
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 103 3129 3153 "ocamlbuild/resource.ml" 103 3129 3168
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/resource.ml" 103 3129 3169 "ocamlbuild/resource.ml" 103 3129 3170
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 103 3129 3171 "ocamlbuild/resource.ml" 103 3129 3187
+type(
+  string
+)
+"ocamlbuild/resource.ml" 103 3129 3153 "ocamlbuild/resource.ml" 103 3129 3187
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 104 3188 3194 "ocamlbuild/resource.ml" 104 3188 3210
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 104 3188 3214 "ocamlbuild/resource.ml" 104 3188 3229
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/resource.ml" 104 3188 3230 "ocamlbuild/resource.ml" 104 3188 3231
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 104 3188 3232 "ocamlbuild/resource.ml" 104 3188 3250
+type(
+  string
+)
+"ocamlbuild/resource.ml" 104 3188 3214 "ocamlbuild/resource.ml" 104 3188 3250
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 105 3251 3269 "ocamlbuild/resource.ml" 105 3251 3272
+type(
+  Command.t
+)
+"ocamlbuild/resource.ml" 105 3251 3274 "ocamlbuild/resource.ml" 105 3251 3275
+type(
+  unit -> unit
+)
+"ocamlbuild/resource.ml" 105 3251 3268 "ocamlbuild/resource.ml" 105 3251 3276
+type(
+  suspension
+)
+"ocamlbuild/resource.ml" 105 3251 3257 "ocamlbuild/resource.ml" 105 3251 3276
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 106 3280 3288 "ocamlbuild/resource.ml" 106 3280 3295
+type(
+  Format.formatter ->
+  ((Format.formatter -> Command.t -> unit) -> Command.t -> unit,
+   Format.formatter, unit)
+  format -> (Format.formatter -> Command.t -> unit) -> Command.t -> unit
+)
+"ocamlbuild/resource.ml" 106 3280 3296 "ocamlbuild/resource.ml" 106 3280 3297
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 106 3280 3298 "ocamlbuild/resource.ml" 106 3280 3347
+type(
+  ((Format.formatter -> Command.t -> unit) -> Command.t -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/resource.ml" 106 3280 3348 "ocamlbuild/resource.ml" 106 3280 3361
+type(
+  Format.formatter -> Command.t -> unit
+)
+"ocamlbuild/resource.ml" 106 3280 3362 "ocamlbuild/resource.ml" 106 3280 3365
+type(
+  Command.t
+)
+"ocamlbuild/resource.ml" 106 3280 3288 "ocamlbuild/resource.ml" 106 3280 3365
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 101 3073 3077 "ocamlbuild/resource.ml" 106 3280 3365
+type(
+  build_status -> unit
+)
+"ocamlbuild/resource.ml" 108 3367 3373 "ocamlbuild/resource.ml" 108 3367 3390
+type(
+  Format.formatter -> cache_entry -> unit
+)
+"ocamlbuild/resource.ml" 108 3367 3391 "ocamlbuild/resource.ml" 108 3367 3392
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 108 3367 3393 "ocamlbuild/resource.ml" 108 3367 3394
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 109 3397 3401 "ocamlbuild/resource.ml" 109 3397 3408
+type(
+  Format.formatter ->
+  ((Format.formatter -> build_status -> unit) ->
+   build_status ->
+   (Format.formatter -> knowledge -> unit) ->
+   knowledge ->
+   (Format.formatter -> Resources.t -> unit) -> Resources.t -> unit,
+   Format.formatter, unit)
+  format ->
+  (Format.formatter -> build_status -> unit) ->
+  build_status ->
+  (Format.formatter -> knowledge -> unit) ->
+  knowledge ->
+  (Format.formatter -> Resources.t -> unit) -> Resources.t -> unit
+)
+"ocamlbuild/resource.ml" 109 3397 3409 "ocamlbuild/resource.ml" 109 3397 3410
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 109 3397 3411 "ocamlbuild/resource.ml" 109 3397 3494
+type(
+  ((Format.formatter -> build_status -> unit) ->
+   build_status ->
+   (Format.formatter -> knowledge -> unit) ->
+   knowledge ->
+   (Format.formatter -> Resources.t -> unit) -> Resources.t -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/resource.ml" 110 3495 3501 "ocamlbuild/resource.ml" 110 3495 3519
+type(
+  Format.formatter -> build_status -> unit
+)
+"ocamlbuild/resource.ml" 110 3495 3520 "ocamlbuild/resource.ml" 110 3495 3521
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 110 3495 3520 "ocamlbuild/resource.ml" 110 3495 3527
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 110 3495 3528 "ocamlbuild/resource.ml" 110 3495 3543
+type(
+  Format.formatter -> knowledge -> unit
+)
+"ocamlbuild/resource.ml" 110 3495 3544 "ocamlbuild/resource.ml" 110 3495 3545
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 110 3495 3544 "ocamlbuild/resource.ml" 110 3495 3553
+type(
+  knowledge
+)
+"ocamlbuild/resource.ml" 110 3495 3554 "ocamlbuild/resource.ml" 110 3495 3569
+type(
+  Format.formatter -> Resources.t -> unit
+)
+"ocamlbuild/resource.ml" 110 3495 3570 "ocamlbuild/resource.ml" 110 3495 3571
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 110 3495 3570 "ocamlbuild/resource.ml" 110 3495 3584
+type(
+  Resources.t
+)
+"ocamlbuild/resource.ml" 109 3397 3401 "ocamlbuild/resource.ml" 110 3495 3584
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 112 3586 3592 "ocamlbuild/resource.ml" 112 3586 3597
+type(
+  (Pathname.t, cache_entry) Hashtbl.t
+)
+"ocamlbuild/resource.ml" 112 3586 3600 "ocamlbuild/resource.ml" 112 3586 3614
+type(
+  int -> (Pathname.t, cache_entry) Hashtbl.t
+)
+"ocamlbuild/resource.ml" 112 3586 3615 "ocamlbuild/resource.ml" 112 3586 3618
+type(
+  int
+)
+"ocamlbuild/resource.ml" 112 3586 3600 "ocamlbuild/resource.ml" 112 3586 3618
+type(
+  (Pathname.t, cache_entry) Hashtbl.t
+)
+"ocamlbuild/resource.ml" 114 3620 3626 "ocamlbuild/resource.ml" 114 3620 3629
+type(
+  Pathname.t -> cache_entry
+)
+"ocamlbuild/resource.ml" 114 3620 3630 "ocamlbuild/resource.ml" 114 3620 3631
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 115 3634 3642 "ocamlbuild/resource.ml" 115 3634 3654
+type(
+  (Pathname.t, cache_entry) Hashtbl.t -> Pathname.t -> cache_entry
+)
+"ocamlbuild/resource.ml" 115 3634 3655 "ocamlbuild/resource.ml" 115 3634 3660
+type(
+  (Pathname.t, cache_entry) Hashtbl.t
+)
+"ocamlbuild/resource.ml" 115 3634 3661 "ocamlbuild/resource.ml" 115 3634 3662
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 115 3634 3642 "ocamlbuild/resource.ml" 115 3634 3662
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 116 3663 3672 "ocamlbuild/resource.ml" 116 3663 3681
+type(
+  exn
+)
+"ocamlbuild/resource.ml" 117 3685 3695 "ocamlbuild/resource.ml" 117 3685 3706
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 117 3685 3709 "ocamlbuild/resource.ml" 117 3685 3714
+type(
+  unit -> cache_entry
+)
+"ocamlbuild/resource.ml" 117 3685 3715 "ocamlbuild/resource.ml" 117 3685 3717
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 117 3685 3709 "ocamlbuild/resource.ml" 117 3685 3717
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 118 3721 3727 "ocamlbuild/resource.ml" 118 3721 3738
+type(
+  (Pathname.t, cache_entry) Hashtbl.t -> Pathname.t -> cache_entry -> unit
+)
+"ocamlbuild/resource.ml" 118 3721 3739 "ocamlbuild/resource.ml" 118 3721 3744
+type(
+  (Pathname.t, cache_entry) Hashtbl.t
+)
+"ocamlbuild/resource.ml" 118 3721 3745 "ocamlbuild/resource.ml" 118 3721 3746
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 118 3721 3747 "ocamlbuild/resource.ml" 118 3721 3758
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 118 3721 3727 "ocamlbuild/resource.ml" 118 3721 3758
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 118 3721 3760 "ocamlbuild/resource.ml" 118 3721 3771
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 118 3721 3727 "ocamlbuild/resource.ml" 118 3721 3771
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 117 3685 3691 "ocamlbuild/resource.ml" 118 3721 3771
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 115 3634 3638 "ocamlbuild/resource.ml" 118 3721 3771
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 120 3773 3779 "ocamlbuild/resource.ml" 120 3773 3789
+type(
+  (Pathname.t -> cache_entry -> 'a -> 'a) -> 'a -> 'a
+)
+"ocamlbuild/resource.ml" 120 3773 3790 "ocamlbuild/resource.ml" 120 3773 3791
+type(
+  Pathname.t -> cache_entry -> 'a -> 'a
+)
+"ocamlbuild/resource.ml" 120 3773 3792 "ocamlbuild/resource.ml" 120 3773 3793
+type(
+  'a
+)
+"ocamlbuild/resource.ml" 120 3773 3796 "ocamlbuild/resource.ml" 120 3773 3808
+type(
+  (Pathname.t -> cache_entry -> 'a -> 'a) ->
+  (Pathname.t, cache_entry) Hashtbl.t -> 'a -> 'a
+)
+"ocamlbuild/resource.ml" 120 3773 3809 "ocamlbuild/resource.ml" 120 3773 3810
+type(
+  Pathname.t -> cache_entry -> 'a -> 'a
+)
+"ocamlbuild/resource.ml" 120 3773 3811 "ocamlbuild/resource.ml" 120 3773 3816
+type(
+  (Pathname.t, cache_entry) Hashtbl.t
+)
+"ocamlbuild/resource.ml" 120 3773 3817 "ocamlbuild/resource.ml" 120 3773 3818
+type(
+  'a
+)
+"ocamlbuild/resource.ml" 120 3773 3796 "ocamlbuild/resource.ml" 120 3773 3818
+type(
+  'a
+)
+"ocamlbuild/resource.ml" 122 3820 3826 "ocamlbuild/resource.ml" 122 3820 3837
+type(
+  Format.formatter -> unit -> unit
+)
+"ocamlbuild/resource.ml" 122 3820 3838 "ocamlbuild/resource.ml" 122 3820 3839
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 122 3820 3840 "ocamlbuild/resource.ml" 122 3820 3842
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 123 3845 3849 "ocamlbuild/resource.ml" 123 3845 3856
+type(
+  Format.formatter -> (unit, Format.formatter, unit) format -> unit
+)
+"ocamlbuild/resource.ml" 123 3845 3857 "ocamlbuild/resource.ml" 123 3845 3858
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 123 3845 3859 "ocamlbuild/resource.ml" 123 3845 3877
+type(
+  (unit, Format.formatter, unit) format
+)
+"ocamlbuild/resource.ml" 123 3845 3849 "ocamlbuild/resource.ml" 123 3845 3877
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 124 3879 3883 "ocamlbuild/resource.ml" 124 3879 3893
+type(
+  (Pathname.t -> cache_entry -> unit -> unit) -> unit -> unit
+)
+"ocamlbuild/resource.ml" 124 3879 3904 "ocamlbuild/resource.ml" 124 3879 3905
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 124 3879 3906 "ocamlbuild/resource.ml" 124 3879 3907
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 124 3879 3908 "ocamlbuild/resource.ml" 124 3879 3910
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 125 3914 3920 "ocamlbuild/resource.ml" 125 3914 3927
+type(
+  Format.formatter ->
+  ((Format.formatter -> Pathname.t -> unit) ->
+   Pathname.t ->
+   (Format.formatter -> cache_entry -> unit) -> cache_entry -> unit,
+   Format.formatter, unit)
+  format ->
+  (Format.formatter -> Pathname.t -> unit) ->
+  Pathname.t ->
+  (Format.formatter -> cache_entry -> unit) -> cache_entry -> unit
+)
+"ocamlbuild/resource.ml" 125 3914 3928 "ocamlbuild/resource.ml" 125 3914 3929
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 125 3914 3930 "ocamlbuild/resource.ml" 125 3914 3951
+type(
+  ((Format.formatter -> Pathname.t -> unit) ->
+   Pathname.t ->
+   (Format.formatter -> cache_entry -> unit) -> cache_entry -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/resource.ml" 125 3914 3952 "ocamlbuild/resource.ml" 125 3914 3957
+type(
+  Format.formatter -> Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 125 3914 3958 "ocamlbuild/resource.ml" 125 3914 3959
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 125 3914 3960 "ocamlbuild/resource.ml" 125 3914 3977
+type(
+  Format.formatter -> cache_entry -> unit
+)
+"ocamlbuild/resource.ml" 125 3914 3978 "ocamlbuild/resource.ml" 125 3914 3979
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 125 3914 3920 "ocamlbuild/resource.ml" 125 3914 3979
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 124 3879 3894 "ocamlbuild/resource.ml" 126 3980 3987
+type(
+  Pathname.t -> cache_entry -> unit -> unit
+)
+"ocamlbuild/resource.ml" 126 3980 3988 "ocamlbuild/resource.ml" 126 3980 3990
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 124 3879 3883 "ocamlbuild/resource.ml" 126 3980 3990
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 127 3992 3996 "ocamlbuild/resource.ml" 127 3992 4003
+type(
+  Format.formatter -> (unit, Format.formatter, unit) format -> unit
+)
+"ocamlbuild/resource.ml" 127 3992 4004 "ocamlbuild/resource.ml" 127 3992 4005
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 127 3992 4006 "ocamlbuild/resource.ml" 127 3992 4014
+type(
+  (unit, Format.formatter, unit) format
+)
+"ocamlbuild/resource.ml" 127 3992 3996 "ocamlbuild/resource.ml" 127 3992 4014
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 124 3879 3883 "ocamlbuild/resource.ml" 127 3992 4014
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 123 3845 3849 "ocamlbuild/resource.ml" 127 3992 4014
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 129 4016 4022 "ocamlbuild/resource.ml" 129 4016 4033
+type(
+  Format.formatter -> unit -> unit
+)
+"ocamlbuild/resource.ml" 129 4016 4034 "ocamlbuild/resource.ml" 129 4016 4035
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 129 4016 4036 "ocamlbuild/resource.ml" 129 4016 4038
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 130 4041 4045 "ocamlbuild/resource.ml" 130 4041 4052
+type(
+  Format.formatter -> (unit, Format.formatter, unit) format -> unit
+)
+"ocamlbuild/resource.ml" 130 4041 4053 "ocamlbuild/resource.ml" 130 4041 4054
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 130 4041 4055 "ocamlbuild/resource.ml" 130 4041 4073
+type(
+  (unit, Format.formatter, unit) format
+)
+"ocamlbuild/resource.ml" 130 4041 4045 "ocamlbuild/resource.ml" 130 4041 4073
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 131 4075 4079 "ocamlbuild/resource.ml" 131 4075 4089
+type(
+  (Pathname.t -> cache_entry -> unit -> unit) -> unit -> unit
+)
+"ocamlbuild/resource.ml" 131 4075 4100 "ocamlbuild/resource.ml" 131 4075 4101
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 131 4075 4102 "ocamlbuild/resource.ml" 131 4075 4103
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 131 4075 4104 "ocamlbuild/resource.ml" 131 4075 4106
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 132 4110 4119 "ocamlbuild/resource.ml" 132 4110 4122
+type(
+  bool -> bool
+)
+"ocamlbuild/resource.ml" 132 4110 4124 "ocamlbuild/resource.ml" 132 4110 4142
+type(
+  Resources.t -> bool
+)
+"ocamlbuild/resource.ml" 132 4110 4143 "ocamlbuild/resource.ml" 132 4110 4144
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 132 4110 4143 "ocamlbuild/resource.ml" 132 4110 4157
+type(
+  Resources.t
+)
+"ocamlbuild/resource.ml" 132 4110 4123 "ocamlbuild/resource.ml" 132 4110 4158
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 132 4110 4119 "ocamlbuild/resource.ml" 132 4110 4158
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 133 4164 4172 "ocamlbuild/resource.ml" 133 4164 4179
+type(
+  Format.formatter ->
+  ((Format.formatter -> Pathname.t -> unit) ->
+   Pathname.t ->
+   (Format.formatter -> Resources.t -> unit) -> Resources.t -> unit,
+   Format.formatter, unit)
+  format ->
+  (Format.formatter -> Pathname.t -> unit) ->
+  Pathname.t ->
+  (Format.formatter -> Resources.t -> unit) -> Resources.t -> unit
+)
+"ocamlbuild/resource.ml" 133 4164 4180 "ocamlbuild/resource.ml" 133 4164 4181
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 133 4164 4182 "ocamlbuild/resource.ml" 133 4164 4203
+type(
+  ((Format.formatter -> Pathname.t -> unit) ->
+   Pathname.t ->
+   (Format.formatter -> Resources.t -> unit) -> Resources.t -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/resource.ml" 133 4164 4204 "ocamlbuild/resource.ml" 133 4164 4209
+type(
+  Format.formatter -> Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 133 4164 4210 "ocamlbuild/resource.ml" 133 4164 4211
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 133 4164 4212 "ocamlbuild/resource.ml" 133 4164 4227
+type(
+  Format.formatter -> Resources.t -> unit
+)
+"ocamlbuild/resource.ml" 133 4164 4228 "ocamlbuild/resource.ml" 133 4164 4229
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 133 4164 4228 "ocamlbuild/resource.ml" 133 4164 4242
+type(
+  Resources.t
+)
+"ocamlbuild/resource.ml" 133 4164 4172 "ocamlbuild/resource.ml" 133 4164 4242
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 132 4110 4116 "ocamlbuild/resource.ml" 133 4164 4242
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 131 4075 4090 "ocamlbuild/resource.ml" 134 4243 4250
+type(
+  Pathname.t -> cache_entry -> unit -> unit
+)
+"ocamlbuild/resource.ml" 134 4243 4251 "ocamlbuild/resource.ml" 134 4243 4253
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 131 4075 4079 "ocamlbuild/resource.ml" 134 4243 4253
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 135 4255 4259 "ocamlbuild/resource.ml" 135 4255 4266
+type(
+  Format.formatter -> (unit, Format.formatter, unit) format -> unit
+)
+"ocamlbuild/resource.ml" 135 4255 4267 "ocamlbuild/resource.ml" 135 4255 4268
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 135 4255 4269 "ocamlbuild/resource.ml" 135 4255 4279
+type(
+  (unit, Format.formatter, unit) format
+)
+"ocamlbuild/resource.ml" 135 4255 4259 "ocamlbuild/resource.ml" 135 4255 4279
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 131 4075 4079 "ocamlbuild/resource.ml" 135 4255 4279
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 130 4041 4045 "ocamlbuild/resource.ml" 135 4255 4279
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 137 4281 4287 "ocamlbuild/resource.ml" 137 4281 4303
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 137 4281 4304 "ocamlbuild/resource.ml" 137 4281 4305
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 138 4308 4312 "ocamlbuild/resource.ml" 138 4308 4319
+type(
+  int ->
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format -> (Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 138 4308 4320 "ocamlbuild/resource.ml" 138 4308 4322
+type(
+  int
+)
+"ocamlbuild/resource.ml" 138 4308 4323 "ocamlbuild/resource.ml" 138 4308 4346
+type(
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/resource.ml" 138 4308 4347 "ocamlbuild/resource.ml" 138 4308 4352
+type(
+  Format.formatter -> Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 138 4308 4353 "ocamlbuild/resource.ml" 138 4308 4354
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 138 4308 4312 "ocamlbuild/resource.ml" 138 4308 4354
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 139 4356 4361 "ocamlbuild/resource.ml" 139 4356 4364
+type(
+  Pathname.t -> cache_entry
+)
+"ocamlbuild/resource.ml" 139 4356 4365 "ocamlbuild/resource.ml" 139 4356 4366
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 139 4356 4360 "ocamlbuild/resource.ml" 139 4356 4367
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 139 4356 4379 "ocamlbuild/resource.ml" 139 4356 4382
+type(
+  knowledge
+)
+"ocamlbuild/resource.ml" 139 4356 4360 "ocamlbuild/resource.ml" 139 4356 4382
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 138 4308 4312 "ocamlbuild/resource.ml" 139 4356 4382
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 141 4384 4390 "ocamlbuild/resource.ml" 141 4384 4412
+type(
+  string -> bool
+)
+"ocamlbuild/resource.ml" 141 4384 4413 "ocamlbuild/resource.ml" 141 4384 4426
+type(
+  string
+)
+"ocamlbuild/resource.ml" 142 4429 4437 "ocamlbuild/resource.ml" 142 4429 4440
+type(
+  string
+)
+"ocamlbuild/resource.ml" 142 4429 4443 "ocamlbuild/resource.ml" 142 4429 4455
+type(
+  string
+)
+"ocamlbuild/resource.ml" 142 4429 4456 "ocamlbuild/resource.ml" 142 4429 4457
+type(
+  string -> string -> string
+)
+"ocamlbuild/resource.ml" 142 4429 4458 "ocamlbuild/resource.ml" 142 4429 4471
+type(
+  string
+)
+"ocamlbuild/resource.ml" 142 4429 4443 "ocamlbuild/resource.ml" 142 4429 4471
+type(
+  string
+)
+"ocamlbuild/resource.ml" 143 4475 4483 "ocamlbuild/resource.ml" 143 4475 4489
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 143 4475 4492 "ocamlbuild/resource.ml" 143 4475 4503
+type(
+  string -> My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 143 4475 4504 "ocamlbuild/resource.ml" 143 4475 4517
+type(
+  string
+)
+"ocamlbuild/resource.ml" 143 4475 4492 "ocamlbuild/resource.ml" 143 4475 4517
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 144 4521 4529 "ocamlbuild/resource.ml" 144 4521 4542
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 146 4555 4567 "ocamlbuild/resource.ml" 146 4555 4574
+type(
+  string
+)
+"ocamlbuild/resource.ml" 146 4555 4577 "ocamlbuild/resource.ml" 146 4555 4593
+type(
+  string -> string
+)
+"ocamlbuild/resource.ml" 146 4555 4594 "ocamlbuild/resource.ml" 146 4555 4597
+type(
+  string
+)
+"ocamlbuild/resource.ml" 146 4555 4577 "ocamlbuild/resource.ml" 146 4555 4597
+type(
+  string
+)
+"ocamlbuild/resource.ml" 147 4601 4609 "ocamlbuild/resource.ml" 147 4601 4615
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 147 4601 4616 "ocamlbuild/resource.ml" 147 4601 4617
+type(
+  My_std.Digest.t -> My_std.Digest.t -> bool
+)
+"ocamlbuild/resource.ml" 147 4601 4618 "ocamlbuild/resource.ml" 147 4601 4625
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 147 4601 4609 "ocamlbuild/resource.ml" 147 4601 4625
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 146 4555 4563 "ocamlbuild/resource.ml" 147 4601 4625
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 148 4626 4637 "ocamlbuild/resource.ml" 148 4626 4646
+type(
+  exn
+)
+"ocamlbuild/resource.ml" 149 4650 4658 "ocamlbuild/resource.ml" 149 4650 4663
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 145 4545 4551 "ocamlbuild/resource.ml" 149 4650 4663
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 151 4671 4675 "ocamlbuild/resource.ml" 151 4671 4688
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 151 4671 4689 "ocamlbuild/resource.ml" 151 4671 4691
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/resource.ml" 151 4671 4693 "ocamlbuild/resource.ml" 151 4671 4709
+type(
+  string -> My_std.Digest.t -> unit
+)
+"ocamlbuild/resource.ml" 151 4671 4710 "ocamlbuild/resource.ml" 151 4671 4713
+type(
+  string
+)
+"ocamlbuild/resource.ml" 151 4671 4714 "ocamlbuild/resource.ml" 151 4671 4720
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 151 4671 4693 "ocamlbuild/resource.ml" 151 4671 4720
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 151 4671 4722 "ocamlbuild/resource.ml" 151 4671 4727
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 151 4671 4692 "ocamlbuild/resource.ml" 151 4671 4728
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 151 4671 4675 "ocamlbuild/resource.ml" 151 4671 4728
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 144 4521 4525 "ocamlbuild/resource.ml" 151 4671 4728
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 143 4475 4479 "ocamlbuild/resource.ml" 151 4671 4728
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 142 4429 4433 "ocamlbuild/resource.ml" 151 4671 4728
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 153 4730 4736 "ocamlbuild/resource.ml" 153 4730 4756
+type(
+  string -> Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 153 4730 4757 "ocamlbuild/resource.ml" 153 4730 4772
+type(
+  string
+)
+"ocamlbuild/resource.ml" 153 4730 4773 "ocamlbuild/resource.ml" 153 4730 4787
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 154 4790 4798 "ocamlbuild/resource.ml" 154 4790 4801
+type(
+  string
+)
+"ocamlbuild/resource.ml" 154 4790 4804 "ocamlbuild/resource.ml" 154 4790 4816
+type(
+  string
+)
+"ocamlbuild/resource.ml" 154 4790 4817 "ocamlbuild/resource.ml" 154 4790 4818
+type(
+  string -> string -> string
+)
+"ocamlbuild/resource.ml" 154 4790 4819 "ocamlbuild/resource.ml" 154 4790 4834
+type(
+  string
+)
+"ocamlbuild/resource.ml" 154 4790 4804 "ocamlbuild/resource.ml" 154 4790 4834
+type(
+  string
+)
+"ocamlbuild/resource.ml" 155 4838 4846 "ocamlbuild/resource.ml" 155 4838 4852
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 155 4838 4855 "ocamlbuild/resource.ml" 155 4838 4866
+type(
+  string -> My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 155 4838 4867 "ocamlbuild/resource.ml" 155 4838 4882
+type(
+  string
+)
+"ocamlbuild/resource.ml" 155 4838 4855 "ocamlbuild/resource.ml" 155 4838 4882
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 156 4886 4894 "ocamlbuild/resource.ml" 156 4886 4909
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 157 4912 4918 "ocamlbuild/resource.ml" 157 4912 4933
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 157 4912 4934 "ocamlbuild/resource.ml" 157 4912 4948
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 157 4912 4918 "ocamlbuild/resource.ml" 157 4912 4948
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 157 4912 4949 "ocamlbuild/resource.ml" 157 4912 4951
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/resource.ml" 159 4962 4974 "ocamlbuild/resource.ml" 159 4962 4981
+type(
+  string
+)
+"ocamlbuild/resource.ml" 159 4962 4984 "ocamlbuild/resource.ml" 159 4962 5000
+type(
+  string -> string
+)
+"ocamlbuild/resource.ml" 159 4962 5001 "ocamlbuild/resource.ml" 159 4962 5004
+type(
+  string
+)
+"ocamlbuild/resource.ml" 159 4962 4984 "ocamlbuild/resource.ml" 159 4962 5004
+type(
+  string
+)
+"ocamlbuild/resource.ml" 160 5008 5016 "ocamlbuild/resource.ml" 160 5008 5022
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 160 5008 5023 "ocamlbuild/resource.ml" 160 5008 5024
+type(
+  My_std.Digest.t -> My_std.Digest.t -> bool
+)
+"ocamlbuild/resource.ml" 160 5008 5025 "ocamlbuild/resource.ml" 160 5008 5032
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 160 5008 5016 "ocamlbuild/resource.ml" 160 5008 5032
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 159 4962 4970 "ocamlbuild/resource.ml" 160 5008 5032
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 161 5033 5044 "ocamlbuild/resource.ml" 161 5033 5053
+type(
+  exn
+)
+"ocamlbuild/resource.ml" 162 5057 5065 "ocamlbuild/resource.ml" 162 5057 5070
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 158 4952 4958 "ocamlbuild/resource.ml" 162 5057 5070
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 157 4912 4918 "ocamlbuild/resource.ml" 162 5057 5070
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 164 5078 5082 "ocamlbuild/resource.ml" 164 5078 5097
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 164 5078 5098 "ocamlbuild/resource.ml" 164 5078 5100
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/resource.ml" 164 5078 5102 "ocamlbuild/resource.ml" 164 5078 5118
+type(
+  string -> My_std.Digest.t -> unit
+)
+"ocamlbuild/resource.ml" 164 5078 5119 "ocamlbuild/resource.ml" 164 5078 5122
+type(
+  string
+)
+"ocamlbuild/resource.ml" 164 5078 5123 "ocamlbuild/resource.ml" 164 5078 5129
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 164 5078 5102 "ocamlbuild/resource.ml" 164 5078 5129
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 164 5078 5131 "ocamlbuild/resource.ml" 164 5078 5136
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 164 5078 5101 "ocamlbuild/resource.ml" 164 5078 5137
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 164 5078 5082 "ocamlbuild/resource.ml" 164 5078 5137
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 156 4886 4890 "ocamlbuild/resource.ml" 164 5078 5137
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 155 4838 4842 "ocamlbuild/resource.ml" 164 5078 5137
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 154 4790 4794 "ocamlbuild/resource.ml" 164 5078 5137
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 166 5139 5145 "ocamlbuild/resource.ml" 166 5139 5163
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 166 5139 5164 "ocamlbuild/resource.ml" 166 5139 5165
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 167 5168 5176 "ocamlbuild/resource.ml" 167 5168 5177
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 167 5168 5180 "ocamlbuild/resource.ml" 167 5168 5192
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 167 5168 5193 "ocamlbuild/resource.ml" 167 5168 5194
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 167 5168 5180 "ocamlbuild/resource.ml" 167 5168 5194
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 168 5198 5202 "ocamlbuild/resource.ml" 168 5198 5205
+type(
+  bool -> bool
+)
+"ocamlbuild/resource.ml" 168 5198 5207 "ocamlbuild/resource.ml" 168 5198 5227
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 168 5198 5228 "ocamlbuild/resource.ml" 168 5198 5229
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 168 5198 5206 "ocamlbuild/resource.ml" 168 5198 5230
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 168 5198 5202 "ocamlbuild/resource.ml" 168 5198 5230
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 168 5198 5231 "ocamlbuild/resource.ml" 168 5198 5233
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/resource.ml" 168 5198 5234 "ocamlbuild/resource.ml" 168 5198 5249
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 168 5198 5250 "ocamlbuild/resource.ml" 168 5198 5251
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 168 5198 5234 "ocamlbuild/resource.ml" 168 5198 5251
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 168 5198 5252 "ocamlbuild/resource.ml" 168 5198 5254
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/resource.ml" 168 5198 5255 "ocamlbuild/resource.ml" 168 5198 5277
+type(
+  Pathname.t -> Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 168 5198 5278 "ocamlbuild/resource.ml" 168 5198 5279
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 168 5198 5281 "ocamlbuild/resource.ml" 168 5198 5294
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 168 5198 5295 "ocamlbuild/resource.ml" 168 5198 5296
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 168 5198 5280 "ocamlbuild/resource.ml" 168 5198 5297
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 168 5198 5255 "ocamlbuild/resource.ml" 168 5198 5297
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 168 5198 5234 "ocamlbuild/resource.ml" 168 5198 5297
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 168 5198 5202 "ocamlbuild/resource.ml" 168 5198 5297
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 167 5168 5172 "ocamlbuild/resource.ml" 168 5198 5297
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 170 5299 5309 "ocamlbuild/resource.ml" 170 5299 5329
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 170 5299 5330 "ocamlbuild/resource.ml" 170 5299 5331
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 171 5334 5342 "ocamlbuild/resource.ml" 171 5334 5353
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 171 5334 5356 "ocamlbuild/resource.ml" 171 5334 5359
+type(
+  Pathname.t -> cache_entry
+)
+"ocamlbuild/resource.ml" 171 5334 5360 "ocamlbuild/resource.ml" 171 5334 5361
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 171 5334 5356 "ocamlbuild/resource.ml" 171 5334 5361
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 172 5365 5375 "ocamlbuild/resource.ml" 172 5365 5386
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 172 5365 5375 "ocamlbuild/resource.ml" 172 5365 5394
+type(
+  knowledge
+)
+"ocamlbuild/resource.ml" 173 5400 5406 "ocamlbuild/resource.ml" 173 5400 5409
+type(
+  knowledge
+)
+"ocamlbuild/resource.ml" 173 5400 5413 "ocamlbuild/resource.ml" 173 5400 5417
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 174 5418 5424 "ocamlbuild/resource.ml" 174 5418 5426
+type(
+  knowledge
+)
+"ocamlbuild/resource.ml" 174 5418 5430 "ocamlbuild/resource.ml" 174 5418 5435
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 175 5436 5442 "ocamlbuild/resource.ml" 175 5436 5449
+type(
+  knowledge
+)
+"ocamlbuild/resource.ml" 176 5453 5463 "ocamlbuild/resource.ml" 176 5453 5466
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 177 5469 5483 "ocamlbuild/resource.ml" 177 5469 5494
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 177 5469 5483 "ocamlbuild/resource.ml" 177 5469 5500
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 178 5506 5516 "ocamlbuild/resource.ml" 178 5506 5522
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 178 5506 5526 "ocamlbuild/resource.ml" 178 5506 5531
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 179 5532 5554 "ocamlbuild/resource.ml" 179 5532 5555
+type(
+  suspension
+)
+"ocamlbuild/resource.ml" 179 5532 5542 "ocamlbuild/resource.ml" 179 5532 5555
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 179 5532 5559 "ocamlbuild/resource.ml" 179 5532 5571
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 180 5572 5582 "ocamlbuild/resource.ml" 180 5572 5598
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 180 5572 5602 "ocamlbuild/resource.ml" 180 5572 5607
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 181 5608 5618 "ocamlbuild/resource.ml" 181 5608 5632
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 181 5608 5636 "ocamlbuild/resource.ml" 181 5608 5639
+type(
+  bool -> bool
+)
+"ocamlbuild/resource.ml" 181 5608 5641 "ocamlbuild/resource.ml" 181 5608 5659
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 181 5608 5660 "ocamlbuild/resource.ml" 181 5608 5661
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 181 5608 5640 "ocamlbuild/resource.ml" 181 5608 5662
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 181 5608 5636 "ocamlbuild/resource.ml" 181 5608 5662
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 177 5469 5477 "ocamlbuild/resource.ml" 181 5608 5662
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 182 5666 5676 "ocamlbuild/resource.ml" 182 5666 5678
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 182 5666 5681 "ocamlbuild/resource.ml" 182 5666 5692
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 182 5666 5707 "ocamlbuild/resource.ml" 182 5666 5710
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 182 5666 5716 "ocamlbuild/resource.ml" 182 5666 5719
+type(
+  knowledge
+)
+"ocamlbuild/resource.ml" 182 5666 5725 "ocamlbuild/resource.ml" 182 5666 5727
+type(
+  knowledge
+)
+"ocamlbuild/resource.ml" 182 5666 5704 "ocamlbuild/resource.ml" 182 5666 5727
+type(
+  knowledge
+)
+"ocamlbuild/resource.ml" 182 5666 5681 "ocamlbuild/resource.ml" 182 5666 5727
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 182 5666 5731 "ocamlbuild/resource.ml" 182 5666 5734
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 182 5666 5672 "ocamlbuild/resource.ml" 182 5666 5734
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 176 5453 5459 "ocamlbuild/resource.ml" 182 5666 5734
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 172 5365 5369 "ocamlbuild/resource.ml" 182 5666 5734
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 171 5334 5338 "ocamlbuild/resource.ml" 182 5666 5734
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 184 5736 5742 "ocamlbuild/resource.ml" 184 5736 5756
+type(
+  Pathname.t -> build_status
+)
+"ocamlbuild/resource.ml" 184 5736 5757 "ocamlbuild/resource.ml" 184 5736 5758
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 184 5736 5762 "ocamlbuild/resource.ml" 184 5736 5765
+type(
+  Pathname.t -> cache_entry
+)
+"ocamlbuild/resource.ml" 184 5736 5766 "ocamlbuild/resource.ml" 184 5736 5767
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 184 5736 5761 "ocamlbuild/resource.ml" 184 5736 5768
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 184 5736 5761 "ocamlbuild/resource.ml" 184 5736 5774
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 186 5776 5782 "ocamlbuild/resource.ml" 186 5776 5796
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 186 5776 5797 "ocamlbuild/resource.ml" 186 5776 5798
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 186 5776 5802 "ocamlbuild/resource.ml" 186 5776 5805
+type(
+  Pathname.t -> cache_entry
+)
+"ocamlbuild/resource.ml" 186 5776 5806 "ocamlbuild/resource.ml" 186 5776 5807
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 186 5776 5801 "ocamlbuild/resource.ml" 186 5776 5808
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 186 5776 5818 "ocamlbuild/resource.ml" 186 5776 5824
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 186 5776 5801 "ocamlbuild/resource.ml" 186 5776 5824
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 188 5826 5832 "ocamlbuild/resource.ml" 188 5826 5847
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 188 5826 5848 "ocamlbuild/resource.ml" 188 5826 5849
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 188 5826 5853 "ocamlbuild/resource.ml" 188 5826 5856
+type(
+  Pathname.t -> cache_entry
+)
+"ocamlbuild/resource.ml" 188 5826 5857 "ocamlbuild/resource.ml" 188 5826 5858
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 188 5826 5852 "ocamlbuild/resource.ml" 188 5826 5859
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 188 5826 5869 "ocamlbuild/resource.ml" 188 5826 5885
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 188 5826 5852 "ocamlbuild/resource.ml" 188 5826 5885
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 190 5887 5893 "ocamlbuild/resource.ml" 190 5887 5912
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 190 5887 5913 "ocamlbuild/resource.ml" 190 5887 5914
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 191 5917 5925 "ocamlbuild/resource.ml" 191 5917 5936
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 191 5917 5939 "ocamlbuild/resource.ml" 191 5917 5942
+type(
+  Pathname.t -> cache_entry
+)
+"ocamlbuild/resource.ml" 191 5917 5943 "ocamlbuild/resource.ml" 191 5917 5944
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 191 5917 5939 "ocamlbuild/resource.ml" 191 5917 5944
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 192 5948 5956 "ocamlbuild/resource.ml" 192 5948 5970
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 192 5948 5973 "ocamlbuild/resource.ml" 192 5948 5985
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 192 5948 5986 "ocamlbuild/resource.ml" 192 5948 5987
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 192 5948 5973 "ocamlbuild/resource.ml" 192 5948 5987
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 193 5991 5999 "ocamlbuild/resource.ml" 193 5991 6014
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 193 5991 6017 "ocamlbuild/resource.ml" 193 5991 6030
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 193 5991 6031 "ocamlbuild/resource.ml" 193 5991 6032
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 193 5991 6017 "ocamlbuild/resource.ml" 193 5991 6032
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 194 6036 6043 "ocamlbuild/resource.ml" 194 6036 6063
+type(
+  Pathname.t -> Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 194 6036 6064 "ocamlbuild/resource.ml" 194 6036 6079
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 194 6036 6080 "ocamlbuild/resource.ml" 194 6036 6094
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 194 6036 6043 "ocamlbuild/resource.ml" 194 6036 6094
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 195 6106 6112 "ocamlbuild/resource.ml" 195 6106 6119
+type(
+  int ->
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format -> (Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 195 6106 6120 "ocamlbuild/resource.ml" 195 6106 6121
+type(
+  int
+)
+"ocamlbuild/resource.ml" 195 6106 6122 "ocamlbuild/resource.ml" 195 6106 6148
+type(
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/resource.ml" 195 6106 6149 "ocamlbuild/resource.ml" 195 6106 6154
+type(
+  Format.formatter -> Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 195 6106 6155 "ocamlbuild/resource.ml" 195 6106 6156
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 194 6036 6100 "ocamlbuild/resource.ml" 196 6158 6165
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 197 6177 6183 "ocamlbuild/resource.ml" 197 6177 6190
+type(
+  int ->
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format -> (Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 197 6177 6191 "ocamlbuild/resource.ml" 197 6177 6192
+type(
+  int
+)
+"ocamlbuild/resource.ml" 197 6177 6193 "ocamlbuild/resource.ml" 197 6177 6231
+type(
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/resource.ml" 197 6177 6232 "ocamlbuild/resource.ml" 197 6177 6237
+type(
+  Format.formatter -> Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 197 6177 6238 "ocamlbuild/resource.ml" 197 6177 6239
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 197 6177 6183 "ocamlbuild/resource.ml" 197 6177 6239
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 198 6241 6247 "ocamlbuild/resource.ml" 198 6241 6260
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 198 6241 6262 "ocamlbuild/resource.ml" 198 6241 6278
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 198 6241 6279 "ocamlbuild/resource.ml" 198 6241 6280
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 198 6241 6261 "ocamlbuild/resource.ml" 198 6241 6281
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 198 6241 6247 "ocamlbuild/resource.ml" 198 6241 6281
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 199 6283 6289 "ocamlbuild/resource.ml" 199 6283 6302
+type(
+  Pathname.t -> Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 199 6283 6303 "ocamlbuild/resource.ml" 199 6283 6318
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 199 6283 6319 "ocamlbuild/resource.ml" 199 6283 6333
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 199 6283 6289 "ocamlbuild/resource.ml" 199 6283 6333
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 200 6335 6341 "ocamlbuild/resource.ml" 200 6335 6352
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 200 6335 6364 "ocamlbuild/resource.ml" 200 6335 6367
+type(
+  knowledge
+)
+"ocamlbuild/resource.ml" 200 6335 6341 "ocamlbuild/resource.ml" 200 6335 6368
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 199 6283 6289 "ocamlbuild/resource.ml" 200 6335 6368
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 198 6241 6247 "ocamlbuild/resource.ml" 200 6335 6368
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 196 6158 6171 "ocamlbuild/resource.ml" 201 6369 6376
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 194 6036 6040 "ocamlbuild/resource.ml" 201 6369 6376
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 202 6378 6382 "ocamlbuild/resource.ml" 202 6378 6393
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 202 6378 6403 "ocamlbuild/resource.ml" 202 6378 6409
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 202 6378 6382 "ocamlbuild/resource.ml" 202 6378 6409
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 194 6036 6040 "ocamlbuild/resource.ml" 202 6378 6409
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 193 5991 5995 "ocamlbuild/resource.ml" 202 6378 6409
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 192 5948 5952 "ocamlbuild/resource.ml" 202 6378 6409
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 191 5917 5921 "ocamlbuild/resource.ml" 202 6378 6409
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 204 6411 6417 "ocamlbuild/resource.ml" 204 6411 6433
+type(
+  Pathname.t -> Command.t -> (unit -> 'b) -> Pathname.t list -> unit
+)
+"ocamlbuild/resource.ml" 204 6411 6434 "ocamlbuild/resource.ml" 204 6411 6435
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 204 6411 6436 "ocamlbuild/resource.ml" 204 6411 6439
+type(
+  Command.t
+)
+"ocamlbuild/resource.ml" 204 6411 6440 "ocamlbuild/resource.ml" 204 6411 6444
+type(
+  unit -> 'b
+)
+"ocamlbuild/resource.ml" 204 6411 6445 "ocamlbuild/resource.ml" 204 6411 6450
+type(
+  Pathname.t list
+)
+"ocamlbuild/resource.ml" 205 6453 6461 "ocamlbuild/resource.ml" 205 6453 6472
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 205 6453 6475 "ocamlbuild/resource.ml" 205 6453 6478
+type(
+  Pathname.t -> cache_entry
+)
+"ocamlbuild/resource.ml" 205 6453 6479 "ocamlbuild/resource.ml" 205 6453 6480
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 205 6453 6475 "ocamlbuild/resource.ml" 205 6453 6480
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 206 6484 6494 "ocamlbuild/resource.ml" 206 6484 6505
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 206 6484 6494 "ocamlbuild/resource.ml" 206 6484 6511
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 207 6517 6535 "ocamlbuild/resource.ml" 207 6517 6536
+type(
+  suspension
+)
+"ocamlbuild/resource.ml" 207 6517 6523 "ocamlbuild/resource.ml" 207 6517 6536
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 207 6517 6540 "ocamlbuild/resource.ml" 207 6517 6542
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 208 6543 6549 "ocamlbuild/resource.ml" 208 6543 6555
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 208 6543 6559 "ocamlbuild/resource.ml" 208 6543 6561
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 209 6562 6568 "ocamlbuild/resource.ml" 209 6562 6584
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 209 6562 6588 "ocamlbuild/resource.ml" 209 6562 6600
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 210 6601 6607 "ocamlbuild/resource.ml" 210 6601 6621
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 211 6625 6637 "ocamlbuild/resource.ml" 211 6625 6641
+type(
+  unit -> unit
+)
+"ocamlbuild/resource.ml" 211 6625 6654 "ocamlbuild/resource.ml" 211 6625 6656
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 212 6660 6670 "ocamlbuild/resource.ml" 212 6660 6674
+type(
+  unit -> 'b
+)
+"ocamlbuild/resource.ml" 212 6660 6675 "ocamlbuild/resource.ml" 212 6660 6677
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 212 6660 6670 "ocamlbuild/resource.ml" 212 6660 6677
+type(
+  'b
+)
+"ocamlbuild/resource.ml" 213 6679 6689 "ocamlbuild/resource.ml" 213 6679 6698
+type(
+  (Pathname.t -> unit) -> Pathname.t list -> unit
+)
+"ocamlbuild/resource.ml" 213 6679 6709 "ocamlbuild/resource.ml" 213 6679 6713
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 214 6717 6730 "ocamlbuild/resource.ml" 214 6717 6733
+type(
+  Pathname.t -> cache_entry
+)
+"ocamlbuild/resource.ml" 214 6717 6734 "ocamlbuild/resource.ml" 214 6717 6738
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 214 6717 6729 "ocamlbuild/resource.ml" 214 6717 6739
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 214 6717 6749 "ocamlbuild/resource.ml" 214 6717 6755
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 214 6717 6729 "ocamlbuild/resource.ml" 214 6717 6755
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 213 6679 6699 "ocamlbuild/resource.ml" 215 6756 6769
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 215 6756 6770 "ocamlbuild/resource.ml" 215 6756 6775
+type(
+  Pathname.t list
+)
+"ocamlbuild/resource.ml" 213 6679 6689 "ocamlbuild/resource.ml" 215 6756 6775
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 212 6660 6670 "ocamlbuild/resource.ml" 215 6756 6775
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 211 6625 6644 "ocamlbuild/resource.ml" 216 6776 6787
+type(
+  unit -> unit
+)
+"ocamlbuild/resource.ml" 216 6776 6791 "ocamlbuild/resource.ml" 216 6776 6802
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 216 6776 6824 "ocamlbuild/resource.ml" 216 6776 6827
+type(
+  Command.t
+)
+"ocamlbuild/resource.ml" 216 6776 6829 "ocamlbuild/resource.ml" 216 6776 6833
+type(
+  unit -> unit
+)
+"ocamlbuild/resource.ml" 216 6776 6823 "ocamlbuild/resource.ml" 216 6776 6834
+type(
+  suspension
+)
+"ocamlbuild/resource.ml" 216 6776 6812 "ocamlbuild/resource.ml" 216 6776 6834
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 216 6776 6791 "ocamlbuild/resource.ml" 216 6776 6834
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 211 6625 6633 "ocamlbuild/resource.ml" 216 6776 6834
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 206 6484 6488 "ocamlbuild/resource.ml" 216 6776 6834
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 205 6453 6457 "ocamlbuild/resource.ml" 216 6776 6834
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 218 6836 6842 "ocamlbuild/resource.ml" 218 6836 6859
+type(
+  Command.t * (unit -> 'c) -> 'c
+)
+"ocamlbuild/resource.ml" 218 6836 6861 "ocamlbuild/resource.ml" 218 6836 6864
+type(
+  Command.t
+)
+"ocamlbuild/resource.ml" 218 6836 6866 "ocamlbuild/resource.ml" 218 6836 6870
+type(
+  unit -> 'c
+)
+"ocamlbuild/resource.ml" 218 6836 6860 "ocamlbuild/resource.ml" 218 6836 6871
+type(
+  Command.t * (unit -> 'c)
+)
+"ocamlbuild/resource.ml" 219 6874 6878 "ocamlbuild/resource.ml" 219 6874 6893
+type(
+  ?quiet:bool -> ?pretend:bool -> Command.t -> unit
+)
+"ocamlbuild/resource.ml" 219 6874 6894 "ocamlbuild/resource.ml" 219 6874 6897
+type(
+  Command.t
+)
+"ocamlbuild/resource.ml" 219 6874 6878 "ocamlbuild/resource.ml" 219 6874 6897
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 220 6899 6903 "ocamlbuild/resource.ml" 220 6899 6907
+type(
+  unit -> 'c
+)
+"ocamlbuild/resource.ml" 220 6899 6908 "ocamlbuild/resource.ml" 220 6899 6910
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 220 6899 6903 "ocamlbuild/resource.ml" 220 6899 6910
+type(
+  'c
+)
+"ocamlbuild/resource.ml" 219 6874 6878 "ocamlbuild/resource.ml" 220 6899 6910
+type(
+  'c
+)
+"ocamlbuild/resource.ml" 222 6912 6918 "ocamlbuild/resource.ml" 222 6912 6933
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 222 6912 6934 "ocamlbuild/resource.ml" 222 6912 6935
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 223 6938 6946 "ocamlbuild/resource.ml" 223 6938 6957
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 223 6938 6960 "ocamlbuild/resource.ml" 223 6938 6963
+type(
+  Pathname.t -> cache_entry
+)
+"ocamlbuild/resource.ml" 223 6938 6964 "ocamlbuild/resource.ml" 223 6938 6965
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 223 6938 6960 "ocamlbuild/resource.ml" 223 6938 6965
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 224 6969 6979 "ocamlbuild/resource.ml" 224 6969 6990
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 224 6969 6979 "ocamlbuild/resource.ml" 224 6969 6996
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 225 7002 7019 "ocamlbuild/resource.ml" 225 7002 7022
+type(
+  suspension
+)
+"ocamlbuild/resource.ml" 225 7002 7008 "ocamlbuild/resource.ml" 225 7002 7022
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 225 7002 7026 "ocamlbuild/resource.ml" 225 7002 7043
+type(
+  suspension -> unit
+)
+"ocamlbuild/resource.ml" 225 7002 7044 "ocamlbuild/resource.ml" 225 7002 7045
+type(
+  suspension
+)
+"ocamlbuild/resource.ml" 225 7002 7026 "ocamlbuild/resource.ml" 225 7002 7045
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 226 7046 7052 "ocamlbuild/resource.ml" 226 7046 7058
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 226 7046 7062 "ocamlbuild/resource.ml" 226 7046 7064
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 227 7065 7071 "ocamlbuild/resource.ml" 227 7065 7087
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 227 7065 7091 "ocamlbuild/resource.ml" 227 7065 7093
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 228 7094 7100 "ocamlbuild/resource.ml" 228 7094 7114
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 228 7094 7118 "ocamlbuild/resource.ml" 228 7094 7120
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 224 6969 6973 "ocamlbuild/resource.ml" 228 7094 7120
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 223 6938 6942 "ocamlbuild/resource.ml" 228 7094 7120
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 230 7122 7128 "ocamlbuild/resource.ml" 230 7122 7160
+type(
+  Pathname.t -> suspension option
+)
+"ocamlbuild/resource.ml" 230 7122 7161 "ocamlbuild/resource.ml" 230 7122 7162
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 231 7165 7176 "ocamlbuild/resource.ml" 231 7165 7179
+type(
+  Pathname.t -> cache_entry
+)
+"ocamlbuild/resource.ml" 231 7165 7180 "ocamlbuild/resource.ml" 231 7165 7181
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 231 7165 7175 "ocamlbuild/resource.ml" 231 7165 7182
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 231 7165 7175 "ocamlbuild/resource.ml" 231 7165 7188
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 232 7194 7212 "ocamlbuild/resource.ml" 232 7194 7220
+type(
+  suspension
+)
+"ocamlbuild/resource.ml" 232 7194 7200 "ocamlbuild/resource.ml" 232 7194 7220
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 232 7194 7229 "ocamlbuild/resource.ml" 232 7194 7237
+type(
+  suspension
+)
+"ocamlbuild/resource.ml" 232 7194 7224 "ocamlbuild/resource.ml" 232 7194 7237
+type(
+  suspension option
+)
+"ocamlbuild/resource.ml" 233 7238 7244 "ocamlbuild/resource.ml" 233 7238 7250
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 233 7238 7253 "ocamlbuild/resource.ml" 233 7238 7269
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 233 7238 7244 "ocamlbuild/resource.ml" 233 7238 7269
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 233 7238 7272 "ocamlbuild/resource.ml" 233 7238 7286
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 233 7238 7244 "ocamlbuild/resource.ml" 233 7238 7286
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 233 7238 7290 "ocamlbuild/resource.ml" 233 7238 7294
+type(
+  suspension option
+)
+"ocamlbuild/resource.ml" 231 7165 7169 "ocamlbuild/resource.ml" 233 7238 7294
+type(
+  suspension option
+)
+"ocamlbuild/resource.ml" 235 7296 7302 "ocamlbuild/resource.ml" 235 7296 7323
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 235 7296 7324 "ocamlbuild/resource.ml" 235 7296 7325
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 235 7296 7329 "ocamlbuild/resource.ml" 235 7296 7332
+type(
+  Pathname.t -> cache_entry
+)
+"ocamlbuild/resource.ml" 235 7296 7333 "ocamlbuild/resource.ml" 235 7296 7334
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 235 7296 7328 "ocamlbuild/resource.ml" 235 7296 7335
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 235 7296 7345 "ocamlbuild/resource.ml" 235 7296 7359
+type(
+  build_status
+)
+"ocamlbuild/resource.ml" 235 7296 7328 "ocamlbuild/resource.ml" 235 7296 7359
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 237 7361 7367 "ocamlbuild/resource.ml" 237 7361 7379
+type(
+  Pathname.t -> Resources.t
+)
+"ocamlbuild/resource.ml" 237 7361 7380 "ocamlbuild/resource.ml" 237 7361 7381
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 237 7361 7385 "ocamlbuild/resource.ml" 237 7361 7388
+type(
+  Pathname.t -> cache_entry
+)
+"ocamlbuild/resource.ml" 237 7361 7389 "ocamlbuild/resource.ml" 237 7361 7390
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 237 7361 7384 "ocamlbuild/resource.ml" 237 7361 7391
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 237 7361 7384 "ocamlbuild/resource.ml" 237 7361 7404
+type(
+  Resources.t
+)
+"ocamlbuild/resource.ml" 239 7406 7412 "ocamlbuild/resource.ml" 239 7406 7429
+type(
+  (Pathname.t -> Resources.elt -> 'd -> 'd) -> 'd -> 'd
+)
+"ocamlbuild/resource.ml" 239 7406 7430 "ocamlbuild/resource.ml" 239 7406 7431
+type(
+  Pathname.t -> Resources.elt -> 'd -> 'd
+)
+"ocamlbuild/resource.ml" 240 7434 7438 "ocamlbuild/resource.ml" 240 7434 7448
+type(
+  (Pathname.t -> cache_entry -> 'd -> 'd) -> 'd -> 'd
+)
+"ocamlbuild/resource.ml" 240 7434 7454 "ocamlbuild/resource.ml" 240 7434 7455
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 240 7434 7456 "ocamlbuild/resource.ml" 240 7434 7457
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 240 7434 7461 "ocamlbuild/resource.ml" 240 7434 7475
+type(
+  (Resources.elt -> 'd -> 'd) -> Resources.t -> 'd -> 'd
+)
+"ocamlbuild/resource.ml" 240 7434 7477 "ocamlbuild/resource.ml" 240 7434 7478
+type(
+  Pathname.t -> Resources.elt -> 'd -> 'd
+)
+"ocamlbuild/resource.ml" 240 7434 7479 "ocamlbuild/resource.ml" 240 7434 7480
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 240 7434 7476 "ocamlbuild/resource.ml" 240 7434 7481
+type(
+  Resources.elt -> 'd -> 'd
+)
+"ocamlbuild/resource.ml" 240 7434 7482 "ocamlbuild/resource.ml" 240 7434 7483
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 240 7434 7482 "ocamlbuild/resource.ml" 240 7434 7496
+type(
+  Resources.t
+)
+"ocamlbuild/resource.ml" 240 7434 7461 "ocamlbuild/resource.ml" 240 7434 7496
+type(
+  'd -> 'd
+)
+"ocamlbuild/resource.ml" 240 7434 7449 "ocamlbuild/resource.ml" 240 7434 7497
+type(
+  Pathname.t -> cache_entry -> 'd -> 'd
+)
+"ocamlbuild/resource.ml" 240 7434 7438 "ocamlbuild/resource.ml" 240 7434 7497
+type(
+  'd -> 'd
+)
+"ocamlbuild/resource.ml" 242 7499 7505 "ocamlbuild/resource.ml" 242 7499 7519
+type(
+  Pathname.t -> Resources.elt -> unit
+)
+"ocamlbuild/resource.ml" 242 7499 7520 "ocamlbuild/resource.ml" 242 7499 7521
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 242 7499 7522 "ocamlbuild/resource.ml" 242 7499 7523
+type(
+  Resources.elt
+)
+"ocamlbuild/resource.ml" 243 7526 7534 "ocamlbuild/resource.ml" 243 7526 7545
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 243 7526 7548 "ocamlbuild/resource.ml" 243 7526 7551
+type(
+  Pathname.t -> cache_entry
+)
+"ocamlbuild/resource.ml" 243 7526 7552 "ocamlbuild/resource.ml" 243 7526 7553
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 243 7526 7548 "ocamlbuild/resource.ml" 243 7526 7553
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 244 7557 7561 "ocamlbuild/resource.ml" 244 7557 7572
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 244 7557 7589 "ocamlbuild/resource.ml" 244 7557 7602
+type(
+  Resources.elt -> Resources.t -> Resources.t
+)
+"ocamlbuild/resource.ml" 244 7557 7603 "ocamlbuild/resource.ml" 244 7557 7604
+type(
+  Resources.elt
+)
+"ocamlbuild/resource.ml" 244 7557 7605 "ocamlbuild/resource.ml" 244 7557 7616
+type(
+  cache_entry
+)
+"ocamlbuild/resource.ml" 244 7557 7605 "ocamlbuild/resource.ml" 244 7557 7629
+type(
+  Resources.t
+)
+"ocamlbuild/resource.ml" 244 7557 7589 "ocamlbuild/resource.ml" 244 7557 7629
+type(
+  Resources.t
+)
+"ocamlbuild/resource.ml" 244 7557 7561 "ocamlbuild/resource.ml" 244 7557 7629
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 243 7526 7530 "ocamlbuild/resource.ml" 244 7557 7629
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 246 7631 7637 "ocamlbuild/resource.ml" 246 7631 7655
+type(
+  Format.formatter -> unit -> unit
+)
+"ocamlbuild/resource.ml" 246 7631 7658 "ocamlbuild/resource.ml" 246 7631 7669
+type(
+  Format.formatter -> unit -> unit
+)
+"ocamlbuild/resource.ml" 250 7676 7680 "ocamlbuild/resource.ml" 250 7676 7686
+type(
+  Pathname.t -> My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 250 7676 7687 "ocamlbuild/resource.ml" 250 7676 7688
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 251 7691 7697 "ocamlbuild/resource.ml" 251 7691 7698
+type(
+  string
+)
+"ocamlbuild/resource.ml" 251 7691 7701 "ocamlbuild/resource.ml" 251 7691 7719
+type(
+  Pathname.t -> string
+)
+"ocamlbuild/resource.ml" 251 7691 7721 "ocamlbuild/resource.ml" 251 7691 7733
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 251 7691 7734 "ocamlbuild/resource.ml" 251 7691 7735
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 251 7691 7720 "ocamlbuild/resource.ml" 251 7691 7736
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 251 7691 7701 "ocamlbuild/resource.ml" 251 7691 7736
+type(
+  string
+)
+"ocamlbuild/resource.ml" 252 7740 7746 "ocamlbuild/resource.ml" 252 7740 7749
+type(
+  Buffer.t
+)
+"ocamlbuild/resource.ml" 252 7740 7752 "ocamlbuild/resource.ml" 252 7740 7765
+type(
+  int -> Buffer.t
+)
+"ocamlbuild/resource.ml" 252 7740 7766 "ocamlbuild/resource.ml" 252 7740 7770
+type(
+  int
+)
+"ocamlbuild/resource.ml" 252 7740 7752 "ocamlbuild/resource.ml" 252 7740 7770
+type(
+  Buffer.t
+)
+"ocamlbuild/resource.ml" 253 7774 7776 "ocamlbuild/resource.ml" 253 7774 7793
+type(
+  Buffer.t -> string -> unit
+)
+"ocamlbuild/resource.ml" 253 7774 7794 "ocamlbuild/resource.ml" 253 7774 7797
+type(
+  Buffer.t
+)
+"ocamlbuild/resource.ml" 253 7774 7798 "ocamlbuild/resource.ml" 253 7774 7799
+type(
+  string
+)
+"ocamlbuild/resource.ml" 253 7774 7776 "ocamlbuild/resource.ml" 253 7774 7799
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 254 7801 7807 "ocamlbuild/resource.ml" 254 7801 7822
+type(
+  string -> bool
+)
+"ocamlbuild/resource.ml" 254 7801 7823 "ocamlbuild/resource.ml" 254 7801 7824
+type(
+  string
+)
+"ocamlbuild/resource.ml" 254 7801 7807 "ocamlbuild/resource.ml" 254 7801 7824
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 254 7801 7830 "ocamlbuild/resource.ml" 254 7801 7847
+type(
+  Buffer.t -> My_std.Digest.t -> unit
+)
+"ocamlbuild/resource.ml" 254 7801 7848 "ocamlbuild/resource.ml" 254 7801 7851
+type(
+  Buffer.t
+)
+"ocamlbuild/resource.ml" 254 7801 7853 "ocamlbuild/resource.ml" 254 7801 7864
+type(
+  string -> My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 254 7801 7865 "ocamlbuild/resource.ml" 254 7801 7866
+type(
+  string
+)
+"ocamlbuild/resource.ml" 254 7801 7852 "ocamlbuild/resource.ml" 254 7801 7867
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 254 7801 7830 "ocamlbuild/resource.ml" 254 7801 7867
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 254 7801 7803 "ocamlbuild/resource.ml" 254 7801 7868
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 255 7870 7872 "ocamlbuild/resource.ml" 255 7870 7885
+type(
+  string -> My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 255 7870 7887 "ocamlbuild/resource.ml" 255 7870 7902
+type(
+  Buffer.t -> string
+)
+"ocamlbuild/resource.ml" 255 7870 7903 "ocamlbuild/resource.ml" 255 7870 7906
+type(
+  Buffer.t
+)
+"ocamlbuild/resource.ml" 255 7870 7886 "ocamlbuild/resource.ml" 255 7870 7907
+type(
+  string
+)
+"ocamlbuild/resource.ml" 255 7870 7872 "ocamlbuild/resource.ml" 255 7870 7907
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 254 7801 7803 "ocamlbuild/resource.ml" 255 7870 7907
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 253 7774 7776 "ocamlbuild/resource.ml" 255 7870 7907
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 252 7740 7742 "ocamlbuild/resource.ml" 255 7870 7907
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 251 7691 7693 "ocamlbuild/resource.ml" 255 7870 7907
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/resource.ml" 257 7909 7913 "ocamlbuild/resource.ml" 257 7909 7932
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 257 7909 7933 "ocamlbuild/resource.ml" 257 7909 7934
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 257 7909 7937 "ocamlbuild/resource.ml" 257 7909 7952
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/resource.ml" 257 7909 7954 "ocamlbuild/resource.ml" 257 7909 7966
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 257 7909 7967 "ocamlbuild/resource.ml" 257 7909 7968
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 257 7909 7953 "ocamlbuild/resource.ml" 257 7909 7969
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 257 7909 7937 "ocamlbuild/resource.ml" 257 7909 7969
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 290 8736 8740 "ocamlbuild/resource.ml" 290 8736 8746
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 290 8736 8747 "ocamlbuild/resource.ml" 290 8736 8748
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 290 8736 8751 "ocamlbuild/resource.ml" 290 8736 8769
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/resource.ml" 290 8736 8770 "ocamlbuild/resource.ml" 290 8736 8771
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 290 8736 8751 "ocamlbuild/resource.ml" 290 8736 8771
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 311 9155 9160 "ocamlbuild/resource.ml" 311 9155 9162
+type(
+  bool * string -> atoms list
+)
+"ocamlbuild/resource.ml" 311 9155 9164 "ocamlbuild/resource.ml" 311 9155 9179
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 311 9155 9181 "ocamlbuild/resource.ml" 311 9155 9182
+type(
+  string
+)
+"ocamlbuild/resource.ml" 311 9155 9163 "ocamlbuild/resource.ml" 311 9155 9183
+type(
+  bool * string
+)
+"ocamlbuild/resource.ml" 311 9155 9186 "ocamlbuild/resource.ml" 311 9155 9194
+type(
+  ([ `Var of string * Glob.globber | `Word of string ] -> atoms) ->
+  [ `Var of string * Glob.globber | `Word of string ] list -> atoms list
+)
+"ocamlbuild/resource.ml" 312 9210 9227 "ocamlbuild/resource.ml" 312 9210 9235
+type(
+  string
+)
+"ocamlbuild/resource.ml" 312 9210 9237 "ocamlbuild/resource.ml" 312 9210 9244
+type(
+  Glob.globber
+)
+"ocamlbuild/resource.ml" 312 9210 9226 "ocamlbuild/resource.ml" 312 9210 9245
+type(
+  string * Glob.globber
+)
+"ocamlbuild/resource.ml" 312 9210 9222 "ocamlbuild/resource.ml" 312 9210 9245
+type(
+  [ `Var of string * Glob.globber | `Word of string ]
+)
+"ocamlbuild/resource.ml" 312 9210 9251 "ocamlbuild/resource.ml" 312 9210 9259
+type(
+  string
+)
+"ocamlbuild/resource.ml" 312 9210 9261 "ocamlbuild/resource.ml" 312 9210 9268
+type(
+  Glob.globber
+)
+"ocamlbuild/resource.ml" 312 9210 9249 "ocamlbuild/resource.ml" 312 9210 9269
+type(
+  atoms
+)
+"ocamlbuild/resource.ml" 313 9270 9288 "ocamlbuild/resource.ml" 313 9270 9289
+type(
+  string
+)
+"ocamlbuild/resource.ml" 313 9270 9282 "ocamlbuild/resource.ml" 313 9270 9289
+type(
+  [ `Var of string * Glob.globber | `Word of string ]
+)
+"ocamlbuild/resource.ml" 313 9270 9295 "ocamlbuild/resource.ml" 313 9270 9296
+type(
+  string
+)
+"ocamlbuild/resource.ml" 313 9270 9293 "ocamlbuild/resource.ml" 313 9270 9296
+type(
+  atoms
+)
+"ocamlbuild/resource.ml" 311 9155 9195 "ocamlbuild/resource.ml" 314 9297 9308
+type(
+  [ `Var of string * Glob.globber | `Word of string ] -> atoms
+)
+"ocamlbuild/resource.ml" 314 9297 9310 "ocamlbuild/resource.ml" 314 9297 9328
+type(
+  bool ->
+  Lexing.lexbuf -> [ `Var of string * Glob.globber | `Word of string ] list
+)
+"ocamlbuild/resource.ml" 314 9297 9329 "ocamlbuild/resource.ml" 314 9297 9344
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 314 9297 9346 "ocamlbuild/resource.ml" 314 9297 9364
+type(
+  string -> Lexing.lexbuf
+)
+"ocamlbuild/resource.ml" 314 9297 9365 "ocamlbuild/resource.ml" 314 9297 9366
+type(
+  string
+)
+"ocamlbuild/resource.ml" 314 9297 9345 "ocamlbuild/resource.ml" 314 9297 9367
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/resource.ml" 314 9297 9309 "ocamlbuild/resource.ml" 314 9297 9368
+type(
+  [ `Var of string * Glob.globber | `Word of string ] list
+)
+"ocamlbuild/resource.ml" 311 9155 9186 "ocamlbuild/resource.ml" 314 9297 9368
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 316 9370 9382 "ocamlbuild/resource.ml" 316 9370 9384
+type(
+  bool * string -> atoms list
+)
+"ocamlbuild/resource.ml" 316 9370 9387 "ocamlbuild/resource.ml" 316 9370 9391
+type(
+  (bool * string -> atoms list) -> bool * string -> atoms list
+)
+"ocamlbuild/resource.ml" 316 9370 9392 "ocamlbuild/resource.ml" 316 9370 9394
+type(
+  bool * string -> atoms list
+)
+"ocamlbuild/resource.ml" 316 9370 9387 "ocamlbuild/resource.ml" 316 9370 9394
+type(
+  bool * string -> atoms list
+)
+"ocamlbuild/resource.ml" 318 9396 9401 "ocamlbuild/resource.ml" 318 9396 9413
+type(
+  string -> int -> string -> int
+)
+"ocamlbuild/resource.ml" 318 9396 9414 "ocamlbuild/resource.ml" 318 9396 9415
+type(
+  string
+)
+"ocamlbuild/resource.ml" 318 9396 9416 "ocamlbuild/resource.ml" 318 9396 9419
+type(
+  int
+)
+"ocamlbuild/resource.ml" 318 9396 9420 "ocamlbuild/resource.ml" 318 9396 9426
+type(
+  string
+)
+"ocamlbuild/resource.ml" 319 9429 9437 "ocamlbuild/resource.ml" 319 9429 9459
+type(
+  string -> int -> string -> int option
+)
+"ocamlbuild/resource.ml" 319 9429 9460 "ocamlbuild/resource.ml" 319 9429 9461
+type(
+  string
+)
+"ocamlbuild/resource.ml" 319 9429 9462 "ocamlbuild/resource.ml" 319 9429 9465
+type(
+  int
+)
+"ocamlbuild/resource.ml" 319 9429 9466 "ocamlbuild/resource.ml" 319 9429 9472
+type(
+  string
+)
+"ocamlbuild/resource.ml" 319 9429 9437 "ocamlbuild/resource.ml" 319 9429 9472
+type(
+  int option
+)
+"ocamlbuild/resource.ml" 320 9478 9486 "ocamlbuild/resource.ml" 320 9478 9492
+type(
+  int
+)
+"ocamlbuild/resource.ml" 320 9478 9482 "ocamlbuild/resource.ml" 320 9478 9492
+type(
+  int option
+)
+"ocamlbuild/resource.ml" 320 9478 9499 "ocamlbuild/resource.ml" 320 9478 9502
+type(
+  int
+)
+"ocamlbuild/resource.ml" 320 9478 9503 "ocamlbuild/resource.ml" 320 9478 9504
+type(
+  int -> int -> bool
+)
+"ocamlbuild/resource.ml" 320 9478 9505 "ocamlbuild/resource.ml" 320 9478 9509
+type(
+  int
+)
+"ocamlbuild/resource.ml" 320 9478 9499 "ocamlbuild/resource.ml" 320 9478 9509
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 320 9478 9515 "ocamlbuild/resource.ml" 320 9478 9519
+type(
+  int
+)
+"ocamlbuild/resource.ml" 320 9478 9520 "ocamlbuild/resource.ml" 320 9478 9521
+type(
+  int -> int -> int
+)
+"ocamlbuild/resource.ml" 320 9478 9522 "ocamlbuild/resource.ml" 320 9478 9535
+type(
+  string -> int
+)
+"ocamlbuild/resource.ml" 320 9478 9536 "ocamlbuild/resource.ml" 320 9478 9542
+type(
+  string
+)
+"ocamlbuild/resource.ml" 320 9478 9522 "ocamlbuild/resource.ml" 320 9478 9542
+type(
+  int
+)
+"ocamlbuild/resource.ml" 320 9478 9515 "ocamlbuild/resource.ml" 320 9478 9542
+type(
+  int
+)
+"ocamlbuild/resource.ml" 320 9478 9548 "ocamlbuild/resource.ml" 320 9478 9553
+type(
+  exn -> int
+)
+"ocamlbuild/resource.ml" 320 9478 9554 "ocamlbuild/resource.ml" 320 9478 9565
+type(
+  exn
+)
+"ocamlbuild/resource.ml" 320 9478 9548 "ocamlbuild/resource.ml" 320 9478 9565
+type(
+  int
+)
+"ocamlbuild/resource.ml" 320 9478 9496 "ocamlbuild/resource.ml" 320 9478 9565
+type(
+  int
+)
+"ocamlbuild/resource.ml" 321 9566 9570 "ocamlbuild/resource.ml" 321 9566 9574
+type(
+  int option
+)
+"ocamlbuild/resource.ml" 321 9566 9578 "ocamlbuild/resource.ml" 321 9566 9583
+type(
+  exn -> int
+)
+"ocamlbuild/resource.ml" 321 9566 9584 "ocamlbuild/resource.ml" 321 9566 9595
+type(
+  exn
+)
+"ocamlbuild/resource.ml" 321 9566 9578 "ocamlbuild/resource.ml" 321 9566 9595
+type(
+  int
+)
+"ocamlbuild/resource.ml" 319 9429 9431 "ocamlbuild/resource.ml" 321 9566 9595
+type(
+  int
+)
+"ocamlbuild/resource.ml" 323 9597 9602 "ocamlbuild/resource.ml" 323 9597 9609
+type(
+  atoms list -> string -> (string * string) list option
+)
+"ocamlbuild/resource.ml" 323 9597 9610 "ocamlbuild/resource.ml" 323 9597 9611
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 323 9597 9612 "ocamlbuild/resource.ml" 323 9597 9613
+type(
+  string
+)
+"ocamlbuild/resource.ml" 324 9616 9623 "ocamlbuild/resource.ml" 324 9616 9625
+type(
+  int
+)
+"ocamlbuild/resource.ml" 324 9616 9628 "ocamlbuild/resource.ml" 324 9616 9641
+type(
+  string -> int
+)
+"ocamlbuild/resource.ml" 324 9616 9642 "ocamlbuild/resource.ml" 324 9616 9643
+type(
+  string
+)
+"ocamlbuild/resource.ml" 324 9616 9628 "ocamlbuild/resource.ml" 324 9616 9643
+type(
+  int
+)
+"ocamlbuild/resource.ml" 325 9647 9657 "ocamlbuild/resource.ml" 325 9647 9661
+type(
+  atoms list ->
+  int -> (string * string) list -> int -> (string * string) list
+)
+"ocamlbuild/resource.ml" 325 9647 9662 "ocamlbuild/resource.ml" 325 9647 9664
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 325 9647 9665 "ocamlbuild/resource.ml" 325 9647 9668
+type(
+  int
+)
+"ocamlbuild/resource.ml" 325 9647 9669 "ocamlbuild/resource.ml" 325 9647 9672
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 325 9647 9673 "ocamlbuild/resource.ml" 325 9647 9678
+type(
+  int
+)
+"ocamlbuild/resource.ml" 326 9681 9690 "ocamlbuild/resource.ml" 326 9681 9692
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 327 9698 9703 "ocamlbuild/resource.ml" 327 9698 9705
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 327 9698 9712 "ocamlbuild/resource.ml" 327 9698 9715
+type(
+  int
+)
+"ocamlbuild/resource.ml" 327 9698 9716 "ocamlbuild/resource.ml" 327 9698 9717
+type(
+  int -> int -> bool
+)
+"ocamlbuild/resource.ml" 327 9698 9718 "ocamlbuild/resource.ml" 327 9698 9720
+type(
+  int
+)
+"ocamlbuild/resource.ml" 327 9698 9712 "ocamlbuild/resource.ml" 327 9698 9720
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 327 9698 9726 "ocamlbuild/resource.ml" 327 9698 9729
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 327 9698 9735 "ocamlbuild/resource.ml" 327 9698 9740
+type(
+  exn -> (string * string) list
+)
+"ocamlbuild/resource.ml" 327 9698 9741 "ocamlbuild/resource.ml" 327 9698 9752
+type(
+  exn
+)
+"ocamlbuild/resource.ml" 327 9698 9735 "ocamlbuild/resource.ml" 327 9698 9752
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 327 9698 9709 "ocamlbuild/resource.ml" 327 9698 9752
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 328 9753 9760 "ocamlbuild/resource.ml" 328 9753 9766
+type(
+  string
+)
+"ocamlbuild/resource.ml" 328 9753 9758 "ocamlbuild/resource.ml" 328 9753 9766
+type(
+  atoms
+)
+"ocamlbuild/resource.ml" 328 9753 9770 "ocamlbuild/resource.ml" 328 9753 9772
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 328 9753 9758 "ocamlbuild/resource.ml" 328 9753 9772
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 328 9753 9776 "ocamlbuild/resource.ml" 328 9753 9780
+type(
+  atoms list ->
+  int -> (string * string) list -> int -> (string * string) list
+)
+"ocamlbuild/resource.ml" 328 9753 9781 "ocamlbuild/resource.ml" 328 9753 9783
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 328 9753 9785 "ocamlbuild/resource.ml" 328 9753 9797
+type(
+  string -> int -> string -> int
+)
+"ocamlbuild/resource.ml" 328 9753 9798 "ocamlbuild/resource.ml" 328 9753 9799
+type(
+  string
+)
+"ocamlbuild/resource.ml" 328 9753 9800 "ocamlbuild/resource.ml" 328 9753 9803
+type(
+  int
+)
+"ocamlbuild/resource.ml" 328 9753 9804 "ocamlbuild/resource.ml" 328 9753 9810
+type(
+  string
+)
+"ocamlbuild/resource.ml" 328 9753 9784 "ocamlbuild/resource.ml" 328 9753 9811
+type(
+  int
+)
+"ocamlbuild/resource.ml" 328 9753 9812 "ocamlbuild/resource.ml" 328 9753 9815
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 328 9753 9816 "ocamlbuild/resource.ml" 328 9753 9817
+type(
+  int
+)
+"ocamlbuild/resource.ml" 328 9753 9776 "ocamlbuild/resource.ml" 328 9753 9817
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 329 9818 9825 "ocamlbuild/resource.ml" 329 9818 9828
+type(
+  string
+)
+"ocamlbuild/resource.ml" 329 9818 9830 "ocamlbuild/resource.ml" 329 9818 9834
+type(
+  Glob.globber
+)
+"ocamlbuild/resource.ml" 329 9818 9823 "ocamlbuild/resource.ml" 329 9818 9835
+type(
+  atoms
+)
+"ocamlbuild/resource.ml" 329 9818 9841 "ocamlbuild/resource.ml" 329 9818 9843
+type(
+  string
+)
+"ocamlbuild/resource.ml" 329 9818 9839 "ocamlbuild/resource.ml" 329 9818 9843
+type(
+  atoms
+)
+"ocamlbuild/resource.ml" 329 9818 9847 "ocamlbuild/resource.ml" 329 9818 9850
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 329 9818 9839 "ocamlbuild/resource.ml" 329 9818 9850
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 329 9818 9823 "ocamlbuild/resource.ml" 329 9818 9850
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 330 9854 9894 "ocamlbuild/resource.ml" 330 9854 9916
+type(
+  string -> int -> string -> int option
+)
+"ocamlbuild/resource.ml" 330 9854 9917 "ocamlbuild/resource.ml" 330 9854 9918
+type(
+  string
+)
+"ocamlbuild/resource.ml" 330 9854 9920 "ocamlbuild/resource.ml" 330 9854 9923
+type(
+  int
+)
+"ocamlbuild/resource.ml" 330 9854 9924 "ocamlbuild/resource.ml" 330 9854 9925
+type(
+  int -> int -> int
+)
+"ocamlbuild/resource.ml" 330 9854 9926 "ocamlbuild/resource.ml" 330 9854 9931
+type(
+  int
+)
+"ocamlbuild/resource.ml" 330 9854 9919 "ocamlbuild/resource.ml" 330 9854 9932
+type(
+  int
+)
+"ocamlbuild/resource.ml" 330 9854 9933 "ocamlbuild/resource.ml" 330 9854 9935
+type(
+  string
+)
+"ocamlbuild/resource.ml" 330 9854 9894 "ocamlbuild/resource.ml" 330 9854 9935
+type(
+  int option
+)
+"ocamlbuild/resource.ml" 331 9941 9975 "ocamlbuild/resource.ml" 331 9941 9981
+type(
+  int
+)
+"ocamlbuild/resource.ml" 331 9941 9971 "ocamlbuild/resource.ml" 331 9941 9981
+type(
+  int option
+)
+"ocamlbuild/resource.ml" 332 9985 10021 "ocamlbuild/resource.ml" 332 9985 10028
+type(
+  string
+)
+"ocamlbuild/resource.ml" 332 9985 10031 "ocamlbuild/resource.ml" 332 9985 10041
+type(
+  string -> int -> int -> string
+)
+"ocamlbuild/resource.ml" 332 9985 10042 "ocamlbuild/resource.ml" 332 9985 10043
+type(
+  string
+)
+"ocamlbuild/resource.ml" 332 9985 10044 "ocamlbuild/resource.ml" 332 9985 10047
+type(
+  int
+)
+"ocamlbuild/resource.ml" 332 9985 10049 "ocamlbuild/resource.ml" 332 9985 10053
+type(
+  int
+)
+"ocamlbuild/resource.ml" 332 9985 10054 "ocamlbuild/resource.ml" 332 9985 10055
+type(
+  int -> int -> int
+)
+"ocamlbuild/resource.ml" 332 9985 10056 "ocamlbuild/resource.ml" 332 9985 10059
+type(
+  int
+)
+"ocamlbuild/resource.ml" 332 9985 10048 "ocamlbuild/resource.ml" 332 9985 10060
+type(
+  int
+)
+"ocamlbuild/resource.ml" 332 9985 10031 "ocamlbuild/resource.ml" 332 9985 10060
+type(
+  string
+)
+"ocamlbuild/resource.ml" 333 10064 10099 "ocamlbuild/resource.ml" 333 10064 10108
+type(
+  Glob.globber -> string -> bool
+)
+"ocamlbuild/resource.ml" 333 10064 10109 "ocamlbuild/resource.ml" 333 10064 10113
+type(
+  Glob.globber
+)
+"ocamlbuild/resource.ml" 333 10064 10114 "ocamlbuild/resource.ml" 333 10064 10121
+type(
+  string
+)
+"ocamlbuild/resource.ml" 333 10064 10099 "ocamlbuild/resource.ml" 333 10064 10121
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 335 10159 10197 "ocamlbuild/resource.ml" 335 10159 10201
+type(
+  atoms list ->
+  int -> (string * string) list -> int -> (string * string) list
+)
+"ocamlbuild/resource.ml" 335 10159 10202 "ocamlbuild/resource.ml" 335 10159 10205
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 335 10159 10207 "ocamlbuild/resource.ml" 335 10159 10211
+type(
+  int
+)
+"ocamlbuild/resource.ml" 335 10159 10212 "ocamlbuild/resource.ml" 335 10159 10213
+type(
+  int -> int -> int
+)
+"ocamlbuild/resource.ml" 335 10159 10214 "ocamlbuild/resource.ml" 335 10159 10227
+type(
+  string -> int
+)
+"ocamlbuild/resource.ml" 335 10159 10228 "ocamlbuild/resource.ml" 335 10159 10230
+type(
+  string
+)
+"ocamlbuild/resource.ml" 335 10159 10214 "ocamlbuild/resource.ml" 335 10159 10230
+type(
+  int
+)
+"ocamlbuild/resource.ml" 335 10159 10206 "ocamlbuild/resource.ml" 335 10159 10231
+type(
+  int
+)
+"ocamlbuild/resource.ml" 335 10159 10234 "ocamlbuild/resource.ml" 335 10159 10237
+type(
+  string
+)
+"ocamlbuild/resource.ml" 335 10159 10239 "ocamlbuild/resource.ml" 335 10159 10246
+type(
+  string
+)
+"ocamlbuild/resource.ml" 335 10159 10233 "ocamlbuild/resource.ml" 335 10159 10247
+type(
+  string * string
+)
+"ocamlbuild/resource.ml" 335 10159 10251 "ocamlbuild/resource.ml" 335 10159 10254
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 335 10159 10232 "ocamlbuild/resource.ml" 335 10159 10255
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 335 10159 10256 "ocamlbuild/resource.ml" 335 10159 10257
+type(
+  int
+)
+"ocamlbuild/resource.ml" 335 10159 10197 "ocamlbuild/resource.ml" 335 10159 10257
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 336 10258 10297 "ocamlbuild/resource.ml" 336 10258 10308
+type(
+  exn
+)
+"ocamlbuild/resource.ml" 336 10258 10312 "ocamlbuild/resource.ml" 336 10258 10316
+type(
+  atoms list ->
+  int -> (string * string) list -> int -> (string * string) list
+)
+"ocamlbuild/resource.ml" 336 10258 10317 "ocamlbuild/resource.ml" 336 10258 10319
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 336 10258 10321 "ocamlbuild/resource.ml" 336 10258 10324
+type(
+  int
+)
+"ocamlbuild/resource.ml" 336 10258 10325 "ocamlbuild/resource.ml" 336 10258 10328
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 336 10258 10330 "ocamlbuild/resource.ml" 336 10258 10334
+type(
+  int
+)
+"ocamlbuild/resource.ml" 336 10258 10335 "ocamlbuild/resource.ml" 336 10258 10336
+type(
+  int -> int -> int
+)
+"ocamlbuild/resource.ml" 336 10258 10337 "ocamlbuild/resource.ml" 336 10258 10340
+type(
+  int
+)
+"ocamlbuild/resource.ml" 336 10258 10330 "ocamlbuild/resource.ml" 336 10258 10340
+type(
+  int
+)
+"ocamlbuild/resource.ml" 336 10258 10341 "ocamlbuild/resource.ml" 336 10258 10342
+type(
+  int -> int -> int
+)
+"ocamlbuild/resource.ml" 336 10258 10343 "ocamlbuild/resource.ml" 336 10258 10344
+type(
+  int
+)
+"ocamlbuild/resource.ml" 336 10258 10329 "ocamlbuild/resource.ml" 336 10258 10345
+type(
+  int
+)
+"ocamlbuild/resource.ml" 336 10258 10312 "ocamlbuild/resource.ml" 336 10258 10345
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 335 10159 10193 "ocamlbuild/resource.ml" 336 10258 10345
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 337 10346 10383 "ocamlbuild/resource.ml" 337 10346 10387
+type(
+  atoms list ->
+  int -> (string * string) list -> int -> (string * string) list
+)
+"ocamlbuild/resource.ml" 337 10346 10388 "ocamlbuild/resource.ml" 337 10346 10390
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 337 10346 10392 "ocamlbuild/resource.ml" 337 10346 10395
+type(
+  int
+)
+"ocamlbuild/resource.ml" 337 10346 10396 "ocamlbuild/resource.ml" 337 10346 10399
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 337 10346 10401 "ocamlbuild/resource.ml" 337 10346 10405
+type(
+  int
+)
+"ocamlbuild/resource.ml" 337 10346 10406 "ocamlbuild/resource.ml" 337 10346 10407
+type(
+  int -> int -> int
+)
+"ocamlbuild/resource.ml" 337 10346 10408 "ocamlbuild/resource.ml" 337 10346 10411
+type(
+  int
+)
+"ocamlbuild/resource.ml" 337 10346 10401 "ocamlbuild/resource.ml" 337 10346 10411
+type(
+  int
+)
+"ocamlbuild/resource.ml" 337 10346 10412 "ocamlbuild/resource.ml" 337 10346 10413
+type(
+  int -> int -> int
+)
+"ocamlbuild/resource.ml" 337 10346 10414 "ocamlbuild/resource.ml" 337 10346 10415
+type(
+  int
+)
+"ocamlbuild/resource.ml" 337 10346 10400 "ocamlbuild/resource.ml" 337 10346 10416
+type(
+  int
+)
+"ocamlbuild/resource.ml" 337 10346 10383 "ocamlbuild/resource.ml" 337 10346 10416
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 333 10064 10096 "ocamlbuild/resource.ml" 337 10346 10416
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 332 9985 10017 "ocamlbuild/resource.ml" 337 10346 10416
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 338 10417 10447 "ocamlbuild/resource.ml" 338 10417 10451
+type(
+  int option
+)
+"ocamlbuild/resource.ml" 338 10417 10455 "ocamlbuild/resource.ml" 338 10417 10460
+type(
+  exn -> (string * string) list
+)
+"ocamlbuild/resource.ml" 338 10417 10461 "ocamlbuild/resource.ml" 338 10417 10472
+type(
+  exn
+)
+"ocamlbuild/resource.ml" 338 10417 10455 "ocamlbuild/resource.ml" 338 10417 10472
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 330 9854 9882 "ocamlbuild/resource.ml" 339 10473 10504
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 340 10505 10513 "ocamlbuild/resource.ml" 340 10505 10516
+type(
+  string
+)
+"ocamlbuild/resource.ml" 340 10505 10518 "ocamlbuild/resource.ml" 340 10505 10522
+type(
+  Glob.globber
+)
+"ocamlbuild/resource.ml" 340 10505 10511 "ocamlbuild/resource.ml" 340 10505 10523
+type(
+  atoms
+)
+"ocamlbuild/resource.ml" 340 10505 10510 "ocamlbuild/resource.ml" 340 10505 10524
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 341 10528 10560 "ocamlbuild/resource.ml" 341 10528 10567
+type(
+  string
+)
+"ocamlbuild/resource.ml" 341 10528 10570 "ocamlbuild/resource.ml" 341 10528 10580
+type(
+  string -> int -> int -> string
+)
+"ocamlbuild/resource.ml" 341 10528 10581 "ocamlbuild/resource.ml" 341 10528 10582
+type(
+  string
+)
+"ocamlbuild/resource.ml" 341 10528 10583 "ocamlbuild/resource.ml" 341 10528 10586
+type(
+  int
+)
+"ocamlbuild/resource.ml" 341 10528 10588 "ocamlbuild/resource.ml" 341 10528 10590
+type(
+  int
+)
+"ocamlbuild/resource.ml" 341 10528 10591 "ocamlbuild/resource.ml" 341 10528 10592
+type(
+  int -> int -> int
+)
+"ocamlbuild/resource.ml" 341 10528 10593 "ocamlbuild/resource.ml" 341 10528 10596
+type(
+  int
+)
+"ocamlbuild/resource.ml" 341 10528 10587 "ocamlbuild/resource.ml" 341 10528 10597
+type(
+  int
+)
+"ocamlbuild/resource.ml" 341 10528 10570 "ocamlbuild/resource.ml" 341 10528 10597
+type(
+  string
+)
+"ocamlbuild/resource.ml" 342 10601 10632 "ocamlbuild/resource.ml" 342 10601 10641
+type(
+  Glob.globber -> string -> bool
+)
+"ocamlbuild/resource.ml" 342 10601 10642 "ocamlbuild/resource.ml" 342 10601 10646
+type(
+  Glob.globber
+)
+"ocamlbuild/resource.ml" 342 10601 10647 "ocamlbuild/resource.ml" 342 10601 10654
+type(
+  string
+)
+"ocamlbuild/resource.ml" 342 10601 10632 "ocamlbuild/resource.ml" 342 10601 10654
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 342 10601 10661 "ocamlbuild/resource.ml" 342 10601 10664
+type(
+  string
+)
+"ocamlbuild/resource.ml" 342 10601 10666 "ocamlbuild/resource.ml" 342 10601 10673
+type(
+  string
+)
+"ocamlbuild/resource.ml" 342 10601 10660 "ocamlbuild/resource.ml" 342 10601 10674
+type(
+  string * string
+)
+"ocamlbuild/resource.ml" 342 10601 10678 "ocamlbuild/resource.ml" 342 10601 10681
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 342 10601 10660 "ocamlbuild/resource.ml" 342 10601 10681
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 342 10601 10687 "ocamlbuild/resource.ml" 342 10601 10692
+type(
+  exn -> (string * string) list
+)
+"ocamlbuild/resource.ml" 342 10601 10693 "ocamlbuild/resource.ml" 342 10601 10704
+type(
+  exn
+)
+"ocamlbuild/resource.ml" 342 10601 10687 "ocamlbuild/resource.ml" 342 10601 10704
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 342 10601 10629 "ocamlbuild/resource.ml" 342 10601 10704
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 341 10528 10556 "ocamlbuild/resource.ml" 342 10601 10704
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 343 10705 10712 "ocamlbuild/resource.ml" 343 10705 10713
+type(
+  Glob.globber
+)
+"ocamlbuild/resource.ml" 343 10705 10712 "ocamlbuild/resource.ml" 343 10705 10713
+type(
+  string
+)
+"ocamlbuild/resource.ml" 343 10705 10710 "ocamlbuild/resource.ml" 343 10705 10713
+type(
+  atoms
+)
+"ocamlbuild/resource.ml" 343 10705 10717 "ocamlbuild/resource.ml" 343 10705 10718
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 343 10705 10710 "ocamlbuild/resource.ml" 343 10705 10718
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 343 10705 10722 "ocamlbuild/resource.ml" 343 10705 10734
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 326 9681 9684 "ocamlbuild/resource.ml" 343 10705 10734
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 345 10740 10752 "ocamlbuild/resource.ml" 345 10740 10756
+type(
+  atoms list ->
+  int -> (string * string) list -> int -> (string * string) list
+)
+"ocamlbuild/resource.ml" 345 10740 10757 "ocamlbuild/resource.ml" 345 10740 10758
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 345 10740 10759 "ocamlbuild/resource.ml" 345 10740 10760
+type(
+  int
+)
+"ocamlbuild/resource.ml" 345 10740 10761 "ocamlbuild/resource.ml" 345 10740 10763
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 345 10740 10764 "ocamlbuild/resource.ml" 345 10740 10765
+type(
+  int
+)
+"ocamlbuild/resource.ml" 345 10740 10751 "ocamlbuild/resource.ml" 345 10740 10766
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 345 10740 10746 "ocamlbuild/resource.ml" 345 10740 10766
+type(
+  (string * string) list option
+)
+"ocamlbuild/resource.ml" 346 10767 10774 "ocamlbuild/resource.ml" 346 10767 10785
+type(
+  exn
+)
+"ocamlbuild/resource.ml" 346 10767 10789 "ocamlbuild/resource.ml" 346 10767 10793
+type(
+  (string * string) list option
+)
+"ocamlbuild/resource.ml" 345 10740 10742 "ocamlbuild/resource.ml" 346 10767 10793
+type(
+  (string * string) list option
+)
+"ocamlbuild/resource.ml" 325 9647 9649 "ocamlbuild/resource.ml" 346 10767 10793
+type(
+  (string * string) list option
+)
+"ocamlbuild/resource.ml" 324 9616 9619 "ocamlbuild/resource.ml" 346 10767 10793
+type(
+  (string * string) list option
+)
+"ocamlbuild/resource.ml" 348 10795 10801 "ocamlbuild/resource.ml" 348 10795 10807
+type(
+  (Format.formatter -> 'a -> unit) -> Format.formatter -> 'a option -> unit
+)
+"ocamlbuild/resource.ml" 348 10795 10808 "ocamlbuild/resource.ml" 348 10795 10814
+type(
+  Format.formatter -> 'a -> unit
+)
+"ocamlbuild/resource.ml" 348 10795 10815 "ocamlbuild/resource.ml" 348 10795 10816
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 350 10832 10838 "ocamlbuild/resource.ml" 350 10832 10842
+type(
+  'a option
+)
+"ocamlbuild/resource.ml" 350 10832 10846 "ocamlbuild/resource.ml" 350 10832 10861
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/resource.ml" 350 10832 10862 "ocamlbuild/resource.ml" 350 10832 10863
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 350 10832 10864 "ocamlbuild/resource.ml" 350 10832 10870
+type(
+  string
+)
+"ocamlbuild/resource.ml" 350 10832 10846 "ocamlbuild/resource.ml" 350 10832 10870
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 351 10871 10882 "ocamlbuild/resource.ml" 351 10871 10883
+type(
+  'a
+)
+"ocamlbuild/resource.ml" 351 10871 10877 "ocamlbuild/resource.ml" 351 10871 10883
+type(
+  'a option
+)
+"ocamlbuild/resource.ml" 351 10871 10887 "ocamlbuild/resource.ml" 351 10871 10901
+type(
+  Format.formatter ->
+  ((Format.formatter -> 'a -> unit) -> 'a -> unit, Format.formatter, unit)
+  format -> (Format.formatter -> 'a -> unit) -> 'a -> unit
+)
+"ocamlbuild/resource.ml" 351 10871 10902 "ocamlbuild/resource.ml" 351 10871 10903
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 351 10871 10904 "ocamlbuild/resource.ml" 351 10871 10914
+type(
+  ((Format.formatter -> 'a -> unit) -> 'a -> unit, Format.formatter, unit)
+  format
+)
+"ocamlbuild/resource.ml" 351 10871 10915 "ocamlbuild/resource.ml" 351 10871 10921
+type(
+  Format.formatter -> 'a -> unit
+)
+"ocamlbuild/resource.ml" 351 10871 10922 "ocamlbuild/resource.ml" 351 10871 10923
+type(
+  'a
+)
+"ocamlbuild/resource.ml" 351 10871 10887 "ocamlbuild/resource.ml" 351 10871 10923
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 349 10819 10823 "ocamlbuild/resource.ml" 351 10871 10923
+type(
+  'a option -> unit
+)
+"ocamlbuild/resource.ml" 353 10925 10931 "ocamlbuild/resource.ml" 353 10925 10940
+type(
+  Format.formatter -> (string * string) list -> unit
+)
+"ocamlbuild/resource.ml" 353 10925 10941 "ocamlbuild/resource.ml" 353 10925 10942
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 353 10925 10943 "ocamlbuild/resource.ml" 353 10925 10946
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 354 10949 10953 "ocamlbuild/resource.ml" 354 10949 10962
+type(
+  (string * string -> unit) -> (string * string) list -> unit
+)
+"ocamlbuild/resource.ml" 354 10949 10974 "ocamlbuild/resource.ml" 354 10949 10975
+type(
+  string
+)
+"ocamlbuild/resource.ml" 354 10949 10977 "ocamlbuild/resource.ml" 354 10949 10978
+type(
+  string
+)
+"ocamlbuild/resource.ml" 354 10949 10973 "ocamlbuild/resource.ml" 354 10949 10979
+type(
+  string * string
+)
+"ocamlbuild/resource.ml" 355 10983 10992 "ocamlbuild/resource.ml" 355 10983 10993
+type(
+  string
+)
+"ocamlbuild/resource.ml" 355 10983 10994 "ocamlbuild/resource.ml" 355 10983 10995
+type(
+  string -> string -> bool
+)
+"ocamlbuild/resource.ml" 355 10983 10996 "ocamlbuild/resource.ml" 355 10983 10998
+type(
+  string
+)
+"ocamlbuild/resource.ml" 355 10983 10992 "ocamlbuild/resource.ml" 355 10983 10998
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 355 10983 11004 "ocamlbuild/resource.ml" 355 10983 11018
+type(
+  Format.formatter ->
+  (string -> unit, Format.formatter, unit) format -> string -> unit
+)
+"ocamlbuild/resource.ml" 355 10983 11019 "ocamlbuild/resource.ml" 355 10983 11020
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 355 10983 11021 "ocamlbuild/resource.ml" 355 10983 11029
+type(
+  (string -> unit, Format.formatter, unit) format
+)
+"ocamlbuild/resource.ml" 355 10983 11030 "ocamlbuild/resource.ml" 355 10983 11031
+type(
+  string
+)
+"ocamlbuild/resource.ml" 355 10983 11004 "ocamlbuild/resource.ml" 355 10983 11031
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 356 11032 11043 "ocamlbuild/resource.ml" 356 11032 11057
+type(
+  Format.formatter ->
+  (string -> string -> unit, Format.formatter, unit) format ->
+  string -> string -> unit
+)
+"ocamlbuild/resource.ml" 356 11032 11058 "ocamlbuild/resource.ml" 356 11032 11059
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 356 11032 11060 "ocamlbuild/resource.ml" 356 11032 11072
+type(
+  (string -> string -> unit, Format.formatter, unit) format
+)
+"ocamlbuild/resource.ml" 356 11032 11073 "ocamlbuild/resource.ml" 356 11032 11074
+type(
+  string
+)
+"ocamlbuild/resource.ml" 356 11032 11075 "ocamlbuild/resource.ml" 356 11032 11076
+type(
+  string
+)
+"ocamlbuild/resource.ml" 356 11032 11043 "ocamlbuild/resource.ml" 356 11032 11076
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 355 10983 10989 "ocamlbuild/resource.ml" 356 11032 11076
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 354 10949 10963 "ocamlbuild/resource.ml" 357 11077 11084
+type(
+  string * string -> unit
+)
+"ocamlbuild/resource.ml" 357 11077 11085 "ocamlbuild/resource.ml" 357 11077 11088
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 354 10949 10953 "ocamlbuild/resource.ml" 357 11077 11088
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 374 11621 11626 "ocamlbuild/resource.ml" 374 11621 11631
+type(
+  (string * string) list -> atoms list -> string
+)
+"ocamlbuild/resource.ml" 374 11621 11632 "ocamlbuild/resource.ml" 374 11621 11635
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 374 11621 11636 "ocamlbuild/resource.ml" 374 11621 11637
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 375 11640 11642 "ocamlbuild/resource.ml" 375 11640 11655
+type(
+  string -> string list -> string
+)
+"ocamlbuild/resource.ml" 375 11640 11656 "ocamlbuild/resource.ml" 375 11640 11658
+type(
+  string
+)
+"ocamlbuild/resource.ml" 376 11665 11668 "ocamlbuild/resource.ml" 376 11665 11676
+type(
+  (atoms -> string) -> atoms list -> string list
+)
+"ocamlbuild/resource.ml" 376 11665 11687 "ocamlbuild/resource.ml" 376 11665 11688
+type(
+  atoms
+)
+"ocamlbuild/resource.ml" 377 11692 11702 "ocamlbuild/resource.ml" 377 11692 11703
+type(
+  atoms
+)
+"ocamlbuild/resource.ml" 378 11709 11717 "ocamlbuild/resource.ml" 378 11709 11721
+type(
+  string
+)
+"ocamlbuild/resource.ml" 378 11709 11715 "ocamlbuild/resource.ml" 378 11709 11721
+type(
+  atoms
+)
+"ocamlbuild/resource.ml" 378 11709 11725 "ocamlbuild/resource.ml" 378 11709 11729
+type(
+  string
+)
+"ocamlbuild/resource.ml" 379 11730 11738 "ocamlbuild/resource.ml" 379 11730 11741
+type(
+  string
+)
+"ocamlbuild/resource.ml" 379 11730 11743 "ocamlbuild/resource.ml" 379 11730 11744
+type(
+  Glob.globber
+)
+"ocamlbuild/resource.ml" 379 11730 11736 "ocamlbuild/resource.ml" 379 11730 11745
+type(
+  atoms
+)
+"ocamlbuild/resource.ml" 379 11730 11749 "ocamlbuild/resource.ml" 379 11730 11759
+type(
+  string -> (string * string) list -> string
+)
+"ocamlbuild/resource.ml" 379 11730 11760 "ocamlbuild/resource.ml" 379 11730 11763
+type(
+  string
+)
+"ocamlbuild/resource.ml" 379 11730 11764 "ocamlbuild/resource.ml" 379 11730 11767
+type(
+  (string * string) list
+)
+"ocamlbuild/resource.ml" 379 11730 11749 "ocamlbuild/resource.ml" 379 11730 11767
+type(
+  string
+)
+"ocamlbuild/resource.ml" 377 11692 11696 "ocamlbuild/resource.ml" 379 11730 11767
+type(
+  string
+)
+"ocamlbuild/resource.ml" 376 11665 11677 "ocamlbuild/resource.ml" 380 11768 11774
+type(
+  atoms -> string
+)
+"ocamlbuild/resource.ml" 380 11768 11775 "ocamlbuild/resource.ml" 380 11768 11776
+type(
+  atoms list
+)
+"ocamlbuild/resource.ml" 375 11640 11659 "ocamlbuild/resource.ml" 381 11777 11782
+type(
+  string list
+)
+"ocamlbuild/resource.ml" 375 11640 11642 "ocamlbuild/resource.ml" 381 11777 11782
+type(
+  string
+)
+"ocamlbuild/resource.ml" 387 11863 11867 "ocamlbuild/resource.ml" 387 11863 11880
+type(
+  Format.formatter -> Pathname.t * 'a -> unit
+)
+"ocamlbuild/resource.ml" 387 11863 11881 "ocamlbuild/resource.ml" 387 11863 11882
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 387 11863 11884 "ocamlbuild/resource.ml" 387 11863 11885
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 387 11863 11887 "ocamlbuild/resource.ml" 387 11863 11888
+type(
+  'a
+)
+"ocamlbuild/resource.ml" 387 11863 11883 "ocamlbuild/resource.ml" 387 11863 11889
+type(
+  Pathname.t * 'a
+)
+"ocamlbuild/resource.ml" 387 11863 11892 "ocamlbuild/resource.ml" 387 11863 11906
+type(
+  Format.formatter -> Pathname.t -> unit
+)
+"ocamlbuild/resource.ml" 387 11863 11907 "ocamlbuild/resource.ml" 387 11863 11908
+type(
+  Format.formatter
+)
+"ocamlbuild/resource.ml" 387 11863 11909 "ocamlbuild/resource.ml" 387 11863 11910
+type(
+  Pathname.t
+)
+"ocamlbuild/resource.ml" 387 11863 11892 "ocamlbuild/resource.ml" 387 11863 11910
+type(
+  unit
+)
+"ocamlbuild/resource.ml" 389 11912 11916 "ocamlbuild/resource.ml" 389 11912 11930
+type(
+  string -> string * MetaPath.t
+)
+"ocamlbuild/resource.ml" 389 11912 11931 "ocamlbuild/resource.ml" 389 11912 11932
+type(
+  string
+)
+"ocamlbuild/resource.ml" 389 11912 11935 "ocamlbuild/resource.ml" 389 11912 11936
+type(
+  string
+)
+"ocamlbuild/resource.ml" 389 11912 11938 "ocamlbuild/resource.ml" 389 11912 11949
+type(
+  bool * string -> MetaPath.t
+)
+"ocamlbuild/resource.ml" 389 11912 11951 "ocamlbuild/resource.ml" 389 11912 11955
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 389 11912 11957 "ocamlbuild/resource.ml" 389 11912 11958
+type(
+  string
+)
+"ocamlbuild/resource.ml" 389 11912 11950 "ocamlbuild/resource.ml" 389 11912 11959
+type(
+  bool * string
+)
+"ocamlbuild/resource.ml" 389 11912 11938 "ocamlbuild/resource.ml" 389 11912 11959
+type(
+  MetaPath.t
+)
+"ocamlbuild/resource.ml" 389 11912 11935 "ocamlbuild/resource.ml" 389 11912 11959
+type(
+  string * MetaPath.t
+)
+"ocamlbuild/resource.ml" 390 11960 11964 "ocamlbuild/resource.ml" 390 11960 11971
+type(
+  'a * MetaPath.t -> string -> MetaPath.env option
+)
+"ocamlbuild/resource.ml" 390 11960 11973 "ocamlbuild/resource.ml" 390 11960 11974
+type(
+  'a
+)
+"ocamlbuild/resource.ml" 390 11960 11976 "ocamlbuild/resource.ml" 390 11960 11977
+type(
+  MetaPath.t
+)
+"ocamlbuild/resource.ml" 390 11960 11972 "ocamlbuild/resource.ml" 390 11960 11978
+type(
+  'a * MetaPath.t
+)
+"ocamlbuild/resource.ml" 390 11960 11979 "ocamlbuild/resource.ml" 390 11960 11980
+type(
+  string
+)
+"ocamlbuild/resource.ml" 390 11960 11983 "ocamlbuild/resource.ml" 390 11960 11999
+type(
+  MetaPath.t -> string -> MetaPath.env option
+)
+"ocamlbuild/resource.ml" 390 11960 12000 "ocamlbuild/resource.ml" 390 11960 12001
+type(
+  MetaPath.t
+)
+"ocamlbuild/resource.ml" 390 11960 12002 "ocamlbuild/resource.ml" 390 11960 12003
+type(
+  string
+)
+"ocamlbuild/resource.ml" 390 11960 11983 "ocamlbuild/resource.ml" 390 11960 12003
+type(
+  MetaPath.env option
+)
+"ocamlbuild/resource.ml" 392 12005 12009 "ocamlbuild/resource.ml" 392 12005 12014
+type(
+  MetaPath.env -> string -> string
+)
+"ocamlbuild/resource.ml" 392 12005 12015 "ocamlbuild/resource.ml" 392 12005 12018
+type(
+  MetaPath.env
+)
+"ocamlbuild/resource.ml" 392 12005 12019 "ocamlbuild/resource.ml" 392 12005 12020
+type(
+  string
+)
+"ocamlbuild/resource.ml" 392 12005 12023 "ocamlbuild/resource.ml" 392 12005 12037
+type(
+  MetaPath.env -> MetaPath.t -> string
+)
+"ocamlbuild/resource.ml" 392 12005 12038 "ocamlbuild/resource.ml" 392 12005 12041
+type(
+  MetaPath.env
+)
+"ocamlbuild/resource.ml" 392 12005 12043 "ocamlbuild/resource.ml" 392 12005 12054
+type(
+  bool * string -> MetaPath.t
+)
+"ocamlbuild/resource.ml" 392 12005 12056 "ocamlbuild/resource.ml" 392 12005 12061
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 392 12005 12063 "ocamlbuild/resource.ml" 392 12005 12064
+type(
+  string
+)
+"ocamlbuild/resource.ml" 392 12005 12055 "ocamlbuild/resource.ml" 392 12005 12065
+type(
+  bool * string
+)
+"ocamlbuild/resource.ml" 392 12005 12042 "ocamlbuild/resource.ml" 392 12005 12066
+type(
+  MetaPath.t
+)
+"ocamlbuild/resource.ml" 392 12005 12023 "ocamlbuild/resource.ml" 392 12005 12066
+type(
+  string
+)
+"ocamlbuild/resource.ml" 393 12067 12071 "ocamlbuild/resource.ml" 393 12067 12080
+type(
+  MetaPath.env -> string -> string
+)
+"ocamlbuild/resource.ml" 393 12067 12081 "ocamlbuild/resource.ml" 393 12067 12084
+type(
+  MetaPath.env
+)
+"ocamlbuild/resource.ml" 393 12067 12085 "ocamlbuild/resource.ml" 393 12067 12086
+type(
+  string
+)
+"ocamlbuild/resource.ml" 393 12067 12089 "ocamlbuild/resource.ml" 393 12067 12103
+type(
+  MetaPath.env -> MetaPath.t -> string
+)
+"ocamlbuild/resource.ml" 393 12067 12104 "ocamlbuild/resource.ml" 393 12067 12107
+type(
+  MetaPath.env
+)
+"ocamlbuild/resource.ml" 393 12067 12109 "ocamlbuild/resource.ml" 393 12067 12120
+type(
+  bool * string -> MetaPath.t
+)
+"ocamlbuild/resource.ml" 393 12067 12122 "ocamlbuild/resource.ml" 393 12067 12126
+type(
+  bool
+)
+"ocamlbuild/resource.ml" 393 12067 12128 "ocamlbuild/resource.ml" 393 12067 12129
+type(
+  string
+)
+"ocamlbuild/resource.ml" 393 12067 12121 "ocamlbuild/resource.ml" 393 12067 12130
+type(
+  bool * string
+)
+"ocamlbuild/resource.ml" 393 12067 12108 "ocamlbuild/resource.ml" 393 12067 12131
+type(
+  MetaPath.t
+)
+"ocamlbuild/resource.ml" 393 12067 12089 "ocamlbuild/resource.ml" 393 12067 12131
+type(
+  string
+)
+"ocamlbuild/resource.ml" 394 12132 12136 "ocamlbuild/resource.ml" 394 12132 12149
+type(
+  MetaPath.env -> 'a * MetaPath.t -> string
+)
+"ocamlbuild/resource.ml" 394 12132 12150 "ocamlbuild/resource.ml" 394 12132 12153
+type(
+  MetaPath.env
+)
+"ocamlbuild/resource.ml" 394 12132 12155 "ocamlbuild/resource.ml" 394 12132 12156
+type(
+  'a
+)
+"ocamlbuild/resource.ml" 394 12132 12158 "ocamlbuild/resource.ml" 394 12132 12159
+type(
+  MetaPath.t
+)
+"ocamlbuild/resource.ml" 394 12132 12154 "ocamlbuild/resource.ml" 394 12132 12160
+type(
+  'a * MetaPath.t
+)
+"ocamlbuild/resource.ml" 394 12132 12163 "ocamlbuild/resource.ml" 394 12132 12177
+type(
+  MetaPath.env -> MetaPath.t -> string
+)
+"ocamlbuild/resource.ml" 394 12132 12178 "ocamlbuild/resource.ml" 394 12132 12181
+type(
+  MetaPath.env
+)
+"ocamlbuild/resource.ml" 394 12132 12182 "ocamlbuild/resource.ml" 394 12132 12183
+type(
+  MetaPath.t
+)
+"ocamlbuild/resource.ml" 394 12132 12163 "ocamlbuild/resource.ml" 394 12132 12183
+type(
+  string
+)
+"ocamlbuild/resource.ml" 396 12185 12189 "ocamlbuild/resource.ml" 396 12185 12198
+type(
+  Format.formatter -> MetaPath.env -> unit
+)
+"ocamlbuild/resource.ml" 396 12185 12201 "ocamlbuild/resource.ml" 396 12185 12219
+type(
+  Format.formatter -> MetaPath.env -> unit
+)

@@ -1,0 +1,172 @@
+#########################################################################
+#                                                                       #
+#                            Objective Caml                             #
+#                                                                       #
+#            Xavier Leroy, projet Cristal, INRIA Rocquencourt           #
+#                                                                       #
+#   Copyright 1999 Institut National de Recherche en Informatique et    #
+#   en Automatique.  All rights reserved.  This file is distributed     #
+#   under the terms of the GNU Library General Public License, with     #
+#   the special exception on linking described in file ../LICENSE.      #
+#                                                                       #
+#########################################################################
+
+# $Id: Makefile.msvc,v 1.21.2.3 2007/10/25 09:31:54 xleroy Exp $
+
+# Configuration for Windows, Visual C++ compiler
+
+######### General configuration
+
+PREFIX=C:/ocamlms
+
+### Where to install the binaries.
+BINDIR=$(PREFIX)/bin
+
+### Where to install the standard library
+LIBDIR=$(PREFIX)/lib
+
+### Where to install the stub DLLs
+STUBLIBDIR=$(LIBDIR)/stublibs
+
+### Where to install the info files
+DISTRIB=$(PREFIX)
+
+### Where to install the man pages
+MANDIR=$(PREFIX)/man
+
+########## Toolchain and OS dependencies
+
+TOOLCHAIN=msvc
+CCOMPTYPE=msvc
+O=obj
+A=lib
+S=asm
+SO=s.obj
+DO=d.obj
+EXE=.exe
+EXT_DLL=.dll
+EXT_OBJ=.$(O)
+EXT_LIB=.$(A)
+EXT_ASM=.$(S)
+MANEXT=1
+SHARPBANGSCRIPTS=false
+PTHREAD_LINK=
+X11_INCLUDES=
+X11_LINK=
+DBM_INCLUDES=
+DBM_LINK=
+BYTECCRPATH=
+SUPPORTS_SHARED_LIBRARIES=true
+SHAREDCCCOMPOPTS=
+NATIVECCPROFOPTS=
+NATIVECCRPATH=
+ASFLAGS=
+ASPP=
+ASPPFLAGS=
+ASPPPROFFLAGS=
+PROFILING=noprof
+DYNLINKOPTS=
+DEBUGGER=
+CC_PROFILE=
+SYSTHREAD_SUPPORT=true
+EXTRALIBS=
+
+########## Configuration for the bytecode compiler
+
+### Which C compiler to use for the bytecode interpreter.
+BYTECC=cl /nologo -D_CRT_SECURE_NO_DEPRECATE
+
+### Additional compile-time options for $(BYTECC).  (For static linking.)
+BYTECCCOMPOPTS=/Ox /MT
+
+### Additional link-time options for $(BYTECC).  (For static linking.)
+BYTECCLINKOPTS=/MT /F16777216
+
+### Additional compile-time options for $(BYTECC).  (For building a DLL.)
+DLLCCCOMPOPTS=/Ox /MD -DCAML_DLL
+
+### Libraries needed
+BYTECCLIBS=advapi32.lib
+NATIVECCLIBS=advapi32.lib
+
+### How to invoke the C preprocessor
+CPP=cl /nologo /EP
+
+### How to merge a .manifest (if any) in a .exe
+MERGEMANIFESTEXE=test ! -f $(1).manifest || mt -nologo -outputresource:$(1) -manifest $(1).manifest && rm -f $(1).manifest
+#ml let mergemanifestexe out = Printf.sprintf "test ! -f %s.manifest || mt -nologo -outputresource:%s -manifest %s.manifest && rm -f %s.manifest" out out out out;;
+
+### How to build an EXE
+MKEXE=$(BYTECC) /Fe$(1) $(2) && ($(MERGEMANIFESTEXE))
+#ml let mkexe out files opts = Printf.sprintf "%s /Fe%s %s %s && (%s)" bytecc out opts files (mergemanifestexe out);;
+
+### How to merge a .manifest (if any) in a .dll
+MERGEMANIFESTDLL=test ! -f $(1).manifest || mt -nologo -outputresource:"$(1);\#2" -manifest $(1).manifest && rm -f $(1).manifest
+#ml let mergemanifestdll out = Printf.sprintf "test ! -f %s.manifest || mt -nologo -outputresource:\"%s;\\#2\" -manifest %s.manifest && rm -f %s.manifest" out out out out;;
+
+### How to build a DLL
+MKDLL=link /nologo /dll /out:$(1) /implib:$(2) $(3) && ($(MERGEMANIFESTDLL))
+#ml let mkdll out implib files opts = Printf.sprintf "link /nologo /dll /out:%s /implib:%s %s %s && (%s)" out implib opts files (mergemanifestdll out);;
+
+### How to build a static library
+MKLIB=link /lib /nologo /out:$(1) $(2)
+#ml let mklib out files opts = Printf.sprintf "link /lib /nologo /out:%s %s %s" out opts files;;
+MKSHAREDLIBRPATH=
+
+### Canonicalize the name of a system library
+SYSLIB=$(1).lib
+#ml let syslib x = x ^ ".lib";;
+
+### The ranlib command
+RANLIB=
+RANLIBCMD=
+
+############# Configuration for the native-code compiler
+
+### Name of architecture for the native-code compiler
+ARCH=i386
+
+### Name of architecture model for the native-code compiler.
+MODEL=default
+
+### Name of operating system family for the native-code compiler.
+SYSTEM=win32
+
+### Which C compiler to use for the native-code compiler.
+NATIVECC=cl /nologo -D_CRT_SECURE_NO_DEPRECATE
+
+### Additional compile-time options for $(NATIVECC).
+NATIVECCCOMPOPTS=/Ox /MT
+
+### Additional link-time options for $(NATIVECC)
+NATIVECCLINKOPTS=/MT /F16777216
+
+### Build partially-linked object file
+PARTIALLD=link /lib /nologo
+PACKLD=link /lib /nologo /out:# there must be no space after this '/out:'
+
+############# Configuration for the contributed libraries
+
+OTHERLIBRARIES=win32unix systhreads str num win32graph dynlink bigarray labltk
+
+### Name of the target architecture for the "num" library
+BNG_ARCH=generic
+BNG_ASM_LEVEL=0
+
+### Configuration for LablTk
+# Set TK_ROOT to the directory where you installed TCL/TK 8.3
+TK_ROOT=c:/tcl
+TK_DEFS=-I$(TK_ROOT)/include
+# The following definition avoids hard-wiring $(TK_ROOT) in the libraries
+# produced by OCaml, and is therefore required for binary distribution
+# of these libraries.  However, $(TK_ROOT) must be added to the LIB
+# environment variable, as described in README.win32.
+TK_LINK=tk84.lib tcl84.lib
+# An alternative definition that avoids mucking with the LIB variable,
+# but hard-wires the Tcl/Tk location in the binaries
+# TK_LINK=$(TK_ROOT)/tk83.lib $(TK_ROOT)/tcl83.lib
+
+############# Aliases for common commands
+
+MAKEREC=$(MAKE) -f Makefile.nt 
+MAKECMD=$(MAKE)

@@ -1,0 +1,600 @@
+(* 2/19/2006 *)
+(* Static analysis of BNG systems*)
+(* Jerome Feret pour PlectiX *)
+(* Abstract boolean expressions: BDD Implementation *)
+(* bdd.ml *)
+
+open Config
+open Tools
+open Expr
+open Kleenean_expr
+open Var
+open Pb_sig
+open Data_structures
+open Abstract_expr_sig
+
+
+module BddBool = 
+  (functor (KExpr:Kleenean_Expr) -> 
+       (struct 
+	 module K = KExpr
+
+	 type abstract_expr = Leaf of bool | Node of (int*(K.E.V.var*abstract_expr*abstract_expr))
+	     
+	 
+
+	 let bdd_true = Leaf true
+	 let bdd_false = Leaf false
+
+	 let bdd_equal a b = if hash_cons then a==b else a=b
+
+	 let rec sanity_equal a b = 
+	   match a,b with Leaf a,Leaf b -> a=b
+	   | Node(_,(a,b,c)),Node(_,(a',b',c')) -> a=a' && (sanity_equal b b') && (sanity_equal c c')
+	   | _ -> false
+	 let rec sanity_check a = 
+	   match a with Leaf _ -> true 
+	   | Node(_,(a,b,c)) -> (not (sanity_equal b c))
+		 &&
+	       (match b with Node(_,(a',_,_)) -> K.E.V.K.compare a a'<0
+	       | _ -> true)
+		 &&
+	       (match c with Node(_,(a',_,_)) -> K.E.V.K.compare a a'<0
+	       | _ -> true)
+		 && 
+	       (sanity_check b)
+		 &&
+	       (sanity_check c)
+	 let sanity_check a = true (* sanity_check a*)
+
+	 let var_of_expr a = 
+	   let rec aux a sol = 
+	     match a with Leaf _ -> sol 
+	     | Node(a,(b,c,d)) -> aux c (aux d (
+					 if c=bdd_false then sol else 
+					 K.E.V.varset_add b sol))
+	   in aux a K.E.V.varset_empty
+	 let hash1_of_bdd a = 
+	   match a with 
+	     Leaf x -> if x then -1 else -2
+	   | Node(a,_) -> a
+
+	 let hash3_of_bdd (a,b,c) = K.E.V.b_of_var a,hash1_of_bdd b,hash1_of_bdd c
+
+	 let node () = 
+	   if hash_cons then 
+	     let hash = Hashtbl.create hashinit in 
+	     let n = ref 0 in 
+	     let f (a,b,c)  = 
+	       let h = hash3_of_bdd (a,b,c) in 
+	       try (Hashtbl.find hash h)
+	       with Not_found  -> 
+     		   (let k = !n in 
+		   (n:=(!n)+1;
+		    let rep = Node (k,(a,b,c)) in 
+		    (Hashtbl.add hash h rep;rep)))
+	     in f
+	   else 
+	     (fun (a,b,c) -> Node(0,(a,b,c)))
+	
+	 let node  = node () 
+	 let leaf x = 
+	   if hash_cons then 
+	     match x with true -> bdd_true
+	     |  false -> bdd_false
+	   else Leaf x
+
+
+	 type reachable_states = abstract_expr
+	 
+       
+
+	 let is_ae_true s = (s=bdd_true)
+	 let reachable_states_of_abstract_expr a = a
+	 let generic_unary f = 
+	   if memoisation then 
+	     begin
+	       let hash = Hashtbl.create hashinit in
+	       let rec generic_unary f a1 = 
+		 let h1 = hash1_of_bdd a1 in 
+		 try (Hashtbl.find hash h1) 
+		 with Not_found -> 
+		   let rep = 
+		     match a1 with 
+		       Node(a,(v1,e1,f1)) -> 
+			 let e2 = generic_unary f e1 in 
+			 let f2 = generic_unary f f1 in 
+			 if bdd_equal e2 f2 then e2 else node(v1,e2,f2)
+		     | Leaf(a) -> leaf(f a) 
+		   in 
+		   (Hashtbl.add hash h1 rep;rep)
+	       in generic_unary f
+	     end
+	     else 
+	     begin
+	     let rec generic_unary f a1 = 
+	       match a1 with 
+		 Node(_,(v1,e1,f1)) -> 
+		   let e2 = generic_unary f e1 in 
+		   let f2 = generic_unary f f1 in 
+		   if bdd_equal e2 f2 then e2 else node(v1,e2,f2)
+	       | Leaf(a) -> leaf(f a)
+	     in generic_unary f 
+	     end
+		 
+	 let bdd_not = generic_unary (fun x -> not x)
+
+	 let generic_binary f = 
+	  if memoisation then
+	    begin
+	      let hash = Hashtbl.create hashinit in
+	      let rec generic_binary f a1 a2 = 
+		let h1,h2 = hash1_of_bdd a1,hash1_of_bdd a2 in 
+		try (Hashtbl.find hash (h1,h2)) 
+		  with Not_found -> 
+		    let rep = 
+		      match a1,a2 with 
+			Node(_,(v1,e1,f1)),Node(_,(v2,e2,f2)) when K.E.V.K.compare v1 v2 = 0 -> 
+			  let e3 = generic_binary f e1 e2 in 
+			  let f3 = generic_binary f f1 f2 in 
+			if bdd_equal e3 f3 then e3 else node(v1,e3,f3)
+		      | Node(_,(v1,_,_)),Node(_,(v2,_,_)) when  K.E.V.K.compare v1 v2 < 0 -> 
+			  generic_binary f a1 (node(v1,a2,a2))
+		      | Node(_,(v1,_,_)),Node(_,(v2,_,_)) when  K.E.V.K.compare v1 v2 > 0 -> generic_binary f (node(v2,a1,a1)) a2 
+		     |	Leaf a,Leaf b -> if f a b then bdd_true else bdd_false
+		     | _,Leaf a -> 
+			  (match f true a,f false a with 
+			    true,true -> bdd_true
+			  | true,false -> a1
+			  | false,true -> bdd_not a1
+			  | false,false -> bdd_false)
+		      | Leaf a,_ -> 
+			  (match f a true,f a false  with 
+			    true,true -> bdd_true
+			  | true,false -> a2
+			  | false,true -> bdd_not a2
+			  | false,false -> bdd_false)
+		      |	_ -> raise Exit in 
+		    (Hashtbl.add hash (h1,h2) rep;rep)
+	      in generic_binary f
+	    end 
+	    else 
+	    let rec generic_binary f a1 a2 =
+	      match a1,a2 with 
+		Node(_,(v1,e1,f1)),Node(_,(v2,e2,f2)) when compare v1 v2 = 0 -> 
+		  let e3 = generic_binary f e1 e2 in 
+		  let f3 = generic_binary f f1 f2 in 
+		  if bdd_equal e3 f3 then e3 else node(v1,e3,f3)
+	      | Node(_,(v1,_,_)),Node(_,(v2,_,_)) when  K.E.V.K.compare v1 v2 <0 -> 
+		  generic_binary f a1 (node(v1,a2,a2))
+	      | Node(_,(v1,_,_)),Node(_,(v2,_,_)) when  K.E.V.K.compare v1 v2 > 0 -> generic_binary f (node(v2,a1,a1)) a2 
+	      |	Leaf a,Leaf b -> if f a b then bdd_true else bdd_false
+	      | _,Leaf a -> 
+			  (match f true a,f false a with 
+			    true,true -> bdd_true
+			  | true,false -> a1
+			  | false,true -> bdd_not a1
+			  | false,false -> bdd_false)
+	      | Leaf a,_ -> 
+			  (match f a true,f a false  with 
+			    true,true -> bdd_true
+			  | true,false -> a2
+			  | false,true -> bdd_not a2
+			  | false,false -> bdd_false)  
+	      |	_ -> raise Exit
+
+	    in generic_binary f
+
+	 let ae_true = bdd_true
+	 
+	 let bdd_and = generic_binary (fun a b -> a && b)
+	 let bdd_or = generic_binary (fun a b -> a || b)
+	 let bdd_equiv = generic_binary (fun a b -> a=b)
+	 let bdd_imply = generic_binary (fun a b -> if a then b else true)
+	 let rec  bdd_of_expr a = 
+	   match a with 
+	     K.E.Var x -> node(x,leaf(true),leaf(false))
+	   | K.E.Not x -> bdd_not (bdd_of_expr x)
+	   | K.E.And (e1,e2) -> 
+	       bdd_and
+		 (bdd_of_expr e1) 
+		 (bdd_of_expr e2) 
+	   | K.E.Or (e1,e2) -> 
+	       bdd_or 
+		 (bdd_of_expr e1)
+		 (bdd_of_expr e2)
+	   | K.E.Equiv(e1,e2) -> 
+	       bdd_equiv
+		 (bdd_of_expr e1)
+		 (bdd_of_expr e2)
+	   | K.E.Imply (e1,e2) -> 
+	       bdd_imply
+		 (bdd_of_expr e1)
+		 (bdd_of_expr e2)
+	   | K.E.True -> bdd_true
+	   | K.E.False  -> bdd_false
+		    
+
+
+	 let reachable_states_of_expr = bdd_of_expr
+	 let abstract_expr_of_expr = bdd_of_expr
+	 let expr_of_abstract_expr  = 
+	   if local_memoisation then 
+	     let hash = Hashtbl.create hashinit in 
+	     let rec f x = 
+	       match x with 
+		 Leaf(true) -> K.E.expr_true
+	       | Leaf(false) -> K.E.expr_not (K.E.expr_true)
+	       | Node(k,y) -> 
+		   try (Hashtbl.find hash k) 
+		   with Not_found  -> 
+		     let (a,b,c)=y in 
+		     let rep = 
+		       K.E.expr_and 
+		       (K.E.expr_imply (K.E.expr_atom a) (f b))
+			 (K.E.expr_imply (K.E.expr_not (K.E.expr_atom a)) (f c))
+		     in (Hashtbl.add hash k rep;rep)
+	     in f
+	   else 
+	     let rec f x = 
+	       match x with 
+		 Leaf(true) -> K.E.expr_true
+	       | Leaf(false) -> K.E.expr_not (K.E.expr_true)
+	       | Node(a,y) -> 
+		   let (a,b,c)=y in 
+		   let rep = 
+		     K.E.expr_and 
+		       (K.E.expr_imply (K.E.expr_atom a) (f b))
+		       (K.E.expr_imply (K.E.expr_not (K.E.expr_atom a)) (f c))
+		   in rep
+	     in f
+	       
+	 let reachable_states_of_valuation_list a s= 
+	   bdd_of_expr 
+	     (K.E.expr_of_valuation_list a s)
+	     
+	     
+	 let conj =bdd_and	     
+	 let tautology expr = bdd_equal expr (leaf(true))
+
+	 let test expr v b = bdd_and expr (node(v,leaf (not b),leaf b)) 
+	 let filtre p   = 
+	   if local_memoisation 
+	   then 
+	     let hash = Hashtbl.create hashinit in 
+	     let rec aux expr = 
+	       match expr with 
+		 Node(k,(a,b,c)) -> 
+		   begin
+		     try (Hashtbl.find hash k) 
+		       with Not_found -> 
+			 let rep = 
+			   if p a then 
+			     let repb = aux b  in
+			     let repc = aux c in 
+			     if bdd_equal repb repc then repb else 
+			     bdd_or repb repc
+			   else 
+			     let repb = aux b in
+			     let repc = aux c in 
+			     if bdd_equal repb repc then repb else 
+			     node(a,repb,repc) in 
+			 (Hashtbl.add hash k rep;rep) 
+		   end
+	       | Leaf(_) -> expr
+	     in aux 
+	   else
+	     let rec aux expr = 
+		 match expr with 
+		   Node(k,(a,b,c)) -> 
+		     begin
+		       let rep = 
+			 if p a then 
+			   let repb = aux b  in
+			   let repc = aux c in 
+			   if bdd_equal repb repc then repb else 
+			   bdd_or repb repc
+			 else 
+			   let repb = aux b in
+			   let repc = aux c in 
+			   if bdd_equal repb repc then repb else 
+			   node(a,repb,repc) in 
+		       rep
+		     end
+		 | Leaf(_) -> expr
+	     in aux 
+	     
+	 let forget expr f = filtre f expr 
+	 let forgetone e v = filtre (fun x -> x=v) e
+	 let project expr f = filtre (fun x-> not (f x)) expr
+
+	 let set expr f = 
+	   if (not (sanity_check expr)) then raise Exit
+	   else 
+	     let l = List.rev (K.E.V.varmap_fold (fun a b c -> (a,b)::c) f []) in 	   
+	     if l = [] then expr
+	     else 
+	       let rec aux e l = 
+		 match l with [] -> e 
+		 | (t,bool)::q -> begin
+		   match e with 
+		     Node(a,(b,c,d)) when K.E.V.K.compare b t < 0 -> 
+		       let c' = aux c l in 
+		       let d' = aux d l in 
+		       if bdd_equal c' d' then c'
+			   else node(b,c',d')
+		   | Node(a,(b,c,d)) when K.E.V.K.compare b t = 0 -> 
+		       if c=Leaf(false) or d = Leaf(false) then 
+			 
+			 let c'=aux (bdd_or c d) q in 
+			 let d'=bdd_false in 
+			 if bdd_equal c' d' then c' else
+			 if bool then 
+			   node(b,c',d') else node (b,d',c')
+		       else raise Exit
+		   | _ -> (
+		       let c' = aux e q in 
+		       let d' = bdd_false in 
+		       if bdd_equal c' d' then c' else
+		       if bool then node(t,c',d') else node(t,d',c'))
+		 end
+	       in aux expr l 
+		 
+
+	 let switch expr s = 
+	   if K.E.V.varset_is_empty s then expr 
+	   else
+	     if local_memoisation 
+	     then 
+	       let hash = Hashtbl.create (if local_memoisation then hashinit else 1) in 
+	       let rec aux e = 
+		 match e with 
+		   Node(a,(b,c,d))  -> 
+		     begin
+		       try (Hashtbl.find hash a) 
+		       with Not_found -> 
+			 let rep = 
+			   if  K.E.V.varset_mem b s 
+			   then node(b,aux d,aux c) 
+			  else node(b,aux c,aux d)
+			 in 
+			 (Hashtbl.add hash a rep;rep)
+		     end
+		 | Leaf _ -> e
+	       in aux expr 
+	     else 
+	       let rec aux e = 
+		 match e with 
+		   Node(a,(b,c,d))  -> 
+		     begin
+		       let rep = 
+			 if  K.E.V.varset_mem b s 
+			 then node(b,aux d,aux c) 
+			 else node(b,aux c,aux d)
+		       in 
+		       rep
+		     end
+		 | Leaf _ -> e
+	       in aux expr 
+		 
+	 let union = bdd_or
+	 let is_included a b = tautology (bdd_imply b a)
+	     
+	 let rec rename expr f = 
+	   match expr with Leaf(_) -> expr
+	   |  Node(_,(a,b,c)) -> 
+	       let repb = set (rename (forgetone b a ) f) (K.E.V.varmap_add (f a) false K.E.V.varmap_empty) in 
+               let repc = set (rename (forgetone c a ) f) (K.E.V.varmap_add (f a) true K.E.V.varmap_empty) in 
+	       union repb repc 
+	 let upgrade f x = K.E.V.var_of_b (upgrade_renaming f (K.E.V.b_of_var x))
+         let rec increasing_renaming expr f = 
+	   match expr with Leaf(_) -> expr
+	   |  Node(_,(a,b,c)) -> node(upgrade f a,increasing_renaming b f,increasing_renaming c f)
+	   
+	 let guard s = 
+	   K.ksfold 
+	     (fun x ->
+	       bdd_of_expr 
+		 (K.expr_of_kleenean_valuation (snd x)))
+	     bdd_or
+	     s (leaf(false))
+
+	 let rec print_bdd a = 
+	       match a with Node(_,(a,b,c)) -> (K.E.V.print_var a;
+						print_string ":";
+					    print_bdd b;
+						print_string ";";
+					    print_bdd c)
+	       |  Leaf(true) -> (print_string "true";print_newline ())
+	       |  Leaf(false) -> (print_string "false";print_newline ())
+		     
+	 let fnd_of_bdd a = 
+	   let rec aux to_visit sol = 
+	     match to_visit with 
+	       (path,Node(_,(a,b,c)))::q -> 
+		 aux (((a,true)::path,b)::(((a,false)::path),c)::q) sol 
+	     |   (path,Leaf true)::q -> aux q (path::sol)
+	     | (path,_)::q -> aux q sol 
+	     | [] -> sol in 
+	   let liste_true = aux [[],a] [] in liste_true
+
+  
+	 let export_ae a k parsed_pb h  = 
+	   let _,map = parsed_pb in
+	   let fnd = fnd_of_bdd a in 
+	   (list_fold 
+	      (fun fnd sol -> 
+		let new_sol = 
+		  let map = 
+		    list_fold (fun (var,bool) map -> 
+		      let b = K.E.V.b_of_var var in 
+		      match b with 
+			P(a,b) -> 
+			  StringMap.add b (let (x,y,z,t) = 
+			    StringMap.find b map in ((if bool then Init "p" else Init ""),y,z,t)) map
+		      | B(a,b) ->StringMap.add b (let (x,y,z,t) = StringMap.find b map in (x,(if bool then Init ":*" else Init ""),z,t)) map
+		      |  AL((a,a'),(b,b')) ->
+			  StringMap.add a'
+			    (let (x,y,z,t) = StringMap.find a' map in
+			    
+                            (x,y,(if bool then (Init (b,b')) else z),
+			     if bool then Init([])
+			     else match z with Init _ -> t
+			     | _ -> (
+				 match t with 
+				   Init (t) -> Init ((b,b')::t)
+				 | Any -> Init [b,b']
+				 | _ -> t))) map
+		      | _ -> map)
+		      fnd (StringMap.find k map) in 
+		  (k,map,h) in 
+		   new_sol::sol) fnd [])
+
+         let print a k parsed_pb h =
+	   List.iter 
+	     (fun (k,map,h) -> 
+	       print_pretty 
+		 k 
+		 (StringMap.add k map StringMap.empty) h;print_newline ())
+	     (export_ae a k parsed_pb h)
+
+	 let print_export_ae exp = 
+	   List.iter 
+	     (fun (k,map,h) -> 
+	       print_pretty 
+		 k 
+		 (StringMap.add k map StringMap.empty) h;print_newline ())
+	     exp
+	 
+	 let print a k parsed_pb h = print_export_ae (export_ae a k parsed_pb h)
+	 
+	 let export_reachable_states access specie_of_id  parsed_pb = 
+	   (if (not (sanity_check access)) then raise Exit);
+	   let _,map = parsed_pb in
+           let fnd = fnd_of_bdd access  in
+	   list_fold 
+              (fun fnd l ->
+		let newsol = 
+                fst (                  list_fold (fun (var,bool) (sol,n) ->
+                    let b = K.E.V.b_of_var var in
+                    match b with
+                       P(a,b) ->
+                         let spec = try (StringMap.find a sol) 
+			 with Not_found -> (StringMap.find (StringMap.find a specie_of_id)  map) in
+			 StringMap.add 
+			   a
+			   (StringMap.add b (let (x,y,z,t) =
+                             StringMap.find b spec in ((if bool then Init "p" else Init ""),y,z,t)) spec) 
+			   sol,n
+                    | B(a,b) ->
+			let spec = try (StringMap.find a sol) 
+			with Not_found -> (StringMap.find (StringMap.find a specie_of_id) map) in
+			StringMap.add 
+			  a
+			  (StringMap.add b 
+			     (let (x,y,z,t) = StringMap.find b spec in (x,(if bool then Init ":*" else Init ""),z,t)) spec)
+			  sol,n
+                    | L((a,a'),(b,b')) ->
+			 let f a a' b b' sol = 
+			   let spec = 
+			     try (StringMap.find a sol) 
+			     with Not_found -> (StringMap.find (StringMap.find a specie_of_id) map) in
+			   StringMap.add 
+			     a
+			     (StringMap.add a' 
+				(let (x,y,z,t) = StringMap.find a' spec in
+				(x,y,(if bool then Init (string_of_int n,"") else z),if bool then Init [] else 
+				(
+			     match t with 
+			       Init (t) -> Init ((b,b')::t)
+			     | Any -> Init [b,b']
+			     | _ -> t))) 
+ spec)
+			     sol in 
+			 let sol = f a a' b b' (f b b' a a' sol) in 
+			 sol,(if bool then (n+1) else n)
+                    |  AL((a,a'),(b,b')) ->
+			let spec = try (StringMap.find a sol) 
+			with Not_found -> (StringMap.find (StringMap.find a specie_of_id) map) in
+			StringMap.add 
+			  a
+			  (StringMap.add a' (let (x,y,z,t) = StringMap.find a' spec in
+			  
+                           (x,y,(if bool then (Init (b,b')) else z),if bool then Init [] else (
+			     match t with 
+			       Init (t) -> Init ((b,b')::t)
+			     | Any -> Init [b,b']
+			     | _ -> t)))
+			     spec)
+			     sol,n)
+			     
+			     fnd (StringMap.empty,1)) in 
+		(newsol::l))
+	     fnd []
+
+	 let print_export_reachable_states exp = 
+	    List.iter 
+	     (fun map -> 
+               let _ = StringMap.fold (fun a b bool -> 
+		 (if bool then print_string ",");
+		 print_pretty a map ((fun x-> true),(fun x -> true),(fun x -> true),(fun x -> true));true) map false in 
+	       print_newline ()) exp
+
+         let print_reachable_states (access:reachable_states) specie_of_id  parsed_pb = print_export_reachable_states (export_reachable_states access specie_of_id  parsed_pb)
+
+	 let abstract_system  s access vars dep = 
+	   let g = guard s in 
+	   K.E.V.fold_vars 
+	     (fun v s -> 
+	       let composante = K.E.V.close dep v in 
+	       K.ksmap
+		 (fun r -> 
+		   let abs = K.abstract r v in 
+		   if abs = r then r 
+		   else 
+		     let abs = K.E.V.fold_vars 
+			 (fun v r -> K.abstract r v) 
+			 composante r in 
+		     let e = 
+		       bdd_imply 
+			 (bdd_of_expr (K.expr_of_kleenean_valuation abs))
+			    (bdd_imply access 
+			       g) in 
+		     if tautology e 
+		     then abs
+		     else r)
+	     s)
+      vars s
+	     
+	 let project a b = 
+	   let rep = project a b in 
+	   if (not (sanity_check rep)) then raise Exit else rep
+	     
+	 let r_neg = bdd_not
+	 let imply = bdd_imply
+	 let atom_pos x =  node(x,leaf(true),leaf(false))
+	 let atom_neg x = node(x,leaf(false),leaf(true))
+	 let r_ae_true = ae_true
+	 let r_conj = conj
+	 let r_imply = imply
+	 let r_union = union
+	 let r_atom = atom_pos
+	     
+	let f x = true 
+	 
+	let all_false l = 
+	   let l = List.sort (fun a b -> -(K.E.V.K.compare (K.E.V.var_of_b a) (K.E.V.var_of_b b))) l in 
+	   fst (list_fold (fun a (l,old) -> 
+	     let b = 
+	       match old with None -> true 
+	       | Some old when old <> a -> true
+	       | _ -> false in
+	     if b then node(K.E.V.var_of_b a,bdd_false,l),Some a
+	     else (l,old))
+	     l (bdd_true,None))
+	     
+
+
+
+end:AbstractExprBool))
+

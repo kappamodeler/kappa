@@ -1,0 +1,68 @@
+"ocamlbuild/hooks.ml" 22 963 967 "ocamlbuild/hooks.ml" 22 963 972
+type(
+  ('_a -> unit) ref
+)
+"ocamlbuild/hooks.ml" 22 963 975 "ocamlbuild/hooks.ml" 22 963 978
+type(
+  ('_a -> unit) -> ('_a -> unit) ref
+)
+"ocamlbuild/hooks.ml" 22 963 979 "ocamlbuild/hooks.ml" 22 963 985
+type(
+  '_a -> unit
+)
+"ocamlbuild/hooks.ml" 22 963 975 "ocamlbuild/hooks.ml" 22 963 985
+type(
+  ('_a -> unit) ref
+)
+"ocamlbuild/hooks.ml" 24 987 991 "ocamlbuild/hooks.ml" 24 987 1002
+type(
+  ('_a -> unit) -> unit
+)
+"ocamlbuild/hooks.ml" 24 987 1003 "ocamlbuild/hooks.ml" 24 987 1004
+type(
+  '_a -> unit
+)
+"ocamlbuild/hooks.ml" 24 987 1007 "ocamlbuild/hooks.ml" 24 987 1012
+type(
+  ('_a -> unit) ref
+)
+"ocamlbuild/hooks.ml" 24 987 1013 "ocamlbuild/hooks.ml" 24 987 1015
+type(
+  ('_a -> unit) ref -> ('_a -> unit) -> unit
+)
+"ocamlbuild/hooks.ml" 24 987 1016 "ocamlbuild/hooks.ml" 24 987 1017
+type(
+  '_a -> unit
+)
+"ocamlbuild/hooks.ml" 24 987 1007 "ocamlbuild/hooks.ml" 24 987 1017
+type(
+  unit
+)
+"ocamlbuild/hooks.ml" 26 1019 1023 "ocamlbuild/hooks.ml" 26 1019 1032
+type(
+  '_a -> unit
+)
+"ocamlbuild/hooks.ml" 26 1019 1033 "ocamlbuild/hooks.ml" 26 1019 1034
+type(
+  '_a
+)
+"ocamlbuild/hooks.ml" 26 1019 1037 "ocamlbuild/hooks.ml" 26 1019 1038
+type(
+  ('_a -> unit) ref -> '_a -> unit
+)
+"ocamlbuild/hooks.ml" 26 1019 1038 "ocamlbuild/hooks.ml" 26 1019 1043
+type(
+  ('_a -> unit) ref
+)
+"ocamlbuild/hooks.ml" 26 1019 1037 "ocamlbuild/hooks.ml" 26 1019 1043
+type(
+  '_a -> unit
+)
+"ocamlbuild/hooks.ml" 26 1019 1044 "ocamlbuild/hooks.ml" 26 1019 1045
+type(
+  '_a
+)
+"ocamlbuild/hooks.ml" 26 1019 1037 "ocamlbuild/hooks.ml" 26 1019 1045
+type(
+  unit
+)

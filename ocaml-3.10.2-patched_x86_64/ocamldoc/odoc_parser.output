@@ -1,0 +1,396 @@
+   0  $accept : %entry% $end
+
+   1  see_info : see_ref Desc
+
+   2  see_ref : See_url
+   3          | See_file
+   4          | See_doc
+
+   5  main : Description
+   6       | EOF
+
+   7  info_part2 : element_list EOF
+
+   8  element_list : element
+   9               | element element_list
+
+  10  element : param
+  11          | author
+  12          | version
+  13          | see
+  14          | since
+  15          | deprecated
+  16          | raise_exc
+  17          | return
+  18          | custom
+
+  19  param : T_PARAM Desc
+
+  20  author : T_AUTHOR Desc
+
+  21  version : T_VERSION Desc
+
+  22  see : T_SEE Desc
+
+  23  since : T_SINCE Desc
+
+  24  deprecated : T_DEPRECATED Desc
+
+  25  raise_exc : T_RAISES Desc
+
+  26  return : T_RETURN Desc
+
+  27  custom : T_CUSTOM Desc
+
+  28  %entry% : '\001' main
+  29          | '\002' info_part2
+  30          | '\003' see_info
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	'\002'  shift 2
+	'\003'  shift 3
+	.  error
+
+	%entry%  goto 4
+
+
+state 1
+	%entry% : '\001' . main  (28)
+
+	Description  shift 5
+	EOF  shift 6
+	.  error
+
+	main  goto 7
+
+
+state 2
+	%entry% : '\002' . info_part2  (29)
+
+	T_PARAM  shift 8
+	T_AUTHOR  shift 9
+	T_VERSION  shift 10
+	T_SEE  shift 11
+	T_SINCE  shift 12
+	T_DEPRECATED  shift 13
+	T_RAISES  shift 14
+	T_RETURN  shift 15
+	T_CUSTOM  shift 16
+	.  error
+
+	info_part2  goto 17
+	element_list  goto 18
+	element  goto 19
+	param  goto 20
+	author  goto 21
+	version  goto 22
+	see  goto 23
+	since  goto 24
+	deprecated  goto 25
+	raise_exc  goto 26
+	return  goto 27
+	custom  goto 28
+
+
+state 3
+	%entry% : '\003' . see_info  (30)
+
+	See_url  shift 29
+	See_file  shift 30
+	See_doc  shift 31
+	.  error
+
+	see_info  goto 32
+	see_ref  goto 33
+
+
+state 4
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 5
+	main : Description .  (5)
+
+	.  reduce 5
+
+
+state 6
+	main : EOF .  (6)
+
+	.  reduce 6
+
+
+state 7
+	%entry% : '\001' main .  (28)
+
+	.  reduce 28
+
+
+state 8
+	param : T_PARAM . Desc  (19)
+
+	Desc  shift 34
+	.  error
+
+
+state 9
+	author : T_AUTHOR . Desc  (20)
+
+	Desc  shift 35
+	.  error
+
+
+state 10
+	version : T_VERSION . Desc  (21)
+
+	Desc  shift 36
+	.  error
+
+
+state 11
+	see : T_SEE . Desc  (22)
+
+	Desc  shift 37
+	.  error
+
+
+state 12
+	since : T_SINCE . Desc  (23)
+
+	Desc  shift 38
+	.  error
+
+
+state 13
+	deprecated : T_DEPRECATED . Desc  (24)
+
+	Desc  shift 39
+	.  error
+
+
+state 14
+	raise_exc : T_RAISES . Desc  (25)
+
+	Desc  shift 40
+	.  error
+
+
+state 15
+	return : T_RETURN . Desc  (26)
+
+	Desc  shift 41
+	.  error
+
+
+state 16
+	custom : T_CUSTOM . Desc  (27)
+
+	Desc  shift 42
+	.  error
+
+
+state 17
+	%entry% : '\002' info_part2 .  (29)
+
+	.  reduce 29
+
+
+state 18
+	info_part2 : element_list . EOF  (7)
+
+	EOF  shift 43
+	.  error
+
+
+state 19
+	element_list : element .  (8)
+	element_list : element . element_list  (9)
+
+	T_PARAM  shift 8
+	T_AUTHOR  shift 9
+	T_VERSION  shift 10
+	T_SEE  shift 11
+	T_SINCE  shift 12
+	T_DEPRECATED  shift 13
+	T_RAISES  shift 14
+	T_RETURN  shift 15
+	T_CUSTOM  shift 16
+	EOF  reduce 8
+
+	element_list  goto 44
+	element  goto 19
+	param  goto 20
+	author  goto 21
+	version  goto 22
+	see  goto 23
+	since  goto 24
+	deprecated  goto 25
+	raise_exc  goto 26
+	return  goto 27
+	custom  goto 28
+
+
+state 20
+	element : param .  (10)
+
+	.  reduce 10
+
+
+state 21
+	element : author .  (11)
+
+	.  reduce 11
+
+
+state 22
+	element : version .  (12)
+
+	.  reduce 12
+
+
+state 23
+	element : see .  (13)
+
+	.  reduce 13
+
+
+state 24
+	element : since .  (14)
+
+	.  reduce 14
+
+
+state 25
+	element : deprecated .  (15)
+
+	.  reduce 15
+
+
+state 26
+	element : raise_exc .  (16)
+
+	.  reduce 16
+
+
+state 27
+	element : return .  (17)
+
+	.  reduce 17
+
+
+state 28
+	element : custom .  (18)
+
+	.  reduce 18
+
+
+state 29
+	see_ref : See_url .  (2)
+
+	.  reduce 2
+
+
+state 30
+	see_ref : See_file .  (3)
+
+	.  reduce 3
+
+
+state 31
+	see_ref : See_doc .  (4)
+
+	.  reduce 4
+
+
+state 32
+	%entry% : '\003' see_info .  (30)
+
+	.  reduce 30
+
+
+state 33
+	see_info : see_ref . Desc  (1)
+
+	Desc  shift 45
+	.  error
+
+
+state 34
+	param : T_PARAM Desc .  (19)
+
+	.  reduce 19
+
+
+state 35
+	author : T_AUTHOR Desc .  (20)
+
+	.  reduce 20
+
+
+state 36
+	version : T_VERSION Desc .  (21)
+
+	.  reduce 21
+
+
+state 37
+	see : T_SEE Desc .  (22)
+
+	.  reduce 22
+
+
+state 38
+	since : T_SINCE Desc .  (23)
+
+	.  reduce 23
+
+
+state 39
+	deprecated : T_DEPRECATED Desc .  (24)
+
+	.  reduce 24
+
+
+state 40
+	raise_exc : T_RAISES Desc .  (25)
+
+	.  reduce 25
+
+
+state 41
+	return : T_RETURN Desc .  (26)
+
+	.  reduce 26
+
+
+state 42
+	custom : T_CUSTOM Desc .  (27)
+
+	.  reduce 27
+
+
+state 43
+	info_part2 : element_list EOF .  (7)
+
+	.  reduce 7
+
+
+state 44
+	element_list : element element_list .  (9)
+
+	.  reduce 9
+
+
+state 45
+	see_info : see_ref Desc .  (1)
+
+	.  reduce 1
+
+
+20 terminals, 17 nonterminals
+31 grammar rules, 46 states

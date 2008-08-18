@@ -1,0 +1,516 @@
+"ocamlbuild/report.ml" 21 895 899 "ocamlbuild/report.ml" 21 895 911
+type(
+  Glob.globber
+)
+"ocamlbuild/report.ml" 21 895 914 "ocamlbuild/report.ml" 21 895 924
+type(
+  ?dir:string -> string -> Glob.globber
+)
+"ocamlbuild/report.ml" 21 895 925 "ocamlbuild/report.ml" 21 895 962
+type(
+  string
+)
+"ocamlbuild/report.ml" 21 895 914 "ocamlbuild/report.ml" 21 895 962
+type(
+  Glob.globber
+)
+"ocamlbuild/report.ml" 23 966 974 "ocamlbuild/report.ml" 23 966 981
+type(
+  Format.formatter -> Solver.backtrace -> bool
+)
+"ocamlbuild/report.ml" 23 966 982 "ocamlbuild/report.ml" 23 966 983
+type(
+  Format.formatter
+)
+"ocamlbuild/report.ml" 23 966 984 "ocamlbuild/report.ml" 23 966 986
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 24 989 997 "ocamlbuild/report.ml" 24 989 999
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 25 1005 1014 "ocamlbuild/report.ml" 25 1005 1015
+type(
+  Pathname.t
+)
+"ocamlbuild/report.ml" 25 1005 1009 "ocamlbuild/report.ml" 25 1005 1015
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 26 1019 1025 "ocamlbuild/report.ml" 26 1019 1032
+type(
+  Format.formatter ->
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format -> (Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit
+)
+"ocamlbuild/report.ml" 26 1019 1033 "ocamlbuild/report.ml" 26 1019 1034
+type(
+  Format.formatter
+)
+"ocamlbuild/report.ml" 26 1019 1035 "ocamlbuild/report.ml" 30 1344 1382
+type(
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/report.ml" 31 1383 1397 "ocamlbuild/report.ml" 31 1383 1411
+type(
+  Format.formatter -> Pathname.t -> unit
+)
+"ocamlbuild/report.ml" 31 1383 1412 "ocamlbuild/report.ml" 31 1383 1413
+type(
+  Pathname.t
+)
+"ocamlbuild/report.ml" 26 1019 1025 "ocamlbuild/report.ml" 31 1383 1413
+type(
+  unit
+)
+"ocamlbuild/report.ml" 32 1415 1421 "ocamlbuild/report.ml" 32 1415 1426
+type(
+  bool
+)
+"ocamlbuild/report.ml" 26 1019 1025 "ocamlbuild/report.ml" 32 1415 1426
+type(
+  bool
+)
+"ocamlbuild/report.ml" 33 1427 1437 "ocamlbuild/report.ml" 33 1427 1438
+type(
+  Pathname.t
+)
+"ocamlbuild/report.ml" 33 1427 1440 "ocamlbuild/report.ml" 33 1427 1442
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 33 1427 1431 "ocamlbuild/report.ml" 33 1427 1443
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 34 1447 1456 "ocamlbuild/report.ml" 34 1447 1465
+type(
+  Glob.globber -> Pathname.t -> bool
+)
+"ocamlbuild/report.ml" 34 1447 1466 "ocamlbuild/report.ml" 34 1447 1478
+type(
+  Glob.globber
+)
+"ocamlbuild/report.ml" 34 1447 1479 "ocamlbuild/report.ml" 34 1447 1480
+type(
+  Pathname.t
+)
+"ocamlbuild/report.ml" 34 1447 1456 "ocamlbuild/report.ml" 34 1447 1480
+type(
+  bool
+)
+"ocamlbuild/report.ml" 36 1500 1510 "ocamlbuild/report.ml" 36 1500 1517
+type(
+  Format.formatter ->
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format -> (Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit
+)
+"ocamlbuild/report.ml" 36 1500 1518 "ocamlbuild/report.ml" 36 1500 1519
+type(
+  Format.formatter
+)
+"ocamlbuild/report.ml" 36 1500 1520 "ocamlbuild/report.ml" 38 1680 1721
+type(
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/report.ml" 39 1722 1740 "ocamlbuild/report.ml" 39 1722 1754
+type(
+  Format.formatter -> Pathname.t -> unit
+)
+"ocamlbuild/report.ml" 39 1722 1755 "ocamlbuild/report.ml" 39 1722 1756
+type(
+  Pathname.t
+)
+"ocamlbuild/report.ml" 36 1500 1510 "ocamlbuild/report.ml" 39 1722 1756
+type(
+  unit
+)
+"ocamlbuild/report.ml" 40 1758 1768 "ocamlbuild/report.ml" 40 1758 1773
+type(
+  bool
+)
+"ocamlbuild/report.ml" 35 1486 1494 "ocamlbuild/report.ml" 41 1774 1785
+type(
+  bool
+)
+"ocamlbuild/report.ml" 43 1797 1805 "ocamlbuild/report.ml" 43 1797 1812
+type(
+  Format.formatter -> Solver.backtrace -> bool
+)
+"ocamlbuild/report.ml" 43 1797 1813 "ocamlbuild/report.ml" 43 1797 1814
+type(
+  Format.formatter
+)
+"ocamlbuild/report.ml" 43 1797 1815 "ocamlbuild/report.ml" 43 1797 1817
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 43 1797 1805 "ocamlbuild/report.ml" 43 1797 1817
+type(
+  bool
+)
+"ocamlbuild/report.ml" 34 1447 1453 "ocamlbuild/report.ml" 43 1797 1817
+type(
+  bool
+)
+"ocamlbuild/report.ml" 44 1818 1829 "ocamlbuild/report.ml" 44 1818 1831
+type(
+  Solver.backtrace list
+)
+"ocamlbuild/report.ml" 44 1818 1822 "ocamlbuild/report.ml" 44 1818 1831
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 44 1818 1835 "ocamlbuild/report.ml" 44 1818 1847
+type(
+  (Solver.backtrace -> bool) -> Solver.backtrace list -> bool
+)
+"ocamlbuild/report.ml" 44 1818 1849 "ocamlbuild/report.ml" 44 1818 1856
+type(
+  Format.formatter -> Solver.backtrace -> bool
+)
+"ocamlbuild/report.ml" 44 1818 1857 "ocamlbuild/report.ml" 44 1818 1858
+type(
+  Format.formatter
+)
+"ocamlbuild/report.ml" 44 1818 1848 "ocamlbuild/report.ml" 44 1818 1859
+type(
+  Solver.backtrace -> bool
+)
+"ocamlbuild/report.ml" 44 1818 1860 "ocamlbuild/report.ml" 44 1818 1862
+type(
+  Solver.backtrace list
+)
+"ocamlbuild/report.ml" 44 1818 1835 "ocamlbuild/report.ml" 44 1818 1862
+type(
+  bool
+)
+"ocamlbuild/report.ml" 45 1863 1874 "ocamlbuild/report.ml" 45 1863 1875
+type(
+  string
+)
+"ocamlbuild/report.ml" 45 1863 1877 "ocamlbuild/report.ml" 45 1863 1879
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 45 1863 1867 "ocamlbuild/report.ml" 45 1863 1880
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 45 1863 1884 "ocamlbuild/report.ml" 45 1863 1891
+type(
+  Format.formatter -> Solver.backtrace -> bool
+)
+"ocamlbuild/report.ml" 45 1863 1892 "ocamlbuild/report.ml" 45 1863 1893
+type(
+  Format.formatter
+)
+"ocamlbuild/report.ml" 45 1863 1894 "ocamlbuild/report.ml" 45 1863 1896
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 45 1863 1884 "ocamlbuild/report.ml" 45 1863 1896
+type(
+  bool
+)
+"ocamlbuild/report.ml" 24 989 991 "ocamlbuild/report.ml" 45 1863 1896
+type(
+  bool
+)
+"ocamlbuild/report.ml" 47 1898 1906 "ocamlbuild/report.ml" 47 1898 1921
+type(
+  Format.formatter -> Solver.backtrace -> unit
+)
+"ocamlbuild/report.ml" 47 1898 1922 "ocamlbuild/report.ml" 47 1898 1923
+type(
+  Format.formatter
+)
+"ocamlbuild/report.ml" 49 1937 1949 "ocamlbuild/report.ml" 49 1937 1953
+type(
+  string
+)
+"ocamlbuild/report.ml" 49 1937 1955 "ocamlbuild/report.ml" 49 1937 1964
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 49 1937 1941 "ocamlbuild/report.ml" 49 1937 1965
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 50 1969 1975 "ocamlbuild/report.ml" 50 1969 1982
+type(
+  Format.formatter ->
+  (string ->
+   (Format.formatter -> Solver.backtrace -> unit) -> Solver.backtrace -> unit,
+   Format.formatter, unit)
+  format ->
+  string ->
+  (Format.formatter -> Solver.backtrace -> unit) -> Solver.backtrace -> unit
+)
+"ocamlbuild/report.ml" 50 1969 1983 "ocamlbuild/report.ml" 50 1969 1984
+type(
+  Format.formatter
+)
+"ocamlbuild/report.ml" 50 1969 1985 "ocamlbuild/report.ml" 50 1969 2030
+type(
+  (string ->
+   (Format.formatter -> Solver.backtrace -> unit) -> Solver.backtrace -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/report.ml" 50 1969 2031 "ocamlbuild/report.ml" 50 1969 2035
+type(
+  string
+)
+"ocamlbuild/report.ml" 50 1969 2036 "ocamlbuild/report.ml" 50 1969 2051
+type(
+  Format.formatter -> Solver.backtrace -> unit
+)
+"ocamlbuild/report.ml" 50 1969 2052 "ocamlbuild/report.ml" 50 1969 2061
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 50 1969 1975 "ocamlbuild/report.ml" 50 1969 2061
+type(
+  unit
+)
+"ocamlbuild/report.ml" 51 2062 2071 "ocamlbuild/report.ml" 51 2062 2072
+type(
+  Pathname.t
+)
+"ocamlbuild/report.ml" 51 2062 2066 "ocamlbuild/report.ml" 51 2062 2072
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 52 2076 2082 "ocamlbuild/report.ml" 52 2076 2089
+type(
+  Format.formatter ->
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format -> (Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit
+)
+"ocamlbuild/report.ml" 52 2076 2090 "ocamlbuild/report.ml" 52 2076 2091
+type(
+  Format.formatter
+)
+"ocamlbuild/report.ml" 52 2076 2092 "ocamlbuild/report.ml" 52 2076 2117
+type(
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/report.ml" 52 2076 2118 "ocamlbuild/report.ml" 52 2076 2132
+type(
+  Format.formatter -> Pathname.t -> unit
+)
+"ocamlbuild/report.ml" 52 2076 2133 "ocamlbuild/report.ml" 52 2076 2134
+type(
+  Pathname.t
+)
+"ocamlbuild/report.ml" 52 2076 2082 "ocamlbuild/report.ml" 52 2076 2134
+type(
+  unit
+)
+"ocamlbuild/report.ml" 53 2135 2146 "ocamlbuild/report.ml" 53 2135 2147
+type(
+  Pathname.t
+)
+"ocamlbuild/report.ml" 53 2135 2149 "ocamlbuild/report.ml" 53 2135 2158
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 53 2135 2139 "ocamlbuild/report.ml" 53 2135 2159
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 54 2163 2169 "ocamlbuild/report.ml" 54 2163 2176
+type(
+  Format.formatter ->
+  ((Format.formatter -> Pathname.t -> unit) ->
+   Pathname.t ->
+   (Format.formatter -> Solver.backtrace -> unit) -> Solver.backtrace -> unit,
+   Format.formatter, unit)
+  format ->
+  (Format.formatter -> Pathname.t -> unit) ->
+  Pathname.t ->
+  (Format.formatter -> Solver.backtrace -> unit) -> Solver.backtrace -> unit
+)
+"ocamlbuild/report.ml" 54 2163 2177 "ocamlbuild/report.ml" 54 2163 2178
+type(
+  Format.formatter
+)
+"ocamlbuild/report.ml" 54 2163 2179 "ocamlbuild/report.ml" 54 2163 2208
+type(
+  ((Format.formatter -> Pathname.t -> unit) ->
+   Pathname.t ->
+   (Format.formatter -> Solver.backtrace -> unit) -> Solver.backtrace -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/report.ml" 54 2163 2209 "ocamlbuild/report.ml" 54 2163 2223
+type(
+  Format.formatter -> Pathname.t -> unit
+)
+"ocamlbuild/report.ml" 54 2163 2224 "ocamlbuild/report.ml" 54 2163 2225
+type(
+  Pathname.t
+)
+"ocamlbuild/report.ml" 54 2163 2226 "ocamlbuild/report.ml" 54 2163 2241
+type(
+  Format.formatter -> Solver.backtrace -> unit
+)
+"ocamlbuild/report.ml" 54 2163 2242 "ocamlbuild/report.ml" 54 2163 2251
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 54 2163 2169 "ocamlbuild/report.ml" 54 2163 2251
+type(
+  unit
+)
+"ocamlbuild/report.ml" 55 2252 2264 "ocamlbuild/report.ml" 55 2252 2273
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 55 2252 2263 "ocamlbuild/report.ml" 55 2252 2274
+type(
+  Solver.backtrace list
+)
+"ocamlbuild/report.ml" 55 2252 2256 "ocamlbuild/report.ml" 55 2252 2274
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 55 2252 2278 "ocamlbuild/report.ml" 55 2252 2293
+type(
+  Format.formatter -> Solver.backtrace -> unit
+)
+"ocamlbuild/report.ml" 55 2252 2294 "ocamlbuild/report.ml" 55 2252 2295
+type(
+  Format.formatter
+)
+"ocamlbuild/report.ml" 55 2252 2296 "ocamlbuild/report.ml" 55 2252 2305
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 55 2252 2278 "ocamlbuild/report.ml" 55 2252 2305
+type(
+  unit
+)
+"ocamlbuild/report.ml" 56 2306 2317 "ocamlbuild/report.ml" 56 2306 2327
+type(
+  Solver.backtrace list
+)
+"ocamlbuild/report.ml" 56 2306 2310 "ocamlbuild/report.ml" 56 2306 2327
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 57 2331 2337 "ocamlbuild/report.ml" 57 2331 2344
+type(
+  Format.formatter -> (unit, Format.formatter, unit) format -> unit
+)
+"ocamlbuild/report.ml" 57 2331 2345 "ocamlbuild/report.ml" 57 2331 2346
+type(
+  Format.formatter
+)
+"ocamlbuild/report.ml" 57 2331 2347 "ocamlbuild/report.ml" 57 2331 2389
+type(
+  (unit, Format.formatter, unit) format
+)
+"ocamlbuild/report.ml" 57 2331 2337 "ocamlbuild/report.ml" 57 2331 2389
+type(
+  unit
+)
+"ocamlbuild/report.ml" 58 2391 2397 "ocamlbuild/report.ml" 58 2391 2406
+type(
+  (Solver.backtrace -> unit) -> Solver.backtrace list -> unit
+)
+"ocamlbuild/report.ml" 58 2391 2408 "ocamlbuild/report.ml" 58 2391 2423
+type(
+  Format.formatter -> Solver.backtrace -> unit
+)
+"ocamlbuild/report.ml" 58 2391 2424 "ocamlbuild/report.ml" 58 2391 2425
+type(
+  Format.formatter
+)
+"ocamlbuild/report.ml" 58 2391 2407 "ocamlbuild/report.ml" 58 2391 2426
+type(
+  Solver.backtrace -> unit
+)
+"ocamlbuild/report.ml" 58 2391 2427 "ocamlbuild/report.ml" 58 2391 2437
+type(
+  Solver.backtrace list
+)
+"ocamlbuild/report.ml" 58 2391 2397 "ocamlbuild/report.ml" 58 2391 2437
+type(
+  unit
+)
+"ocamlbuild/report.ml" 59 2439 2445 "ocamlbuild/report.ml" 59 2439 2452
+type(
+  Format.formatter -> (unit, Format.formatter, unit) format -> unit
+)
+"ocamlbuild/report.ml" 59 2439 2453 "ocamlbuild/report.ml" 59 2439 2454
+type(
+  Format.formatter
+)
+"ocamlbuild/report.ml" 59 2439 2455 "ocamlbuild/report.ml" 59 2439 2459
+type(
+  (unit, Format.formatter, unit) format
+)
+"ocamlbuild/report.ml" 59 2439 2445 "ocamlbuild/report.ml" 59 2439 2459
+type(
+  unit
+)
+"ocamlbuild/report.ml" 58 2391 2397 "ocamlbuild/report.ml" 59 2439 2459
+type(
+  unit
+)
+"ocamlbuild/report.ml" 57 2331 2337 "ocamlbuild/report.ml" 59 2439 2459
+type(
+  unit
+)
+"ocamlbuild/report.ml" 48 1926 1928 "ocamlbuild/report.ml" 59 2439 2459
+type(
+  Solver.backtrace -> unit
+)
+"ocamlbuild/report.ml" 61 2461 2465 "ocamlbuild/report.ml" 61 2461 2488
+type(
+  Format.formatter -> Solver.backtrace -> unit
+)
+"ocamlbuild/report.ml" 61 2461 2489 "ocamlbuild/report.ml" 61 2461 2490
+type(
+  Format.formatter
+)
+"ocamlbuild/report.ml" 61 2461 2491 "ocamlbuild/report.ml" 61 2461 2493
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 61 2461 2496 "ocamlbuild/report.ml" 61 2461 2502
+type(
+  bool -> unit
+)
+"ocamlbuild/report.ml" 61 2461 2504 "ocamlbuild/report.ml" 61 2461 2511
+type(
+  Format.formatter -> Solver.backtrace -> bool
+)
+"ocamlbuild/report.ml" 61 2461 2512 "ocamlbuild/report.ml" 61 2461 2513
+type(
+  Format.formatter
+)
+"ocamlbuild/report.ml" 61 2461 2514 "ocamlbuild/report.ml" 61 2461 2516
+type(
+  Solver.backtrace
+)
+"ocamlbuild/report.ml" 61 2461 2503 "ocamlbuild/report.ml" 61 2461 2517
+type(
+  bool
+)
+"ocamlbuild/report.ml" 61 2461 2496 "ocamlbuild/report.ml" 61 2461 2517
+type(
+  unit
+)

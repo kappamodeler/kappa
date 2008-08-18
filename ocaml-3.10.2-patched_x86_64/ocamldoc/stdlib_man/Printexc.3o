@@ -1,0 +1,81 @@
+.TH "Printexc" 3 2008-07-16 OCamldoc "OCaml library"
+.SH NAME
+Printexc \- Facilities for printing exceptions.
+.SH Module
+Module   Printexc
+.SH Documentation
+.sp
+Module
+.BI "Printexc"
+ : 
+.B sig  end
+
+.sp
+Facilities for printing exceptions\&.
+.sp
+
+.sp
+
+.sp
+.sp
+
+.I val to_string 
+: 
+.B exn -> string
+.sp
+
+.B Printexc\&.to_string e
+returns a string representation of
+the exception 
+.B e
+\&.
+.sp
+
+.sp
+
+.I val print 
+: 
+.B ('a -> 'b) -> 'a -> 'b
+.sp
+
+.B Printexc\&.print fn x
+applies 
+.B fn
+to 
+.B x
+and returns the result\&.
+If the evaluation of 
+.B fn x
+raises any exception, the
+name of the exception is printed on standard error output,
+and the exception is raised again\&.
+The typical use is to catch and report exceptions that
+escape a function application\&.
+.sp
+
+.sp
+
+.I val catch 
+: 
+.B ('a -> 'b) -> 'a -> 'b
+.sp
+
+.B Printexc\&.catch fn x
+is similar to 
+.B Printexc\&.print
+, but
+aborts the program with exit code 2 after printing the
+uncaught exception\&.  This function is deprecated: the runtime
+system is now able to print uncaught exceptions as precisely
+as 
+.B Printexc\&.catch
+does\&.  Moreover, calling 
+.B Printexc\&.catch
+makes it harder to track the location of the exception
+using the debugger or the stack backtrace facility\&.
+So, do not use 
+.B Printexc\&.catch
+in new code\&.
+.sp
+
+.sp

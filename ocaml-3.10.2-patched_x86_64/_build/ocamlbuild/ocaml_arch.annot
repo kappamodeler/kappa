@@ -1,0 +1,2049 @@
+"ocamlbuild/ocaml_arch.ml" 23 1031 1035 "ocamlbuild/ocaml_arch.ml" 23 1031 1038
+type(
+  string -> unit arch list -> unit arch
+)
+"ocamlbuild/ocaml_arch.ml" 23 1031 1039 "ocamlbuild/ocaml_arch.ml" 23 1031 1043
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 23 1031 1044 "ocamlbuild/ocaml_arch.ml" 23 1031 1052
+type(
+  unit arch list
+)
+"ocamlbuild/ocaml_arch.ml" 23 1031 1064 "ocamlbuild/ocaml_arch.ml" 23 1031 1068
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 23 1031 1070 "ocamlbuild/ocaml_arch.ml" 23 1031 1072
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 23 1031 1074 "ocamlbuild/ocaml_arch.ml" 23 1031 1082
+type(
+  unit arch list
+)
+"ocamlbuild/ocaml_arch.ml" 23 1031 1055 "ocamlbuild/ocaml_arch.ml" 23 1031 1083
+type(
+  unit arch
+)
+"ocamlbuild/ocaml_arch.ml" 24 1084 1088 "ocamlbuild/ocaml_arch.ml" 24 1084 1096
+type(
+  string -> unit arch list -> unit arch
+)
+"ocamlbuild/ocaml_arch.ml" 24 1084 1097 "ocamlbuild/ocaml_arch.ml" 24 1084 1101
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 24 1084 1102 "ocamlbuild/ocaml_arch.ml" 24 1084 1110
+type(
+  unit arch list
+)
+"ocamlbuild/ocaml_arch.ml" 24 1084 1127 "ocamlbuild/ocaml_arch.ml" 24 1084 1131
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 24 1084 1133 "ocamlbuild/ocaml_arch.ml" 24 1084 1135
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 24 1084 1137 "ocamlbuild/ocaml_arch.ml" 24 1084 1145
+type(
+  unit arch list
+)
+"ocamlbuild/ocaml_arch.ml" 24 1084 1113 "ocamlbuild/ocaml_arch.ml" 24 1084 1146
+type(
+  unit arch
+)
+"ocamlbuild/ocaml_arch.ml" 25 1147 1151 "ocamlbuild/ocaml_arch.ml" 25 1147 1155
+type(
+  string -> unit arch
+)
+"ocamlbuild/ocaml_arch.ml" 25 1147 1156 "ocamlbuild/ocaml_arch.ml" 25 1147 1160
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 25 1147 1173 "ocamlbuild/ocaml_arch.ml" 25 1147 1177
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 25 1147 1179 "ocamlbuild/ocaml_arch.ml" 25 1147 1181
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 25 1147 1163 "ocamlbuild/ocaml_arch.ml" 25 1147 1182
+type(
+  unit arch
+)
+"ocamlbuild/ocaml_arch.ml" 34 1281 1285 "ocamlbuild/ocaml_arch.ml" 34 1281 1294
+type(
+  string -> string -> string
+)
+"ocamlbuild/ocaml_arch.ml" 34 1281 1295 "ocamlbuild/ocaml_arch.ml" 34 1281 1301
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 34 1281 1302 "ocamlbuild/ocaml_arch.ml" 34 1281 1306
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 35 1309 1314 "ocamlbuild/ocaml_arch.ml" 35 1309 1320
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 35 1309 1321 "ocamlbuild/ocaml_arch.ml" 35 1309 1322
+type(
+  string -> string -> bool
+)
+"ocamlbuild/ocaml_arch.ml" 35 1309 1323 "ocamlbuild/ocaml_arch.ml" 35 1309 1325
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 35 1309 1314 "ocamlbuild/ocaml_arch.ml" 35 1309 1325
+type(
+  bool
+)
+"ocamlbuild/ocaml_arch.ml" 35 1309 1331 "ocamlbuild/ocaml_arch.ml" 35 1309 1335
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 35 1309 1341 "ocamlbuild/ocaml_arch.ml" 35 1309 1347
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 35 1309 1348 "ocamlbuild/ocaml_arch.ml" 35 1309 1349
+type(
+  string -> string -> string
+)
+"ocamlbuild/ocaml_arch.ml" 35 1309 1350 "ocamlbuild/ocaml_arch.ml" 35 1309 1353
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 35 1309 1354 "ocamlbuild/ocaml_arch.ml" 35 1309 1355
+type(
+  string -> string -> string
+)
+"ocamlbuild/ocaml_arch.ml" 35 1309 1356 "ocamlbuild/ocaml_arch.ml" 35 1309 1360
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 35 1309 1350 "ocamlbuild/ocaml_arch.ml" 35 1309 1360
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 35 1309 1341 "ocamlbuild/ocaml_arch.ml" 35 1309 1360
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 35 1309 1311 "ocamlbuild/ocaml_arch.ml" 35 1309 1360
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 37 1362 1366 "ocamlbuild/ocaml_arch.ml" 37 1362 1374
+type(
+  'a arch -> info arch
+)
+"ocamlbuild/ocaml_arch.ml" 37 1362 1375 "ocamlbuild/ocaml_arch.ml" 37 1362 1379
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 38 1382 1392 "ocamlbuild/ocaml_arch.ml" 38 1382 1396
+type(
+  'b arch -> info -> Pathname.t list * info arch
+)
+"ocamlbuild/ocaml_arch.ml" 38 1382 1397 "ocamlbuild/ocaml_arch.ml" 38 1382 1401
+type(
+  'b arch
+)
+"ocamlbuild/ocaml_arch.ml" 38 1382 1402 "ocamlbuild/ocaml_arch.ml" 38 1382 1405
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 39 1408 1418 "ocamlbuild/ocaml_arch.ml" 39 1408 1422
+type(
+  'b arch
+)
+"ocamlbuild/ocaml_arch.ml" 40 1428 1448 "ocamlbuild/ocaml_arch.ml" 40 1428 1452
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 40 1428 1454 "ocamlbuild/ocaml_arch.ml" 40 1428 1455
+type(
+  'b
+)
+"ocamlbuild/ocaml_arch.ml" 40 1428 1457 "ocamlbuild/ocaml_arch.ml" 40 1428 1465
+type(
+  'b arch list
+)
+"ocamlbuild/ocaml_arch.ml" 40 1428 1434 "ocamlbuild/ocaml_arch.ml" 40 1428 1466
+type(
+  'b arch
+)
+"ocamlbuild/ocaml_arch.ml" 41 1470 1482 "ocamlbuild/ocaml_arch.ml" 41 1470 1485
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 41 1470 1490 "ocamlbuild/ocaml_arch.ml" 41 1470 1495
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 41 1470 1512 "ocamlbuild/ocaml_arch.ml" 41 1470 1521
+type(
+  string -> Pathname.t -> Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 41 1470 1522 "ocamlbuild/ocaml_arch.ml" 41 1470 1525
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 41 1470 1522 "ocamlbuild/ocaml_arch.ml" 41 1470 1534
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 41 1470 1535 "ocamlbuild/ocaml_arch.ml" 41 1470 1539
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 41 1470 1512 "ocamlbuild/ocaml_arch.ml" 41 1470 1539
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 41 1470 1488 "ocamlbuild/ocaml_arch.ml" 41 1470 1541
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 42 1545 1558 "ocamlbuild/ocaml_arch.ml" 42 1545 1559
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 42 1545 1561 "ocamlbuild/ocaml_arch.ml" 42 1545 1562
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 42 1545 1564 "ocamlbuild/ocaml_arch.ml" 42 1545 1565
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 42 1545 1567 "ocamlbuild/ocaml_arch.ml" 42 1545 1579
+type(
+  info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 42 1545 1557 "ocamlbuild/ocaml_arch.ml" 42 1545 1580
+type(
+  Pathname.t * Pathname.t list * info * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 42 1545 1583 "ocamlbuild/ocaml_arch.ml" 42 1545 1596
+type(
+  Pathname.t ->
+  'b arch list ->
+  info -> Pathname.t * Pathname.t list * info * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 42 1545 1597 "ocamlbuild/ocaml_arch.ml" 42 1545 1601
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 42 1545 1602 "ocamlbuild/ocaml_arch.ml" 42 1545 1610
+type(
+  'b arch list
+)
+"ocamlbuild/ocaml_arch.ml" 42 1545 1611 "ocamlbuild/ocaml_arch.ml" 42 1545 1614
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 42 1545 1583 "ocamlbuild/ocaml_arch.ml" 42 1545 1614
+type(
+  Pathname.t * Pathname.t list * info * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 43 1618 1627 "ocamlbuild/ocaml_arch.ml" 43 1618 1629
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 43 1618 1645 "ocamlbuild/ocaml_arch.ml" 43 1618 1649
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 43 1618 1651 "ocamlbuild/ocaml_arch.ml" 43 1618 1652
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 43 1618 1654 "ocamlbuild/ocaml_arch.ml" 43 1618 1662
+type(
+  info arch list -> info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 43 1618 1663 "ocamlbuild/ocaml_arch.ml" 43 1618 1675
+type(
+  info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 43 1618 1654 "ocamlbuild/ocaml_arch.ml" 43 1618 1675
+type(
+  info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 43 1618 1631 "ocamlbuild/ocaml_arch.ml" 43 1618 1676
+type(
+  info arch
+)
+"ocamlbuild/ocaml_arch.ml" 43 1618 1626 "ocamlbuild/ocaml_arch.ml" 43 1618 1677
+type(
+  Pathname.t list * info arch
+)
+"ocamlbuild/ocaml_arch.ml" 42 1545 1553 "ocamlbuild/ocaml_arch.ml" 43 1618 1677
+type(
+  Pathname.t list * info arch
+)
+"ocamlbuild/ocaml_arch.ml" 41 1470 1478 "ocamlbuild/ocaml_arch.ml" 43 1618 1677
+type(
+  Pathname.t list * info arch
+)
+"ocamlbuild/ocaml_arch.ml" 44 1678 1693 "ocamlbuild/ocaml_arch.ml" 44 1678 1697
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 44 1678 1699 "ocamlbuild/ocaml_arch.ml" 44 1678 1700
+type(
+  'b
+)
+"ocamlbuild/ocaml_arch.ml" 44 1678 1702 "ocamlbuild/ocaml_arch.ml" 44 1678 1710
+type(
+  'b arch list
+)
+"ocamlbuild/ocaml_arch.ml" 44 1678 1684 "ocamlbuild/ocaml_arch.ml" 44 1678 1711
+type(
+  'b arch
+)
+"ocamlbuild/ocaml_arch.ml" 45 1715 1728 "ocamlbuild/ocaml_arch.ml" 45 1715 1740
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 45 1715 1742 "ocamlbuild/ocaml_arch.ml" 45 1715 1754
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 45 1715 1756 "ocamlbuild/ocaml_arch.ml" 45 1715 1757
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 45 1715 1759 "ocamlbuild/ocaml_arch.ml" 45 1715 1771
+type(
+  info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 45 1715 1727 "ocamlbuild/ocaml_arch.ml" 45 1715 1772
+type(
+  Pathname.t * Pathname.t list * info * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 45 1715 1775 "ocamlbuild/ocaml_arch.ml" 45 1715 1788
+type(
+  Pathname.t ->
+  'b arch list ->
+  info -> Pathname.t * Pathname.t list * info * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 45 1715 1789 "ocamlbuild/ocaml_arch.ml" 45 1715 1793
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 45 1715 1794 "ocamlbuild/ocaml_arch.ml" 45 1715 1802
+type(
+  'b arch list
+)
+"ocamlbuild/ocaml_arch.ml" 45 1715 1803 "ocamlbuild/ocaml_arch.ml" 45 1715 1806
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 45 1715 1775 "ocamlbuild/ocaml_arch.ml" 45 1715 1806
+type(
+  Pathname.t * Pathname.t list * info * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 46 1810 1819 "ocamlbuild/ocaml_arch.ml" 46 1810 1831
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 46 1810 1835 "ocamlbuild/ocaml_arch.ml" 46 1810 1847
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 46 1810 1819 "ocamlbuild/ocaml_arch.ml" 46 1810 1847
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 46 1810 1858 "ocamlbuild/ocaml_arch.ml" 46 1810 1862
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 46 1810 1864 "ocamlbuild/ocaml_arch.ml" 46 1810 1865
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 46 1810 1867 "ocamlbuild/ocaml_arch.ml" 46 1810 1875
+type(
+  info arch list -> info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 46 1810 1876 "ocamlbuild/ocaml_arch.ml" 46 1810 1888
+type(
+  info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 46 1810 1867 "ocamlbuild/ocaml_arch.ml" 46 1810 1888
+type(
+  info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 46 1810 1849 "ocamlbuild/ocaml_arch.ml" 46 1810 1889
+type(
+  info arch
+)
+"ocamlbuild/ocaml_arch.ml" 46 1810 1818 "ocamlbuild/ocaml_arch.ml" 46 1810 1890
+type(
+  Pathname.t list * info arch
+)
+"ocamlbuild/ocaml_arch.ml" 45 1715 1723 "ocamlbuild/ocaml_arch.ml" 46 1810 1890
+type(
+  Pathname.t list * info arch
+)
+"ocamlbuild/ocaml_arch.ml" 47 1891 1907 "ocamlbuild/ocaml_arch.ml" 47 1891 1911
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 47 1891 1913 "ocamlbuild/ocaml_arch.ml" 47 1891 1914
+type(
+  'b
+)
+"ocamlbuild/ocaml_arch.ml" 47 1891 1897 "ocamlbuild/ocaml_arch.ml" 47 1891 1915
+type(
+  'b arch
+)
+"ocamlbuild/ocaml_arch.ml" 48 1919 1928 "ocamlbuild/ocaml_arch.ml" 48 1919 1930
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 48 1919 1942 "ocamlbuild/ocaml_arch.ml" 48 1919 1946
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 48 1919 1948 "ocamlbuild/ocaml_arch.ml" 48 1919 1951
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 48 1919 1932 "ocamlbuild/ocaml_arch.ml" 48 1919 1952
+type(
+  info arch
+)
+"ocamlbuild/ocaml_arch.ml" 48 1919 1927 "ocamlbuild/ocaml_arch.ml" 48 1919 1953
+type(
+  Pathname.t list * info arch
+)
+"ocamlbuild/ocaml_arch.ml" 39 1408 1412 "ocamlbuild/ocaml_arch.ml" 48 1919 1953
+type(
+  Pathname.t list * info arch
+)
+"ocamlbuild/ocaml_arch.ml" 49 1954 1960 "ocamlbuild/ocaml_arch.ml" 49 1954 1973
+type(
+  Pathname.t ->
+  'b arch list ->
+  info -> Pathname.t * Pathname.t list * info * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 49 1954 1974 "ocamlbuild/ocaml_arch.ml" 49 1954 1978
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 49 1954 1979 "ocamlbuild/ocaml_arch.ml" 49 1954 1987
+type(
+  'b arch list
+)
+"ocamlbuild/ocaml_arch.ml" 49 1954 1988 "ocamlbuild/ocaml_arch.ml" 49 1954 1991
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 50 1994 2002 "ocamlbuild/ocaml_arch.ml" 50 1994 2014
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 50 1994 2017 "ocamlbuild/ocaml_arch.ml" 50 1994 2020
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 50 1994 2017 "ocamlbuild/ocaml_arch.ml" 50 1994 2033
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 50 1994 2033 "ocamlbuild/ocaml_arch.ml" 50 1994 2034
+type(
+  Pathname.t -> Pathname.t -> Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 50 1994 2034 "ocamlbuild/ocaml_arch.ml" 50 1994 2038
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 50 1994 2017 "ocamlbuild/ocaml_arch.ml" 50 1994 2038
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 51 2042 2050 "ocamlbuild/ocaml_arch.ml" 51 2042 2062
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 51 2042 2068 "ocamlbuild/ocaml_arch.ml" 51 2042 2080
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 51 2042 2081 "ocamlbuild/ocaml_arch.ml" 51 2042 2082
+type(
+  Pathname.t -> Pathname.t -> bool
+)
+"ocamlbuild/ocaml_arch.ml" 51 2042 2083 "ocamlbuild/ocaml_arch.ml" 51 2042 2085
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 51 2042 2068 "ocamlbuild/ocaml_arch.ml" 51 2042 2085
+type(
+  bool
+)
+"ocamlbuild/ocaml_arch.ml" 51 2042 2091 "ocamlbuild/ocaml_arch.ml" 51 2042 2094
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 51 2042 2091 "ocamlbuild/ocaml_arch.ml" 51 2042 2107
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 51 2042 2113 "ocamlbuild/ocaml_arch.ml" 51 2042 2125
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 51 2042 2129 "ocamlbuild/ocaml_arch.ml" 51 2042 2132
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 51 2042 2129 "ocamlbuild/ocaml_arch.ml" 51 2042 2145
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 51 2042 2113 "ocamlbuild/ocaml_arch.ml" 51 2042 2145
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 51 2042 2065 "ocamlbuild/ocaml_arch.ml" 51 2042 2145
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 52 2149 2157 "ocamlbuild/ocaml_arch.ml" 52 2149 2158
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 52 2149 2163 "ocamlbuild/ocaml_arch.ml" 52 2149 2168
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 52 2149 2189 "ocamlbuild/ocaml_arch.ml" 52 2149 2201
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 52 2149 2218 "ocamlbuild/ocaml_arch.ml" 52 2149 2230
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 52 2149 2161 "ocamlbuild/ocaml_arch.ml" 52 2149 2232
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 53 2236 2245 "ocamlbuild/ocaml_arch.ml" 53 2236 2257
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 53 2236 2259 "ocamlbuild/ocaml_arch.ml" 53 2236 2271
+type(
+  info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 53 2236 2244 "ocamlbuild/ocaml_arch.ml" 53 2236 2272
+type(
+  Pathname.t list * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 54 2275 2281 "ocamlbuild/ocaml_arch.ml" 54 2275 2295
+type(
+  (Pathname.t list * info arch list ->
+   'b arch -> Pathname.t list * info arch list) ->
+  Pathname.t list * info arch list ->
+  'b arch list -> Pathname.t list * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 54 2275 2307 "ocamlbuild/ocaml_arch.ml" 54 2275 2319
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 54 2275 2321 "ocamlbuild/ocaml_arch.ml" 54 2275 2333
+type(
+  info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 54 2275 2306 "ocamlbuild/ocaml_arch.ml" 54 2275 2334
+type(
+  Pathname.t list * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 54 2275 2335 "ocamlbuild/ocaml_arch.ml" 54 2275 2336
+type(
+  'b arch
+)
+"ocamlbuild/ocaml_arch.ml" 55 2340 2352 "ocamlbuild/ocaml_arch.ml" 55 2340 2353
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 55 2340 2358 "ocamlbuild/ocaml_arch.ml" 55 2340 2361
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 55 2340 2382 "ocamlbuild/ocaml_arch.ml" 55 2340 2394
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 55 2340 2395 "ocamlbuild/ocaml_arch.ml" 55 2340 2396
+type(
+  Pathname.t list -> Pathname.t list -> Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 55 2340 2397 "ocamlbuild/ocaml_arch.ml" 55 2340 2398
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 55 2340 2397 "ocamlbuild/ocaml_arch.ml" 55 2340 2411
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 55 2340 2382 "ocamlbuild/ocaml_arch.ml" 55 2340 2411
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 55 2340 2356 "ocamlbuild/ocaml_arch.ml" 55 2340 2413
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 56 2417 2430 "ocamlbuild/ocaml_arch.ml" 56 2417 2443
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 56 2417 2445 "ocamlbuild/ocaml_arch.ml" 56 2417 2447
+type(
+  info arch
+)
+"ocamlbuild/ocaml_arch.ml" 56 2417 2429 "ocamlbuild/ocaml_arch.ml" 56 2417 2448
+type(
+  Pathname.t list * info arch
+)
+"ocamlbuild/ocaml_arch.ml" 56 2417 2451 "ocamlbuild/ocaml_arch.ml" 56 2417 2455
+type(
+  'b arch -> info -> Pathname.t list * info arch
+)
+"ocamlbuild/ocaml_arch.ml" 56 2417 2456 "ocamlbuild/ocaml_arch.ml" 56 2417 2457
+type(
+  'b arch
+)
+"ocamlbuild/ocaml_arch.ml" 56 2417 2458 "ocamlbuild/ocaml_arch.ml" 56 2417 2459
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 56 2417 2451 "ocamlbuild/ocaml_arch.ml" 56 2417 2459
+type(
+  Pathname.t list * info arch
+)
+"ocamlbuild/ocaml_arch.ml" 57 2463 2472 "ocamlbuild/ocaml_arch.ml" 57 2463 2484
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 57 2463 2485 "ocamlbuild/ocaml_arch.ml" 57 2463 2486
+type(
+  Pathname.t list -> Pathname.t list -> Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 57 2463 2487 "ocamlbuild/ocaml_arch.ml" 57 2463 2500
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 57 2463 2472 "ocamlbuild/ocaml_arch.ml" 57 2463 2500
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 57 2463 2502 "ocamlbuild/ocaml_arch.ml" 57 2463 2504
+type(
+  info arch
+)
+"ocamlbuild/ocaml_arch.ml" 57 2463 2508 "ocamlbuild/ocaml_arch.ml" 57 2463 2520
+type(
+  info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 57 2463 2502 "ocamlbuild/ocaml_arch.ml" 57 2463 2520
+type(
+  info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 57 2463 2471 "ocamlbuild/ocaml_arch.ml" 57 2463 2521
+type(
+  Pathname.t list * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 56 2417 2425 "ocamlbuild/ocaml_arch.ml" 57 2463 2521
+type(
+  Pathname.t list * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 55 2340 2348 "ocamlbuild/ocaml_arch.ml" 57 2463 2521
+type(
+  Pathname.t list * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 54 2275 2296 "ocamlbuild/ocaml_arch.ml" 58 2522 2531
+type(
+  Pathname.t list * info arch list ->
+  'b arch -> Pathname.t list * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 58 2522 2533 "ocamlbuild/ocaml_arch.ml" 58 2522 2535
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 58 2522 2537 "ocamlbuild/ocaml_arch.ml" 58 2522 2539
+type(
+  info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 58 2522 2532 "ocamlbuild/ocaml_arch.ml" 58 2522 2540
+type(
+  Pathname.t list * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 58 2522 2541 "ocamlbuild/ocaml_arch.ml" 58 2522 2549
+type(
+  'b arch list
+)
+"ocamlbuild/ocaml_arch.ml" 54 2275 2281 "ocamlbuild/ocaml_arch.ml" 58 2522 2549
+type(
+  Pathname.t list * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 59 2553 2558 "ocamlbuild/ocaml_arch.ml" 59 2553 2570
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 59 2553 2572 "ocamlbuild/ocaml_arch.ml" 59 2553 2584
+type(
+  Pathname.t list
+)
+"ocamlbuild/ocaml_arch.ml" 59 2553 2586 "ocamlbuild/ocaml_arch.ml" 59 2553 2587
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 59 2553 2589 "ocamlbuild/ocaml_arch.ml" 59 2553 2601
+type(
+  info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 59 2553 2557 "ocamlbuild/ocaml_arch.ml" 59 2553 2602
+type(
+  Pathname.t * Pathname.t list * info * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 53 2236 2240 "ocamlbuild/ocaml_arch.ml" 59 2553 2602
+type(
+  Pathname.t * Pathname.t list * info * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 52 2149 2153 "ocamlbuild/ocaml_arch.ml" 59 2553 2602
+type(
+  Pathname.t * Pathname.t list * info * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 51 2042 2046 "ocamlbuild/ocaml_arch.ml" 59 2553 2602
+type(
+  Pathname.t * Pathname.t list * info * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 50 1994 1998 "ocamlbuild/ocaml_arch.ml" 59 2553 2602
+type(
+  Pathname.t * Pathname.t list * info * info arch list
+)
+"ocamlbuild/ocaml_arch.ml" 60 2606 2612 "ocamlbuild/ocaml_arch.ml" 60 2606 2616
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 60 2606 2636 "ocamlbuild/ocaml_arch.ml" 60 2606 2638
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 60 2606 2655 "ocamlbuild/ocaml_arch.ml" 60 2606 2657
+type(
+  string list
+)
+"ocamlbuild/ocaml_arch.ml" 60 2606 2670 "ocamlbuild/ocaml_arch.ml" 60 2606 2672
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 60 2606 2619 "ocamlbuild/ocaml_arch.ml" 60 2606 2674
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 61 2678 2680 "ocamlbuild/ocaml_arch.ml" 61 2678 2683
+type(
+  Pathname.t list * info arch -> info arch
+)
+"ocamlbuild/ocaml_arch.ml" 61 2678 2685 "ocamlbuild/ocaml_arch.ml" 61 2678 2689
+type(
+  'a arch -> info -> Pathname.t list * info arch
+)
+"ocamlbuild/ocaml_arch.ml" 61 2678 2690 "ocamlbuild/ocaml_arch.ml" 61 2678 2694
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 61 2678 2695 "ocamlbuild/ocaml_arch.ml" 61 2678 2699
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 61 2678 2684 "ocamlbuild/ocaml_arch.ml" 61 2678 2700
+type(
+  Pathname.t list * info arch
+)
+"ocamlbuild/ocaml_arch.ml" 61 2678 2680 "ocamlbuild/ocaml_arch.ml" 61 2678 2700
+type(
+  info arch
+)
+"ocamlbuild/ocaml_arch.ml" 60 2606 2608 "ocamlbuild/ocaml_arch.ml" 61 2678 2700
+type(
+  info arch
+)
+"ocamlbuild/ocaml_arch.ml" 38 1382 1384 "ocamlbuild/ocaml_arch.ml" 61 2678 2700
+type(
+  info arch
+)
+"ocamlbuild/ocaml_arch.ml" 63 2702 2710 "ocamlbuild/ocaml_arch.ml" 63 2702 2715
+type(
+  (Format.formatter -> 'a -> unit) -> Format.formatter -> 'a arch -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 63 2702 2716 "ocamlbuild/ocaml_arch.ml" 63 2702 2726
+type(
+  Format.formatter -> 'a -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 63 2702 2727 "ocamlbuild/ocaml_arch.ml" 63 2702 2728
+type(
+  Format.formatter
+)
+"ocamlbuild/ocaml_arch.ml" 64 2731 2741 "ocamlbuild/ocaml_arch.ml" 64 2731 2755
+type(
+  Format.formatter -> 'a arch list -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 64 2731 2756 "ocamlbuild/ocaml_arch.ml" 64 2731 2757
+type(
+  Format.formatter
+)
+"ocamlbuild/ocaml_arch.ml" 66 2773 2779 "ocamlbuild/ocaml_arch.ml" 66 2773 2781
+type(
+  'a arch list
+)
+"ocamlbuild/ocaml_arch.ml" 66 2773 2785 "ocamlbuild/ocaml_arch.ml" 66 2773 2787
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 67 2788 2794 "ocamlbuild/ocaml_arch.ml" 67 2788 2795
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 67 2788 2799 "ocamlbuild/ocaml_arch.ml" 67 2788 2801
+type(
+  'a arch list
+)
+"ocamlbuild/ocaml_arch.ml" 67 2788 2794 "ocamlbuild/ocaml_arch.ml" 67 2788 2801
+type(
+  'a arch list
+)
+"ocamlbuild/ocaml_arch.ml" 67 2788 2805 "ocamlbuild/ocaml_arch.ml" 67 2788 2819
+type(
+  Format.formatter ->
+  ((Format.formatter -> 'a arch -> unit) ->
+   'a arch ->
+   (Format.formatter -> 'a arch list -> unit) -> 'a arch list -> unit,
+   Format.formatter, unit)
+  format ->
+  (Format.formatter -> 'a arch -> unit) ->
+  'a arch ->
+  (Format.formatter -> 'a arch list -> unit) -> 'a arch list -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 67 2788 2820 "ocamlbuild/ocaml_arch.ml" 67 2788 2821
+type(
+  Format.formatter
+)
+"ocamlbuild/ocaml_arch.ml" 67 2788 2822 "ocamlbuild/ocaml_arch.ml" 67 2788 2830
+type(
+  ((Format.formatter -> 'a arch -> unit) ->
+   'a arch ->
+   (Format.formatter -> 'a arch list -> unit) -> 'a arch list -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/ocaml_arch.ml" 67 2788 2832 "ocamlbuild/ocaml_arch.ml" 67 2788 2837
+type(
+  (Format.formatter -> 'a -> unit) -> Format.formatter -> 'a arch -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 67 2788 2838 "ocamlbuild/ocaml_arch.ml" 67 2788 2848
+type(
+  Format.formatter -> 'a -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 67 2788 2831 "ocamlbuild/ocaml_arch.ml" 67 2788 2849
+type(
+  Format.formatter -> 'a arch -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 67 2788 2850 "ocamlbuild/ocaml_arch.ml" 67 2788 2851
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 67 2788 2852 "ocamlbuild/ocaml_arch.ml" 67 2788 2866
+type(
+  Format.formatter -> 'a arch list -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 67 2788 2867 "ocamlbuild/ocaml_arch.ml" 67 2788 2869
+type(
+  'a arch list
+)
+"ocamlbuild/ocaml_arch.ml" 67 2788 2805 "ocamlbuild/ocaml_arch.ml" 67 2788 2869
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 65 2760 2764 "ocamlbuild/ocaml_arch.ml" 67 2788 2869
+type(
+  'a arch list -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 69 2884 2897 "ocamlbuild/ocaml_arch.ml" 69 2884 2901
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 69 2884 2903 "ocamlbuild/ocaml_arch.ml" 69 2884 2907
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 69 2884 2909 "ocamlbuild/ocaml_arch.ml" 69 2884 2917
+type(
+  'a arch list
+)
+"ocamlbuild/ocaml_arch.ml" 69 2884 2888 "ocamlbuild/ocaml_arch.ml" 69 2884 2918
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 70 2922 2928 "ocamlbuild/ocaml_arch.ml" 70 2922 2942
+type(
+  Format.formatter ->
+  (string ->
+   (Format.formatter -> 'a -> unit) ->
+   'a -> (Format.formatter -> 'a arch list -> unit) -> 'a arch list -> unit,
+   Format.formatter, unit)
+  format ->
+  string ->
+  (Format.formatter -> 'a -> unit) ->
+  'a -> (Format.formatter -> 'a arch list -> unit) -> 'a arch list -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 70 2922 2943 "ocamlbuild/ocaml_arch.ml" 70 2922 2944
+type(
+  Format.formatter
+)
+"ocamlbuild/ocaml_arch.ml" 70 2922 2945 "ocamlbuild/ocaml_arch.ml" 70 2922 2965
+type(
+  (string ->
+   (Format.formatter -> 'a -> unit) ->
+   'a -> (Format.formatter -> 'a arch list -> unit) -> 'a arch list -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/ocaml_arch.ml" 70 2922 2966 "ocamlbuild/ocaml_arch.ml" 70 2922 2970
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 70 2922 2971 "ocamlbuild/ocaml_arch.ml" 70 2922 2981
+type(
+  Format.formatter -> 'a -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 70 2922 2982 "ocamlbuild/ocaml_arch.ml" 70 2922 2986
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 70 2922 2987 "ocamlbuild/ocaml_arch.ml" 70 2922 3001
+type(
+  Format.formatter -> 'a arch list -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 70 2922 3002 "ocamlbuild/ocaml_arch.ml" 70 2922 3010
+type(
+  'a arch list
+)
+"ocamlbuild/ocaml_arch.ml" 70 2922 2928 "ocamlbuild/ocaml_arch.ml" 70 2922 3010
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 71 3011 3029 "ocamlbuild/ocaml_arch.ml" 71 3011 3033
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 71 3011 3035 "ocamlbuild/ocaml_arch.ml" 71 3011 3039
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 71 3011 3041 "ocamlbuild/ocaml_arch.ml" 71 3011 3049
+type(
+  'a arch list
+)
+"ocamlbuild/ocaml_arch.ml" 71 3011 3015 "ocamlbuild/ocaml_arch.ml" 71 3011 3050
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 72 3054 3060 "ocamlbuild/ocaml_arch.ml" 72 3054 3074
+type(
+  Format.formatter ->
+  (string ->
+   (Format.formatter -> 'a -> unit) ->
+   'a -> (Format.formatter -> 'a arch list -> unit) -> 'a arch list -> unit,
+   Format.formatter, unit)
+  format ->
+  string ->
+  (Format.formatter -> 'a -> unit) ->
+  'a -> (Format.formatter -> 'a arch list -> unit) -> 'a arch list -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 72 3054 3075 "ocamlbuild/ocaml_arch.ml" 72 3054 3076
+type(
+  Format.formatter
+)
+"ocamlbuild/ocaml_arch.ml" 72 3054 3077 "ocamlbuild/ocaml_arch.ml" 72 3054 3102
+type(
+  (string ->
+   (Format.formatter -> 'a -> unit) ->
+   'a -> (Format.formatter -> 'a arch list -> unit) -> 'a arch list -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/ocaml_arch.ml" 72 3054 3103 "ocamlbuild/ocaml_arch.ml" 72 3054 3107
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 72 3054 3108 "ocamlbuild/ocaml_arch.ml" 72 3054 3118
+type(
+  Format.formatter -> 'a -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 72 3054 3119 "ocamlbuild/ocaml_arch.ml" 72 3054 3123
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 72 3054 3124 "ocamlbuild/ocaml_arch.ml" 72 3054 3138
+type(
+  Format.formatter -> 'a arch list -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 72 3054 3139 "ocamlbuild/ocaml_arch.ml" 72 3054 3147
+type(
+  'a arch list
+)
+"ocamlbuild/ocaml_arch.ml" 72 3054 3060 "ocamlbuild/ocaml_arch.ml" 72 3054 3147
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 73 3148 3162 "ocamlbuild/ocaml_arch.ml" 73 3148 3166
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 73 3148 3168 "ocamlbuild/ocaml_arch.ml" 73 3148 3172
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 73 3148 3152 "ocamlbuild/ocaml_arch.ml" 73 3148 3173
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 74 3177 3183 "ocamlbuild/ocaml_arch.ml" 74 3177 3197
+type(
+  Format.formatter ->
+  (string -> (Format.formatter -> 'a -> unit) -> 'a -> unit,
+   Format.formatter, unit)
+  format -> string -> (Format.formatter -> 'a -> unit) -> 'a -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 74 3177 3198 "ocamlbuild/ocaml_arch.ml" 74 3177 3199
+type(
+  Format.formatter
+)
+"ocamlbuild/ocaml_arch.ml" 74 3177 3200 "ocamlbuild/ocaml_arch.ml" 74 3177 3218
+type(
+  (string -> (Format.formatter -> 'a -> unit) -> 'a -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/ocaml_arch.ml" 74 3177 3219 "ocamlbuild/ocaml_arch.ml" 74 3177 3223
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 74 3177 3224 "ocamlbuild/ocaml_arch.ml" 74 3177 3234
+type(
+  Format.formatter -> 'a -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 74 3177 3235 "ocamlbuild/ocaml_arch.ml" 74 3177 3239
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 74 3177 3183 "ocamlbuild/ocaml_arch.ml" 74 3177 3239
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 68 2873 2875 "ocamlbuild/ocaml_arch.ml" 74 3177 3239
+type(
+  'a arch -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 64 2731 2733 "ocamlbuild/ocaml_arch.ml" 74 3177 3239
+type(
+  'a arch -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 76 3241 3245 "ocamlbuild/ocaml_arch.ml" 76 3241 3263
+type(
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 76 3241 3266 "ocamlbuild/ocaml_arch.ml" 76 3241 3276
+type(
+  (Format.formatter -> string -> unit) ->
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 76 3241 3277 "ocamlbuild/ocaml_arch.ml" 76 3241 3289
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 76 3241 3266 "ocamlbuild/ocaml_arch.ml" 76 3241 3289
+type(
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 78 3291 3295 "ocamlbuild/ocaml_arch.ml" 78 3291 3305
+type(
+  Format.formatter -> info -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 78 3291 3306 "ocamlbuild/ocaml_arch.ml" 78 3291 3307
+type(
+  Format.formatter
+)
+"ocamlbuild/ocaml_arch.ml" 78 3291 3308 "ocamlbuild/ocaml_arch.ml" 78 3291 3309
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 79 3312 3314 "ocamlbuild/ocaml_arch.ml" 79 3312 3328
+type(
+  Format.formatter ->
+  (string ->
+   (Format.formatter -> string list -> unit) -> string list -> string -> unit,
+   Format.formatter, unit)
+  format ->
+  string ->
+  (Format.formatter -> string list -> unit) -> string list -> string -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 79 3312 3329 "ocamlbuild/ocaml_arch.ml" 79 3312 3330
+type(
+  Format.formatter
+)
+"ocamlbuild/ocaml_arch.ml" 79 3312 3331 "ocamlbuild/ocaml_arch.ml" 81 3430 3486
+type(
+  (string ->
+   (Format.formatter -> string list -> unit) -> string list -> string -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/ocaml_arch.ml" 82 3487 3504 "ocamlbuild/ocaml_arch.ml" 82 3487 3505
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 82 3487 3504 "ocamlbuild/ocaml_arch.ml" 82 3487 3518
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 82 3487 3519 "ocamlbuild/ocaml_arch.ml" 82 3487 3537
+type(
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 82 3487 3538 "ocamlbuild/ocaml_arch.ml" 82 3487 3539
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 82 3487 3538 "ocamlbuild/ocaml_arch.ml" 82 3487 3552
+type(
+  string list
+)
+"ocamlbuild/ocaml_arch.ml" 82 3487 3553 "ocamlbuild/ocaml_arch.ml" 82 3487 3554
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 82 3487 3553 "ocamlbuild/ocaml_arch.ml" 82 3487 3563
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 79 3312 3314 "ocamlbuild/ocaml_arch.ml" 82 3487 3563
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 84 3565 3573 "ocamlbuild/ocaml_arch.ml" 84 3565 3582
+type(
+  ('a -> unit) -> 'a arch -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 84 3565 3583 "ocamlbuild/ocaml_arch.ml" 84 3565 3584
+type(
+  'a -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 86 3598 3616 "ocamlbuild/ocaml_arch.ml" 86 3598 3617
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 86 3598 3619 "ocamlbuild/ocaml_arch.ml" 86 3598 3620
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 86 3598 3622 "ocamlbuild/ocaml_arch.ml" 86 3598 3624
+type(
+  'a arch list
+)
+"ocamlbuild/ocaml_arch.ml" 86 3598 3602 "ocamlbuild/ocaml_arch.ml" 86 3598 3625
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 86 3598 3637 "ocamlbuild/ocaml_arch.ml" 86 3598 3638
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 86 3598 3640 "ocamlbuild/ocaml_arch.ml" 86 3598 3641
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 86 3598 3643 "ocamlbuild/ocaml_arch.ml" 86 3598 3645
+type(
+  'a arch list
+)
+"ocamlbuild/ocaml_arch.ml" 86 3598 3628 "ocamlbuild/ocaml_arch.ml" 86 3598 3646
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 86 3598 3602 "ocamlbuild/ocaml_arch.ml" 86 3598 3646
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 87 3650 3656 "ocamlbuild/ocaml_arch.ml" 87 3650 3657
+type(
+  'a -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 87 3650 3658 "ocamlbuild/ocaml_arch.ml" 87 3650 3659
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 87 3650 3656 "ocamlbuild/ocaml_arch.ml" 87 3650 3659
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 87 3650 3661 "ocamlbuild/ocaml_arch.ml" 87 3650 3670
+type(
+  ('a arch -> unit) -> 'a arch list -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 87 3650 3672 "ocamlbuild/ocaml_arch.ml" 87 3650 3681
+type(
+  ('a -> unit) -> 'a arch -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 87 3650 3682 "ocamlbuild/ocaml_arch.ml" 87 3650 3683
+type(
+  'a -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 87 3650 3671 "ocamlbuild/ocaml_arch.ml" 87 3650 3684
+type(
+  'a arch -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 87 3650 3685 "ocamlbuild/ocaml_arch.ml" 87 3650 3687
+type(
+  'a arch list
+)
+"ocamlbuild/ocaml_arch.ml" 87 3650 3661 "ocamlbuild/ocaml_arch.ml" 87 3650 3687
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 87 3650 3656 "ocamlbuild/ocaml_arch.ml" 87 3650 3687
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 88 3688 3702 "ocamlbuild/ocaml_arch.ml" 88 3688 3703
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 88 3688 3705 "ocamlbuild/ocaml_arch.ml" 88 3688 3706
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 88 3688 3692 "ocamlbuild/ocaml_arch.ml" 88 3688 3707
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 88 3688 3711 "ocamlbuild/ocaml_arch.ml" 88 3688 3712
+type(
+  'a -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 88 3688 3713 "ocamlbuild/ocaml_arch.ml" 88 3688 3714
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 88 3688 3711 "ocamlbuild/ocaml_arch.ml" 88 3688 3714
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 85 3587 3589 "ocamlbuild/ocaml_arch.ml" 88 3688 3714
+type(
+  'a arch -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 90 3716 3724 "ocamlbuild/ocaml_arch.ml" 90 3716 3733
+type(
+  ('a -> 'b -> 'b) -> 'a arch -> 'b -> 'b
+)
+"ocamlbuild/ocaml_arch.ml" 90 3716 3734 "ocamlbuild/ocaml_arch.ml" 90 3716 3735
+type(
+  'a -> 'b -> 'b
+)
+"ocamlbuild/ocaml_arch.ml" 90 3716 3736 "ocamlbuild/ocaml_arch.ml" 90 3716 3740
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 90 3716 3741 "ocamlbuild/ocaml_arch.ml" 90 3716 3744
+type(
+  'b
+)
+"ocamlbuild/ocaml_arch.ml" 91 3747 3755 "ocamlbuild/ocaml_arch.ml" 91 3747 3759
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 92 3765 3783 "ocamlbuild/ocaml_arch.ml" 92 3765 3784
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 92 3765 3786 "ocamlbuild/ocaml_arch.ml" 92 3765 3787
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 92 3765 3789 "ocamlbuild/ocaml_arch.ml" 92 3765 3791
+type(
+  'a arch list
+)
+"ocamlbuild/ocaml_arch.ml" 92 3765 3769 "ocamlbuild/ocaml_arch.ml" 92 3765 3792
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 92 3765 3804 "ocamlbuild/ocaml_arch.ml" 92 3765 3805
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 92 3765 3807 "ocamlbuild/ocaml_arch.ml" 92 3765 3808
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 92 3765 3810 "ocamlbuild/ocaml_arch.ml" 92 3765 3812
+type(
+  'a arch list
+)
+"ocamlbuild/ocaml_arch.ml" 92 3765 3795 "ocamlbuild/ocaml_arch.ml" 92 3765 3813
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 92 3765 3769 "ocamlbuild/ocaml_arch.ml" 92 3765 3813
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 93 3817 3823 "ocamlbuild/ocaml_arch.ml" 93 3817 3838
+type(
+  ('a arch -> 'b -> 'b) -> 'a arch list -> 'b -> 'b
+)
+"ocamlbuild/ocaml_arch.ml" 93 3817 3840 "ocamlbuild/ocaml_arch.ml" 93 3817 3849
+type(
+  ('a -> 'b -> 'b) -> 'a arch -> 'b -> 'b
+)
+"ocamlbuild/ocaml_arch.ml" 93 3817 3850 "ocamlbuild/ocaml_arch.ml" 93 3817 3851
+type(
+  'a -> 'b -> 'b
+)
+"ocamlbuild/ocaml_arch.ml" 93 3817 3839 "ocamlbuild/ocaml_arch.ml" 93 3817 3852
+type(
+  'a arch -> 'b -> 'b
+)
+"ocamlbuild/ocaml_arch.ml" 93 3817 3853 "ocamlbuild/ocaml_arch.ml" 93 3817 3855
+type(
+  'a arch list
+)
+"ocamlbuild/ocaml_arch.ml" 93 3817 3857 "ocamlbuild/ocaml_arch.ml" 93 3817 3858
+type(
+  'a -> 'b -> 'b
+)
+"ocamlbuild/ocaml_arch.ml" 93 3817 3859 "ocamlbuild/ocaml_arch.ml" 93 3817 3860
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 93 3817 3861 "ocamlbuild/ocaml_arch.ml" 93 3817 3864
+type(
+  'b
+)
+"ocamlbuild/ocaml_arch.ml" 93 3817 3856 "ocamlbuild/ocaml_arch.ml" 93 3817 3865
+type(
+  'b
+)
+"ocamlbuild/ocaml_arch.ml" 93 3817 3823 "ocamlbuild/ocaml_arch.ml" 93 3817 3865
+type(
+  'b
+)
+"ocamlbuild/ocaml_arch.ml" 94 3866 3880 "ocamlbuild/ocaml_arch.ml" 94 3866 3881
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 94 3866 3883 "ocamlbuild/ocaml_arch.ml" 94 3866 3884
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 94 3866 3870 "ocamlbuild/ocaml_arch.ml" 94 3866 3885
+type(
+  'a arch
+)
+"ocamlbuild/ocaml_arch.ml" 94 3866 3889 "ocamlbuild/ocaml_arch.ml" 94 3866 3890
+type(
+  'a -> 'b -> 'b
+)
+"ocamlbuild/ocaml_arch.ml" 94 3866 3891 "ocamlbuild/ocaml_arch.ml" 94 3866 3892
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 94 3866 3893 "ocamlbuild/ocaml_arch.ml" 94 3866 3896
+type(
+  'b
+)
+"ocamlbuild/ocaml_arch.ml" 94 3866 3889 "ocamlbuild/ocaml_arch.ml" 94 3866 3896
+type(
+  'b
+)
+"ocamlbuild/ocaml_arch.ml" 91 3747 3749 "ocamlbuild/ocaml_arch.ml" 94 3866 3896
+type(
+  'b
+)
+"ocamlbuild/ocaml_arch.ml" 98 3928 3932 "ocamlbuild/ocaml_arch.ml" 98 3928 3949
+type(
+  info arch -> (SS.elt -> unit) -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 98 3928 3950 "ocamlbuild/ocaml_arch.ml" 98 3928 3954
+type(
+  info arch
+)
+"ocamlbuild/ocaml_arch.ml" 99 3957 3963 "ocamlbuild/ocaml_arch.ml" 99 3957 3966
+type(
+  SS.t
+)
+"ocamlbuild/ocaml_arch.ml" 99 3957 3969 "ocamlbuild/ocaml_arch.ml" 99 3957 3978
+type(
+  (info -> SS.t -> SS.t) -> info arch -> SS.t -> SS.t
+)
+"ocamlbuild/ocaml_arch.ml" 99 3957 3984 "ocamlbuild/ocaml_arch.ml" 99 3957 3985
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 99 3957 3989 "ocamlbuild/ocaml_arch.ml" 99 3957 4004
+type(
+  (SS.elt -> SS.t -> SS.t) -> SS.elt list -> SS.t -> SS.t
+)
+"ocamlbuild/ocaml_arch.ml" 99 3957 4005 "ocamlbuild/ocaml_arch.ml" 99 3957 4011
+type(
+  SS.elt -> SS.t -> SS.t
+)
+"ocamlbuild/ocaml_arch.ml" 99 3957 4012 "ocamlbuild/ocaml_arch.ml" 99 3957 4013
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 99 3957 4012 "ocamlbuild/ocaml_arch.ml" 99 3957 4026
+type(
+  SS.elt list
+)
+"ocamlbuild/ocaml_arch.ml" 99 3957 3989 "ocamlbuild/ocaml_arch.ml" 99 3957 4026
+type(
+  SS.t -> SS.t
+)
+"ocamlbuild/ocaml_arch.ml" 99 3957 3979 "ocamlbuild/ocaml_arch.ml" 99 3957 4027
+type(
+  info -> SS.t -> SS.t
+)
+"ocamlbuild/ocaml_arch.ml" 99 3957 4028 "ocamlbuild/ocaml_arch.ml" 99 3957 4032
+type(
+  info arch
+)
+"ocamlbuild/ocaml_arch.ml" 99 3957 4033 "ocamlbuild/ocaml_arch.ml" 99 3957 4041
+type(
+  SS.t
+)
+"ocamlbuild/ocaml_arch.ml" 99 3957 3969 "ocamlbuild/ocaml_arch.ml" 99 3957 4041
+type(
+  SS.t
+)
+"ocamlbuild/ocaml_arch.ml" 100 4045 4051 "ocamlbuild/ocaml_arch.ml" 100 4045 4052
+type(
+  SS.elt -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 100 4045 4056 "ocamlbuild/ocaml_arch.ml" 100 4045 4063
+type(
+  (SS.elt -> unit) -> SS.t -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 100 4045 4064 "ocamlbuild/ocaml_arch.ml" 100 4045 4065
+type(
+  SS.elt -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 100 4045 4066 "ocamlbuild/ocaml_arch.ml" 100 4045 4069
+type(
+  SS.t
+)
+"ocamlbuild/ocaml_arch.ml" 100 4045 4056 "ocamlbuild/ocaml_arch.ml" 100 4045 4069
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 100 4045 4047 "ocamlbuild/ocaml_arch.ml" 100 4045 4069
+type(
+  (SS.elt -> unit) -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 99 3957 3959 "ocamlbuild/ocaml_arch.ml" 100 4045 4069
+type(
+  (SS.elt -> unit) -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 102 4071 4075 "ocamlbuild/ocaml_arch.ml" 102 4071 4100
+type(
+  (Pathname.t -> Command.spec) ref
+)
+"ocamlbuild/ocaml_arch.ml" 102 4071 4103 "ocamlbuild/ocaml_arch.ml" 102 4071 4106
+type(
+  (Pathname.t -> Command.spec) -> (Pathname.t -> Command.spec) ref
+)
+"ocamlbuild/ocaml_arch.ml" 102 4071 4112 "ocamlbuild/ocaml_arch.ml" 102 4071 4113
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 102 4071 4117 "ocamlbuild/ocaml_arch.ml" 102 4071 4118
+type(
+  Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 102 4071 4107 "ocamlbuild/ocaml_arch.ml" 102 4071 4119
+type(
+  Pathname.t -> Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 102 4071 4103 "ocamlbuild/ocaml_arch.ml" 102 4071 4119
+type(
+  (Pathname.t -> Command.spec) ref
+)
+"ocamlbuild/ocaml_arch.ml" 104 4121 4125 "ocamlbuild/ocaml_arch.ml" 104 4121 4136
+type(
+  (Format.formatter -> 'a -> unit) ->
+  Format.formatter -> (string, 'a) Hashtbl.t -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 104 4121 4137 "ocamlbuild/ocaml_arch.ml" 104 4121 4148
+type(
+  Format.formatter -> 'a -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 104 4121 4149 "ocamlbuild/ocaml_arch.ml" 104 4121 4150
+type(
+  Format.formatter
+)
+"ocamlbuild/ocaml_arch.ml" 104 4121 4151 "ocamlbuild/ocaml_arch.ml" 104 4121 4156
+type(
+  (string, 'a) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 105 4159 4161 "ocamlbuild/ocaml_arch.ml" 105 4159 4175
+type(
+  Format.formatter -> (unit, Format.formatter, unit) format -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 105 4159 4176 "ocamlbuild/ocaml_arch.ml" 105 4159 4177
+type(
+  Format.formatter
+)
+"ocamlbuild/ocaml_arch.ml" 105 4159 4178 "ocamlbuild/ocaml_arch.ml" 105 4159 4196
+type(
+  (unit, Format.formatter, unit) format
+)
+"ocamlbuild/ocaml_arch.ml" 105 4159 4161 "ocamlbuild/ocaml_arch.ml" 105 4159 4196
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 106 4198 4200 "ocamlbuild/ocaml_arch.ml" 106 4198 4212
+type(
+  (string -> 'a -> unit) -> (string, 'a) Hashtbl.t -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 106 4198 4223 "ocamlbuild/ocaml_arch.ml" 106 4198 4224
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 106 4198 4225 "ocamlbuild/ocaml_arch.ml" 106 4198 4226
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 107 4230 4237 "ocamlbuild/ocaml_arch.ml" 107 4230 4238
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 107 4230 4239 "ocamlbuild/ocaml_arch.ml" 107 4230 4241
+type(
+  string -> string -> bool
+)
+"ocamlbuild/ocaml_arch.ml" 107 4230 4242 "ocamlbuild/ocaml_arch.ml" 107 4230 4244
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 107 4230 4237 "ocamlbuild/ocaml_arch.ml" 107 4230 4244
+type(
+  bool
+)
+"ocamlbuild/ocaml_arch.ml" 108 4250 4256 "ocamlbuild/ocaml_arch.ml" 108 4250 4270
+type(
+  Format.formatter ->
+  (string -> (Format.formatter -> 'a -> unit) -> 'a -> unit,
+   Format.formatter, unit)
+  format -> string -> (Format.formatter -> 'a -> unit) -> 'a -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 108 4250 4271 "ocamlbuild/ocaml_arch.ml" 108 4250 4272
+type(
+  Format.formatter
+)
+"ocamlbuild/ocaml_arch.ml" 108 4250 4273 "ocamlbuild/ocaml_arch.ml" 108 4250 4294
+type(
+  (string -> (Format.formatter -> 'a -> unit) -> 'a -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/ocaml_arch.ml" 108 4250 4295 "ocamlbuild/ocaml_arch.ml" 108 4250 4296
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 108 4250 4297 "ocamlbuild/ocaml_arch.ml" 108 4250 4308
+type(
+  Format.formatter -> 'a -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 108 4250 4309 "ocamlbuild/ocaml_arch.ml" 108 4250 4310
+type(
+  'a
+)
+"ocamlbuild/ocaml_arch.ml" 108 4250 4256 "ocamlbuild/ocaml_arch.ml" 108 4250 4310
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 107 4230 4234 "ocamlbuild/ocaml_arch.ml" 108 4250 4311
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 106 4198 4213 "ocamlbuild/ocaml_arch.ml" 109 4312 4317
+type(
+  string -> 'a -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 109 4312 4318 "ocamlbuild/ocaml_arch.ml" 109 4312 4323
+type(
+  (string, 'a) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 106 4198 4200 "ocamlbuild/ocaml_arch.ml" 109 4312 4323
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 110 4325 4327 "ocamlbuild/ocaml_arch.ml" 110 4325 4341
+type(
+  Format.formatter -> (unit, Format.formatter, unit) format -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 110 4325 4342 "ocamlbuild/ocaml_arch.ml" 110 4325 4343
+type(
+  Format.formatter
+)
+"ocamlbuild/ocaml_arch.ml" 110 4325 4344 "ocamlbuild/ocaml_arch.ml" 110 4325 4354
+type(
+  (unit, Format.formatter, unit) format
+)
+"ocamlbuild/ocaml_arch.ml" 110 4325 4327 "ocamlbuild/ocaml_arch.ml" 110 4325 4354
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 106 4198 4200 "ocamlbuild/ocaml_arch.ml" 110 4325 4354
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 105 4159 4161 "ocamlbuild/ocaml_arch.ml" 110 4325 4354
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 112 4356 4360 "ocamlbuild/ocaml_arch.ml" 112 4356 4372
+type(
+  Format.formatter ->
+  (string, string list) Hashtbl.t * (string, string) Hashtbl.t -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 112 4356 4373 "ocamlbuild/ocaml_arch.ml" 112 4356 4374
+type(
+  Format.formatter
+)
+"ocamlbuild/ocaml_arch.ml" 112 4356 4376 "ocamlbuild/ocaml_arch.ml" 112 4356 4394
+type(
+  (string, string list) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 112 4356 4396 "ocamlbuild/ocaml_arch.ml" 112 4356 4410
+type(
+  (string, string) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 112 4356 4375 "ocamlbuild/ocaml_arch.ml" 112 4356 4411
+type(
+  (string, string list) Hashtbl.t * (string, string) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 113 4414 4416 "ocamlbuild/ocaml_arch.ml" 113 4414 4430
+type(
+  Format.formatter ->
+  ((Format.formatter -> (string, string list) Hashtbl.t -> unit) ->
+   (string, string list) Hashtbl.t ->
+   (Format.formatter -> (string, string) Hashtbl.t -> unit) ->
+   (string, string) Hashtbl.t -> unit, Format.formatter, unit)
+  format ->
+  (Format.formatter -> (string, string list) Hashtbl.t -> unit) ->
+  (string, string list) Hashtbl.t ->
+  (Format.formatter -> (string, string) Hashtbl.t -> unit) ->
+  (string, string) Hashtbl.t -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 113 4414 4431 "ocamlbuild/ocaml_arch.ml" 113 4414 4432
+type(
+  Format.formatter
+)
+"ocamlbuild/ocaml_arch.ml" 113 4414 4433 "ocamlbuild/ocaml_arch.ml" 113 4414 4500
+type(
+  ((Format.formatter -> (string, string list) Hashtbl.t -> unit) ->
+   (string, string list) Hashtbl.t ->
+   (Format.formatter -> (string, string) Hashtbl.t -> unit) ->
+   (string, string) Hashtbl.t -> unit, Format.formatter, unit)
+  format
+)
+"ocamlbuild/ocaml_arch.ml" 114 4501 4507 "ocamlbuild/ocaml_arch.ml" 114 4501 4518
+type(
+  (Format.formatter -> string list -> unit) ->
+  Format.formatter -> (string, string list) Hashtbl.t -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 114 4501 4520 "ocamlbuild/ocaml_arch.ml" 114 4501 4530
+type(
+  (Format.formatter -> string -> unit) ->
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 114 4501 4531 "ocamlbuild/ocaml_arch.ml" 114 4501 4543
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 114 4501 4519 "ocamlbuild/ocaml_arch.ml" 114 4501 4544
+type(
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 114 4501 4506 "ocamlbuild/ocaml_arch.ml" 114 4501 4545
+type(
+  Format.formatter -> (string, string list) Hashtbl.t -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 114 4501 4546 "ocamlbuild/ocaml_arch.ml" 114 4501 4564
+type(
+  (string, string list) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 115 4565 4571 "ocamlbuild/ocaml_arch.ml" 115 4565 4582
+type(
+  (Format.formatter -> string -> unit) ->
+  Format.formatter -> (string, string) Hashtbl.t -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 115 4565 4583 "ocamlbuild/ocaml_arch.ml" 115 4565 4595
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 115 4565 4570 "ocamlbuild/ocaml_arch.ml" 115 4565 4596
+type(
+  Format.formatter -> (string, string) Hashtbl.t -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 115 4565 4597 "ocamlbuild/ocaml_arch.ml" 115 4565 4611
+type(
+  (string, string) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 113 4414 4416 "ocamlbuild/ocaml_arch.ml" 115 4565 4611
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 117 4613 4617 "ocamlbuild/ocaml_arch.ml" 117 4613 4626
+type(
+  info arch ->
+  (string, string list) Hashtbl.t * (Pathname.t, string) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 117 4613 4627 "ocamlbuild/ocaml_arch.ml" 117 4613 4631
+type(
+  info arch
+)
+"ocamlbuild/ocaml_arch.ml" 118 4634 4640 "ocamlbuild/ocaml_arch.ml" 118 4634 4658
+type(
+  (string, string list) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 118 4634 4661 "ocamlbuild/ocaml_arch.ml" 118 4634 4675
+type(
+  int -> (string, string list) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 118 4634 4676 "ocamlbuild/ocaml_arch.ml" 118 4634 4678
+type(
+  int
+)
+"ocamlbuild/ocaml_arch.ml" 118 4634 4661 "ocamlbuild/ocaml_arch.ml" 118 4634 4678
+type(
+  (string, string list) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 119 4679 4685 "ocamlbuild/ocaml_arch.ml" 119 4679 4699
+type(
+  (Pathname.t, string) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 119 4679 4702 "ocamlbuild/ocaml_arch.ml" 119 4679 4716
+type(
+  int -> (Pathname.t, string) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 119 4679 4717 "ocamlbuild/ocaml_arch.ml" 119 4679 4719
+type(
+  int
+)
+"ocamlbuild/ocaml_arch.ml" 119 4679 4702 "ocamlbuild/ocaml_arch.ml" 119 4679 4719
+type(
+  (Pathname.t, string) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 120 4723 4725 "ocamlbuild/ocaml_arch.ml" 120 4723 4734
+type(
+  (info -> unit) -> info arch -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 120 4723 4745 "ocamlbuild/ocaml_arch.ml" 120 4723 4746
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 121 4750 4754 "ocamlbuild/ocaml_arch.ml" 121 4750 4769
+type(
+  (string, string list) Hashtbl.t -> string -> string list -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 121 4750 4770 "ocamlbuild/ocaml_arch.ml" 121 4750 4788
+type(
+  (string, string list) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 121 4750 4789 "ocamlbuild/ocaml_arch.ml" 121 4750 4790
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 121 4750 4789 "ocamlbuild/ocaml_arch.ml" 121 4750 4803
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 121 4750 4804 "ocamlbuild/ocaml_arch.ml" 121 4750 4805
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 121 4750 4804 "ocamlbuild/ocaml_arch.ml" 121 4750 4818
+type(
+  string list
+)
+"ocamlbuild/ocaml_arch.ml" 121 4750 4754 "ocamlbuild/ocaml_arch.ml" 121 4750 4818
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 122 4820 4824 "ocamlbuild/ocaml_arch.ml" 122 4820 4839
+type(
+  (Pathname.t, string) Hashtbl.t -> Pathname.t -> string -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 122 4820 4840 "ocamlbuild/ocaml_arch.ml" 122 4820 4854
+type(
+  (Pathname.t, string) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 122 4820 4855 "ocamlbuild/ocaml_arch.ml" 122 4820 4856
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 122 4820 4855 "ocamlbuild/ocaml_arch.ml" 122 4820 4869
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 122 4820 4870 "ocamlbuild/ocaml_arch.ml" 122 4820 4871
+type(
+  info
+)
+"ocamlbuild/ocaml_arch.ml" 122 4820 4870 "ocamlbuild/ocaml_arch.ml" 122 4820 4880
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 122 4820 4824 "ocamlbuild/ocaml_arch.ml" 122 4820 4880
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 121 4750 4754 "ocamlbuild/ocaml_arch.ml" 122 4820 4880
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 120 4723 4735 "ocamlbuild/ocaml_arch.ml" 123 4881 4886
+type(
+  info -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 123 4881 4887 "ocamlbuild/ocaml_arch.ml" 123 4881 4891
+type(
+  info arch
+)
+"ocamlbuild/ocaml_arch.ml" 120 4723 4725 "ocamlbuild/ocaml_arch.ml" 123 4881 4891
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 124 4893 4899 "ocamlbuild/ocaml_arch.ml" 124 4893 4933
+type(
+  Pathname.t -> Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 124 4893 4936 "ocamlbuild/ocaml_arch.ml" 124 4893 4937
+type(
+  (Pathname.t -> Command.spec) ref -> Pathname.t -> Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 124 4893 4937 "ocamlbuild/ocaml_arch.ml" 124 4893 4962
+type(
+  (Pathname.t -> Command.spec) ref
+)
+"ocamlbuild/ocaml_arch.ml" 124 4893 4936 "ocamlbuild/ocaml_arch.ml" 124 4893 4962
+type(
+  Pathname.t -> Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 125 4966 4968 "ocamlbuild/ocaml_arch.ml" 125 4966 4993
+type(
+  (Pathname.t -> Command.spec) ref
+)
+"ocamlbuild/ocaml_arch.ml" 125 4966 4994 "ocamlbuild/ocaml_arch.ml" 125 4966 4996
+type(
+  (Pathname.t -> Command.spec) ref -> (Pathname.t -> Command.spec) -> unit
+)
+"ocamlbuild/ocaml_arch.ml" 125 4966 5007 "ocamlbuild/ocaml_arch.ml" 125 4966 5008
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 126 5012 5020 "ocamlbuild/ocaml_arch.ml" 126 5012 5022
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 126 5012 5025 "ocamlbuild/ocaml_arch.ml" 126 5012 5041
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 126 5012 5042 "ocamlbuild/ocaml_arch.ml" 126 5012 5043
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 126 5012 5025 "ocamlbuild/ocaml_arch.ml" 126 5012 5043
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 128 5055 5065 "ocamlbuild/ocaml_arch.ml" 128 5055 5073
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 128 5055 5076 "ocamlbuild/ocaml_arch.ml" 128 5055 5088
+type(
+  (Pathname.t, string) Hashtbl.t -> Pathname.t -> string
+)
+"ocamlbuild/ocaml_arch.ml" 128 5055 5089 "ocamlbuild/ocaml_arch.ml" 128 5055 5103
+type(
+  (Pathname.t, string) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 128 5055 5104 "ocamlbuild/ocaml_arch.ml" 128 5055 5106
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 128 5055 5076 "ocamlbuild/ocaml_arch.ml" 128 5055 5106
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 129 5110 5119 "ocamlbuild/ocaml_arch.ml" 129 5110 5127
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 129 5110 5128 "ocamlbuild/ocaml_arch.ml" 129 5110 5129
+type(
+  string -> string -> bool
+)
+"ocamlbuild/ocaml_arch.ml" 129 5110 5130 "ocamlbuild/ocaml_arch.ml" 129 5110 5132
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 129 5110 5119 "ocamlbuild/ocaml_arch.ml" 129 5110 5132
+type(
+  bool
+)
+"ocamlbuild/ocaml_arch.ml" 129 5110 5138 "ocamlbuild/ocaml_arch.ml" 129 5110 5139
+type(
+  Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 129 5110 5148 "ocamlbuild/ocaml_arch.ml" 129 5110 5159
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 129 5110 5147 "ocamlbuild/ocaml_arch.ml" 129 5110 5159
+type(
+  Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 129 5110 5163 "ocamlbuild/ocaml_arch.ml" 129 5110 5171
+type(
+  string
+)
+"ocamlbuild/ocaml_arch.ml" 129 5110 5161 "ocamlbuild/ocaml_arch.ml" 129 5110 5171
+type(
+  Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 129 5110 5146 "ocamlbuild/ocaml_arch.ml" 129 5110 5172
+type(
+  Command.spec list
+)
+"ocamlbuild/ocaml_arch.ml" 129 5110 5145 "ocamlbuild/ocaml_arch.ml" 129 5110 5172
+type(
+  Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 129 5110 5116 "ocamlbuild/ocaml_arch.ml" 129 5110 5172
+type(
+  Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 128 5055 5061 "ocamlbuild/ocaml_arch.ml" 129 5110 5172
+type(
+  Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 130 5173 5182 "ocamlbuild/ocaml_arch.ml" 130 5173 5191
+type(
+  exn
+)
+"ocamlbuild/ocaml_arch.ml" 130 5173 5195 "ocamlbuild/ocaml_arch.ml" 130 5173 5229
+type(
+  Pathname.t -> Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 130 5173 5230 "ocamlbuild/ocaml_arch.ml" 130 5173 5231
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 130 5173 5195 "ocamlbuild/ocaml_arch.ml" 130 5173 5231
+type(
+  Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 127 5047 5051 "ocamlbuild/ocaml_arch.ml" 130 5173 5231
+type(
+  Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 126 5012 5016 "ocamlbuild/ocaml_arch.ml" 130 5173 5231
+type(
+  Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 125 4966 4997 "ocamlbuild/ocaml_arch.ml" 131 5232 5237
+type(
+  Pathname.t -> Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 125 4966 4968 "ocamlbuild/ocaml_arch.ml" 131 5232 5237
+type(
+  unit
+)
+"ocamlbuild/ocaml_arch.ml" 133 5327 5330 "ocamlbuild/ocaml_arch.ml" 133 5327 5348
+type(
+  (string, string list) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 133 5327 5350 "ocamlbuild/ocaml_arch.ml" 133 5327 5364
+type(
+  (Pathname.t, string) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 133 5327 5329 "ocamlbuild/ocaml_arch.ml" 133 5327 5365
+type(
+  (string, string list) Hashtbl.t * (Pathname.t, string) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 125 4966 4968 "ocamlbuild/ocaml_arch.ml" 133 5327 5365
+type(
+  (string, string list) Hashtbl.t * (Pathname.t, string) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 124 4893 4895 "ocamlbuild/ocaml_arch.ml" 133 5327 5365
+type(
+  (string, string list) Hashtbl.t * (Pathname.t, string) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 120 4723 4725 "ocamlbuild/ocaml_arch.ml" 133 5327 5365
+type(
+  (string, string list) Hashtbl.t * (Pathname.t, string) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 118 4634 4636 "ocamlbuild/ocaml_arch.ml" 133 5327 5365
+type(
+  (string, string list) Hashtbl.t * (Pathname.t, string) Hashtbl.t
+)
+"ocamlbuild/ocaml_arch.ml" 135 5367 5371 "ocamlbuild/ocaml_arch.ml" 135 5367 5396
+type(
+  Pathname.t -> Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 135 5367 5397 "ocamlbuild/ocaml_arch.ml" 135 5367 5398
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 135 5367 5401 "ocamlbuild/ocaml_arch.ml" 135 5367 5402
+type(
+  (Pathname.t -> Command.spec) ref -> Pathname.t -> Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 135 5367 5402 "ocamlbuild/ocaml_arch.ml" 135 5367 5427
+type(
+  (Pathname.t -> Command.spec) ref
+)
+"ocamlbuild/ocaml_arch.ml" 135 5367 5401 "ocamlbuild/ocaml_arch.ml" 135 5367 5427
+type(
+  Pathname.t -> Command.spec
+)
+"ocamlbuild/ocaml_arch.ml" 135 5367 5428 "ocamlbuild/ocaml_arch.ml" 135 5367 5429
+type(
+  Pathname.t
+)
+"ocamlbuild/ocaml_arch.ml" 135 5367 5401 "ocamlbuild/ocaml_arch.ml" 135 5367 5429
+type(
+  Command.spec
+)

@@ -1,0 +1,211 @@
+(* 01/03/2007 *)
+(* Static analysis of BNG systems*)
+(* Jerome Feret pour PlectiX *)
+(* output for XML *)
+(* xml.ml *)
+
+open Data_structures
+open Pb_sig
+open Tools
+open Config_complx
+
+let style () = 
+  "xsi:schemaLocation=\"http://plectix.synthesisstudios.com
+KappaSession.xsd\" xmlns=\"http://plectix.synthesisstudios.com\"
+xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+  
+let time_stamp () = Config_complx.time_stamp 
+let command_line () =  
+  let s = ref "" in 
+  let _ = 
+    Array.iter  (fun x  -> if (!s) = "" then (s:=x) else s:=((!s)^" "^x)) Sys.argv in (!s)
+
+let input_file () = List.fold_right (fun x s -> if s="" then x else s^" "^x) (!Config_complx.input_file) ""
+
+let print_log channel (l,m)   =
+  let print s = Printf.fprintf channel s in 
+    if m = [] && l = [] then ()
+    else 
+      let _ = print "-<Log>\n" in 
+      let _ = List.iter (fun s -> print "<Entry Type=\"WARNING\" Message=\"%s\"/>\n" s) m in 
+      let _ = 
+	match List.rev l with [] -> ()
+	  | (s,t)::q  ->
+	      let _ = list_fold
+		(fun (s,t) t' -> print "<Entry Type=\"INFO\" Message=\"%s%s s.\"/>\n" s (string_of_float (t-.t'));t)
+		q t in () in 
+      let _ = print "</Log>\n" in 
+	() 
+
+let print_compression mode channel pb = 
+  let a,title = 
+    if mode = Full then pb.qualitative_compression,"Qualitative compression"
+    else pb.quantitative_compression,"Quantitative compression" in 
+  match a  with 
+    None -> () 
+  | Some a -> 
+      let print s = Printf.fprintf channel s in 
+      let _ = print "-<Set Name=\"%s\">\n" title in 
+      let _  =
+	List.iter
+	  (fun l -> 
+	    List.iter 
+	      (fun (a,b) -> 
+		let _ = print "<Rule Id=\"" in
+		let _ = 
+		    List.fold_left 
+		    (fun bool s -> 
+		      (if bool then print ",%s" s
+		      else print "%s" s);
+		      true)
+		    false (List.sort compare a) in
+		let _ = print "\" Data=\"" in 
+		let _ = 
+		  List.iter 
+		    (fun s -> print "%s" s)
+		    (List.rev b) in
+		let _ = print "\"/>\n" in ())
+		l)
+	      (List.rev a) in
+      let _ = print "</Set>\n" in
+      ()
+
+
+let print_rules channel pb  = 
+  let system = 
+    match pb.boolean_encoding with 
+      Some a -> a.system
+    | None -> 
+	(match pb.gathered_boolean_encoding with 
+	  Some a -> a.system
+	| None -> unsafe "XML 46" (raise Exit)) in 
+  let print s = Printf.fprintf channel s in 
+  let _ = print "-<Rules>\n" in 
+  let _ = print "-<Set Name=\"Original\">\n" in 
+  let _ = 
+    List.iter 
+      (fun rc -> 
+	 List.iter 
+	   (fun case -> 
+	      List.iter 
+		(fun id -> 
+		   print "<Rule Id=\"%d\" Data=\"%s\"/>\n" 
+		     id.Pb_sig.r_simplx.Rule.id
+                     id.Pb_sig.r_simplx.Rule.input)
+		case.Pb_sig.labels)
+	   (rc.Pb_sig.rules))
+      (List.rev system) in
+  let _ = print "</Set>\n" in
+  let _ = print_compression Full channel pb in
+  let _ = print_compression Isolated channel pb in 
+  let _ = print "</Rules>\n" in 
+  ()
+ 
+
+
+let print_contact_map channel pb   = 
+  let cpb = 
+    match pb.intermediate_encoding with 
+      None -> unsafe "XML 62" (raise Exit)
+    | Some a -> a in 
+  match pb.contact_map  with None -> ()
+    | Some l -> 
+	let l = l.relation_list in 
+	begin
+	  let print s = Printf.fprintf channel s in 
+	  let _ = print "-<ContactMap>\n" in 
+	  let _ = 
+	    List.iter 
+	      (fun (a,b,c) ->
+		 let m1 = list_fold StringSet.add b StringSet.empty in 
+		 let m2 = list_fold StringSet.add c StringSet.empty in 
+		 let mall = StringSet.union m1 m2 in 
+		 let _ = print "-<Agent Name=\"%s\">\n" a in 
+		 let _ = 
+		   StringSet.iter 
+		     (fun site -> 
+			let _ = print 
+			  "-<Site Name=\"%s\" CanChangeState=\"%s\" CanBeBound=\"%s\"/>\n" 
+			  site 
+			  (if StringSet.mem site m1 then "true" else "false")
+			  (if StringSet.mem site m2 then "true" else "false")
+			in () )
+		     mall in 
+		 let _ = print "</Agent>\n" in ()) 
+	      cpb.Pb_sig.cpb_interface in 
+	  let _ = 
+	    List.iter (fun ((a,b),(c,d)) ->
+			 print "<Bond FromAgent=\"%s\" FromSite=\"%s\" ToAgent=\"%s\" ToSite=\"%s\"/>\n" a b c d 
+		      ) l
+	  in 
+	  let _ = print "</ContactMap>\n" in ()
+	end
+
+
+let print_species_map channel pb  = 
+    () 
+let print_flow_map channel pb  = 
+  let system = 
+    match pb.boolean_encoding with 
+      None -> 
+	(match pb.gathered_boolean_encoding with 
+	  None -> unsafe "XML 105" (raise Exit)
+	| Some a -> a.system )
+    | Some a -> a.system in 
+  let print s = Printf.fprintf channel s in 
+  match pb.Pb_sig.wake_up_map,pb.Pb_sig.inhibition_map with 
+      Some a,Some b -> 
+	let _ = print "-<InfluenceMap>\n"  in 
+	let _ = 
+	  List.iter 
+	    (fun rc -> 
+	       List.iter 
+		 (fun case -> 
+		    List.iter 
+		      (fun id -> 
+			 let name = (match id.Pb_sig.r_simplx.Rule.flag with 
+				None -> id.Pb_sig.r_simplx.Rule.input
+				  | Some a -> a) in 
+			 let _  =
+			   print "<Node Type=\"RULE\" Text=\"%s\" Id=\"%d\" Name=\"%s\" Data=\"%s\"/>\n"  name 
+			     id.Pb_sig.r_simplx.Rule.id
+			     id.Pb_sig.r_simplx.Rule.input in ())
+		      case.Pb_sig.labels)
+		 rc.Pb_sig.rules)
+	    system in
+	let _ = 
+	  IntMap.iter 
+	    (fun a b -> 
+	       IntSet.iter 
+		 (fun b -> 
+		    let _ = print "<Connection FromNode=\"%d\" ToNode=\"%d\" Relation=\"POSITIVE\"/>\n" a b in ()) b)
+	    a in
+	let _ = 
+	  IntMap.iter 
+	    (fun a b -> 
+	       IntSet.iter 
+		 (fun b -> 
+		    let _ = print "<Connection FromNode=\"%d\" ToNode=\"%d\" Relation=\"NEGATIVE\"/>\n" a b in ()) b)
+	    a in
+	let _ = print "</InfluenceMap>\n" in ()  
+  |  _ -> ()
+
+let dump_session pb channel (l,m)  = 
+  let print s = Printf.fprintf channel s in 
+  let _ = print "<?xml version='1.0' encoding='utf-8'?>\n" in 
+  let _ = print "<!-- Automaticaly generated by Complx %s -->\n" (Config_complx.version) in
+  let _ = print "<ComplxSession Timestamp=\"%s\" CommandLine=\"%s\" InputFile=\"%s\" \n"
+    (time_stamp ()) 
+    (command_line ()) 
+    (input_file ()) in 
+  let _ = print "%s>\n" (style ()) in 
+  let _ = print_log channel (l,m)  in 
+  let _ = match pb with None -> ()
+    | Some pb -> 
+	let _ = print_rules channel pb  in 
+	
+	let _ = print_contact_map channel pb  in 
+	let _ = print_species_map channel pb  in 
+	let _ = print_flow_map channel pb  in () in 
+        let _ = print "</ComplxSession>\n" in 
+    (l,m)

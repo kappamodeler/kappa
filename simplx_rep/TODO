@@ -1,0 +1,12 @@
+#On the actual simulator
+
+1/Perform computation on the not-yet expanded solution 
+2/Reduce memory usage by using rule reference in the flow relation
+3/Do a 64bits specific code
+4/Make a more efficient pushout function
+
+#New simulator
+Write a species-based simulator
+
+#Interactive mode
+Write an interactive mode for checking rule syntax and answering the factory without having to pay the price of spawning a process each time.

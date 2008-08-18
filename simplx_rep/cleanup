@@ -1,0 +1,13 @@
+LEXER = kappa_lex.ml
+PARSER = kappa_parse.ml
+
+clean:
+	rm -f *~ ;
+	cd src/bnf ; rm -f *.cm* *.o *~ $(LEXER) $(PARSER) *.mli ;
+	cd src/html_config ; rm -f *.cm* *.o *~ ;
+	cd src/tools ; rm -f *.cm* *.o *~ 
+	cd src/kappa ; rm -f *.cm* *.o *~ 
+	cd src/data_structures ; rm -f *.cm* *.o *~ 
+	cd src/main ; rm -f *.cm* *.o *~ 
+	cd src/stories ; rm -f *.cm* *.o *~ 
+	cd lib ; rm -f *

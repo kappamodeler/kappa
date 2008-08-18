@@ -1,0 +1,301 @@
+MAKEFILE_NAME = make_x86_64
+MYMAKE=make --makefile=$(MAKEFILE_NAME)
+
+all: simplx_light complx_light
+simplx_light:
+	$(MYMAKE) TKREP=light TKINCLUDES="" TK_CMXA=""  KEY="without_key" simplx
+
+complx_light:
+	$(MYMAKE) TKREP=light TKINCLUDES="" TK_CMXA="" KEY="without_key" complx
+
+shell:
+	$(MYMAKE) TKREP=light TKINCLUDES="" TK_CMXA="" KEY="without_key" interplx
+
+full: simplx_full complx_full 
+
+simplx_full: 
+	$(MYMAKE) simplx TKREP=full TKINCLUDES="-I +labltk" TK_CMXA="labltk.cmxa jpflib.cmxa frxlib.cmxa -cclib -lpthread -cclib -lXau -cclib -lXdmcp" KEY="without_key"
+
+complx_full: 
+	$(MYMAKE) complx TKREP=full TKINCLUDES="-I +labltk" TK_CMXA="labltk.cmxa jpflib.cmxa frxlib.cmxa -cclib -lpthread -cclib -lXau -cclib -lXdmcp" KEY="without_key"
+
+with_key:
+	$(MYMAKE) TKREP=light TKINCLUDES="" TK_CMXQ="" KEY="with_key" simplx
+	$(MYMAKE) TKREP=light TKINCLUDES="" TK_CMXQ="" KEY="with_key" complx
+
+top:
+	$(MYMAKE) toplevel KEY=without_key 
+
+TKREP?=light
+SIMPLXREP?=simplx_rep
+COMPLXREP?=complx_rep
+INTERPLXREP?=interplx_rep
+BIN = ./bin
+KEY?=without_key
+
+$(BIN): bin/
+	mkdir bin
+
+OCAMLPREFIX?= ./ocaml-3.10.2-patched_x86_64
+OCAMLC=		$(OCAMLPREFIX)/ocamlc -thread
+OCAMLCI=	$(OCAMLPREFIX)/ocamlc -thread
+OCAMLOPT= 	$(OCAMLPREFIX)/ocamlopt.opt -nostdlib -thread
+OCAMLYACC=	$(OCAMLPREFIX)/yacc/ocamlyacc -v
+OCAMLLEX=	$(OCAMLPREFIX)/lex/ocamllex.opt
+
+TKINCLUDES? = 
+
+
+test:
+	$(OCAMLOPT) -I $(OCAMLPREFIX)/ocamlbuild -I $(OCAMLPREFIX)/stdlib test_arch.ml
+
+OCAMLINCLUDES= -I $(OCAMLPREFIX)/ocamlbuild \
+		-I $(OCAMLPREFIX)/stdlib \
+		-I $(OCAMLPREFIX)/otherlibs/unix \
+		-I $(OCAMLPREFIX)/otherlibs/num \
+		-I $(OCAMLPREFIX)/otherlibs/str \
+		-I $(OCAMLPREFIX)/otherlibs/systhreads \
+		-I $(COMPLXREP)/lib/$(TKREP) \
+		-I $(COMPLXREP)/lib/$(KEY) \
+		-I $(COMPLXREP)/backend \
+	        -I $(COMPLXREP)/config \
+	        -I $(COMPLXREP)/tools \
+	        -I $(COMPLXREP)/expr  \
+	        -I $(COMPLXREP)/compressor \
+                -I $(COMPLXREP)/data_structures \
+                -I $(COMPLXREP)/reachability \
+                -I $(COMPLXREP)/vars \
+	        -I $(COMPLXREP)/abstract_expr \
+                -I $(COMPLXREP)/frontend \
+                -I $(COMPLXREP)/backend/parse_comment \
+                -I $(COMPLXREP)/backend/contact_map \
+                -I $(COMPLXREP)/lib/ \
+		-I $(SIMPLXREP)/src/bnf \
+		-I $(SIMPLXREP)/src/data_structures \
+		-I $(SIMPLXREP)/src/kappa \
+		-I $(SIMPLXREP)/src/main \
+		-I $(SIMPLXREP)/src/stories \
+		-I $(SIMPLXREP)/src/html_config/ \
+		-I $(SIMPLXREP)/src/tools/ \
+                -I $(SIMPLXREP)/lib \
+		-I $(COMPLXREP)/influence_map \
+                -I $(COMPLXREP)/pipeline \
+                -I $(COMPLXREP)/share \
+                -I $(COMPLXREP)/backend/XML \
+		-I $(COMPLXREP)/backend/HTML \
+		-I $(COMPLXREP)/ODE \
+		-I $(COMPLXREP)/cyclical_complexes \
+		-I $(COMPLXREP)/refinements \
+		-I $(COMPLXREP)/isomorphism_detection\
+		$(TKINCLUDES) 
+
+OCAMLFLAGS=	$(OCAMLINCLUDES)
+OCAMLLIBDIR=	$(shell ocamlc -where)
+CFLAGS=		-I $(OCAMLLIBDIR) -Wall -Werror -Wno-unused -DPENTIUM_III_COMPATIBLE
+
+# TK
+TK_CMA?  = labltk.cma  jpflib.cma  frxlib.cma
+TK_CMXA? = 
+
+LIBS_MLFILES = #$(COMPLXREP)/lib/wordexp.ml
+LIBS_CMOFILES = $(LIBS_MLFILES:%.ml=%.cmo)
+LIBS_CMXFILES = $(LIBS_MLFILES:%.ml=%.cmx)
+
+AUTOGENML=$(SIMPLXREP)/src/bnf/kappa_parse.ml 
+MLFULL? = $(COMPLXREP)/lib/$(TKREP)/superargTk.ml 
+
+TKFILE=
+
+OBJS = 	./$(COMPLXREP)/tools/exceptions.cmo \
+	./$(COMPLXREP)/tools/error_handler.cmo \
+	./$(COMPLXREP)/tools/memory_usage.cmo \
+	./$(COMPLXREP)/lib/$(KEY)/key.cmo \
+	./$(SIMPLXREP)/src/tools/error.cmo \
+	./$(SIMPLXREP)/src/data_structures/coord.cmo \
+	./$(SIMPLXREP)/src/html_config/config.cmo \
+	./$(COMPLXREP)/tools/map2.cmo \
+	./$(COMPLXREP)/tools/map_random.cmo \
+	./$(COMPLXREP)/tools/map_with_sharing.cmo \
+	./$(COMPLXREP)/tools/tools2.cmo \
+	./$(COMPLXREP)/tools/unbounded_array.cmo \
+	./$(SIMPLXREP)/src/data_structures/map_ext.cmo \
+	./$(COMPLXREP)/data_structures/big_array.cmo \
+	./$(SIMPLXREP)/src/data_structures/array_ext.cmo\
+	./$(SIMPLXREP)/src/data_structures/random_tree.cmo \
+	./$(SIMPLXREP)/src/tools/stringlist.cmo \
+	./$(SIMPLXREP)/src/tools/mods2.cmo \
+        ./$(SIMPLXREP)/src/kappa/agent.cmo \
+	./$(SIMPLXREP)/src/kappa/solution.cmo \
+	./$(SIMPLXREP)/src/data_structures/longString.cmo \
+	./$(SIMPLXREP)/src/kappa/species.cmo \
+	./$(SIMPLXREP)/src/data_structures/val_map.cmo \
+	./$(SIMPLXREP)/src/data_structures/implementation_choices.cmo \
+	./$(SIMPLXREP)/src/kappa/rule.cmo \
+	./$(SIMPLXREP)/src/kappa/experiment.cmo \
+	./$(SIMPLXREP)/src/main/data.cmo \
+	./$(SIMPLXREP)/src/stories/network.cmo \
+	./$(SIMPLXREP)/src/stories/story_compressor.cmo \
+	./$(COMPLXREP)/backend/parse_comment/comment_sig.cmo \
+	./$(COMPLXREP)/frontend/pb_sig.cmo \
+	./$(COMPLXREP)/data_structures/data_structures.cmo \
+	./$(COMPLXREP)/lib/superarg.cmo \
+	./$(COMPLXREP)/lib/$(TKREP)/superargTk.cmo \
+	./$(COMPLXREP)/config/config_complx.cmo \
+	./$(COMPLXREP)/tools/tools.cmo \
+	./$(SIMPLXREP)/src/stories/iso.cmo \
+	./$(COMPLXREP)/share/share.cmo \
+	./$(COMPLXREP)/data_structures/hash.cmo \
+	./$(COMPLXREP)/backend/contact_map/acyclicity.cmo \
+        ./$(COMPLXREP)/reachability/concretization.cmo \
+	./$(COMPLXREP)/reachability/count_complexes.cmo \
+	./$(COMPLXREP)/vars/var.cmo \
+	./$(COMPLXREP)/expr/expr.cmo \
+	./$(COMPLXREP)/expr/kleenean_expr.cmo \
+	./$(COMPLXREP)/abstract_expr/abstract_expr_sig.cmo \
+	./$(COMPLXREP)/abstract_expr/bdd.cmo \
+	./$(COMPLXREP)/abstract_expr/rough.cmo \
+	./$(COMPLXREP)/abstract_expr/partition.cmo \
+	./$(COMPLXREP)/backend/parse_comment/yacc.cmo \
+	./$(COMPLXREP)/backend/parse_comment/lexeur.cmo \
+	./$(COMPLXREP)/compressor/compressor.cmo \
+	./$(COMPLXREP)/reachability/contact_map.cmo \
+	./$(COMPLXREP)/reachability/reachability.cmo \
+	./$(COMPLXREP)/frontend/cbng_sig.cmo \
+	./$(COMPLXREP)/frontend/cbng.cmo \
+	./$(SIMPLXREP)/src/bnf/kappa_parse.cmo \
+        ./$(SIMPLXREP)/src/bnf/kappa_lex.cmo \
+	./$(COMPLXREP)/frontend/translate.cmo \
+	./$(COMPLXREP)/reachability/packing.cmo \
+	./$(COMPLXREP)/influence_map/quarkification.cmo \
+	./$(COMPLXREP)/backend/contact_map/neighborhood.cmo\
+	./$(COMPLXREP)/backend/contact_map/output_contact_map.cmo \
+	./$(COMPLXREP)/cyclical_complexes/avoid_polymere.cmo \
+	./$(COMPLXREP)/refinements/refinements.cmo \
+	./$(COMPLXREP)/isomorphism_detection/count_isomorphism.cmo \
+	./$(COMPLXREP)/backend/XML/xml.cmo \
+	./$(COMPLXREP)/backend/HTML/html.cmo \
+	./$(COMPLXREP)/influence_map/influence_map.cmo \
+	./$(COMPLXREP)/ODE/arithmetics.cmo \
+	./$(COMPLXREP)/ODE/ode_print_sig.cmo \
+	./$(COMPLXREP)/ODE/ode_print.cmo \
+	./$(COMPLXREP)/ODE/annotated_contact_map.cmo \
+	./$(COMPLXREP)/ODE/views.cmo \
+	./$(COMPLXREP)/ODE/fragments.cmo \
+	./$(COMPLXREP)/ODE/ode_computation.cmo \
+	./$(COMPLXREP)/backend/contact_map/find_cycles.cmo \
+	./$(COMPLXREP)/backend/contact_map/connected_components.cmo \
+	./$(COMPLXREP)/pipeline/pipeline.cmo \
+	./$(SIMPLXREP)/src/main/session.cmo \
+	./$(SIMPLXREP)/src/main/memory_control.cmo \
+	./$(SIMPLXREP)/src/tools/bench.cmo \
+	./$(SIMPLXREP)/src/main/simulation2.cmo \
+	./$(SIMPLXREP)/src/html_config/HTML.cmo 
+
+
+SIMPLX_MAIN = ./$(SIMPLXREP)/src/main/main.ml
+COMPLX_MAIN = ./$(COMPLXREP)/main.ml 
+INTERPLX_MAIN = ./$(INTERPLXREP)/shell.ml
+
+NATIVE_OBJS = $(OBJS:cmo=cmx) 
+
+MLI =  ./$(SIMPLXREP)/src/tools/error.mli \
+	./$(SIMPLXREP)/src/data_structures/coord.mli \
+	./$(SIMPLXREP)/src/data_structures/map_ext.mli \
+	./$(SIMPLXREP)/src/data_structures/array_ext.mli \
+	./$(SIMPLXREP)/src/data_structures/longString.mli \
+	./$(SIMPLXREP)/src/tools/mods2.mli \
+        ./$(SIMPLXREP)/src/kappa/agent.mli \
+	./$(SIMPLXREP)/src/kappa/solution.mli \
+	./$(SIMPLXREP)/src/kappa/rule.mli\
+	./$(SIMPLXREP)/src/bnf/kappa_parse.mli 
+
+CMI = $(MLI:mli=cmi)
+CMA = unix.cma threads.cma str.cma nums.cma
+CMXA = unix.cmxa threads.cmxa str.cmxa nums.cmxa
+
+SIMPLX_OUT = simplx
+INTERPLX_OUT = interplx
+
+LIB_OPT = $(SIMPLX_OUT).cmxa
+LIB_BYTE = $(SIMPLX_OUT).cma
+
+DOCS = $(MLI) $(OBJS:cmo=ml)
+DOCREP = ./document
+DOCTYPE = 
+
+gen_doc :  
+	ocamldoc -$(DOCTYPE) $(DOCS) $(OCAMLINCLUDES) -d $(DOCREP) 
+
+html_doc : 
+	$(MYMAKE) KEY=without_key DOCTYPE=html gen_doc
+
+dot_doc :
+	$(MYMAKE) KEY=without_key DOCTYPE=dot gen_doc
+
+
+simplx :$(MLI) $(CMI) $(LIBSC_CMXA) $(LIB_OPT) $(SIMPLX_MAIN) $(BIN)
+	$(OCAMLOPT) $(OCAMLFLAGS) $(CMXA) $(TK_CMXA) $(LIBSC_CMXA) $(LIB_OPT)  $(SIMPLX_MAIN) -o $(BIN)/$(SIMPLX_OUT)
+
+byte :  $(MLI) $(CMI) $(LIBSC_CMA) $(LIB_BYTE) $(SIMPLX_MAIN) $(BIN)
+	$(OCAMLC) $(OCAMLFLAGS) $(CMA) $(LIBSC_CMA) $(LIB_BYTE) $(SIMPLX_MAIN) -o $(BIN)/$(SIMPLX_OUT).byte
+
+interplx :$(MLI) $(CMI) $(LIBSC_CMXA) $(LIB_OPT) $(INTERPLX_MAIN) $(BIN)
+	$(OCAMLOPT) $(OCAMLFLAGS) $(CMXA) $(TK_CMXA) $(LIBSC_CMXA) $(LIB_OPT)  $(INTERPLX_MAIN) -o $(BIN)/$(INTERPLX_OUT)
+
+$(SIMPLX_OUT).cmxa: $(MLI) $(CMI) $(LIBSC_CMXA) $(NATIVE_OBJS) 
+	$(OCAMLOPT) $(OCAMLFLAGS) -a $(NATIVE_OBJS)  -o $(SIMPLXREP)/lib/$(SIMPLX_OUT).cmxa
+
+$(SIMPLX_OUT).cma: $(MLI) $(CMI) $(LIBSC_CMA) $(OBJS)	
+	$(OCAMLC) $(OCAMLFLAGS) -a $(OBJS) -o $(SIMPLXREP)/lib/$(SIMPLX_OUT).cma
+
+LINE = $(OCAMLOPT) $(OCAMLFLAGS) $(TKINCLUDES) $(CMXA) $(TK_CMXA) $(LIBSC_CMXA)  $(NATIVE_OBJS) 
+
+complx: $(LIBSC_CMXA) $(NATIVE_OBJS) $(COMPLX_MAIN)
+	$(LINE) $(COMPLX_MAIN) -o $(BIN)/complx
+
+influence_map: $(COMPLXREP)/influence_pipeline.cmx 
+	$(LINE) $(COMPLXREP)/influence_pipeline.cmx -o $(BIN)/bd_influence_map
+
+toplevel: $(MLI) $(CMI) $(LIBSC_CMA) $(LIB_BYTE)
+	$(OCAML) $(OCAMLINCLUDES) unix.cma nums.cma $(OBJS)
+
+./$(SIMPLXREP)/src/bnf/kappa_parse.ml ./$(SIMPLXREP)/src/bnf/kappa_parse.mli : ./$(SIMPLXREP)/src/bnf/kappa_parse.mly
+	$(OCAMLYACC) ./$(SIMPLXREP)/src/bnf/kappa_parse.mly 
+
+./$(SIMPLXREP)/src/bnf/kappa_parse.cmo: ./$(SIMPLXREP)/src/bnf/kappa_parse.mli ./$(SIMPLXREP)/src/bnf/kappa_parse.ml
+	$(OCAMLC) $(OCAMLFLAGS) -c ./$(SIMPLXREP)/src/bnf/kappa_parse.mli ./$(SIMPLXREP)/src/bnf/kappa_parse.ml
+
+./$(SIMPLXREP)/src/bnf/kappa_lex.ml: ./$(SIMPLXREP)/src/bnf/kappa_lex.mll
+	$(OCAMLLEX) ./$(SIMPLXREP)/src/bnf/kappa_lex.mll
+
+./$(COMPLXREP)/backend/parse_comment/yacc.ml: ./$(COMPLXREP)/backend/parse_comment ./$(COMPLXREP)/backend/parse_comment/yacc.mly 
+	$(OCAMLYACC) ./$(COMPLXREP)/backend/parse_comment/yacc.mly
+
+./$(COMPLXREP)/backend/parse_comment/yacc.cmx: ./$(COMPLXREP)/backend/parse_comment/yacc.cmi ./$(COMPLXREP)/backend/parse_comment/yacc.ml ./$(COMPLXREP)/backend/parse_comment/yacc.mly
+	$(OCAMLOPT) -c $(OCAMLFLAGS) ./$(COMPLXREP)/backend/parse_comment/yacc.ml
+
+./$(COMPLXREP)/backend/parse_comment/yacc.cmo: ./$(COMPLXREP)/backend/parse_comment/yacc.cmi ./$(COMPLXREP)/backend/parse_comment/yacc.ml ./$(COMPLXREP)/backend/parse_comment/yacc.mly
+	$(OCAMLC) -c $(OCAMLFLAGS) ./$(COMPLXREP)/backend/parse_comment/yacc.ml
+
+
+./$(COMPLXREP)/backend/parse_comment/yacc.cmi: ./$(COMPLXREP)/backend/parse_comment/yacc.mli2
+	cp ./$(COMPLXREP)/backend/parse_comment/yacc.mli2 ./$(COMPLXREP)/backend/parse_comment/yacc.mli;
+	$(OCAMLOPT) -c $(OCAMLFLAGS) ./$(COMPLXREP)/backend/parse_comment/yacc.mli
+
+./$(COMPLXREP)/backend/parse_comment/lexeur.ml: ./$(COMPLXREP)/backend/parse_comment/lexeur.mll
+	$(OCAMLLEX) ./$(COMPLXREP)/backend/parse_comment/lexeur.mll
+
+%.cmi : %.mli
+	$(OCAMLC) $(OCAMLFLAGS) $<
+
+%.cmo : %.ml 
+	$(OCAMLC) $(OCAMLFLAGS) -c $<
+
+%.cmx : %.ml 
+	$(OCAMLOPT) $(OCAMLFLAGS) -c $<
+
+clean:
+	rm -f *~ ; 
+	cd $(SIMPLXREP) ; make -f cleanup ;
+	cd $(COMPLXREP) ; make -f cleanup ; 
+	cd $(INTERPLXREP) ; make -f cleanup

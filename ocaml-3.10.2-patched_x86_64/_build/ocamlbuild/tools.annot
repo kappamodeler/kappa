@@ -1,0 +1,384 @@
+"ocamlbuild/tools.ml" 23 945 949 "ocamlbuild/tools.ml" 23 945 953
+type(
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/tools.ml" 23 945 956 "ocamlbuild/tools.ml" 23 945 966
+type(
+  (Format.formatter -> string -> unit) ->
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/tools.ml" 23 945 967 "ocamlbuild/tools.ml" 23 945 979
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/tools.ml" 23 945 956 "ocamlbuild/tools.ml" 23 945 979
+type(
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/tools.ml" 25 981 985 "ocamlbuild/tools.ml" 25 981 1001
+type(
+  Pathname.t -> Tags.t
+)
+"ocamlbuild/tools.ml" 25 981 1002 "ocamlbuild/tools.ml" 25 981 1003
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 26 1006 1008 "ocamlbuild/tools.ml" 26 1006 1038
+type(
+  string -> Tags.t
+)
+"ocamlbuild/tools.ml" 26 1006 1040 "ocamlbuild/tools.ml" 26 1006 1058
+type(
+  Pathname.t -> string
+)
+"ocamlbuild/tools.ml" 26 1006 1059 "ocamlbuild/tools.ml" 26 1006 1060
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 26 1006 1039 "ocamlbuild/tools.ml" 26 1006 1061
+type(
+  string
+)
+"ocamlbuild/tools.ml" 26 1006 1008 "ocamlbuild/tools.ml" 26 1006 1061
+type(
+  Tags.t
+)
+"ocamlbuild/tools.ml" 27 1062 1064 "ocamlbuild/tools.ml" 27 1062 1066
+type(
+  Tags.t -> Tags.elt -> Tags.t
+)
+"ocamlbuild/tools.ml" 27 1062 1067 "ocamlbuild/tools.ml" 27 1062 1074
+type(
+  string
+)
+"ocamlbuild/tools.ml" 27 1062 1074 "ocamlbuild/tools.ml" 27 1062 1075
+type(
+  string -> Pathname.t -> Tags.elt
+)
+"ocamlbuild/tools.ml" 27 1062 1075 "ocamlbuild/tools.ml" 27 1062 1076
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 27 1062 1066 "ocamlbuild/tools.ml" 27 1062 1077
+type(
+  Tags.elt
+)
+"ocamlbuild/tools.ml" 26 1006 1008 "ocamlbuild/tools.ml" 27 1062 1077
+type(
+  Tags.t
+)
+"ocamlbuild/tools.ml" 28 1078 1080 "ocamlbuild/tools.ml" 28 1078 1082
+type(
+  Tags.t -> Tags.elt -> Tags.t
+)
+"ocamlbuild/tools.ml" 28 1078 1083 "ocamlbuild/tools.ml" 28 1078 1095
+type(
+  string
+)
+"ocamlbuild/tools.ml" 28 1078 1095 "ocamlbuild/tools.ml" 28 1078 1096
+type(
+  string -> string -> Tags.elt
+)
+"ocamlbuild/tools.ml" 28 1078 1096 "ocamlbuild/tools.ml" 28 1078 1118
+type(
+  Pathname.t -> string
+)
+"ocamlbuild/tools.ml" 28 1078 1119 "ocamlbuild/tools.ml" 28 1078 1120
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 28 1078 1096 "ocamlbuild/tools.ml" 28 1078 1120
+type(
+  string
+)
+"ocamlbuild/tools.ml" 28 1078 1082 "ocamlbuild/tools.ml" 28 1078 1121
+type(
+  Tags.elt
+)
+"ocamlbuild/tools.ml" 26 1006 1008 "ocamlbuild/tools.ml" 28 1078 1121
+type(
+  Tags.t
+)
+"ocamlbuild/tools.ml" 29 1124 1128 "ocamlbuild/tools.ml" 29 1124 1145
+type(
+  Pathname.t -> Command.spec
+)
+"ocamlbuild/tools.ml" 29 1124 1146 "ocamlbuild/tools.ml" 29 1124 1147
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 29 1124 1150 "ocamlbuild/tools.ml" 29 1124 1181
+type(
+  string -> Command.spec
+)
+"ocamlbuild/tools.ml" 29 1124 1183 "ocamlbuild/tools.ml" 29 1124 1201
+type(
+  Pathname.t -> string
+)
+"ocamlbuild/tools.ml" 29 1124 1202 "ocamlbuild/tools.ml" 29 1124 1203
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 29 1124 1182 "ocamlbuild/tools.ml" 29 1124 1204
+type(
+  string
+)
+"ocamlbuild/tools.ml" 29 1124 1150 "ocamlbuild/tools.ml" 29 1124 1204
+type(
+  Command.spec
+)
+"ocamlbuild/tools.ml" 31 1206 1210 "ocamlbuild/tools.ml" 31 1206 1219
+type(
+  (Format.formatter -> 'a -> unit) -> Format.formatter -> 'a option -> unit
+)
+"ocamlbuild/tools.ml" 31 1206 1220 "ocamlbuild/tools.ml" 31 1206 1223
+type(
+  Format.formatter -> 'a -> unit
+)
+"ocamlbuild/tools.ml" 31 1206 1224 "ocamlbuild/tools.ml" 31 1206 1227
+type(
+  Format.formatter
+)
+"ocamlbuild/tools.ml" 33 1241 1250 "ocamlbuild/tools.ml" 33 1241 1251
+type(
+  'a
+)
+"ocamlbuild/tools.ml" 33 1241 1245 "ocamlbuild/tools.ml" 33 1241 1251
+type(
+  'a option
+)
+"ocamlbuild/tools.ml" 33 1241 1255 "ocamlbuild/tools.ml" 33 1241 1262
+type(
+  Format.formatter ->
+  ((Format.formatter -> 'a -> unit) -> 'a -> unit, Format.formatter, unit)
+  format -> (Format.formatter -> 'a -> unit) -> 'a -> unit
+)
+"ocamlbuild/tools.ml" 33 1241 1263 "ocamlbuild/tools.ml" 33 1241 1266
+type(
+  Format.formatter
+)
+"ocamlbuild/tools.ml" 33 1241 1267 "ocamlbuild/tools.ml" 33 1241 1284
+type(
+  ((Format.formatter -> 'a -> unit) -> 'a -> unit, Format.formatter, unit)
+  format
+)
+"ocamlbuild/tools.ml" 33 1241 1285 "ocamlbuild/tools.ml" 33 1241 1288
+type(
+  Format.formatter -> 'a -> unit
+)
+"ocamlbuild/tools.ml" 33 1241 1289 "ocamlbuild/tools.ml" 33 1241 1290
+type(
+  'a
+)
+"ocamlbuild/tools.ml" 33 1241 1255 "ocamlbuild/tools.ml" 33 1241 1290
+type(
+  unit
+)
+"ocamlbuild/tools.ml" 34 1291 1295 "ocamlbuild/tools.ml" 34 1291 1299
+type(
+  'a option
+)
+"ocamlbuild/tools.ml" 34 1291 1303 "ocamlbuild/tools.ml" 34 1291 1318
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/tools.ml" 34 1291 1319 "ocamlbuild/tools.ml" 34 1291 1322
+type(
+  Format.formatter
+)
+"ocamlbuild/tools.ml" 34 1291 1323 "ocamlbuild/tools.ml" 34 1291 1329
+type(
+  string
+)
+"ocamlbuild/tools.ml" 34 1291 1303 "ocamlbuild/tools.ml" 34 1291 1329
+type(
+  unit
+)
+"ocamlbuild/tools.ml" 32 1230 1232 "ocamlbuild/tools.ml" 34 1291 1329
+type(
+  'a option -> unit
+)
+"ocamlbuild/tools.ml" 36 1331 1335 "ocamlbuild/tools.ml" 36 1331 1361
+type(
+  Pathname.t -> Pathname.t list
+)
+"ocamlbuild/tools.ml" 36 1331 1362 "ocamlbuild/tools.ml" 36 1331 1363
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 37 1366 1371 "ocamlbuild/tools.ml" 37 1366 1391
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/tools.ml" 37 1366 1392 "ocamlbuild/tools.ml" 37 1366 1393
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 37 1366 1371 "ocamlbuild/tools.ml" 37 1366 1393
+type(
+  bool
+)
+"ocamlbuild/tools.ml" 38 1399 1407 "ocamlbuild/tools.ml" 38 1399 1408
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 38 1399 1411 "ocamlbuild/tools.ml" 38 1399 1428
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/tools.ml" 38 1399 1429 "ocamlbuild/tools.ml" 38 1399 1430
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 38 1399 1411 "ocamlbuild/tools.ml" 38 1399 1430
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 39 1434 1442 "ocamlbuild/tools.ml" 39 1434 1443
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 39 1434 1446 "ocamlbuild/tools.ml" 39 1434 1462
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/tools.ml" 39 1434 1463 "ocamlbuild/tools.ml" 39 1434 1464
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 39 1434 1446 "ocamlbuild/tools.ml" 39 1434 1464
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 40 1468 1475 "ocamlbuild/tools.ml" 40 1468 1476
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 40 1468 1477 "ocamlbuild/tools.ml" 40 1468 1479
+type(
+  Pathname.t -> Pathname.t -> bool
+)
+"ocamlbuild/tools.ml" 40 1468 1480 "ocamlbuild/tools.ml" 40 1468 1505
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 40 1468 1475 "ocamlbuild/tools.ml" 40 1468 1505
+type(
+  bool
+)
+"ocamlbuild/tools.ml" 41 1511 1521 "ocamlbuild/tools.ml" 41 1511 1523
+type(
+  unit
+)
+"ocamlbuild/tools.ml" 41 1511 1526 "ocamlbuild/tools.ml" 41 1511 1549
+type(
+  Pathname.t -> Pathname.t list -> unit
+)
+"ocamlbuild/tools.ml" 41 1511 1550 "ocamlbuild/tools.ml" 41 1511 1551
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 41 1511 1553 "ocamlbuild/tools.ml" 41 1511 1554
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 41 1511 1552 "ocamlbuild/tools.ml" 41 1511 1555
+type(
+  Pathname.t list
+)
+"ocamlbuild/tools.ml" 41 1511 1526 "ocamlbuild/tools.ml" 41 1511 1555
+type(
+  unit
+)
+"ocamlbuild/tools.ml" 42 1559 1566 "ocamlbuild/tools.ml" 42 1559 1567
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 42 1559 1565 "ocamlbuild/tools.ml" 42 1559 1568
+type(
+  Pathname.t list
+)
+"ocamlbuild/tools.ml" 41 1511 1517 "ocamlbuild/tools.ml" 42 1559 1568
+type(
+  Pathname.t list
+)
+"ocamlbuild/tools.ml" 44 1578 1588 "ocamlbuild/tools.ml" 44 1578 1600
+type(
+  string list
+)
+"ocamlbuild/tools.ml" 44 1578 1603 "ocamlbuild/tools.ml" 44 1578 1627
+type(
+  Pathname.t -> string list
+)
+"ocamlbuild/tools.ml" 44 1578 1628 "ocamlbuild/tools.ml" 44 1578 1629
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 44 1578 1603 "ocamlbuild/tools.ml" 44 1578 1629
+type(
+  string list
+)
+"ocamlbuild/tools.ml" 45 1633 1639 "ocamlbuild/tools.ml" 45 1633 1647
+type(
+  (Pathname.t -> Pathname.t) -> Pathname.t list -> Pathname.t list
+)
+"ocamlbuild/tools.ml" 45 1633 1653 "ocamlbuild/tools.ml" 45 1633 1664
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 45 1633 1668 "ocamlbuild/tools.ml" 45 1633 1679
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 45 1633 1679 "ocamlbuild/tools.ml" 45 1633 1680
+type(
+  Pathname.t -> Pathname.t -> Pathname.t
+)
+"ocamlbuild/tools.ml" 45 1633 1680 "ocamlbuild/tools.ml" 45 1633 1681
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 45 1633 1668 "ocamlbuild/tools.ml" 45 1633 1681
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 45 1633 1648 "ocamlbuild/tools.ml" 45 1633 1682
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/tools.ml" 45 1633 1683 "ocamlbuild/tools.ml" 45 1633 1695
+type(
+  Pathname.t list
+)
+"ocamlbuild/tools.ml" 45 1633 1639 "ocamlbuild/tools.ml" 45 1633 1695
+type(
+  Pathname.t list
+)
+"ocamlbuild/tools.ml" 44 1578 1584 "ocamlbuild/tools.ml" 45 1633 1695
+type(
+  Pathname.t list
+)
+"ocamlbuild/tools.ml" 40 1468 1472 "ocamlbuild/tools.ml" 45 1633 1695
+type(
+  Pathname.t list
+)
+"ocamlbuild/tools.ml" 39 1434 1438 "ocamlbuild/tools.ml" 45 1633 1695
+type(
+  Pathname.t list
+)
+"ocamlbuild/tools.ml" 38 1399 1403 "ocamlbuild/tools.ml" 45 1633 1695
+type(
+  Pathname.t list
+)
+"ocamlbuild/tools.ml" 46 1696 1704 "ocamlbuild/tools.ml" 46 1696 1705
+type(
+  Pathname.t
+)
+"ocamlbuild/tools.ml" 46 1696 1703 "ocamlbuild/tools.ml" 46 1696 1706
+type(
+  Pathname.t list
+)
+"ocamlbuild/tools.ml" 37 1366 1368 "ocamlbuild/tools.ml" 46 1696 1706
+type(
+  Pathname.t list
+)

@@ -1,0 +1,141 @@
+(* 21/02/2007 *)
+(* Static analysis of BNG systems*)
+(* Jerome Feret pour PlectiX *)
+(* To compute the causality map  *)
+(* causality_map.ml *)
+
+open Tools
+open Data_structures 
+open Pb_sig
+
+
+type causality_map = string*string 
+
+let print_short = false 
+
+let ignore blist control  = 
+  List.fold_left (fun sol (b,bool) -> 
+    match (b,bool) with 
+     M((_,b,c),d),bool when bool or control   -> (M((b,b,c),d),bool)::sol
+      | L((a,b,c),(d,e,f)),bool when bool or control -> 
+	  (L((b,b,c),(e,e,f)),bool)::sol
+(*   | AL((_,b,c),d),bool when bool or control  -> (AL((b,b,c),d),bool)::sol*)
+   | B(x,b,c),bool when  (not bool) or control -> ((B(b,b,c),bool)::sol)
+   | _ -> sol)
+  [] blist 
+
+
+let compute_influence_map pb = 
+    let bt_to_control = BMap.empty in 
+    let bt_to_guard = BMap.empty in 
+    let bf_to_guard = BMap.empty in 
+    let bf_to_control = BMap.empty in 
+    let system = pb.system in 
+    let bt_to_control,bf_to_control = 
+        list_fold
+            (fun rc ->
+               let idlist = 
+                  (list_fold (fun a sol -> 
+                       list_fold (fun a sol -> (a.r_id::sol))
+                         a.labels sol) rc.rules []) in 
+		 list_fold
+                   (fun (b,bool) (bt,bf) ->
+                      if bool then 
+                        let old = try BMap.find b bt with Not_found -> [] in 
+                        let new' = list_fold (fun a b -> a::b) idlist old in 
+                          BMap.add b new' bt,bf 
+                      else
+                        let old = try BMap.find b bf with Not_found -> [] in 
+                        let new' = list_fold (fun a b -> a::b) idlist old in 
+                          bt,BMap.add b new' bf) 
+                   (ignore (rc.control.context_update) true))
+              system
+              (bt_to_control,bf_to_control)  in 
+    let _ = trace_print "CAUSALITY: ONE WAY" in 
+    let _ = flush () in 
+    let bt_to_guard,bf_to_guard = 
+        list_fold
+            (fun rc -> 
+		 list_fold 
+                     (fun case -> 
+                          let idlist = List.map (fun a->a.r_id) case.labels  in 
+			  list_fold
+                            (fun (b,bool) (bt,bf) -> 
+				 if bool then 
+                               let old = try BMap.find b bt with Not_found -> [] in 
+                               let new' = list_fold (fun a b -> a::b) idlist old in 
+                               BMap.add b new' bt,bf 
+                              else
+                               let old = try BMap.find b bf with Not_found -> [] in 
+                               let new' = list_fold (fun a b -> a::b) idlist old in 
+                               bt,BMap.add b new' bf) 
+                  (ignore case.injective_guard false)) rc.rules)
+              system
+              (bt_to_guard,bf_to_guard)  in 
+    let _ = trace_print "CAUSALITY OTHER WAY" in 
+    let _ = flush () in 
+    let fadd (a,b) sol = 
+      let new' = try (StringMap.find a sol) with Not_found -> StringSet.empty  in 
+      StringMap.add a (StringSet.add b new') sol in 
+    let g a b sol = 
+      BMap.fold2
+	(fun _ _ sol -> sol)
+	(fun _ _ sol -> sol)
+	(fun _ rset rset' sol -> 
+	   List.fold_left 
+             (fun sol a -> 
+                List.fold_left 
+                  (fun sol b  -> fadd (b,a) sol)
+                  sol rset)
+             sol rset')
+	a b sol 
+    in 
+    let h a b c sol = 
+      BMap.fold2
+	(fun _ _ sol -> sol)
+	(fun _ _ sol -> sol)
+	(fun b rset rset' sol -> 
+	   match rset,rset' with 
+	       [],_ | _,[] -> sol 
+	       | _ -> 
+		   let rset' = 
+		     let rec aux l1 l2 sol = 
+		       match l1,l2 with 
+			 a::b,c::d -> 
+			     let r = compare a c in 
+			       (match r with 
+				   0 -> aux b d (a::sol)
+				 | 1 -> aux (a::b) d sol
+				 | -1 -> aux b (c::d) sol)
+			 | _ -> sol
+		     in aux rset (try (BMap.find b c) with Not_found -> []) []
+		   in 
+		     List.fold_left 
+		       (fun sol a -> 
+			  List.fold_left
+			    (fun sol a2  -> 
+			       fadd (a,a2) sol)
+			       			       
+			    sol rset)
+		       sol rset')
+	a b sol in 
+      
+
+      (  g 
+	   bt_to_control 
+	   bt_to_guard 
+	   (g
+	      bf_to_control
+	      bf_to_guard
+	      StringMap.empty),
+	 h 
+	   bt_to_guard
+	   bt_to_guard
+	   bf_to_control
+	   (h bf_to_guard 
+	      bf_to_guard
+	      bt_to_control
+	      StringMap.empty))
+
+
+

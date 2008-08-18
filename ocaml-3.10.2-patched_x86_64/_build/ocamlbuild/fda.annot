@@ -1,0 +1,599 @@
+"ocamlbuild/fda.ml" 23 907 911 "ocamlbuild/fda.ml" 23 907 915
+type(
+  Hygiene.law list
+)
+"ocamlbuild/fda.ml" 25 922 939 "ocamlbuild/fda.ml" 25 922 973
+type(
+  string
+)
+"ocamlbuild/fda.ml" 26 975 998 "ocamlbuild/fda.ml" 26 975 1004
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 26 975 994 "ocamlbuild/fda.ml" 26 975 1004
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 26 975 1010 "ocamlbuild/fda.ml" 26 975 1016
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 26 975 1006 "ocamlbuild/fda.ml" 26 975 1016
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 26 975 1022 "ocamlbuild/fda.ml" 26 975 1028
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 26 975 1018 "ocamlbuild/fda.ml" 26 975 1028
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 26 975 1034 "ocamlbuild/fda.ml" 26 975 1040
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 26 975 1030 "ocamlbuild/fda.ml" 26 975 1040
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 26 975 1046 "ocamlbuild/fda.ml" 26 975 1053
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 26 975 1042 "ocamlbuild/fda.ml" 26 975 1053
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 26 975 993 "ocamlbuild/fda.ml" 26 975 1054
+type(
+  Hygiene.rule list
+)
+"ocamlbuild/fda.ml" 27 1056 1076 "ocamlbuild/fda.ml" 27 1056 1080
+type(
+  Hygiene.penalty
+)
+"ocamlbuild/fda.ml" 25 922 926 "ocamlbuild/fda.ml" 27 1056 1082
+type(
+  Hygiene.law
+)
+"ocamlbuild/fda.ml" 28 1084 1101 "ocamlbuild/fda.ml" 28 1084 1139
+type(
+  string
+)
+"ocamlbuild/fda.ml" 29 1141 1164 "ocamlbuild/fda.ml" 29 1141 1172
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 29 1141 1160 "ocamlbuild/fda.ml" 29 1141 1172
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 29 1141 1159 "ocamlbuild/fda.ml" 29 1141 1173
+type(
+  Hygiene.rule list
+)
+"ocamlbuild/fda.ml" 30 1175 1195 "ocamlbuild/fda.ml" 30 1175 1199
+type(
+  Hygiene.penalty
+)
+"ocamlbuild/fda.ml" 28 1084 1088 "ocamlbuild/fda.ml" 30 1175 1201
+type(
+  Hygiene.law
+)
+"ocamlbuild/fda.ml" 31 1203 1220 "ocamlbuild/fda.ml" 31 1203 1243
+type(
+  string
+)
+"ocamlbuild/fda.ml" 32 1245 1268 "ocamlbuild/fda.ml" 32 1245 1272
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 32 1245 1264 "ocamlbuild/fda.ml" 32 1245 1272
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 32 1245 1278 "ocamlbuild/fda.ml" 32 1245 1282
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 32 1245 1274 "ocamlbuild/fda.ml" 32 1245 1282
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 32 1245 1288 "ocamlbuild/fda.ml" 32 1245 1293
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 32 1245 1284 "ocamlbuild/fda.ml" 32 1245 1293
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 32 1245 1299 "ocamlbuild/fda.ml" 32 1245 1305
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 32 1245 1295 "ocamlbuild/fda.ml" 32 1245 1305
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 32 1245 1311 "ocamlbuild/fda.ml" 32 1245 1317
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 32 1245 1307 "ocamlbuild/fda.ml" 32 1245 1317
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 32 1245 1323 "ocamlbuild/fda.ml" 32 1245 1329
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 32 1245 1319 "ocamlbuild/fda.ml" 32 1245 1329
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 32 1245 1263 "ocamlbuild/fda.ml" 32 1245 1330
+type(
+  Hygiene.rule list
+)
+"ocamlbuild/fda.ml" 33 1332 1352 "ocamlbuild/fda.ml" 33 1332 1356
+type(
+  Hygiene.penalty
+)
+"ocamlbuild/fda.ml" 31 1203 1207 "ocamlbuild/fda.ml" 33 1332 1358
+type(
+  Hygiene.law
+)
+"ocamlbuild/fda.ml" 34 1360 1377 "ocamlbuild/fda.ml" 34 1360 1413
+type(
+  string
+)
+"ocamlbuild/fda.ml" 35 1415 1446 "ocamlbuild/fda.ml" 35 1415 1452
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 35 1415 1453 "ocamlbuild/fda.ml" 35 1415 1458
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 35 1415 1434 "ocamlbuild/fda.ml" 35 1415 1459
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 35 1415 1473 "ocamlbuild/fda.ml" 35 1415 1479
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 35 1415 1480 "ocamlbuild/fda.ml" 35 1415 1486
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 35 1415 1461 "ocamlbuild/fda.ml" 35 1415 1487
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 35 1415 1433 "ocamlbuild/fda.ml" 35 1415 1488
+type(
+  Hygiene.rule list
+)
+"ocamlbuild/fda.ml" 36 1490 1510 "ocamlbuild/fda.ml" 36 1490 1514
+type(
+  Hygiene.penalty
+)
+"ocamlbuild/fda.ml" 34 1360 1364 "ocamlbuild/fda.ml" 36 1490 1516
+type(
+  Hygiene.law
+)
+"ocamlbuild/fda.ml" 37 1518 1535 "ocamlbuild/fda.ml" 37 1518 1570
+type(
+  string
+)
+"ocamlbuild/fda.ml" 38 1572 1603 "ocamlbuild/fda.ml" 38 1572 1609
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 38 1572 1610 "ocamlbuild/fda.ml" 38 1572 1615
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 38 1572 1591 "ocamlbuild/fda.ml" 38 1572 1616
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 38 1572 1590 "ocamlbuild/fda.ml" 38 1572 1617
+type(
+  Hygiene.rule list
+)
+"ocamlbuild/fda.ml" 39 1619 1639 "ocamlbuild/fda.ml" 39 1619 1643
+type(
+  Hygiene.penalty
+)
+"ocamlbuild/fda.ml" 37 1518 1522 "ocamlbuild/fda.ml" 39 1619 1645
+type(
+  Hygiene.law
+)
+"ocamlbuild/fda.ml" 40 1647 1664 "ocamlbuild/fda.ml" 40 1647 1691
+type(
+  string
+)
+"ocamlbuild/fda.ml" 41 1693 1716 "ocamlbuild/fda.ml" 41 1693 1729
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 41 1693 1712 "ocamlbuild/fda.ml" 41 1693 1729
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 41 1693 1735 "ocamlbuild/fda.ml" 41 1693 1749
+type(
+  Hygiene.pattern
+)
+"ocamlbuild/fda.ml" 41 1693 1731 "ocamlbuild/fda.ml" 41 1693 1749
+type(
+  Hygiene.rule
+)
+"ocamlbuild/fda.ml" 41 1693 1711 "ocamlbuild/fda.ml" 41 1693 1750
+type(
+  Hygiene.rule list
+)
+"ocamlbuild/fda.ml" 42 1752 1772 "ocamlbuild/fda.ml" 42 1752 1776
+type(
+  Hygiene.penalty
+)
+"ocamlbuild/fda.ml" 40 1647 1651 "ocamlbuild/fda.ml" 42 1752 1778
+type(
+  Hygiene.law
+)
+"ocamlbuild/fda.ml" 24 918 920 "ocamlbuild/fda.ml" 43 1779 1782
+type(
+  Hygiene.law list
+)
+"ocamlbuild/fda.ml" 45 1784 1788 "ocamlbuild/fda.ml" 45 1784 1795
+type(
+  bool Slurp.entry -> unit
+)
+"ocamlbuild/fda.ml" 45 1784 1796 "ocamlbuild/fda.ml" 45 1784 1801
+type(
+  bool Slurp.entry
+)
+"ocamlbuild/fda.ml" 46 1804 1806 "ocamlbuild/fda.ml" 46 1804 1813
+type(
+  int -> (unit, Format.formatter, unit) format -> unit
+)
+"ocamlbuild/fda.ml" 46 1804 1814 "ocamlbuild/fda.ml" 46 1804 1815
+type(
+  int
+)
+"ocamlbuild/fda.ml" 46 1804 1816 "ocamlbuild/fda.ml" 46 1804 1837
+type(
+  (unit, Format.formatter, unit) format
+)
+"ocamlbuild/fda.ml" 46 1804 1806 "ocamlbuild/fda.ml" 46 1804 1837
+type(
+  unit
+)
+"ocamlbuild/fda.ml" 47 1839 1845 "ocamlbuild/fda.ml" 47 1839 1849
+type(
+  bool ref
+)
+"ocamlbuild/fda.ml" 47 1839 1852 "ocamlbuild/fda.ml" 47 1839 1855
+type(
+  bool -> bool ref
+)
+"ocamlbuild/fda.ml" 47 1839 1856 "ocamlbuild/fda.ml" 47 1839 1861
+type(
+  bool
+)
+"ocamlbuild/fda.ml" 47 1839 1852 "ocamlbuild/fda.ml" 47 1839 1861
+type(
+  bool ref
+)
+"ocamlbuild/fda.ml" 48 1865 1873 "ocamlbuild/fda.ml" 48 1865 1886
+type(
+  ?sanitize:Pathname.t ->
+  Hygiene.law list -> bool Slurp.entry -> (Hygiene.law * string list) list
+)
+"ocamlbuild/fda.ml" 51 1914 1925 "ocamlbuild/fda.ml" 51 1914 1926
+type(
+  bool ref -> bool
+)
+"ocamlbuild/fda.ml" 51 1914 1926 "ocamlbuild/fda.ml" 51 1914 1942
+type(
+  bool ref
+)
+"ocamlbuild/fda.ml" 51 1914 1925 "ocamlbuild/fda.ml" 51 1914 1942
+type(
+  bool
+)
+"ocamlbuild/fda.ml" 52 1948 1963 "ocamlbuild/fda.ml" 52 1948 1978
+type(
+  Pathname.t -> Pathname.t -> Pathname.t
+)
+"ocamlbuild/fda.ml" 52 1948 1979 "ocamlbuild/fda.ml" 52 1948 1980
+type(
+  Pathname.t ref -> Pathname.t
+)
+"ocamlbuild/fda.ml" 52 1948 1980 "ocamlbuild/fda.ml" 52 1948 1997
+type(
+  Pathname.t ref
+)
+"ocamlbuild/fda.ml" 52 1948 1979 "ocamlbuild/fda.ml" 52 1948 1997
+type(
+  Pathname.t
+)
+"ocamlbuild/fda.ml" 52 1948 1998 "ocamlbuild/fda.ml" 52 1948 1999
+type(
+  Pathname.t ref -> Pathname.t
+)
+"ocamlbuild/fda.ml" 52 1948 1999 "ocamlbuild/fda.ml" 52 1948 2026
+type(
+  Pathname.t ref
+)
+"ocamlbuild/fda.ml" 52 1948 1998 "ocamlbuild/fda.ml" 52 1948 2026
+type(
+  Pathname.t
+)
+"ocamlbuild/fda.ml" 52 1948 1962 "ocamlbuild/fda.ml" 52 1948 2027
+type(
+  Pathname.t
+)
+"ocamlbuild/fda.ml" 52 1948 1958 "ocamlbuild/fda.ml" 52 1948 2027
+type(
+  Pathname.t option
+)
+"ocamlbuild/fda.ml" 54 2041 2051 "ocamlbuild/fda.ml" 54 2041 2055
+type(
+  Pathname.t option
+)
+"ocamlbuild/fda.ml" 50 1902 1908 "ocamlbuild/fda.ml" 55 2056 2065
+type(
+  Pathname.t option
+)
+"ocamlbuild/fda.ml" 56 2066 2072 "ocamlbuild/fda.ml" 56 2066 2076
+type(
+  Hygiene.law list
+)
+"ocamlbuild/fda.ml" 56 2066 2077 "ocamlbuild/fda.ml" 56 2066 2082
+type(
+  bool Slurp.entry
+)
+"ocamlbuild/fda.ml" 48 1865 1873 "ocamlbuild/fda.ml" 56 2066 2082
+type(
+  (Hygiene.law * string list) list
+)
+"ocamlbuild/fda.ml" 58 2090 2094 "ocamlbuild/fda.ml" 58 2090 2096
+type(
+  (Hygiene.law * string list) list
+)
+"ocamlbuild/fda.ml" 58 2090 2100 "ocamlbuild/fda.ml" 58 2090 2102
+type(
+  unit
+)
+"ocamlbuild/fda.ml" 59 2103 2107 "ocamlbuild/fda.ml" 59 2103 2112
+type(
+  (Hygiene.law * string list) list
+)
+"ocamlbuild/fda.ml" 60 2116 2120 "ocamlbuild/fda.ml" 60 2116 2129
+type(
+  (Hygiene.law * string list -> unit) ->
+  (Hygiene.law * string list) list -> unit
+)
+"ocamlbuild/fda.ml" 61 2130 2147 "ocamlbuild/fda.ml" 61 2130 2150
+type(
+  Hygiene.law
+)
+"ocamlbuild/fda.ml" 61 2130 2152 "ocamlbuild/fda.ml" 61 2130 2156
+type(
+  string list
+)
+"ocamlbuild/fda.ml" 61 2130 2146 "ocamlbuild/fda.ml" 61 2130 2157
+type(
+  Hygiene.law * string list
+)
+"ocamlbuild/fda.ml" 62 2161 2169 "ocamlbuild/fda.ml" 62 2161 2182
+type(
+  (string -> string -> unit, out_channel, unit) format ->
+  string -> string -> unit
+)
+"ocamlbuild/fda.ml" 62 2161 2183 "ocamlbuild/fda.ml" 62 2161 2194
+type(
+  (string -> string -> unit, out_channel, unit) format
+)
+"ocamlbuild/fda.ml" 63 2195 2212 "ocamlbuild/fda.ml" 63 2195 2215
+type(
+  Hygiene.law
+)
+"ocamlbuild/fda.ml" 63 2195 2212 "ocamlbuild/fda.ml" 63 2195 2227
+type(
+  Hygiene.penalty
+)
+"ocamlbuild/fda.ml" 64 2233 2246 "ocamlbuild/fda.ml" 64 2233 2250
+type(
+  Hygiene.penalty
+)
+"ocamlbuild/fda.ml" 64 2233 2254 "ocamlbuild/fda.ml" 64 2233 2263
+type(
+  string
+)
+"ocamlbuild/fda.ml" 65 2264 2277 "ocamlbuild/fda.ml" 65 2264 2281
+type(
+  Hygiene.penalty
+)
+"ocamlbuild/fda.ml" 66 2285 2303 "ocamlbuild/fda.ml" 66 2285 2306
+type(
+  bool -> bool
+)
+"ocamlbuild/fda.ml" 66 2285 2307 "ocamlbuild/fda.ml" 66 2285 2308
+type(
+  bool ref -> bool
+)
+"ocamlbuild/fda.ml" 66 2285 2308 "ocamlbuild/fda.ml" 66 2285 2312
+type(
+  bool ref
+)
+"ocamlbuild/fda.ml" 66 2285 2307 "ocamlbuild/fda.ml" 66 2285 2312
+type(
+  bool
+)
+"ocamlbuild/fda.ml" 66 2285 2303 "ocamlbuild/fda.ml" 66 2285 2312
+type(
+  bool
+)
+"ocamlbuild/fda.ml" 68 2341 2360 "ocamlbuild/fda.ml" 68 2341 2373
+type(
+  (unit, out_channel, unit) format -> unit
+)
+"ocamlbuild/fda.ml" 68 2341 2374 "ocamlbuild/fda.ml" 68 2341 2434
+type(
+  (unit, out_channel, unit) format
+)
+"ocamlbuild/fda.ml" 68 2341 2360 "ocamlbuild/fda.ml" 68 2341 2434
+type(
+  unit
+)
+"ocamlbuild/fda.ml" 69 2436 2455 "ocamlbuild/fda.ml" 69 2436 2459
+type(
+  bool ref
+)
+"ocamlbuild/fda.ml" 69 2436 2460 "ocamlbuild/fda.ml" 69 2436 2462
+type(
+  bool ref -> bool -> unit
+)
+"ocamlbuild/fda.ml" 69 2436 2463 "ocamlbuild/fda.ml" 69 2436 2467
+type(
+  bool
+)
+"ocamlbuild/fda.ml" 69 2436 2455 "ocamlbuild/fda.ml" 69 2436 2467
+type(
+  unit
+)
+"ocamlbuild/fda.ml" 67 2318 2335 "ocamlbuild/fda.ml" 70 2468 2488
+type(
+  unit
+)
+"ocamlbuild/fda.ml" 66 2285 2300 "ocamlbuild/fda.ml" 70 2468 2488
+type(
+  unit
+)
+"ocamlbuild/fda.ml" 71 2490 2504 "ocamlbuild/fda.ml" 71 2490 2511
+type(
+  string
+)
+"ocamlbuild/fda.ml" 66 2285 2300 "ocamlbuild/fda.ml" 71 2490 2511
+type(
+  string
+)
+"ocamlbuild/fda.ml" 63 2195 2205 "ocamlbuild/fda.ml" 71 2490 2512
+type(
+  string
+)
+"ocamlbuild/fda.ml" 72 2513 2523 "ocamlbuild/fda.ml" 72 2513 2526
+type(
+  Hygiene.law
+)
+"ocamlbuild/fda.ml" 72 2513 2523 "ocamlbuild/fda.ml" 72 2513 2535
+type(
+  string
+)
+"ocamlbuild/fda.ml" 62 2161 2169 "ocamlbuild/fda.ml" 72 2513 2535
+type(
+  unit
+)
+"ocamlbuild/fda.ml" 73 2537 2545 "ocamlbuild/fda.ml" 73 2537 2554
+type(
+  (string -> unit) -> string list -> unit
+)
+"ocamlbuild/fda.ml" 74 2555 2575 "ocamlbuild/fda.ml" 74 2555 2578
+type(
+  string
+)
+"ocamlbuild/fda.ml" 75 2582 2594 "ocamlbuild/fda.ml" 75 2582 2607
+type(
+  (string -> unit, out_channel, unit) format -> string -> unit
+)
+"ocamlbuild/fda.ml" 75 2582 2608 "ocamlbuild/fda.ml" 75 2582 2616
+type(
+  (string -> unit, out_channel, unit) format
+)
+"ocamlbuild/fda.ml" 75 2582 2617 "ocamlbuild/fda.ml" 75 2582 2620
+type(
+  string
+)
+"ocamlbuild/fda.ml" 75 2582 2594 "ocamlbuild/fda.ml" 75 2582 2620
+type(
+  unit
+)
+"ocamlbuild/fda.ml" 74 2555 2565 "ocamlbuild/fda.ml" 76 2621 2634
+type(
+  string -> unit
+)
+"ocamlbuild/fda.ml" 77 2635 2645 "ocamlbuild/fda.ml" 77 2635 2649
+type(
+  string list
+)
+"ocamlbuild/fda.ml" 73 2537 2545 "ocamlbuild/fda.ml" 77 2635 2649
+type(
+  unit
+)
+"ocamlbuild/fda.ml" 62 2161 2169 "ocamlbuild/fda.ml" 77 2635 2649
+type(
+  unit
+)
+"ocamlbuild/fda.ml" 61 2130 2136 "ocamlbuild/fda.ml" 78 2650 2659
+type(
+  Hygiene.law * string list -> unit
+)
+"ocamlbuild/fda.ml" 79 2660 2666 "ocamlbuild/fda.ml" 79 2660 2671
+type(
+  (Hygiene.law * string list) list
+)
+"ocamlbuild/fda.ml" 60 2116 2120 "ocamlbuild/fda.ml" 79 2660 2671
+type(
+  unit
+)
+"ocamlbuild/fda.ml" 80 2673 2680 "ocamlbuild/fda.ml" 80 2673 2681
+type(
+  bool ref -> bool
+)
+"ocamlbuild/fda.ml" 80 2673 2681 "ocamlbuild/fda.ml" 80 2673 2685
+type(
+  bool ref
+)
+"ocamlbuild/fda.ml" 80 2673 2680 "ocamlbuild/fda.ml" 80 2673 2685
+type(
+  bool
+)
+"ocamlbuild/fda.ml" 80 2673 2691 "ocamlbuild/fda.ml" 80 2673 2696
+type(
+  exn -> unit
+)
+"ocamlbuild/fda.ml" 80 2673 2697 "ocamlbuild/fda.ml" 80 2673 2716
+type(
+  exn
+)
+"ocamlbuild/fda.ml" 80 2673 2691 "ocamlbuild/fda.ml" 80 2673 2716
+type(
+  unit
+)
+"ocamlbuild/fda.ml" 80 2673 2677 "ocamlbuild/fda.ml" 80 2673 2717
+type(
+  unit
+)
+"ocamlbuild/fda.ml" 60 2116 2120 "ocamlbuild/fda.ml" 80 2673 2717
+type(
+  unit
+)
+"ocamlbuild/fda.ml" 48 1865 1867 "ocamlbuild/fda.ml" 80 2673 2717
+type(
+  unit
+)
+"ocamlbuild/fda.ml" 47 1839 1841 "ocamlbuild/fda.ml" 80 2673 2717
+type(
+  unit
+)
+"ocamlbuild/fda.ml" 46 1804 1806 "ocamlbuild/fda.ml" 80 2673 2717
+type(
+  unit
+)

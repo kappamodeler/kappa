@@ -1,0 +1,22 @@
+CLEANUP=rm -f *.cm* *.o *~ *.a
+
+clean:
+	cd abstract_expr ; $(CLEANUP) ;
+	cd backend ; make -f cleanup ; $(CLEANUP) ;
+	cd compressor ; $(CLEANUP) ;
+	cd config ; $(CLEANUP) ;
+	cd data_structures  ; $(CLEANUP) ;
+	cd expr ; $(CLEANUP) ;
+	cd frontend ; $(CLEANUP) ;
+	cd influence_map ; $(CLEANUP) ;
+	cd lib ; make -f cleanup ; $(CLEANUP) ;
+	cd pipeline ; $(CLEANUP) ;
+	cd reachability ; $(CLEANUP) ;
+	cd share ; $(CLEANUP) ;
+	cd tools ; $(CLEANUP) ;
+	cd vars ; $(CLEANUP) ;
+	cd ODE ; $(CLEANUP) ;
+	cd cyclical_complexes ; $(CLEANUP) ;
+	cd refinements ; $(CLEANUP) ; 
+	cd isomorphism_detection ; $(CLEANUP) ; 
+	$(CLEANUP) 

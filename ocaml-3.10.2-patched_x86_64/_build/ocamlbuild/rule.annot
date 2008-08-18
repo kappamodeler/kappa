@@ -1,0 +1,5592 @@
+"ocamlbuild/rule.ml" 39 1531 1535 "ocamlbuild/rule.ml" 39 1531 1547
+type(
+  'a gen_rule -> string
+)
+"ocamlbuild/rule.ml" 39 1531 1548 "ocamlbuild/rule.ml" 39 1531 1549
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 39 1531 1552 "ocamlbuild/rule.ml" 39 1531 1553
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 39 1531 1552 "ocamlbuild/rule.ml" 39 1531 1558
+type(
+  string
+)
+"ocamlbuild/rule.ml" 40 1559 1563 "ocamlbuild/rule.ml" 40 1559 1575
+type(
+  'a gen_rule -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 40 1559 1576 "ocamlbuild/rule.ml" 40 1559 1577
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 40 1559 1580 "ocamlbuild/rule.ml" 40 1559 1581
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 40 1559 1580 "ocamlbuild/rule.ml" 40 1559 1586
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 41 1587 1591 "ocamlbuild/rule.ml" 41 1587 1604
+type(
+  'a gen_rule -> 'a list
+)
+"ocamlbuild/rule.ml" 41 1587 1605 "ocamlbuild/rule.ml" 41 1587 1606
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 41 1587 1609 "ocamlbuild/rule.ml" 41 1587 1610
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 41 1587 1609 "ocamlbuild/rule.ml" 41 1587 1616
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 42 1617 1621 "ocamlbuild/rule.ml" 42 1617 1634
+type(
+  'a gen_rule -> 'a option
+)
+"ocamlbuild/rule.ml" 42 1617 1635 "ocamlbuild/rule.ml" 42 1617 1636
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 42 1617 1639 "ocamlbuild/rule.ml" 42 1617 1640
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 42 1617 1639 "ocamlbuild/rule.ml" 42 1617 1646
+type(
+  'a option
+)
+"ocamlbuild/rule.ml" 46 1748 1752 "ocamlbuild/rule.ml" 46 1748 1759
+type(
+  'a -> 'b -> 'c
+)
+"ocamlbuild/rule.ml" 46 1748 1760 "ocamlbuild/rule.ml" 46 1748 1761
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 46 1748 1762 "ocamlbuild/rule.ml" 46 1748 1763
+type(
+  'b
+)
+"ocamlbuild/rule.ml" 46 1748 1766 "ocamlbuild/rule.ml" 46 1748 1778
+type(
+  'c
+)
+"ocamlbuild/rule.ml" 48 1780 1784 "ocamlbuild/rule.ml" 48 1780 1799
+type(
+  Format.formatter -> 'a gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 48 1780 1800 "ocamlbuild/rule.ml" 48 1780 1801
+type(
+  Format.formatter
+)
+"ocamlbuild/rule.ml" 48 1780 1802 "ocamlbuild/rule.ml" 48 1780 1803
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 48 1780 1806 "ocamlbuild/rule.ml" 48 1780 1821
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/rule.ml" 48 1780 1822 "ocamlbuild/rule.ml" 48 1780 1823
+type(
+  Format.formatter
+)
+"ocamlbuild/rule.ml" 48 1780 1824 "ocamlbuild/rule.ml" 48 1780 1825
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 48 1780 1824 "ocamlbuild/rule.ml" 48 1780 1830
+type(
+  string
+)
+"ocamlbuild/rule.ml" 48 1780 1806 "ocamlbuild/rule.ml" 48 1780 1830
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 50 1832 1836 "ocamlbuild/rule.ml" 50 1832 1855
+type(
+  Format.formatter -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 50 1832 1858 "ocamlbuild/rule.ml" 50 1832 1868
+type(
+  (Format.formatter -> Pathname.t -> unit) ->
+  Format.formatter -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 50 1832 1869 "ocamlbuild/rule.ml" 50 1832 1883
+type(
+  Format.formatter -> Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 50 1832 1858 "ocamlbuild/rule.ml" 50 1832 1883
+type(
+  Format.formatter -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 52 1885 1889 "ocamlbuild/rule.ml" 52 1885 1908
+type(
+  (Format.formatter -> 'a -> 'b) -> Format.formatter -> 'a gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 52 1885 1909 "ocamlbuild/rule.ml" 52 1885 1914
+type(
+  Format.formatter -> 'a -> 'b
+)
+"ocamlbuild/rule.ml" 52 1885 1915 "ocamlbuild/rule.ml" 52 1885 1916
+type(
+  Format.formatter
+)
+"ocamlbuild/rule.ml" 52 1885 1917 "ocamlbuild/rule.ml" 52 1885 1918
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 53 1921 1923 "ocamlbuild/rule.ml" 53 1921 1930
+type(
+  Format.formatter ->
+  (string ->
+   (Format.formatter -> Tags.t -> unit) ->
+   Tags.t ->
+   (Format.formatter -> Pathname.t list -> unit) ->
+   Pathname.t list ->
+   (Format.formatter -> 'a list -> unit) -> 'a list -> unit,
+   Format.formatter, unit)
+  format ->
+  string ->
+  (Format.formatter -> Tags.t -> unit) ->
+  Tags.t ->
+  (Format.formatter -> Pathname.t list -> unit) ->
+  Pathname.t list -> (Format.formatter -> 'a list -> unit) -> 'a list -> unit
+)
+"ocamlbuild/rule.ml" 53 1921 1931 "ocamlbuild/rule.ml" 53 1921 1932
+type(
+  Format.formatter
+)
+"ocamlbuild/rule.ml" 53 1921 1933 "ocamlbuild/rule.ml" 53 1921 2052
+type(
+  (string ->
+   (Format.formatter -> Tags.t -> unit) ->
+   Tags.t ->
+   (Format.formatter -> Pathname.t list -> unit) ->
+   Pathname.t list ->
+   (Format.formatter -> 'a list -> unit) -> 'a list -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/rule.ml" 54 2053 2057 "ocamlbuild/rule.ml" 54 2053 2058
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 54 2053 2057 "ocamlbuild/rule.ml" 54 2053 2063
+type(
+  string
+)
+"ocamlbuild/rule.ml" 54 2053 2064 "ocamlbuild/rule.ml" 54 2053 2074
+type(
+  Format.formatter -> Tags.t -> unit
+)
+"ocamlbuild/rule.ml" 54 2053 2075 "ocamlbuild/rule.ml" 54 2053 2076
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 54 2053 2075 "ocamlbuild/rule.ml" 54 2053 2081
+type(
+  Tags.t
+)
+"ocamlbuild/rule.ml" 54 2053 2082 "ocamlbuild/rule.ml" 54 2053 2101
+type(
+  Format.formatter -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 54 2053 2102 "ocamlbuild/rule.ml" 54 2053 2103
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 54 2053 2102 "ocamlbuild/rule.ml" 54 2053 2108
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 54 2053 2110 "ocamlbuild/rule.ml" 54 2053 2120
+type(
+  (Format.formatter -> 'a -> 'b) -> Format.formatter -> 'a list -> unit
+)
+"ocamlbuild/rule.ml" 54 2053 2121 "ocamlbuild/rule.ml" 54 2053 2126
+type(
+  Format.formatter -> 'a -> 'b
+)
+"ocamlbuild/rule.ml" 54 2053 2109 "ocamlbuild/rule.ml" 54 2053 2127
+type(
+  Format.formatter -> 'a list -> unit
+)
+"ocamlbuild/rule.ml" 54 2053 2128 "ocamlbuild/rule.ml" 54 2053 2129
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 54 2053 2128 "ocamlbuild/rule.ml" 54 2053 2135
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 53 1921 1923 "ocamlbuild/rule.ml" 54 2053 2135
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 56 2137 2141 "ocamlbuild/rule.ml" 56 2137 2153
+type(
+  (Format.formatter -> 'a -> 'b) -> Format.formatter -> 'a gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 56 2137 2154 "ocamlbuild/rule.ml" 56 2137 2159
+type(
+  Format.formatter -> 'a -> 'b
+)
+"ocamlbuild/rule.ml" 56 2137 2160 "ocamlbuild/rule.ml" 56 2137 2161
+type(
+  Format.formatter
+)
+"ocamlbuild/rule.ml" 56 2137 2162 "ocamlbuild/rule.ml" 56 2137 2163
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 57 2166 2168 "ocamlbuild/rule.ml" 57 2166 2175
+type(
+  Format.formatter ->
+  (string ->
+   (Format.formatter -> Pathname.t list -> unit) ->
+   Pathname.t list ->
+   (Format.formatter -> 'a list -> unit) -> 'a list -> unit,
+   Format.formatter, unit)
+  format ->
+  string ->
+  (Format.formatter -> Pathname.t list -> unit) ->
+  Pathname.t list -> (Format.formatter -> 'a list -> unit) -> 'a list -> unit
+)
+"ocamlbuild/rule.ml" 57 2166 2176 "ocamlbuild/rule.ml" 57 2166 2177
+type(
+  Format.formatter
+)
+"ocamlbuild/rule.ml" 57 2166 2178 "ocamlbuild/rule.ml" 57 2166 2225
+type(
+  (string ->
+   (Format.formatter -> Pathname.t list -> unit) ->
+   Pathname.t list ->
+   (Format.formatter -> 'a list -> unit) -> 'a list -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/rule.ml" 58 2226 2230 "ocamlbuild/rule.ml" 58 2226 2231
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 58 2226 2230 "ocamlbuild/rule.ml" 58 2226 2236
+type(
+  string
+)
+"ocamlbuild/rule.ml" 58 2226 2237 "ocamlbuild/rule.ml" 58 2226 2256
+type(
+  Format.formatter -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 58 2226 2257 "ocamlbuild/rule.ml" 58 2226 2258
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 58 2226 2257 "ocamlbuild/rule.ml" 58 2226 2263
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 58 2226 2265 "ocamlbuild/rule.ml" 58 2226 2275
+type(
+  (Format.formatter -> 'a -> 'b) -> Format.formatter -> 'a list -> unit
+)
+"ocamlbuild/rule.ml" 58 2226 2276 "ocamlbuild/rule.ml" 58 2226 2281
+type(
+  Format.formatter -> 'a -> 'b
+)
+"ocamlbuild/rule.ml" 58 2226 2264 "ocamlbuild/rule.ml" 58 2226 2282
+type(
+  Format.formatter -> 'a list -> unit
+)
+"ocamlbuild/rule.ml" 58 2226 2283 "ocamlbuild/rule.ml" 58 2226 2284
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 58 2226 2283 "ocamlbuild/rule.ml" 58 2226 2290
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 57 2166 2168 "ocamlbuild/rule.ml" 58 2226 2290
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 60 2292 2296 "ocamlbuild/rule.ml" 60 2292 2301
+type(
+  Format.formatter -> 'a gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 60 2292 2304 "ocamlbuild/rule.ml" 60 2292 2319
+type(
+  Format.formatter -> 'a gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 62 2321 2325 "ocamlbuild/rule.ml" 62 2321 2330
+type(
+  Resource.env -> Resource.resource_pattern gen_rule -> Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 62 2321 2331 "ocamlbuild/rule.ml" 62 2321 2334
+type(
+  Resource.env
+)
+"ocamlbuild/rule.ml" 62 2321 2335 "ocamlbuild/rule.ml" 62 2321 2339
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 63 2342 2348 "ocamlbuild/rule.ml" 63 2342 2363
+type(
+  Pathname.t list -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 63 2342 2366 "ocamlbuild/rule.ml" 63 2342 2374
+type(
+  (Pathname.t -> Pathname.t) -> Pathname.t list -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 63 2342 2376 "ocamlbuild/rule.ml" 63 2342 2390
+type(
+  Resource.env -> Pathname.t -> Pathname.t
+)
+"ocamlbuild/rule.ml" 63 2342 2391 "ocamlbuild/rule.ml" 63 2342 2394
+type(
+  Resource.env
+)
+"ocamlbuild/rule.ml" 63 2342 2375 "ocamlbuild/rule.ml" 63 2342 2395
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/rule.ml" 63 2342 2366 "ocamlbuild/rule.ml" 63 2342 2395
+type(
+  Pathname.t list -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 64 2399 2405 "ocamlbuild/rule.ml" 64 2399 2428
+type(
+  Resource.resource_pattern list -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 64 2399 2431 "ocamlbuild/rule.ml" 64 2399 2439
+type(
+  (Resource.resource_pattern -> Pathname.t) ->
+  Resource.resource_pattern list -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 64 2399 2441 "ocamlbuild/rule.ml" 64 2399 2463
+type(
+  Resource.env -> Resource.resource_pattern -> Pathname.t
+)
+"ocamlbuild/rule.ml" 64 2399 2464 "ocamlbuild/rule.ml" 64 2399 2467
+type(
+  Resource.env
+)
+"ocamlbuild/rule.ml" 64 2399 2440 "ocamlbuild/rule.ml" 64 2399 2468
+type(
+  Resource.resource_pattern -> Pathname.t
+)
+"ocamlbuild/rule.ml" 64 2399 2431 "ocamlbuild/rule.ml" 64 2399 2468
+type(
+  Resource.resource_pattern list -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 65 2472 2478 "ocamlbuild/rule.ml" 65 2472 2484
+type(
+  (Pathname.t -> 'a) -> Pathname.t -> 'a
+)
+"ocamlbuild/rule.ml" 65 2472 2485 "ocamlbuild/rule.ml" 65 2472 2496
+type(
+  Pathname.t -> 'a
+)
+"ocamlbuild/rule.ml" 65 2472 2497 "ocamlbuild/rule.ml" 65 2472 2498
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 65 2472 2501 "ocamlbuild/rule.ml" 65 2472 2512
+type(
+  Pathname.t -> 'a
+)
+"ocamlbuild/rule.ml" 65 2472 2514 "ocamlbuild/rule.ml" 65 2472 2532
+type(
+  Resource.env -> Pathname.t -> Pathname.t
+)
+"ocamlbuild/rule.ml" 65 2472 2533 "ocamlbuild/rule.ml" 65 2472 2536
+type(
+  Resource.env
+)
+"ocamlbuild/rule.ml" 65 2472 2537 "ocamlbuild/rule.ml" 65 2472 2538
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 65 2472 2513 "ocamlbuild/rule.ml" 65 2472 2539
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 65 2472 2501 "ocamlbuild/rule.ml" 65 2472 2539
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 66 2543 2549 "ocamlbuild/rule.ml" 66 2543 2554
+type(
+  Pathname.t option
+)
+"ocamlbuild/rule.ml" 66 2543 2563 "ocamlbuild/rule.ml" 66 2543 2567
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 66 2543 2563 "ocamlbuild/rule.ml" 66 2543 2573
+type(
+  Resource.resource_pattern option
+)
+"ocamlbuild/rule.ml" 66 2543 2579 "ocamlbuild/rule.ml" 66 2543 2583
+type(
+  Resource.resource_pattern option
+)
+"ocamlbuild/rule.ml" 66 2543 2587 "ocamlbuild/rule.ml" 66 2543 2591
+type(
+  Pathname.t option
+)
+"ocamlbuild/rule.ml" 66 2543 2599 "ocamlbuild/rule.ml" 66 2543 2600
+type(
+  Resource.resource_pattern
+)
+"ocamlbuild/rule.ml" 66 2543 2594 "ocamlbuild/rule.ml" 66 2543 2600
+type(
+  Resource.resource_pattern option
+)
+"ocamlbuild/rule.ml" 66 2543 2610 "ocamlbuild/rule.ml" 66 2543 2632
+type(
+  Resource.env -> Resource.resource_pattern -> Pathname.t
+)
+"ocamlbuild/rule.ml" 66 2543 2633 "ocamlbuild/rule.ml" 66 2543 2636
+type(
+  Resource.env
+)
+"ocamlbuild/rule.ml" 66 2543 2637 "ocamlbuild/rule.ml" 66 2543 2638
+type(
+  Resource.resource_pattern
+)
+"ocamlbuild/rule.ml" 66 2543 2609 "ocamlbuild/rule.ml" 66 2543 2639
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 66 2543 2604 "ocamlbuild/rule.ml" 66 2543 2639
+type(
+  Pathname.t option
+)
+"ocamlbuild/rule.ml" 66 2543 2557 "ocamlbuild/rule.ml" 66 2543 2639
+type(
+  Pathname.t option
+)
+"ocamlbuild/rule.ml" 67 2643 2649 "ocamlbuild/rule.ml" 67 2643 2654
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 67 2643 2657 "ocamlbuild/rule.ml" 67 2643 2680
+type(
+  Resource.resource_pattern list -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 67 2643 2681 "ocamlbuild/rule.ml" 67 2643 2685
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 67 2643 2681 "ocamlbuild/rule.ml" 67 2643 2691
+type(
+  Resource.resource_pattern list
+)
+"ocamlbuild/rule.ml" 67 2643 2657 "ocamlbuild/rule.ml" 67 2643 2691
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 68 2695 2699 "ocamlbuild/rule.ml" 68 2695 2705
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 68 2695 2718 "ocamlbuild/rule.ml" 68 2695 2726
+type(
+  (string ->
+   (Format.formatter -> Resource.env -> unit) -> Resource.env -> string,
+   Format.formatter, unit, string)
+  format4 ->
+  string ->
+  (Format.formatter -> Resource.env -> unit) -> Resource.env -> string
+)
+"ocamlbuild/rule.ml" 68 2695 2727 "ocamlbuild/rule.ml" 68 2695 2736
+type(
+  (string ->
+   (Format.formatter -> Resource.env -> unit) -> Resource.env -> string,
+   Format.formatter, unit, string)
+  format4
+)
+"ocamlbuild/rule.ml" 68 2695 2737 "ocamlbuild/rule.ml" 68 2695 2741
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 68 2695 2737 "ocamlbuild/rule.ml" 68 2695 2746
+type(
+  string
+)
+"ocamlbuild/rule.ml" 68 2695 2747 "ocamlbuild/rule.ml" 68 2695 2765
+type(
+  Format.formatter -> Resource.env -> unit
+)
+"ocamlbuild/rule.ml" 68 2695 2766 "ocamlbuild/rule.ml" 68 2695 2769
+type(
+  Resource.env
+)
+"ocamlbuild/rule.ml" 68 2695 2718 "ocamlbuild/rule.ml" 68 2695 2769
+type(
+  string
+)
+"ocamlbuild/rule.ml" 69 2771 2795 "ocamlbuild/rule.ml" 69 2771 2800
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 70 2802 2825 "ocamlbuild/rule.ml" 70 2802 2840
+type(
+  Pathname.t list -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 70 2802 2841 "ocamlbuild/rule.ml" 70 2802 2845
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 70 2802 2841 "ocamlbuild/rule.ml" 70 2802 2850
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 70 2802 2825 "ocamlbuild/rule.ml" 70 2802 2850
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 71 2916 2940 "ocamlbuild/rule.ml" 71 2916 2945
+type(
+  Pathname.t option
+)
+"ocamlbuild/rule.ml" 72 2947 2975 "ocamlbuild/rule.ml" 72 2947 2978
+type(
+  env
+)
+"ocamlbuild/rule.ml" 72 2947 2982 "ocamlbuild/rule.ml" 72 2947 2986
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 72 2947 2982 "ocamlbuild/rule.ml" 72 2947 2991
+type(
+  env -> builder -> digest_command
+)
+"ocamlbuild/rule.ml" 72 2947 2993 "ocamlbuild/rule.ml" 72 2947 2999
+type(
+  env -> env
+)
+"ocamlbuild/rule.ml" 72 2947 3000 "ocamlbuild/rule.ml" 72 2947 3003
+type(
+  env
+)
+"ocamlbuild/rule.ml" 72 2947 2992 "ocamlbuild/rule.ml" 72 2947 3004
+type(
+  env
+)
+"ocamlbuild/rule.ml" 72 2947 2982 "ocamlbuild/rule.ml" 72 2947 3004
+type(
+  builder -> digest_command
+)
+"ocamlbuild/rule.ml" 72 2947 2970 "ocamlbuild/rule.ml" 72 2947 3005
+type(
+  env -> builder -> digest_command
+)
+"ocamlbuild/rule.ml" 68 2695 2697 "ocamlbuild/rule.ml" 72 2947 3007
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 67 2643 2645 "ocamlbuild/rule.ml" 72 2947 3007
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 66 2543 2545 "ocamlbuild/rule.ml" 72 2947 3007
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 65 2472 2474 "ocamlbuild/rule.ml" 72 2947 3007
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 64 2399 2401 "ocamlbuild/rule.ml" 72 2947 3007
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 63 2342 2344 "ocamlbuild/rule.ml" 72 2947 3007
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 76 3040 3044 "ocamlbuild/rule.ml" 76 3040 3055
+type(
+  Pathname.t -> Resource.resource_pattern gen_rule -> rule option
+)
+"ocamlbuild/rule.ml" 76 3040 3056 "ocamlbuild/rule.ml" 76 3040 3062
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 76 3040 3063 "ocamlbuild/rule.ml" 76 3040 3067
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 78 3076 3080 "ocamlbuild/rule.ml" 78 3076 3089
+type(
+  (Resource.resource_pattern -> unit) ->
+  Resource.resource_pattern list -> unit
+)
+"ocamlbuild/rule.ml" 78 3076 3100 "ocamlbuild/rule.ml" 78 3076 3108
+type(
+  Resource.resource_pattern
+)
+"ocamlbuild/rule.ml" 79 3112 3124 "ocamlbuild/rule.ml" 79 3112 3140
+type(
+  Resource.resource_pattern -> Pathname.t -> Resource.env option
+)
+"ocamlbuild/rule.ml" 79 3112 3141 "ocamlbuild/rule.ml" 79 3112 3149
+type(
+  Resource.resource_pattern
+)
+"ocamlbuild/rule.ml" 79 3112 3150 "ocamlbuild/rule.ml" 79 3112 3156
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 79 3112 3124 "ocamlbuild/rule.ml" 79 3112 3156
+type(
+  Resource.env option
+)
+"ocamlbuild/rule.ml" 80 3162 3175 "ocamlbuild/rule.ml" 80 3162 3178
+type(
+  Resource.env
+)
+"ocamlbuild/rule.ml" 80 3162 3170 "ocamlbuild/rule.ml" 80 3162 3178
+type(
+  Resource.env option
+)
+"ocamlbuild/rule.ml" 80 3162 3182 "ocamlbuild/rule.ml" 80 3162 3187
+type(
+  exn -> unit
+)
+"ocamlbuild/rule.ml" 80 3162 3202 "ocamlbuild/rule.ml" 80 3162 3207
+type(
+  Resource.env -> Resource.resource_pattern gen_rule -> rule
+)
+"ocamlbuild/rule.ml" 80 3162 3208 "ocamlbuild/rule.ml" 80 3162 3211
+type(
+  Resource.env
+)
+"ocamlbuild/rule.ml" 80 3162 3212 "ocamlbuild/rule.ml" 80 3162 3216
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 80 3162 3201 "ocamlbuild/rule.ml" 80 3162 3217
+type(
+  rule
+)
+"ocamlbuild/rule.ml" 80 3162 3188 "ocamlbuild/rule.ml" 80 3162 3218
+type(
+  exn
+)
+"ocamlbuild/rule.ml" 80 3162 3182 "ocamlbuild/rule.ml" 80 3162 3218
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 81 3219 3227 "ocamlbuild/rule.ml" 81 3219 3231
+type(
+  Resource.env option
+)
+"ocamlbuild/rule.ml" 81 3219 3235 "ocamlbuild/rule.ml" 81 3219 3237
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 79 3112 3118 "ocamlbuild/rule.ml" 81 3219 3237
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 78 3076 3090 "ocamlbuild/rule.ml" 82 3238 3245
+type(
+  Resource.resource_pattern -> unit
+)
+"ocamlbuild/rule.ml" 82 3238 3246 "ocamlbuild/rule.ml" 82 3238 3250
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 82 3238 3246 "ocamlbuild/rule.ml" 82 3238 3256
+type(
+  Resource.resource_pattern list
+)
+"ocamlbuild/rule.ml" 78 3076 3080 "ocamlbuild/rule.ml" 82 3238 3256
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 82 3238 3258 "ocamlbuild/rule.ml" 82 3238 3262
+type(
+  rule option
+)
+"ocamlbuild/rule.ml" 78 3076 3080 "ocamlbuild/rule.ml" 82 3238 3262
+type(
+  rule option
+)
+"ocamlbuild/rule.ml" 83 3263 3282 "ocamlbuild/rule.ml" 83 3263 3283
+type(
+  rule
+)
+"ocamlbuild/rule.ml" 83 3263 3270 "ocamlbuild/rule.ml" 83 3263 3283
+type(
+  exn
+)
+"ocamlbuild/rule.ml" 83 3263 3292 "ocamlbuild/rule.ml" 83 3263 3293
+type(
+  rule
+)
+"ocamlbuild/rule.ml" 83 3263 3287 "ocamlbuild/rule.ml" 83 3263 3293
+type(
+  rule option
+)
+"ocamlbuild/rule.ml" 77 3070 3072 "ocamlbuild/rule.ml" 83 3263 3293
+type(
+  rule option
+)
+"ocamlbuild/rule.ml" 87 3381 3385 "ocamlbuild/rule.ml" 87 3381 3397
+type(
+  Pathname.t gen_rule -> (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 87 3381 3398 "ocamlbuild/rule.ml" 87 3381 3399
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 88 3402 3404 "ocamlbuild/rule.ml" 88 3402 3419
+type(
+  (Pathname.t ->
+   (string * My_std.Digest.t) list -> (string * My_std.Digest.t) list) ->
+  Pathname.t list ->
+  (string * My_std.Digest.t) list -> (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 88 3402 3430 "ocamlbuild/rule.ml" 88 3402 3431
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 88 3402 3432 "ocamlbuild/rule.ml" 88 3402 3435
+type(
+  (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 89 3439 3447 "ocamlbuild/rule.ml" 89 3439 3448
+type(
+  string
+)
+"ocamlbuild/rule.ml" 89 3439 3451 "ocamlbuild/rule.ml" 89 3439 3469
+type(
+  Pathname.t -> string
+)
+"ocamlbuild/rule.ml" 89 3439 3471 "ocamlbuild/rule.ml" 89 3439 3492
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/rule.ml" 89 3439 3493 "ocamlbuild/rule.ml" 89 3439 3494
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 89 3439 3470 "ocamlbuild/rule.ml" 89 3439 3495
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 89 3439 3451 "ocamlbuild/rule.ml" 89 3439 3495
+type(
+  string
+)
+"ocamlbuild/rule.ml" 90 3499 3506 "ocamlbuild/rule.ml" 90 3499 3521
+type(
+  string -> bool
+)
+"ocamlbuild/rule.ml" 90 3499 3522 "ocamlbuild/rule.ml" 90 3499 3523
+type(
+  string
+)
+"ocamlbuild/rule.ml" 90 3499 3506 "ocamlbuild/rule.ml" 90 3499 3523
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 90 3499 3530 "ocamlbuild/rule.ml" 90 3499 3531
+type(
+  string
+)
+"ocamlbuild/rule.ml" 90 3499 3533 "ocamlbuild/rule.ml" 90 3499 3544
+type(
+  string -> My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 90 3499 3545 "ocamlbuild/rule.ml" 90 3499 3546
+type(
+  string
+)
+"ocamlbuild/rule.ml" 90 3499 3533 "ocamlbuild/rule.ml" 90 3499 3546
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 90 3499 3529 "ocamlbuild/rule.ml" 90 3499 3547
+type(
+  string * My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 90 3499 3551 "ocamlbuild/rule.ml" 90 3499 3554
+type(
+  (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 90 3499 3529 "ocamlbuild/rule.ml" 90 3499 3554
+type(
+  (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 90 3499 3560 "ocamlbuild/rule.ml" 90 3499 3563
+type(
+  (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 90 3499 3503 "ocamlbuild/rule.ml" 90 3499 3563
+type(
+  (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 89 3439 3443 "ocamlbuild/rule.ml" 90 3499 3563
+type(
+  (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 88 3402 3420 "ocamlbuild/rule.ml" 91 3564 3569
+type(
+  Pathname.t ->
+  (string * My_std.Digest.t) list -> (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 91 3564 3570 "ocamlbuild/rule.ml" 91 3564 3571
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 91 3564 3570 "ocamlbuild/rule.ml" 91 3564 3577
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 91 3564 3578 "ocamlbuild/rule.ml" 91 3564 3580
+type(
+  (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 88 3402 3404 "ocamlbuild/rule.ml" 91 3564 3580
+type(
+  (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 93 3582 3586 "ocamlbuild/rule.ml" 93 3582 3597
+type(
+  'a gen_rule -> Resources.t -> string
+)
+"ocamlbuild/rule.ml" 93 3582 3598 "ocamlbuild/rule.ml" 93 3582 3599
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 93 3582 3600 "ocamlbuild/rule.ml" 93 3582 3607
+type(
+  Resources.t
+)
+"ocamlbuild/rule.ml" 94 3610 3616 "ocamlbuild/rule.ml" 94 3610 3619
+type(
+  Buffer.t
+)
+"ocamlbuild/rule.ml" 94 3610 3622 "ocamlbuild/rule.ml" 94 3610 3635
+type(
+  int -> Buffer.t
+)
+"ocamlbuild/rule.ml" 94 3610 3636 "ocamlbuild/rule.ml" 94 3610 3640
+type(
+  int
+)
+"ocamlbuild/rule.ml" 94 3610 3622 "ocamlbuild/rule.ml" 94 3610 3640
+type(
+  Buffer.t
+)
+"ocamlbuild/rule.ml" 95 3644 3650 "ocamlbuild/rule.ml" 95 3644 3662
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 95 3644 3663 "ocamlbuild/rule.ml" 95 3644 3664
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 95 3644 3667 "ocamlbuild/rule.ml" 95 3644 3684
+type(
+  Buffer.t -> string -> unit
+)
+"ocamlbuild/rule.ml" 95 3644 3685 "ocamlbuild/rule.ml" 95 3644 3688
+type(
+  Buffer.t
+)
+"ocamlbuild/rule.ml" 95 3644 3690 "ocamlbuild/rule.ml" 95 3644 3703
+type(
+  My_std.Digest.t -> string
+)
+"ocamlbuild/rule.ml" 95 3644 3705 "ocamlbuild/rule.ml" 95 3644 3720
+type(
+  Pathname.t -> My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 95 3644 3721 "ocamlbuild/rule.ml" 95 3644 3722
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 95 3644 3704 "ocamlbuild/rule.ml" 95 3644 3723
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 95 3644 3689 "ocamlbuild/rule.ml" 95 3644 3724
+type(
+  string
+)
+"ocamlbuild/rule.ml" 95 3644 3667 "ocamlbuild/rule.ml" 95 3644 3724
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 96 3728 3730 "ocamlbuild/rule.ml" 96 3728 3747
+type(
+  Buffer.t -> string -> unit
+)
+"ocamlbuild/rule.ml" 96 3728 3748 "ocamlbuild/rule.ml" 96 3728 3751
+type(
+  Buffer.t
+)
+"ocamlbuild/rule.ml" 96 3728 3752 "ocamlbuild/rule.ml" 96 3728 3759
+type(
+  string
+)
+"ocamlbuild/rule.ml" 96 3728 3730 "ocamlbuild/rule.ml" 96 3728 3759
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 97 3761 3763 "ocamlbuild/rule.ml" 97 3761 3772
+type(
+  (Pathname.t -> unit) -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 97 3761 3773 "ocamlbuild/rule.ml" 97 3761 3785
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 97 3761 3786 "ocamlbuild/rule.ml" 97 3761 3787
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 97 3761 3786 "ocamlbuild/rule.ml" 97 3761 3792
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 97 3761 3763 "ocamlbuild/rule.ml" 97 3761 3792
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 98 3794 3796 "ocamlbuild/rule.ml" 98 3794 3813
+type(
+  Buffer.t -> string -> unit
+)
+"ocamlbuild/rule.ml" 98 3794 3814 "ocamlbuild/rule.ml" 98 3794 3817
+type(
+  Buffer.t
+)
+"ocamlbuild/rule.ml" 98 3794 3818 "ocamlbuild/rule.ml" 98 3794 3828
+type(
+  string
+)
+"ocamlbuild/rule.ml" 98 3794 3796 "ocamlbuild/rule.ml" 98 3794 3828
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 99 3830 3832 "ocamlbuild/rule.ml" 99 3830 3846
+type(
+  (Resources.elt -> unit) -> Resources.t -> unit
+)
+"ocamlbuild/rule.ml" 99 3830 3847 "ocamlbuild/rule.ml" 99 3830 3859
+type(
+  Resources.elt -> unit
+)
+"ocamlbuild/rule.ml" 99 3830 3860 "ocamlbuild/rule.ml" 99 3830 3867
+type(
+  Resources.t
+)
+"ocamlbuild/rule.ml" 99 3830 3832 "ocamlbuild/rule.ml" 99 3830 3867
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 100 3869 3871 "ocamlbuild/rule.ml" 100 3869 3884
+type(
+  My_std.Digest.t -> string
+)
+"ocamlbuild/rule.ml" 100 3869 3886 "ocamlbuild/rule.ml" 100 3869 3899
+type(
+  string -> My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 100 3869 3901 "ocamlbuild/rule.ml" 100 3869 3916
+type(
+  Buffer.t -> string
+)
+"ocamlbuild/rule.ml" 100 3869 3917 "ocamlbuild/rule.ml" 100 3869 3920
+type(
+  Buffer.t
+)
+"ocamlbuild/rule.ml" 100 3869 3900 "ocamlbuild/rule.ml" 100 3869 3921
+type(
+  string
+)
+"ocamlbuild/rule.ml" 100 3869 3885 "ocamlbuild/rule.ml" 100 3869 3922
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 100 3869 3871 "ocamlbuild/rule.ml" 100 3869 3922
+type(
+  string
+)
+"ocamlbuild/rule.ml" 99 3830 3832 "ocamlbuild/rule.ml" 100 3869 3922
+type(
+  string
+)
+"ocamlbuild/rule.ml" 98 3794 3796 "ocamlbuild/rule.ml" 100 3869 3922
+type(
+  string
+)
+"ocamlbuild/rule.ml" 97 3761 3763 "ocamlbuild/rule.ml" 100 3869 3922
+type(
+  string
+)
+"ocamlbuild/rule.ml" 96 3728 3730 "ocamlbuild/rule.ml" 100 3869 3922
+type(
+  string
+)
+"ocamlbuild/rule.ml" 95 3644 3646 "ocamlbuild/rule.ml" 100 3869 3922
+type(
+  string
+)
+"ocamlbuild/rule.ml" 94 3610 3612 "ocamlbuild/rule.ml" 100 3869 3922
+type(
+  string
+)
+"ocamlbuild/rule.ml" 102 3924 3928 "ocamlbuild/rule.ml" 102 3924 3939
+type(
+  Pathname.t gen_rule -> Resources.t -> digest_command -> My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 102 3924 3940 "ocamlbuild/rule.ml" 102 3924 3941
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 102 3924 3942 "ocamlbuild/rule.ml" 102 3924 3949
+type(
+  Resources.t
+)
+"ocamlbuild/rule.ml" 102 3924 3950 "ocamlbuild/rule.ml" 102 3924 3956
+type(
+  digest_command
+)
+"ocamlbuild/rule.ml" 103 3959 3965 "ocamlbuild/rule.ml" 103 3959 3968
+type(
+  Buffer.t
+)
+"ocamlbuild/rule.ml" 103 3959 3971 "ocamlbuild/rule.ml" 103 3959 3984
+type(
+  int -> Buffer.t
+)
+"ocamlbuild/rule.ml" 103 3959 3985 "ocamlbuild/rule.ml" 103 3959 3989
+type(
+  int
+)
+"ocamlbuild/rule.ml" 103 3959 3971 "ocamlbuild/rule.ml" 103 3959 3989
+type(
+  Buffer.t
+)
+"ocamlbuild/rule.ml" 104 3993 3995 "ocamlbuild/rule.ml" 104 3993 4012
+type(
+  Buffer.t -> string -> unit
+)
+"ocamlbuild/rule.ml" 104 3993 4013 "ocamlbuild/rule.ml" 104 3993 4016
+type(
+  Buffer.t
+)
+"ocamlbuild/rule.ml" 104 3993 4017 "ocamlbuild/rule.ml" 104 3993 4023
+type(
+  digest_command
+)
+"ocamlbuild/rule.ml" 104 3993 4017 "ocamlbuild/rule.ml" 104 3993 4030
+type(
+  string
+)
+"ocamlbuild/rule.ml" 104 3993 3995 "ocamlbuild/rule.ml" 104 3993 4030
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 105 4032 4038 "ocamlbuild/rule.ml" 105 4032 4050
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 105 4032 4051 "ocamlbuild/rule.ml" 105 4032 4052
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 105 4032 4055 "ocamlbuild/rule.ml" 105 4032 4072
+type(
+  Buffer.t -> string -> unit
+)
+"ocamlbuild/rule.ml" 105 4032 4073 "ocamlbuild/rule.ml" 105 4032 4076
+type(
+  Buffer.t
+)
+"ocamlbuild/rule.ml" 105 4032 4078 "ocamlbuild/rule.ml" 105 4032 4093
+type(
+  Pathname.t -> string
+)
+"ocamlbuild/rule.ml" 105 4032 4094 "ocamlbuild/rule.ml" 105 4032 4095
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 105 4032 4077 "ocamlbuild/rule.ml" 105 4032 4096
+type(
+  string
+)
+"ocamlbuild/rule.ml" 105 4032 4055 "ocamlbuild/rule.ml" 105 4032 4096
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 106 4100 4102 "ocamlbuild/rule.ml" 106 4100 4119
+type(
+  Buffer.t -> string -> unit
+)
+"ocamlbuild/rule.ml" 106 4100 4120 "ocamlbuild/rule.ml" 106 4100 4123
+type(
+  Buffer.t
+)
+"ocamlbuild/rule.ml" 106 4100 4124 "ocamlbuild/rule.ml" 106 4100 4132
+type(
+  string
+)
+"ocamlbuild/rule.ml" 106 4100 4102 "ocamlbuild/rule.ml" 106 4100 4132
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 107 4134 4136 "ocamlbuild/rule.ml" 107 4134 4145
+type(
+  (Pathname.t -> unit) -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 107 4134 4146 "ocamlbuild/rule.ml" 107 4134 4158
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 107 4134 4159 "ocamlbuild/rule.ml" 107 4134 4160
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 107 4134 4159 "ocamlbuild/rule.ml" 107 4134 4166
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 107 4134 4136 "ocamlbuild/rule.ml" 107 4134 4166
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 108 4168 4170 "ocamlbuild/rule.ml" 108 4168 4187
+type(
+  Buffer.t -> string -> unit
+)
+"ocamlbuild/rule.ml" 108 4168 4188 "ocamlbuild/rule.ml" 108 4168 4191
+type(
+  Buffer.t
+)
+"ocamlbuild/rule.ml" 108 4168 4192 "ocamlbuild/rule.ml" 108 4168 4199
+type(
+  string
+)
+"ocamlbuild/rule.ml" 108 4168 4170 "ocamlbuild/rule.ml" 108 4168 4199
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 109 4201 4203 "ocamlbuild/rule.ml" 109 4201 4212
+type(
+  (Pathname.t -> unit) -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 109 4201 4213 "ocamlbuild/rule.ml" 109 4201 4225
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 109 4201 4226 "ocamlbuild/rule.ml" 109 4201 4227
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 109 4201 4226 "ocamlbuild/rule.ml" 109 4201 4232
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 109 4201 4203 "ocamlbuild/rule.ml" 109 4201 4232
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 110 4234 4236 "ocamlbuild/rule.ml" 110 4234 4253
+type(
+  Buffer.t -> string -> unit
+)
+"ocamlbuild/rule.ml" 110 4234 4254 "ocamlbuild/rule.ml" 110 4234 4257
+type(
+  Buffer.t
+)
+"ocamlbuild/rule.ml" 110 4234 4258 "ocamlbuild/rule.ml" 110 4234 4268
+type(
+  string
+)
+"ocamlbuild/rule.ml" 110 4234 4236 "ocamlbuild/rule.ml" 110 4234 4268
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 111 4270 4272 "ocamlbuild/rule.ml" 111 4270 4286
+type(
+  (Resources.elt -> unit) -> Resources.t -> unit
+)
+"ocamlbuild/rule.ml" 111 4270 4287 "ocamlbuild/rule.ml" 111 4270 4299
+type(
+  Resources.elt -> unit
+)
+"ocamlbuild/rule.ml" 111 4270 4300 "ocamlbuild/rule.ml" 111 4270 4307
+type(
+  Resources.t
+)
+"ocamlbuild/rule.ml" 111 4270 4272 "ocamlbuild/rule.ml" 111 4270 4307
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 112 4309 4311 "ocamlbuild/rule.ml" 112 4309 4324
+type(
+  string -> My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 112 4309 4326 "ocamlbuild/rule.ml" 112 4309 4341
+type(
+  Buffer.t -> string
+)
+"ocamlbuild/rule.ml" 112 4309 4342 "ocamlbuild/rule.ml" 112 4309 4345
+type(
+  Buffer.t
+)
+"ocamlbuild/rule.ml" 112 4309 4325 "ocamlbuild/rule.ml" 112 4309 4346
+type(
+  string
+)
+"ocamlbuild/rule.ml" 112 4309 4311 "ocamlbuild/rule.ml" 112 4309 4346
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 111 4270 4272 "ocamlbuild/rule.ml" 112 4309 4346
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 110 4234 4236 "ocamlbuild/rule.ml" 112 4309 4346
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 109 4201 4203 "ocamlbuild/rule.ml" 112 4309 4346
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 108 4168 4170 "ocamlbuild/rule.ml" 112 4309 4346
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 107 4134 4136 "ocamlbuild/rule.ml" 112 4309 4346
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 106 4100 4102 "ocamlbuild/rule.ml" 112 4309 4346
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 105 4032 4034 "ocamlbuild/rule.ml" 112 4309 4346
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 104 3993 3995 "ocamlbuild/rule.ml" 112 4309 4346
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 103 3959 3961 "ocamlbuild/rule.ml" 112 4309 4346
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 114 4348 4352 "ocamlbuild/rule.ml" 114 4348 4365
+type(
+  'a gen_rule -> string option
+)
+"ocamlbuild/rule.ml" 114 4348 4366 "ocamlbuild/rule.ml" 114 4348 4367
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 115 4370 4382 "ocamlbuild/rule.ml" 115 4370 4398
+type(
+  string -> string
+)
+"ocamlbuild/rule.ml" 115 4370 4400 "ocamlbuild/rule.ml" 115 4370 4408
+type(
+  string
+)
+"ocamlbuild/rule.ml" 115 4370 4409 "ocamlbuild/rule.ml" 115 4370 4410
+type(
+  string -> string -> string
+)
+"ocamlbuild/rule.ml" 115 4370 4411 "ocamlbuild/rule.ml" 115 4370 4412
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 115 4370 4411 "ocamlbuild/rule.ml" 115 4370 4417
+type(
+  string
+)
+"ocamlbuild/rule.ml" 115 4370 4399 "ocamlbuild/rule.ml" 115 4370 4418
+type(
+  string
+)
+"ocamlbuild/rule.ml" 115 4370 4381 "ocamlbuild/rule.ml" 115 4370 4419
+type(
+  string
+)
+"ocamlbuild/rule.ml" 115 4370 4376 "ocamlbuild/rule.ml" 115 4370 4419
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 116 4420 4427 "ocamlbuild/rule.ml" 116 4420 4436
+type(
+  exn
+)
+"ocamlbuild/rule.ml" 116 4420 4440 "ocamlbuild/rule.ml" 116 4420 4444
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 115 4370 4372 "ocamlbuild/rule.ml" 116 4420 4444
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 118 4446 4450 "ocamlbuild/rule.ml" 118 4446 4462
+type(
+  'a gen_rule -> string -> unit
+)
+"ocamlbuild/rule.ml" 118 4446 4463 "ocamlbuild/rule.ml" 118 4446 4464
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 118 4446 4465 "ocamlbuild/rule.ml" 118 4446 4471
+type(
+  string
+)
+"ocamlbuild/rule.ml" 118 4446 4474 "ocamlbuild/rule.ml" 118 4446 4490
+type(
+  string -> string -> unit
+)
+"ocamlbuild/rule.ml" 118 4446 4492 "ocamlbuild/rule.ml" 118 4446 4500
+type(
+  string
+)
+"ocamlbuild/rule.ml" 118 4446 4501 "ocamlbuild/rule.ml" 118 4446 4502
+type(
+  string -> string -> string
+)
+"ocamlbuild/rule.ml" 118 4446 4503 "ocamlbuild/rule.ml" 118 4446 4504
+type(
+  'a gen_rule
+)
+"ocamlbuild/rule.ml" 118 4446 4503 "ocamlbuild/rule.ml" 118 4446 4509
+type(
+  string
+)
+"ocamlbuild/rule.ml" 118 4446 4491 "ocamlbuild/rule.ml" 118 4446 4510
+type(
+  string
+)
+"ocamlbuild/rule.ml" 118 4446 4511 "ocamlbuild/rule.ml" 118 4446 4517
+type(
+  string
+)
+"ocamlbuild/rule.ml" 118 4446 4474 "ocamlbuild/rule.ml" 118 4446 4517
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 120 4519 4523 "ocamlbuild/rule.ml" 120 4519 4535
+type(
+  Format.formatter -> My_std.Digest.t -> unit
+)
+"ocamlbuild/rule.ml" 120 4519 4536 "ocamlbuild/rule.ml" 120 4519 4537
+type(
+  Format.formatter
+)
+"ocamlbuild/rule.ml" 120 4519 4538 "ocamlbuild/rule.ml" 120 4519 4539
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 120 4519 4542 "ocamlbuild/rule.ml" 120 4519 4557
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/rule.ml" 120 4519 4558 "ocamlbuild/rule.ml" 120 4519 4559
+type(
+  Format.formatter
+)
+"ocamlbuild/rule.ml" 120 4519 4561 "ocamlbuild/rule.ml" 120 4519 4574
+type(
+  My_std.Digest.t -> string
+)
+"ocamlbuild/rule.ml" 120 4519 4575 "ocamlbuild/rule.ml" 120 4519 4576
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 120 4519 4560 "ocamlbuild/rule.ml" 120 4519 4577
+type(
+  string
+)
+"ocamlbuild/rule.ml" 120 4519 4542 "ocamlbuild/rule.ml" 120 4519 4577
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 122 4579 4583 "ocamlbuild/rule.ml" 122 4579 4590
+type(
+  ('a -> 'b -> 'c) -> 'a -> 'b -> 'c option
+)
+"ocamlbuild/rule.ml" 122 4579 4591 "ocamlbuild/rule.ml" 122 4579 4595
+type(
+  'a -> 'b -> 'c
+)
+"ocamlbuild/rule.ml" 122 4579 4596 "ocamlbuild/rule.ml" 122 4579 4597
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 122 4579 4598 "ocamlbuild/rule.ml" 122 4579 4600
+type(
+  'b
+)
+"ocamlbuild/rule.ml" 123 4603 4615 "ocamlbuild/rule.ml" 123 4603 4619
+type(
+  'a -> 'b -> 'c
+)
+"ocamlbuild/rule.ml" 123 4603 4620 "ocamlbuild/rule.ml" 123 4603 4621
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 123 4603 4622 "ocamlbuild/rule.ml" 123 4603 4624
+type(
+  'b
+)
+"ocamlbuild/rule.ml" 123 4603 4614 "ocamlbuild/rule.ml" 123 4603 4625
+type(
+  'c
+)
+"ocamlbuild/rule.ml" 123 4603 4609 "ocamlbuild/rule.ml" 123 4603 4625
+type(
+  'c option
+)
+"ocamlbuild/rule.ml" 123 4603 4631 "ocamlbuild/rule.ml" 123 4603 4640
+type(
+  exn
+)
+"ocamlbuild/rule.ml" 123 4603 4644 "ocamlbuild/rule.ml" 123 4603 4648
+type(
+  'c option
+)
+"ocamlbuild/rule.ml" 123 4603 4605 "ocamlbuild/rule.ml" 123 4603 4648
+type(
+  'c option
+)
+"ocamlbuild/rule.ml" 125 4650 4654 "ocamlbuild/rule.ml" 125 4650 4670
+type(
+  (Tags.t * Pathname.t list) list ref
+)
+"ocamlbuild/rule.ml" 125 4650 4673 "ocamlbuild/rule.ml" 125 4650 4676
+type(
+  (Tags.t * Pathname.t list) list -> (Tags.t * Pathname.t list) list ref
+)
+"ocamlbuild/rule.ml" 125 4650 4677 "ocamlbuild/rule.ml" 125 4650 4679
+type(
+  (Tags.t * Pathname.t list) list
+)
+"ocamlbuild/rule.ml" 125 4650 4673 "ocamlbuild/rule.ml" 125 4650 4679
+type(
+  (Tags.t * Pathname.t list) list ref
+)
+"ocamlbuild/rule.ml" 127 4681 4685 "ocamlbuild/rule.ml" 127 4681 4689
+type(
+  'a list -> 'a list -> 'a list
+)
+"ocamlbuild/rule.ml" 127 4681 4690 "ocamlbuild/rule.ml" 127 4681 4694
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 127 4681 4695 "ocamlbuild/rule.ml" 127 4681 4698
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 128 4701 4703 "ocamlbuild/rule.ml" 128 4701 4711
+type(
+  'a list -> 'a list
+)
+"ocamlbuild/rule.ml" 128 4701 4711 "ocamlbuild/rule.ml" 128 4701 4712
+type(
+  ('a list -> 'a list) -> 'a list -> 'a list
+)
+"ocamlbuild/rule.ml" 129 4713 4717 "ocamlbuild/rule.ml" 129 4713 4731
+type(
+  ('a list -> 'a -> 'a list) -> 'a list -> 'a list -> 'a list
+)
+"ocamlbuild/rule.ml" 129 4713 4742 "ocamlbuild/rule.ml" 129 4713 4745
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 129 4713 4746 "ocamlbuild/rule.ml" 129 4713 4749
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 130 4753 4762 "ocamlbuild/rule.ml" 130 4753 4770
+type(
+  'a -> 'a list -> bool
+)
+"ocamlbuild/rule.ml" 130 4753 4771 "ocamlbuild/rule.ml" 130 4753 4774
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 130 4753 4775 "ocamlbuild/rule.ml" 130 4753 4778
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 130 4753 4762 "ocamlbuild/rule.ml" 130 4753 4778
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 130 4753 4784 "ocamlbuild/rule.ml" 130 4753 4787
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 130 4753 4793 "ocamlbuild/rule.ml" 130 4753 4796
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 130 4753 4800 "ocamlbuild/rule.ml" 130 4753 4803
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 130 4753 4793 "ocamlbuild/rule.ml" 130 4753 4803
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 130 4753 4759 "ocamlbuild/rule.ml" 130 4753 4803
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 129 4713 4732 "ocamlbuild/rule.ml" 131 4804 4811
+type(
+  'a list -> 'a -> 'a list
+)
+"ocamlbuild/rule.ml" 131 4804 4812 "ocamlbuild/rule.ml" 131 4804 4815
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 131 4804 4816 "ocamlbuild/rule.ml" 131 4804 4820
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 129 4713 4717 "ocamlbuild/rule.ml" 131 4804 4820
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 128 4701 4703 "ocamlbuild/rule.ml" 131 4804 4820
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 133 4822 4826 "ocamlbuild/rule.ml" 133 4822 4838
+type(
+  Tags.t -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 133 4822 4839 "ocamlbuild/rule.ml" 133 4822 4843
+type(
+  Tags.t
+)
+"ocamlbuild/rule.ml" 134 4846 4848 "ocamlbuild/rule.ml" 134 4846 4862
+type(
+  (Pathname.t list -> Tags.t * Pathname.t list -> Pathname.t list) ->
+  Pathname.t list -> (Tags.t * Pathname.t list) list -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 134 4846 4873 "ocamlbuild/rule.ml" 134 4846 4876
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 134 4846 4878 "ocamlbuild/rule.ml" 134 4846 4883
+type(
+  Tags.t
+)
+"ocamlbuild/rule.ml" 134 4846 4885 "ocamlbuild/rule.ml" 134 4846 4890
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 134 4846 4877 "ocamlbuild/rule.ml" 134 4846 4891
+type(
+  Tags.t * Pathname.t list
+)
+"ocamlbuild/rule.ml" 135 4895 4902 "ocamlbuild/rule.ml" 135 4895 4917
+type(
+  Tags.t -> Tags.t -> bool
+)
+"ocamlbuild/rule.ml" 135 4895 4918 "ocamlbuild/rule.ml" 135 4895 4922
+type(
+  Tags.t
+)
+"ocamlbuild/rule.ml" 135 4895 4923 "ocamlbuild/rule.ml" 135 4895 4928
+type(
+  Tags.t
+)
+"ocamlbuild/rule.ml" 135 4895 4902 "ocamlbuild/rule.ml" 135 4895 4928
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 135 4895 4934 "ocamlbuild/rule.ml" 135 4895 4938
+type(
+  Pathname.t list -> Pathname.t list -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 135 4895 4939 "ocamlbuild/rule.ml" 135 4895 4944
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 135 4895 4945 "ocamlbuild/rule.ml" 135 4895 4948
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 135 4895 4934 "ocamlbuild/rule.ml" 135 4895 4948
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 136 4949 4958 "ocamlbuild/rule.ml" 136 4949 4961
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 135 4895 4899 "ocamlbuild/rule.ml" 136 4949 4961
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 134 4846 4863 "ocamlbuild/rule.ml" 137 4962 4967
+type(
+  Pathname.t list -> Tags.t * Pathname.t list -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 137 4962 4968 "ocamlbuild/rule.ml" 137 4962 4970
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 137 4962 4971 "ocamlbuild/rule.ml" 137 4962 4972
+type(
+  (Tags.t * Pathname.t list) list ref -> (Tags.t * Pathname.t list) list
+)
+"ocamlbuild/rule.ml" 137 4962 4972 "ocamlbuild/rule.ml" 137 4962 4988
+type(
+  (Tags.t * Pathname.t list) list ref
+)
+"ocamlbuild/rule.ml" 137 4962 4971 "ocamlbuild/rule.ml" 137 4962 4988
+type(
+  (Tags.t * Pathname.t list) list
+)
+"ocamlbuild/rule.ml" 134 4846 4848 "ocamlbuild/rule.ml" 137 4962 4988
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 139 4990 4994 "ocamlbuild/rule.ml" 139 4990 5010
+type(
+  Tags.t -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 139 4990 5011 "ocamlbuild/rule.ml" 139 4990 5015
+type(
+  Tags.t
+)
+"ocamlbuild/rule.ml" 139 4990 5016 "ocamlbuild/rule.ml" 139 4990 5020
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 140 5023 5025 "ocamlbuild/rule.ml" 140 5023 5041
+type(
+  (Tags.t * Pathname.t list) list ref
+)
+"ocamlbuild/rule.ml" 140 5023 5042 "ocamlbuild/rule.ml" 140 5023 5044
+type(
+  (Tags.t * Pathname.t list) list ref ->
+  (Tags.t * Pathname.t list) list -> unit
+)
+"ocamlbuild/rule.ml" 140 5023 5046 "ocamlbuild/rule.ml" 140 5023 5050
+type(
+  Tags.t
+)
+"ocamlbuild/rule.ml" 140 5023 5052 "ocamlbuild/rule.ml" 140 5023 5056
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 140 5023 5045 "ocamlbuild/rule.ml" 140 5023 5057
+type(
+  Tags.t * Pathname.t list
+)
+"ocamlbuild/rule.ml" 140 5023 5061 "ocamlbuild/rule.ml" 140 5023 5062
+type(
+  (Tags.t * Pathname.t list) list ref -> (Tags.t * Pathname.t list) list
+)
+"ocamlbuild/rule.ml" 140 5023 5062 "ocamlbuild/rule.ml" 140 5023 5078
+type(
+  (Tags.t * Pathname.t list) list ref
+)
+"ocamlbuild/rule.ml" 140 5023 5061 "ocamlbuild/rule.ml" 140 5023 5078
+type(
+  (Tags.t * Pathname.t list) list
+)
+"ocamlbuild/rule.ml" 140 5023 5045 "ocamlbuild/rule.ml" 140 5023 5078
+type(
+  (Tags.t * Pathname.t list) list
+)
+"ocamlbuild/rule.ml" 140 5023 5025 "ocamlbuild/rule.ml" 140 5023 5078
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 142 5080 5084 "ocamlbuild/rule.ml" 142 5080 5087
+type(
+  string list -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 142 5080 5088 "ocamlbuild/rule.ml" 142 5080 5092
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 142 5080 5093 "ocamlbuild/rule.ml" 142 5080 5097
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 142 5080 5100 "ocamlbuild/rule.ml" 142 5080 5116
+type(
+  Tags.t -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 142 5080 5118 "ocamlbuild/rule.ml" 142 5080 5130
+type(
+  string list -> Tags.t
+)
+"ocamlbuild/rule.ml" 142 5080 5131 "ocamlbuild/rule.ml" 142 5080 5135
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 142 5080 5117 "ocamlbuild/rule.ml" 142 5080 5136
+type(
+  Tags.t
+)
+"ocamlbuild/rule.ml" 142 5080 5137 "ocamlbuild/rule.ml" 142 5080 5141
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 142 5080 5100 "ocamlbuild/rule.ml" 142 5080 5141
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 144 5143 5147 "ocamlbuild/rule.ml" 144 5143 5165
+type(
+  (Pathname.t list list -> ('a, exn) My_std.Outcome.t list) ->
+  Tags.t -> 'a list
+)
+"ocamlbuild/rule.ml" 144 5143 5166 "ocamlbuild/rule.ml" 144 5143 5173
+type(
+  Pathname.t list list -> ('a, exn) My_std.Outcome.t list
+)
+"ocamlbuild/rule.ml" 144 5143 5174 "ocamlbuild/rule.ml" 144 5143 5178
+type(
+  Tags.t
+)
+"ocamlbuild/rule.ml" 145 5181 5189 "ocamlbuild/rule.ml" 145 5181 5201
+type(
+  Tags.t -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 145 5181 5202 "ocamlbuild/rule.ml" 145 5181 5206
+type(
+  Tags.t
+)
+"ocamlbuild/rule.ml" 145 5181 5189 "ocamlbuild/rule.ml" 145 5181 5206
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 146 5212 5216 "ocamlbuild/rule.ml" 146 5212 5218
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 146 5212 5222 "ocamlbuild/rule.ml" 146 5212 5224
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 147 5225 5229 "ocamlbuild/rule.ml" 147 5225 5233
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 147 5225 5237 "ocamlbuild/rule.ml" 147 5225 5245
+type(
+  (('a, exn) My_std.Outcome.t -> 'a) ->
+  ('a, exn) My_std.Outcome.t list -> 'a list
+)
+"ocamlbuild/rule.ml" 147 5225 5246 "ocamlbuild/rule.ml" 147 5225 5258
+type(
+  ('a, exn) My_std.Outcome.t -> 'a
+)
+"ocamlbuild/rule.ml" 147 5225 5260 "ocamlbuild/rule.ml" 147 5225 5267
+type(
+  Pathname.t list list -> ('a, exn) My_std.Outcome.t list
+)
+"ocamlbuild/rule.ml" 147 5225 5269 "ocamlbuild/rule.ml" 147 5225 5277
+type(
+  (Pathname.t -> Pathname.t list) -> Pathname.t list -> Pathname.t list list
+)
+"ocamlbuild/rule.ml" 147 5225 5283 "ocamlbuild/rule.ml" 147 5225 5284
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 147 5225 5289 "ocamlbuild/rule.ml" 147 5225 5290
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 147 5225 5288 "ocamlbuild/rule.ml" 147 5225 5291
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 147 5225 5278 "ocamlbuild/rule.ml" 147 5225 5292
+type(
+  Pathname.t -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 147 5225 5293 "ocamlbuild/rule.ml" 147 5225 5297
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 147 5225 5268 "ocamlbuild/rule.ml" 147 5225 5298
+type(
+  Pathname.t list list
+)
+"ocamlbuild/rule.ml" 147 5225 5259 "ocamlbuild/rule.ml" 147 5225 5299
+type(
+  ('a, exn) My_std.Outcome.t list
+)
+"ocamlbuild/rule.ml" 147 5225 5237 "ocamlbuild/rule.ml" 147 5225 5299
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 145 5181 5183 "ocamlbuild/rule.ml" 147 5225 5299
+type(
+  'a list
+)
+"ocamlbuild/rule.ml" 149 5301 5305 "ocamlbuild/rule.ml" 149 5301 5330
+type(
+  (Pathname.t list list -> ('a, exn) My_std.Outcome.t list) ->
+  Command.t -> unit
+)
+"ocamlbuild/rule.ml" 149 5301 5331 "ocamlbuild/rule.ml" 149 5301 5338
+type(
+  Pathname.t list list -> ('a, exn) My_std.Outcome.t list
+)
+"ocamlbuild/rule.ml" 150 5341 5343 "ocamlbuild/rule.ml" 150 5341 5360
+type(
+  (Tags.t -> unit) -> Command.t -> unit
+)
+"ocamlbuild/rule.ml" 150 5341 5371 "ocamlbuild/rule.ml" 150 5341 5375
+type(
+  Tags.t
+)
+"ocamlbuild/rule.ml" 151 5379 5389 "ocamlbuild/rule.ml" 151 5379 5401
+type(
+  Tags.t -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 151 5379 5402 "ocamlbuild/rule.ml" 151 5379 5406
+type(
+  Tags.t
+)
+"ocamlbuild/rule.ml" 151 5379 5389 "ocamlbuild/rule.ml" 151 5379 5406
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 152 5412 5418 "ocamlbuild/rule.ml" 152 5412 5420
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 152 5412 5424 "ocamlbuild/rule.ml" 152 5412 5426
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 153 5427 5433 "ocamlbuild/rule.ml" 153 5427 5437
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 153 5427 5441 "ocamlbuild/rule.ml" 153 5427 5450
+type(
+  (('a, exn) My_std.Outcome.t -> unit) ->
+  ('a, exn) My_std.Outcome.t list -> unit
+)
+"ocamlbuild/rule.ml" 153 5427 5451 "ocamlbuild/rule.ml" 153 5427 5462
+type(
+  ('a, exn) My_std.Outcome.t -> unit
+)
+"ocamlbuild/rule.ml" 153 5427 5464 "ocamlbuild/rule.ml" 153 5427 5471
+type(
+  Pathname.t list list -> ('a, exn) My_std.Outcome.t list
+)
+"ocamlbuild/rule.ml" 153 5427 5473 "ocamlbuild/rule.ml" 153 5427 5481
+type(
+  (Pathname.t -> Pathname.t list) -> Pathname.t list -> Pathname.t list list
+)
+"ocamlbuild/rule.ml" 153 5427 5487 "ocamlbuild/rule.ml" 153 5427 5488
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 153 5427 5493 "ocamlbuild/rule.ml" 153 5427 5494
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 153 5427 5492 "ocamlbuild/rule.ml" 153 5427 5495
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 153 5427 5482 "ocamlbuild/rule.ml" 153 5427 5496
+type(
+  Pathname.t -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 153 5427 5497 "ocamlbuild/rule.ml" 153 5427 5501
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 153 5427 5472 "ocamlbuild/rule.ml" 153 5427 5502
+type(
+  Pathname.t list list
+)
+"ocamlbuild/rule.ml" 153 5427 5463 "ocamlbuild/rule.ml" 153 5427 5503
+type(
+  ('a, exn) My_std.Outcome.t list
+)
+"ocamlbuild/rule.ml" 153 5427 5441 "ocamlbuild/rule.ml" 153 5427 5503
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 151 5379 5383 "ocamlbuild/rule.ml" 153 5427 5503
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 150 5341 5361 "ocamlbuild/rule.ml" 154 5504 5509
+type(
+  Tags.t -> unit
+)
+"ocamlbuild/rule.ml" 150 5341 5343 "ocamlbuild/rule.ml" 154 5504 5509
+type(
+  Command.t -> unit
+)
+"ocamlbuild/rule.ml" 156 5511 5515 "ocamlbuild/rule.ml" 156 5511 5519
+type(
+  (Pathname.t list list -> (Pathname.t, exn) My_std.Outcome.t list) ->
+  Pathname.t gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 156 5511 5520 "ocamlbuild/rule.ml" 156 5511 5527
+type(
+  Pathname.t list list -> (Pathname.t, exn) My_std.Outcome.t list
+)
+"ocamlbuild/rule.ml" 156 5511 5528 "ocamlbuild/rule.ml" 156 5511 5529
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 157 5532 5538 "ocamlbuild/rule.ml" 157 5532 5545
+type(
+  Resources.t ref
+)
+"ocamlbuild/rule.ml" 157 5532 5548 "ocamlbuild/rule.ml" 157 5532 5551
+type(
+  Resources.t -> Resources.t ref
+)
+"ocamlbuild/rule.ml" 157 5532 5552 "ocamlbuild/rule.ml" 157 5532 5567
+type(
+  Resources.t
+)
+"ocamlbuild/rule.ml" 157 5532 5548 "ocamlbuild/rule.ml" 157 5532 5567
+type(
+  Resources.t ref
+)
+"ocamlbuild/rule.ml" 158 5571 5577 "ocamlbuild/rule.ml" 158 5571 5584
+type(
+  Pathname.t list list -> (Pathname.t, exn) My_std.Outcome.t list
+)
+"ocamlbuild/rule.ml" 158 5571 5585 "ocamlbuild/rule.ml" 158 5571 5587
+type(
+  Pathname.t list list
+)
+"ocamlbuild/rule.ml" 159 5590 5598 "ocamlbuild/rule.ml" 159 5590 5605
+type(
+  (Pathname.t, exn) My_std.Outcome.t list
+)
+"ocamlbuild/rule.ml" 159 5590 5608 "ocamlbuild/rule.ml" 159 5590 5615
+type(
+  Pathname.t list list -> (Pathname.t, exn) My_std.Outcome.t list
+)
+"ocamlbuild/rule.ml" 159 5590 5616 "ocamlbuild/rule.ml" 159 5590 5618
+type(
+  Pathname.t list list
+)
+"ocamlbuild/rule.ml" 159 5590 5608 "ocamlbuild/rule.ml" 159 5590 5618
+type(
+  (Pathname.t, exn) My_std.Outcome.t list
+)
+"ocamlbuild/rule.ml" 160 5622 5626 "ocamlbuild/rule.ml" 160 5622 5634
+type(
+  ((Pathname.t, exn) My_std.Outcome.t -> (Pathname.t, exn) My_std.Outcome.t) ->
+  (Pathname.t, exn) My_std.Outcome.t list ->
+  (Pathname.t, exn) My_std.Outcome.t list
+)
+"ocamlbuild/rule.ml" 160 5622 5645 "ocamlbuild/rule.ml" 160 5622 5648
+type(
+  (Pathname.t, exn) My_std.Outcome.t
+)
+"ocamlbuild/rule.ml" 161 5652 5664 "ocamlbuild/rule.ml" 161 5652 5667
+type(
+  (Pathname.t, exn) My_std.Outcome.t
+)
+"ocamlbuild/rule.ml" 162 5673 5686 "ocamlbuild/rule.ml" 162 5673 5690
+type(
+  Resources.elt
+)
+"ocamlbuild/rule.ml" 162 5673 5681 "ocamlbuild/rule.ml" 162 5673 5690
+type(
+  (Pathname.t, exn) My_std.Outcome.t
+)
+"ocamlbuild/rule.ml" 163 5694 5708 "ocamlbuild/rule.ml" 163 5694 5710
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 163 5694 5713 "ocamlbuild/rule.ml" 163 5694 5720
+type(
+  int ->
+  (string ->
+   (Format.formatter -> Pathname.t list -> unit) ->
+   Pathname.t list -> Resources.elt -> unit, Format.formatter, unit)
+  format ->
+  string ->
+  (Format.formatter -> Pathname.t list -> unit) ->
+  Pathname.t list -> Resources.elt -> unit
+)
+"ocamlbuild/rule.ml" 163 5694 5721 "ocamlbuild/rule.ml" 163 5694 5723
+type(
+  int
+)
+"ocamlbuild/rule.ml" 163 5694 5724 "ocamlbuild/rule.ml" 163 5694 5751
+type(
+  (string ->
+   (Format.formatter -> Pathname.t list -> unit) ->
+   Pathname.t list -> Resources.elt -> unit, Format.formatter, unit)
+  format
+)
+"ocamlbuild/rule.ml" 163 5694 5752 "ocamlbuild/rule.ml" 163 5694 5753
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 163 5694 5752 "ocamlbuild/rule.ml" 163 5694 5758
+type(
+  string
+)
+"ocamlbuild/rule.ml" 163 5694 5759 "ocamlbuild/rule.ml" 163 5694 5778
+type(
+  Format.formatter -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 163 5694 5779 "ocamlbuild/rule.ml" 163 5694 5780
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 163 5694 5779 "ocamlbuild/rule.ml" 163 5694 5786
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 163 5694 5787 "ocamlbuild/rule.ml" 163 5694 5791
+type(
+  Resources.elt
+)
+"ocamlbuild/rule.ml" 163 5694 5713 "ocamlbuild/rule.ml" 163 5694 5791
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 164 5795 5805 "ocamlbuild/rule.ml" 164 5795 5812
+type(
+  Resources.t ref
+)
+"ocamlbuild/rule.ml" 164 5795 5813 "ocamlbuild/rule.ml" 164 5795 5815
+type(
+  Resources.t ref -> Resources.t -> unit
+)
+"ocamlbuild/rule.ml" 164 5795 5816 "ocamlbuild/rule.ml" 164 5795 5829
+type(
+  Resources.elt -> Resources.t -> Resources.t
+)
+"ocamlbuild/rule.ml" 164 5795 5830 "ocamlbuild/rule.ml" 164 5795 5834
+type(
+  Resources.elt
+)
+"ocamlbuild/rule.ml" 164 5795 5835 "ocamlbuild/rule.ml" 164 5795 5836
+type(
+  Resources.t ref -> Resources.t
+)
+"ocamlbuild/rule.ml" 164 5795 5836 "ocamlbuild/rule.ml" 164 5795 5843
+type(
+  Resources.t ref
+)
+"ocamlbuild/rule.ml" 164 5795 5835 "ocamlbuild/rule.ml" 164 5795 5843
+type(
+  Resources.t
+)
+"ocamlbuild/rule.ml" 164 5795 5816 "ocamlbuild/rule.ml" 164 5795 5843
+type(
+  Resources.t
+)
+"ocamlbuild/rule.ml" 164 5795 5805 "ocamlbuild/rule.ml" 164 5795 5843
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 165 5845 5855 "ocamlbuild/rule.ml" 165 5845 5864
+type(
+  (Pathname.t -> unit) -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 165 5845 5870 "ocamlbuild/rule.ml" 165 5845 5871
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 165 5845 5875 "ocamlbuild/rule.ml" 165 5845 5904
+type(
+  Pathname.t -> Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 165 5845 5905 "ocamlbuild/rule.ml" 165 5845 5906
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 165 5845 5907 "ocamlbuild/rule.ml" 165 5845 5911
+type(
+  Resources.elt
+)
+"ocamlbuild/rule.ml" 165 5845 5875 "ocamlbuild/rule.ml" 165 5845 5911
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 165 5845 5865 "ocamlbuild/rule.ml" 165 5845 5912
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 165 5845 5913 "ocamlbuild/rule.ml" 165 5845 5914
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 165 5845 5913 "ocamlbuild/rule.ml" 165 5845 5920
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 165 5845 5855 "ocamlbuild/rule.ml" 165 5845 5920
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 166 5922 5932 "ocamlbuild/rule.ml" 166 5922 5935
+type(
+  (Pathname.t, exn) My_std.Outcome.t
+)
+"ocamlbuild/rule.ml" 165 5845 5855 "ocamlbuild/rule.ml" 166 5922 5935
+type(
+  (Pathname.t, exn) My_std.Outcome.t
+)
+"ocamlbuild/rule.ml" 164 5795 5805 "ocamlbuild/rule.ml" 166 5922 5935
+type(
+  (Pathname.t, exn) My_std.Outcome.t
+)
+"ocamlbuild/rule.ml" 163 5694 5704 "ocamlbuild/rule.ml" 166 5922 5935
+type(
+  (Pathname.t, exn) My_std.Outcome.t
+)
+"ocamlbuild/rule.ml" 167 5936 5948 "ocamlbuild/rule.ml" 167 5936 5949
+type(
+  exn
+)
+"ocamlbuild/rule.ml" 167 5936 5944 "ocamlbuild/rule.ml" 167 5936 5949
+type(
+  (Pathname.t, exn) My_std.Outcome.t
+)
+"ocamlbuild/rule.ml" 167 5936 5953 "ocamlbuild/rule.ml" 167 5936 5956
+type(
+  (Pathname.t, exn) My_std.Outcome.t
+)
+"ocamlbuild/rule.ml" 161 5652 5658 "ocamlbuild/rule.ml" 167 5936 5956
+type(
+  (Pathname.t, exn) My_std.Outcome.t
+)
+"ocamlbuild/rule.ml" 160 5622 5635 "ocamlbuild/rule.ml" 168 5957 5964
+type(
+  (Pathname.t, exn) My_std.Outcome.t -> (Pathname.t, exn) My_std.Outcome.t
+)
+"ocamlbuild/rule.ml" 168 5957 5965 "ocamlbuild/rule.ml" 168 5957 5972
+type(
+  (Pathname.t, exn) My_std.Outcome.t list
+)
+"ocamlbuild/rule.ml" 160 5622 5626 "ocamlbuild/rule.ml" 168 5957 5972
+type(
+  (Pathname.t, exn) My_std.Outcome.t list
+)
+"ocamlbuild/rule.ml" 159 5590 5594 "ocamlbuild/rule.ml" 168 5957 5972
+type(
+  (Pathname.t, exn) My_std.Outcome.t list
+)
+"ocamlbuild/rule.ml" 169 5976 5982 "ocamlbuild/rule.ml" 169 5976 5984
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 169 5976 5987 "ocamlbuild/rule.ml" 169 5976 5994
+type(
+  int ->
+  ((Format.formatter -> Pathname.t gen_rule -> unit) ->
+   Pathname.t gen_rule -> unit, Format.formatter, unit)
+  format ->
+  (Format.formatter -> Pathname.t gen_rule -> unit) ->
+  Pathname.t gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 169 5976 5995 "ocamlbuild/rule.ml" 169 5976 5996
+type(
+  int
+)
+"ocamlbuild/rule.ml" 169 5976 5997 "ocamlbuild/rule.ml" 169 5976 6012
+type(
+  ((Format.formatter -> Pathname.t gen_rule -> unit) ->
+   Pathname.t gen_rule -> unit, Format.formatter, unit)
+  format
+)
+"ocamlbuild/rule.ml" 169 5976 6013 "ocamlbuild/rule.ml" 169 5976 6018
+type(
+  Format.formatter -> Pathname.t gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 169 5976 6019 "ocamlbuild/rule.ml" 169 5976 6020
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 169 5976 5987 "ocamlbuild/rule.ml" 169 5976 6020
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 170 6024 6030 "ocamlbuild/rule.ml" 170 6024 6036
+type(
+  digest_command
+)
+"ocamlbuild/rule.ml" 170 6024 6039 "ocamlbuild/rule.ml" 170 6024 6040
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 170 6024 6039 "ocamlbuild/rule.ml" 170 6024 6045
+type(
+  env -> builder -> digest_command
+)
+"ocamlbuild/rule.ml" 170 6024 6051 "ocamlbuild/rule.ml" 170 6024 6052
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 170 6024 6056 "ocamlbuild/rule.ml" 170 6024 6057
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 170 6024 6046 "ocamlbuild/rule.ml" 170 6024 6058
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/rule.ml" 170 6024 6059 "ocamlbuild/rule.ml" 170 6024 6066
+type(
+  builder
+)
+"ocamlbuild/rule.ml" 170 6024 6039 "ocamlbuild/rule.ml" 170 6024 6066
+type(
+  digest_command
+)
+"ocamlbuild/rule.ml" 171 6070 6072 "ocamlbuild/rule.ml" 171 6070 6097
+type(
+  (Pathname.t list list -> (Pathname.t, exn) My_std.Outcome.t list) ->
+  Command.t -> unit
+)
+"ocamlbuild/rule.ml" 171 6070 6098 "ocamlbuild/rule.ml" 171 6070 6105
+type(
+  Pathname.t list list -> (Pathname.t, exn) My_std.Outcome.t list
+)
+"ocamlbuild/rule.ml" 171 6070 6106 "ocamlbuild/rule.ml" 171 6070 6112
+type(
+  digest_command
+)
+"ocamlbuild/rule.ml" 171 6070 6106 "ocamlbuild/rule.ml" 171 6070 6120
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 171 6070 6072 "ocamlbuild/rule.ml" 171 6070 6120
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 172 6122 6128 "ocamlbuild/rule.ml" 172 6122 6135
+type(
+  Resources.t
+)
+"ocamlbuild/rule.ml" 172 6122 6138 "ocamlbuild/rule.ml" 172 6122 6139
+type(
+  Resources.t ref -> Resources.t
+)
+"ocamlbuild/rule.ml" 172 6122 6139 "ocamlbuild/rule.ml" 172 6122 6146
+type(
+  Resources.t ref
+)
+"ocamlbuild/rule.ml" 172 6122 6138 "ocamlbuild/rule.ml" 172 6122 6146
+type(
+  Resources.t
+)
+"ocamlbuild/rule.ml" 173 6150 6156 "ocamlbuild/rule.ml" 173 6150 6158
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 173 6150 6161 "ocamlbuild/rule.ml" 173 6150 6168
+type(
+  int ->
+  ((Format.formatter -> Resources.t -> unit) -> Resources.t -> unit,
+   Format.formatter, unit)
+  format -> (Format.formatter -> Resources.t -> unit) -> Resources.t -> unit
+)
+"ocamlbuild/rule.ml" 173 6150 6169 "ocamlbuild/rule.ml" 173 6150 6171
+type(
+  int
+)
+"ocamlbuild/rule.ml" 173 6150 6172 "ocamlbuild/rule.ml" 173 6150 6185
+type(
+  ((Format.formatter -> Resources.t -> unit) -> Resources.t -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/rule.ml" 173 6150 6186 "ocamlbuild/rule.ml" 173 6150 6201
+type(
+  Format.formatter -> Resources.t -> unit
+)
+"ocamlbuild/rule.ml" 173 6150 6202 "ocamlbuild/rule.ml" 173 6150 6209
+type(
+  Resources.t
+)
+"ocamlbuild/rule.ml" 173 6150 6161 "ocamlbuild/rule.ml" 173 6150 6209
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 174 6213 6220 "ocamlbuild/rule.ml" 174 6213 6226
+type(
+  [> `cache_hit
+   | `cache_miss_changed_dep of Pathname.t
+   | `cache_miss_changed_dyn_dep of Resources.elt
+   | `cache_miss_digest_changed of My_std.Digest.t * My_std.Digest.t
+   | `cache_miss_missing_prod of Pathname.t
+   | `cache_miss_no_digest ]
+)
+"ocamlbuild/rule.ml" 174 6213 6228 "ocamlbuild/rule.ml" 174 6213 6234
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 174 6213 6219 "ocamlbuild/rule.ml" 174 6213 6235
+type(
+  ([> `cache_hit
+    | `cache_miss_changed_dep of Pathname.t
+    | `cache_miss_changed_dyn_dep of Resources.elt
+    | `cache_miss_digest_changed of My_std.Digest.t * My_std.Digest.t
+    | `cache_miss_missing_prod of Pathname.t
+    | `cache_miss_no_digest ]
+   as 'a) *
+  bool
+)
+"ocamlbuild/rule.ml" 175 6238 6248 "ocamlbuild/rule.ml" 175 6238 6255
+type(
+  ((Pathname.t -> bool) -> Pathname.t list -> Pathname.t) ->
+  (Pathname.t -> bool) -> Pathname.t list -> Pathname.t option
+)
+"ocamlbuild/rule.ml" 175 6238 6256 "ocamlbuild/rule.ml" 175 6238 6265
+type(
+  (Pathname.t -> bool) -> Pathname.t list -> Pathname.t
+)
+"ocamlbuild/rule.ml" 175 6238 6271 "ocamlbuild/rule.ml" 175 6238 6272
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 175 6238 6276 "ocamlbuild/rule.ml" 175 6238 6279
+type(
+  bool -> bool
+)
+"ocamlbuild/rule.ml" 175 6238 6281 "ocamlbuild/rule.ml" 175 6238 6309
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/rule.ml" 175 6238 6310 "ocamlbuild/rule.ml" 175 6238 6311
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 175 6238 6280 "ocamlbuild/rule.ml" 175 6238 6312
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 175 6238 6276 "ocamlbuild/rule.ml" 175 6238 6312
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 175 6238 6266 "ocamlbuild/rule.ml" 175 6238 6313
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/rule.ml" 175 6238 6314 "ocamlbuild/rule.ml" 175 6238 6315
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 175 6238 6314 "ocamlbuild/rule.ml" 175 6238 6321
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 175 6238 6248 "ocamlbuild/rule.ml" 175 6238 6321
+type(
+  Pathname.t option
+)
+"ocamlbuild/rule.ml" 176 6327 6338 "ocamlbuild/rule.ml" 176 6327 6339
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 176 6327 6333 "ocamlbuild/rule.ml" 176 6327 6339
+type(
+  Pathname.t option
+)
+"ocamlbuild/rule.ml" 176 6327 6369 "ocamlbuild/rule.ml" 176 6327 6370
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 176 6327 6344 "ocamlbuild/rule.ml" 176 6327 6370
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 176 6327 6372 "ocamlbuild/rule.ml" 176 6327 6377
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 176 6327 6343 "ocamlbuild/rule.ml" 176 6327 6378
+type(
+  'a * bool
+)
+"ocamlbuild/rule.ml" 177 6379 6385 "ocamlbuild/rule.ml" 177 6379 6386
+type(
+  Pathname.t option
+)
+"ocamlbuild/rule.ml" 178 6390 6408 "ocamlbuild/rule.ml" 178 6390 6415
+type(
+  ((Pathname.t -> bool) -> Pathname.t list -> Pathname.t) ->
+  (Pathname.t -> bool) -> Pathname.t list -> Pathname.t option
+)
+"ocamlbuild/rule.ml" 178 6390 6416 "ocamlbuild/rule.ml" 178 6390 6425
+type(
+  (Pathname.t -> bool) -> Pathname.t list -> Pathname.t
+)
+"ocamlbuild/rule.ml" 178 6390 6426 "ocamlbuild/rule.ml" 178 6390 6461
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/rule.ml" 178 6390 6462 "ocamlbuild/rule.ml" 178 6390 6463
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 178 6390 6462 "ocamlbuild/rule.ml" 178 6390 6468
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 178 6390 6408 "ocamlbuild/rule.ml" 178 6390 6468
+type(
+  Pathname.t option
+)
+"ocamlbuild/rule.ml" 179 6474 6487 "ocamlbuild/rule.ml" 179 6474 6488
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 179 6474 6482 "ocamlbuild/rule.ml" 179 6474 6488
+type(
+  Pathname.t option
+)
+"ocamlbuild/rule.ml" 179 6474 6517 "ocamlbuild/rule.ml" 179 6474 6518
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 179 6474 6493 "ocamlbuild/rule.ml" 179 6474 6518
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 179 6474 6520 "ocamlbuild/rule.ml" 179 6474 6525
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 179 6474 6492 "ocamlbuild/rule.ml" 179 6474 6526
+type(
+  'a * bool
+)
+"ocamlbuild/rule.ml" 180 6527 6535 "ocamlbuild/rule.ml" 180 6527 6536
+type(
+  Pathname.t option
+)
+"ocamlbuild/rule.ml" 181 6540 6560 "ocamlbuild/rule.ml" 181 6540 6567
+type(
+  ((Resources.elt -> bool) -> Resources.t -> Resources.elt) ->
+  (Resources.elt -> bool) -> Resources.t -> Resources.elt option
+)
+"ocamlbuild/rule.ml" 181 6540 6568 "ocamlbuild/rule.ml" 181 6540 6582
+type(
+  (Resources.elt -> bool) -> Resources.t -> Resources.elt
+)
+"ocamlbuild/rule.ml" 181 6540 6583 "ocamlbuild/rule.ml" 181 6540 6618
+type(
+  Resources.elt -> bool
+)
+"ocamlbuild/rule.ml" 181 6540 6619 "ocamlbuild/rule.ml" 181 6540 6626
+type(
+  Resources.t
+)
+"ocamlbuild/rule.ml" 181 6540 6560 "ocamlbuild/rule.ml" 181 6540 6626
+type(
+  Resources.elt option
+)
+"ocamlbuild/rule.ml" 182 6632 6647 "ocamlbuild/rule.ml" 182 6632 6648
+type(
+  Resources.elt
+)
+"ocamlbuild/rule.ml" 182 6632 6642 "ocamlbuild/rule.ml" 182 6632 6648
+type(
+  Resources.elt option
+)
+"ocamlbuild/rule.ml" 182 6632 6681 "ocamlbuild/rule.ml" 182 6632 6682
+type(
+  Resources.elt
+)
+"ocamlbuild/rule.ml" 182 6632 6653 "ocamlbuild/rule.ml" 182 6632 6682
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 182 6632 6684 "ocamlbuild/rule.ml" 182 6632 6689
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 182 6632 6652 "ocamlbuild/rule.ml" 182 6632 6690
+type(
+  'a * bool
+)
+"ocamlbuild/rule.ml" 183 6691 6701 "ocamlbuild/rule.ml" 183 6691 6702
+type(
+  Resources.elt option
+)
+"ocamlbuild/rule.ml" 184 6706 6730 "ocamlbuild/rule.ml" 184 6706 6743
+type(
+  Pathname.t gen_rule -> My_std.Digest.t option
+)
+"ocamlbuild/rule.ml" 184 6706 6744 "ocamlbuild/rule.ml" 184 6706 6745
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 184 6706 6730 "ocamlbuild/rule.ml" 184 6706 6745
+type(
+  My_std.Digest.t option
+)
+"ocamlbuild/rule.ml" 185 6751 6765 "ocamlbuild/rule.ml" 185 6751 6769
+type(
+  My_std.Digest.t option
+)
+"ocamlbuild/rule.ml" 185 6751 6774 "ocamlbuild/rule.ml" 185 6751 6795
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 185 6751 6797 "ocamlbuild/rule.ml" 185 6751 6802
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 185 6751 6773 "ocamlbuild/rule.ml" 185 6751 6803
+type(
+  'a * bool
+)
+"ocamlbuild/rule.ml" 186 6804 6823 "ocamlbuild/rule.ml" 186 6804 6824
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 186 6804 6818 "ocamlbuild/rule.ml" 186 6804 6824
+type(
+  My_std.Digest.t option
+)
+"ocamlbuild/rule.ml" 187 6828 6848 "ocamlbuild/rule.ml" 187 6828 6859
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 187 6828 6862 "ocamlbuild/rule.ml" 187 6828 6873
+type(
+  Pathname.t gen_rule -> Resources.t -> digest_command -> My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 187 6828 6874 "ocamlbuild/rule.ml" 187 6828 6875
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 187 6828 6876 "ocamlbuild/rule.ml" 187 6828 6883
+type(
+  Resources.t
+)
+"ocamlbuild/rule.ml" 187 6828 6884 "ocamlbuild/rule.ml" 187 6828 6890
+type(
+  digest_command
+)
+"ocamlbuild/rule.ml" 187 6828 6862 "ocamlbuild/rule.ml" 187 6828 6890
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 188 6894 6913 "ocamlbuild/rule.ml" 188 6894 6914
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 188 6894 6915 "ocamlbuild/rule.ml" 188 6894 6916
+type(
+  My_std.Digest.t -> My_std.Digest.t -> bool
+)
+"ocamlbuild/rule.ml" 188 6894 6917 "ocamlbuild/rule.ml" 188 6894 6928
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 188 6894 6913 "ocamlbuild/rule.ml" 188 6894 6928
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 188 6894 6935 "ocamlbuild/rule.ml" 188 6894 6945
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 188 6894 6947 "ocamlbuild/rule.ml" 188 6894 6951
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 188 6894 6934 "ocamlbuild/rule.ml" 188 6894 6952
+type(
+  'a * bool
+)
+"ocamlbuild/rule.ml" 189 6953 7002 "ocamlbuild/rule.ml" 189 6953 7003
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 189 6953 7005 "ocamlbuild/rule.ml" 189 6953 7016
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 189 6953 7001 "ocamlbuild/rule.ml" 189 6953 7017
+type(
+  My_std.Digest.t * My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 189 6953 6975 "ocamlbuild/rule.ml" 189 6953 7017
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 189 6953 7019 "ocamlbuild/rule.ml" 189 6953 7024
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 189 6953 6974 "ocamlbuild/rule.ml" 189 6953 7025
+type(
+  'a * bool
+)
+"ocamlbuild/rule.ml" 188 6894 6910 "ocamlbuild/rule.ml" 189 6953 7025
+type(
+  'a * bool
+)
+"ocamlbuild/rule.ml" 187 6828 6844 "ocamlbuild/rule.ml" 189 6953 7025
+type(
+  'a * bool
+)
+"ocamlbuild/rule.ml" 184 6706 6718 "ocamlbuild/rule.ml" 190 7026 7041
+type(
+  'a * bool
+)
+"ocamlbuild/rule.ml" 181 6540 6548 "ocamlbuild/rule.ml" 191 7042 7053
+type(
+  'a * bool
+)
+"ocamlbuild/rule.ml" 178 6390 6396 "ocamlbuild/rule.ml" 192 7054 7063
+type(
+  'a * bool
+)
+"ocamlbuild/rule.ml" 175 6238 6242 "ocamlbuild/rule.ml" 192 7054 7063
+type(
+  'a * bool
+)
+"ocamlbuild/rule.ml" 194 7069 7075 "ocamlbuild/rule.ml" 194 7069 7089
+type(
+  int -> unit
+)
+"ocamlbuild/rule.ml" 194 7069 7090 "ocamlbuild/rule.ml" 194 7069 7091
+type(
+  int
+)
+"ocamlbuild/rule.ml" 195 7094 7098 "ocamlbuild/rule.ml" 195 7094 7109
+type(
+  int ->
+  ((Format.formatter -> Pathname.t gen_rule -> unit) ->
+   Pathname.t gen_rule -> unit, Format.formatter, unit)
+  format ->
+  (Format.formatter -> Pathname.t gen_rule -> unit) ->
+  Pathname.t gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 195 7094 7111 "ocamlbuild/rule.ml" 195 7094 7112
+type(
+  int
+)
+"ocamlbuild/rule.ml" 195 7094 7112 "ocamlbuild/rule.ml" 195 7094 7113
+type(
+  int -> int -> int
+)
+"ocamlbuild/rule.ml" 195 7094 7113 "ocamlbuild/rule.ml" 195 7094 7114
+type(
+  int
+)
+"ocamlbuild/rule.ml" 195 7094 7110 "ocamlbuild/rule.ml" 195 7094 7115
+type(
+  int
+)
+"ocamlbuild/rule.ml" 195 7094 7116 "ocamlbuild/rule.ml" 195 7094 7131
+type(
+  ((Format.formatter -> Pathname.t gen_rule -> unit) ->
+   Pathname.t gen_rule -> unit, Format.formatter, unit)
+  format
+)
+"ocamlbuild/rule.ml" 195 7094 7132 "ocamlbuild/rule.ml" 195 7094 7137
+type(
+  Format.formatter -> Pathname.t gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 195 7094 7138 "ocamlbuild/rule.ml" 195 7094 7139
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 195 7094 7098 "ocamlbuild/rule.ml" 195 7094 7139
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 196 7141 7151 "ocamlbuild/rule.ml" 196 7141 7157
+type(
+  [ `cache_hit
+  | `cache_miss_changed_dep of Pathname.t
+  | `cache_miss_changed_dyn_dep of Resources.elt
+  | `cache_miss_digest_changed of My_std.Digest.t * My_std.Digest.t
+  | `cache_miss_missing_prod of Pathname.t
+  | `cache_miss_no_digest ]
+)
+"ocamlbuild/rule.ml" 197 7163 7194 "ocamlbuild/rule.ml" 197 7163 7195
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 197 7163 7169 "ocamlbuild/rule.ml" 197 7163 7195
+type(
+  [ `cache_hit
+  | `cache_miss_changed_dep of Pathname.t
+  | `cache_miss_changed_dyn_dep of Resources.elt
+  | `cache_miss_digest_changed of My_std.Digest.t * My_std.Digest.t
+  | `cache_miss_missing_prod of Pathname.t
+  | `cache_miss_no_digest ]
+)
+"ocamlbuild/rule.ml" 198 7199 7209 "ocamlbuild/rule.ml" 198 7199 7216
+type(
+  int ->
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format -> (Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 198 7199 7217 "ocamlbuild/rule.ml" 198 7199 7218
+type(
+  int
+)
+"ocamlbuild/rule.ml" 198 7199 7219 "ocamlbuild/rule.ml" 198 7199 7267
+type(
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/rule.ml" 198 7199 7268 "ocamlbuild/rule.ml" 198 7199 7282
+type(
+  Format.formatter -> Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 198 7199 7283 "ocamlbuild/rule.ml" 198 7199 7284
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 198 7199 7209 "ocamlbuild/rule.ml" 198 7199 7284
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 199 7285 7315 "ocamlbuild/rule.ml" 199 7285 7316
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 199 7285 7291 "ocamlbuild/rule.ml" 199 7285 7316
+type(
+  [ `cache_hit
+  | `cache_miss_changed_dep of Pathname.t
+  | `cache_miss_changed_dyn_dep of Resources.elt
+  | `cache_miss_digest_changed of My_std.Digest.t * My_std.Digest.t
+  | `cache_miss_missing_prod of Pathname.t
+  | `cache_miss_no_digest ]
+)
+"ocamlbuild/rule.ml" 200 7320 7330 "ocamlbuild/rule.ml" 200 7320 7337
+type(
+  int ->
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format -> (Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 200 7320 7338 "ocamlbuild/rule.ml" 200 7320 7339
+type(
+  int
+)
+"ocamlbuild/rule.ml" 200 7320 7340 "ocamlbuild/rule.ml" 200 7320 7383
+type(
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/rule.ml" 200 7320 7384 "ocamlbuild/rule.ml" 200 7320 7398
+type(
+  Format.formatter -> Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 200 7320 7399 "ocamlbuild/rule.ml" 200 7320 7400
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 200 7320 7330 "ocamlbuild/rule.ml" 200 7320 7400
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 201 7401 7435 "ocamlbuild/rule.ml" 201 7401 7436
+type(
+  Resources.elt
+)
+"ocamlbuild/rule.ml" 201 7401 7407 "ocamlbuild/rule.ml" 201 7401 7436
+type(
+  [ `cache_hit
+  | `cache_miss_changed_dep of Pathname.t
+  | `cache_miss_changed_dyn_dep of Resources.elt
+  | `cache_miss_digest_changed of My_std.Digest.t * My_std.Digest.t
+  | `cache_miss_missing_prod of Pathname.t
+  | `cache_miss_no_digest ]
+)
+"ocamlbuild/rule.ml" 202 7440 7450 "ocamlbuild/rule.ml" 202 7440 7457
+type(
+  int ->
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format -> (Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 202 7440 7458 "ocamlbuild/rule.ml" 202 7440 7459
+type(
+  int
+)
+"ocamlbuild/rule.ml" 202 7440 7460 "ocamlbuild/rule.ml" 202 7440 7511
+type(
+  ((Format.formatter -> Pathname.t -> unit) -> Pathname.t -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/rule.ml" 202 7440 7512 "ocamlbuild/rule.ml" 202 7440 7526
+type(
+  Format.formatter -> Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 202 7440 7527 "ocamlbuild/rule.ml" 202 7440 7528
+type(
+  Resources.elt
+)
+"ocamlbuild/rule.ml" 202 7440 7450 "ocamlbuild/rule.ml" 202 7440 7528
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 203 7529 7535 "ocamlbuild/rule.ml" 203 7529 7556
+type(
+  [ `cache_hit
+  | `cache_miss_changed_dep of Pathname.t
+  | `cache_miss_changed_dyn_dep of Resources.elt
+  | `cache_miss_digest_changed of My_std.Digest.t * My_std.Digest.t
+  | `cache_miss_missing_prod of Pathname.t
+  | `cache_miss_no_digest ]
+)
+"ocamlbuild/rule.ml" 204 7560 7570 "ocamlbuild/rule.ml" 204 7560 7577
+type(
+  int -> (string -> unit, Format.formatter, unit) format -> string -> unit
+)
+"ocamlbuild/rule.ml" 204 7560 7578 "ocamlbuild/rule.ml" 204 7560 7579
+type(
+  int
+)
+"ocamlbuild/rule.ml" 204 7560 7580 "ocamlbuild/rule.ml" 204 7560 7658
+type(
+  (string -> unit, Format.formatter, unit) format
+)
+"ocamlbuild/rule.ml" 205 7659 7671 "ocamlbuild/rule.ml" 205 7659 7672
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 205 7659 7671 "ocamlbuild/rule.ml" 205 7659 7677
+type(
+  string
+)
+"ocamlbuild/rule.ml" 204 7560 7570 "ocamlbuild/rule.ml" 205 7659 7677
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 206 7678 7684 "ocamlbuild/rule.ml" 206 7678 7694
+type(
+  [ `cache_hit
+  | `cache_miss_changed_dep of Pathname.t
+  | `cache_miss_changed_dyn_dep of Resources.elt
+  | `cache_miss_digest_changed of My_std.Digest.t * My_std.Digest.t
+  | `cache_miss_missing_prod of Pathname.t
+  | `cache_miss_no_digest ]
+)
+"ocamlbuild/rule.ml" 206 7678 7698 "ocamlbuild/rule.ml" 206 7678 7705
+type(
+  int -> (unit, Format.formatter, unit) format -> unit
+)
+"ocamlbuild/rule.ml" 206 7678 7707 "ocamlbuild/rule.ml" 206 7678 7708
+type(
+  int
+)
+"ocamlbuild/rule.ml" 206 7678 7708 "ocamlbuild/rule.ml" 206 7678 7709
+type(
+  int -> int -> int
+)
+"ocamlbuild/rule.ml" 206 7678 7709 "ocamlbuild/rule.ml" 206 7678 7710
+type(
+  int
+)
+"ocamlbuild/rule.ml" 206 7678 7706 "ocamlbuild/rule.ml" 206 7678 7711
+type(
+  int
+)
+"ocamlbuild/rule.ml" 206 7678 7712 "ocamlbuild/rule.ml" 206 7678 7723
+type(
+  (unit, Format.formatter, unit) format
+)
+"ocamlbuild/rule.ml" 206 7678 7698 "ocamlbuild/rule.ml" 206 7678 7723
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 207 7724 7757 "ocamlbuild/rule.ml" 207 7724 7762
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 207 7724 7764 "ocamlbuild/rule.ml" 207 7724 7769
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 207 7724 7756 "ocamlbuild/rule.ml" 207 7724 7770
+type(
+  My_std.Digest.t * My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 207 7724 7730 "ocamlbuild/rule.ml" 207 7724 7770
+type(
+  [ `cache_hit
+  | `cache_miss_changed_dep of Pathname.t
+  | `cache_miss_changed_dyn_dep of Resources.elt
+  | `cache_miss_digest_changed of My_std.Digest.t * My_std.Digest.t
+  | `cache_miss_missing_prod of Pathname.t
+  | `cache_miss_no_digest ]
+)
+"ocamlbuild/rule.ml" 208 7774 7784 "ocamlbuild/rule.ml" 208 7774 7791
+type(
+  int ->
+  (string ->
+   (Format.formatter -> My_std.Digest.t -> unit) ->
+   My_std.Digest.t ->
+   (Format.formatter -> My_std.Digest.t -> unit) -> My_std.Digest.t -> unit,
+   Format.formatter, unit)
+  format ->
+  string ->
+  (Format.formatter -> My_std.Digest.t -> unit) ->
+  My_std.Digest.t ->
+  (Format.formatter -> My_std.Digest.t -> unit) -> My_std.Digest.t -> unit
+)
+"ocamlbuild/rule.ml" 208 7774 7792 "ocamlbuild/rule.ml" 208 7774 7793
+type(
+  int
+)
+"ocamlbuild/rule.ml" 208 7774 7794 "ocamlbuild/rule.ml" 208 7774 7889
+type(
+  (string ->
+   (Format.formatter -> My_std.Digest.t -> unit) ->
+   My_std.Digest.t ->
+   (Format.formatter -> My_std.Digest.t -> unit) -> My_std.Digest.t -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/rule.ml" 209 7890 7902 "ocamlbuild/rule.ml" 209 7890 7903
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 209 7890 7902 "ocamlbuild/rule.ml" 209 7890 7908
+type(
+  string
+)
+"ocamlbuild/rule.ml" 209 7890 7909 "ocamlbuild/rule.ml" 209 7890 7921
+type(
+  Format.formatter -> My_std.Digest.t -> unit
+)
+"ocamlbuild/rule.ml" 209 7890 7922 "ocamlbuild/rule.ml" 209 7890 7927
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 209 7890 7928 "ocamlbuild/rule.ml" 209 7890 7940
+type(
+  Format.formatter -> My_std.Digest.t -> unit
+)
+"ocamlbuild/rule.ml" 209 7890 7941 "ocamlbuild/rule.ml" 209 7890 7946
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 208 7774 7784 "ocamlbuild/rule.ml" 209 7890 7946
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 196 7141 7145 "ocamlbuild/rule.ml" 209 7890 7946
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 195 7094 7098 "ocamlbuild/rule.ml" 209 7890 7946
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 211 7952 7958 "ocamlbuild/rule.ml" 211 7952 7970
+type(
+  (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 211 7952 7973 "ocamlbuild/rule.ml" 211 7952 7985
+type(
+  Pathname.t gen_rule -> (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 211 7952 7986 "ocamlbuild/rule.ml" 211 7952 7987
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 211 7952 7973 "ocamlbuild/rule.ml" 211 7952 7987
+type(
+  (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 212 7991 7997 "ocamlbuild/rule.ml" 212 7991 8000
+type(
+  bool -> bool
+)
+"ocamlbuild/rule.ml" 212 7991 8001 "ocamlbuild/rule.ml" 212 7991 8007
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 212 7991 7997 "ocamlbuild/rule.ml" 212 7991 8007
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 212 7991 8013 "ocamlbuild/rule.ml" 212 7991 8022
+type(
+  (Pathname.t -> unit) -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 212 7991 8023 "ocamlbuild/rule.ml" 212 7991 8037
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 212 7991 8038 "ocamlbuild/rule.ml" 212 7991 8039
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 212 7991 8038 "ocamlbuild/rule.ml" 212 7991 8045
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 212 7991 8013 "ocamlbuild/rule.ml" 212 7991 8045
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 212 7991 7993 "ocamlbuild/rule.ml" 212 7991 8046
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 213 8048 8054 "ocamlbuild/rule.ml" 213 8048 8055
+type(
+  bool ref -> bool
+)
+"ocamlbuild/rule.ml" 213 8048 8055 "ocamlbuild/rule.ml" 213 8048 8088
+type(
+  bool ref
+)
+"ocamlbuild/rule.ml" 213 8048 8054 "ocamlbuild/rule.ml" 213 8048 8088
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 213 8048 8089 "ocamlbuild/rule.ml" 213 8048 8091
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/rule.ml" 213 8048 8092 "ocamlbuild/rule.ml" 213 8048 8095
+type(
+  bool -> bool
+)
+"ocamlbuild/rule.ml" 213 8048 8096 "ocamlbuild/rule.ml" 213 8048 8102
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 213 8048 8092 "ocamlbuild/rule.ml" 213 8048 8102
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 213 8048 8054 "ocamlbuild/rule.ml" 213 8048 8102
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 214 8108 8113 "ocamlbuild/rule.ml" 214 8108 8127
+type(
+  int -> unit
+)
+"ocamlbuild/rule.ml" 214 8108 8128 "ocamlbuild/rule.ml" 214 8108 8132
+type(
+  int
+)
+"ocamlbuild/rule.ml" 214 8108 8113 "ocamlbuild/rule.ml" 214 8108 8132
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 215 8134 8143 "ocamlbuild/rule.ml" 215 8134 8146
+type(
+  string
+)
+"ocamlbuild/rule.ml" 215 8134 8149 "ocamlbuild/rule.ml" 215 8134 8157
+type(
+  ((Format.formatter -> Pathname.t list -> unit) ->
+   Pathname.t list ->
+   (Format.formatter -> Pathname.t gen_rule -> unit) ->
+   Pathname.t gen_rule -> string, Format.formatter, unit, string)
+  format4 ->
+  (Format.formatter -> Pathname.t list -> unit) ->
+  Pathname.t list ->
+  (Format.formatter -> Pathname.t gen_rule -> unit) ->
+  Pathname.t gen_rule -> string
+)
+"ocamlbuild/rule.ml" 215 8134 8158 "ocamlbuild/rule.ml" 215 8134 8200
+type(
+  ((Format.formatter -> Pathname.t list -> unit) ->
+   Pathname.t list ->
+   (Format.formatter -> Pathname.t gen_rule -> unit) ->
+   Pathname.t gen_rule -> string, Format.formatter, unit, string)
+  format4
+)
+"ocamlbuild/rule.ml" 215 8134 8201 "ocamlbuild/rule.ml" 215 8134 8220
+type(
+  Format.formatter -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 215 8134 8221 "ocamlbuild/rule.ml" 215 8134 8222
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 215 8134 8221 "ocamlbuild/rule.ml" 215 8134 8228
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 215 8134 8229 "ocamlbuild/rule.ml" 215 8134 8234
+type(
+  Format.formatter -> Pathname.t gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 215 8134 8235 "ocamlbuild/rule.ml" 215 8134 8236
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 215 8134 8149 "ocamlbuild/rule.ml" 215 8134 8236
+type(
+  string
+)
+"ocamlbuild/rule.ml" 216 8240 8245 "ocamlbuild/rule.ml" 216 8240 8250
+type(
+  exn -> unit
+)
+"ocamlbuild/rule.ml" 216 8240 8268 "ocamlbuild/rule.ml" 216 8240 8271
+type(
+  string
+)
+"ocamlbuild/rule.ml" 216 8240 8251 "ocamlbuild/rule.ml" 216 8240 8272
+type(
+  exn
+)
+"ocamlbuild/rule.ml" 216 8240 8245 "ocamlbuild/rule.ml" 216 8240 8272
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 215 8134 8139 "ocamlbuild/rule.ml" 216 8240 8272
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 214 8108 8112 "ocamlbuild/rule.ml" 216 8240 8273
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 213 8048 8050 "ocamlbuild/rule.ml" 216 8240 8274
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 217 8276 8278 "ocamlbuild/rule.ml" 217 8276 8292
+type(
+  int -> unit
+)
+"ocamlbuild/rule.ml" 217 8276 8293 "ocamlbuild/rule.ml" 217 8276 8294
+type(
+  int
+)
+"ocamlbuild/rule.ml" 217 8276 8278 "ocamlbuild/rule.ml" 217 8276 8294
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 218 8296 8302 "ocamlbuild/rule.ml" 218 8296 8307
+type(
+  unit -> unit
+)
+"ocamlbuild/rule.ml" 218 8296 8308 "ocamlbuild/rule.ml" 218 8296 8310
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 220 8321 8330 "ocamlbuild/rule.ml" 220 8321 8336
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 220 8321 8342 "ocamlbuild/rule.ml" 220 8321 8357
+type(
+  ?quiet:bool -> ?pretend:bool -> Command.t -> unit
+)
+"ocamlbuild/rule.ml" 220 8321 8367 "ocamlbuild/rule.ml" 220 8321 8371
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 220 8321 8372 "ocamlbuild/rule.ml" 220 8321 8378
+type(
+  digest_command
+)
+"ocamlbuild/rule.ml" 220 8321 8372 "ocamlbuild/rule.ml" 220 8321 8386
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 220 8321 8342 "ocamlbuild/rule.ml" 220 8321 8386
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 222 8398 8418 "ocamlbuild/rule.ml" 222 8398 8419
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 222 8398 8418 "ocamlbuild/rule.ml" 222 8398 8425
+type(
+  Pathname.t option
+)
+"ocamlbuild/rule.ml" 223 8431 8446 "ocamlbuild/rule.ml" 223 8431 8451
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 223 8431 8441 "ocamlbuild/rule.ml" 223 8431 8451
+type(
+  Pathname.t option
+)
+"ocamlbuild/rule.ml" 224 8455 8467 "ocamlbuild/rule.ml" 224 8455 8486
+type(
+  unit -> unit
+)
+"ocamlbuild/rule.ml" 224 8455 8487 "ocamlbuild/rule.ml" 224 8455 8489
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 224 8455 8467 "ocamlbuild/rule.ml" 224 8455 8489
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 225 8491 8507 "ocamlbuild/rule.ml" 225 8491 8518
+type(
+  string
+)
+"ocamlbuild/rule.ml" 225 8491 8521 "ocamlbuild/rule.ml" 225 8491 8532
+type(
+  Pathname.t gen_rule -> Resources.t -> string
+)
+"ocamlbuild/rule.ml" 225 8491 8533 "ocamlbuild/rule.ml" 225 8491 8534
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 225 8491 8535 "ocamlbuild/rule.ml" 225 8491 8542
+type(
+  Resources.t
+)
+"ocamlbuild/rule.ml" 225 8491 8521 "ocamlbuild/rule.ml" 225 8491 8542
+type(
+  string
+)
+"ocamlbuild/rule.ml" 226 8546 8558 "ocamlbuild/rule.ml" 226 8546 8574
+type(
+  ?bin:bool -> Pathname.t -> (out_channel -> unit) -> unit
+)
+"ocamlbuild/rule.ml" 226 8546 8575 "ocamlbuild/rule.ml" 226 8546 8580
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 226 8546 8586 "ocamlbuild/rule.ml" 226 8546 8588
+type(
+  out_channel
+)
+"ocamlbuild/rule.ml" 226 8546 8592 "ocamlbuild/rule.ml" 226 8546 8605
+type(
+  out_channel -> string -> unit
+)
+"ocamlbuild/rule.ml" 226 8546 8606 "ocamlbuild/rule.ml" 226 8546 8608
+type(
+  out_channel
+)
+"ocamlbuild/rule.ml" 226 8546 8609 "ocamlbuild/rule.ml" 226 8546 8620
+type(
+  string
+)
+"ocamlbuild/rule.ml" 226 8546 8592 "ocamlbuild/rule.ml" 226 8546 8620
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 226 8546 8581 "ocamlbuild/rule.ml" 226 8546 8621
+type(
+  out_channel -> unit
+)
+"ocamlbuild/rule.ml" 226 8546 8558 "ocamlbuild/rule.ml" 226 8546 8621
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 225 8491 8503 "ocamlbuild/rule.ml" 226 8546 8621
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 224 8455 8467 "ocamlbuild/rule.ml" 226 8546 8621
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 227 8622 8632 "ocamlbuild/rule.ml" 227 8622 8636
+type(
+  Pathname.t option
+)
+"ocamlbuild/rule.ml" 227 8622 8640 "ocamlbuild/rule.ml" 227 8622 8642
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 222 8398 8406 "ocamlbuild/rule.ml" 228 8643 8654
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 220 8321 8327 "ocamlbuild/rule.ml" 228 8643 8654
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 229 8656 8662 "ocamlbuild/rule.ml" 229 8656 8671
+type(
+  (Pathname.t -> unit) -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 229 8656 8677 "ocamlbuild/rule.ml" 229 8656 8678
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 229 8656 8682 "ocamlbuild/rule.ml" 229 8656 8711
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 229 8656 8712 "ocamlbuild/rule.ml" 229 8656 8713
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 229 8656 8682 "ocamlbuild/rule.ml" 229 8656 8713
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 229 8656 8672 "ocamlbuild/rule.ml" 229 8656 8714
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 229 8656 8715 "ocamlbuild/rule.ml" 229 8656 8716
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 229 8656 8715 "ocamlbuild/rule.ml" 229 8656 8722
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 229 8656 8662 "ocamlbuild/rule.ml" 229 8656 8722
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 230 8724 8734 "ocamlbuild/rule.ml" 230 8724 8737
+type(
+  bool -> bool
+)
+"ocamlbuild/rule.ml" 230 8724 8738 "ocamlbuild/rule.ml" 230 8724 8744
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 230 8724 8734 "ocamlbuild/rule.ml" 230 8724 8744
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 231 8750 8762 "ocamlbuild/rule.ml" 231 8750 8777
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 231 8750 8780 "ocamlbuild/rule.ml" 231 8750 8791
+type(
+  Pathname.t gen_rule -> Resources.t -> digest_command -> My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 231 8750 8792 "ocamlbuild/rule.ml" 231 8750 8793
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 231 8750 8794 "ocamlbuild/rule.ml" 231 8750 8801
+type(
+  Resources.t
+)
+"ocamlbuild/rule.ml" 231 8750 8802 "ocamlbuild/rule.ml" 231 8750 8808
+type(
+  digest_command
+)
+"ocamlbuild/rule.ml" 231 8750 8780 "ocamlbuild/rule.ml" 231 8750 8808
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 232 8812 8824 "ocamlbuild/rule.ml" 232 8812 8840
+type(
+  (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 232 8812 8843 "ocamlbuild/rule.ml" 232 8812 8855
+type(
+  Pathname.t gen_rule -> (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 232 8812 8856 "ocamlbuild/rule.ml" 232 8812 8857
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 232 8812 8843 "ocamlbuild/rule.ml" 232 8812 8857
+type(
+  (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 233 8861 8873 "ocamlbuild/rule.ml" 233 8861 8875
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 233 8861 8878 "ocamlbuild/rule.ml" 233 8861 8890
+type(
+  Pathname.t gen_rule -> My_std.Digest.t -> unit
+)
+"ocamlbuild/rule.ml" 233 8861 8891 "ocamlbuild/rule.ml" 233 8861 8892
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 233 8861 8893 "ocamlbuild/rule.ml" 233 8861 8908
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 233 8861 8878 "ocamlbuild/rule.ml" 233 8861 8908
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 234 8912 8920 "ocamlbuild/rule.ml" 234 8912 8929
+type(
+  (Pathname.t -> unit) -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 234 8912 8940 "ocamlbuild/rule.ml" 234 8912 8941
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 235 8945 8959 "ocamlbuild/rule.ml" 235 8945 8960
+type(
+  string
+)
+"ocamlbuild/rule.ml" 235 8945 8963 "ocamlbuild/rule.ml" 235 8945 8981
+type(
+  Pathname.t -> string
+)
+"ocamlbuild/rule.ml" 235 8945 8983 "ocamlbuild/rule.ml" 235 8945 9004
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/rule.ml" 235 8945 9005 "ocamlbuild/rule.ml" 235 8945 9006
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 235 8945 8982 "ocamlbuild/rule.ml" 235 8945 9007
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 235 8945 8963 "ocamlbuild/rule.ml" 235 8945 9007
+type(
+  string
+)
+"ocamlbuild/rule.ml" 236 9011 9030 "ocamlbuild/rule.ml" 236 9011 9036
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 236 9011 9039 "ocamlbuild/rule.ml" 236 9011 9049
+type(
+  string -> (string * My_std.Digest.t) list -> My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 236 9011 9050 "ocamlbuild/rule.ml" 236 9011 9051
+type(
+  string
+)
+"ocamlbuild/rule.ml" 236 9011 9052 "ocamlbuild/rule.ml" 236 9011 9064
+type(
+  (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 236 9011 9039 "ocamlbuild/rule.ml" 236 9011 9064
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 237 9068 9087 "ocamlbuild/rule.ml" 237 9068 9097
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 237 9068 9100 "ocamlbuild/rule.ml" 237 9068 9110
+type(
+  string -> (string * My_std.Digest.t) list -> My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 237 9068 9111 "ocamlbuild/rule.ml" 237 9068 9112
+type(
+  string
+)
+"ocamlbuild/rule.ml" 237 9068 9113 "ocamlbuild/rule.ml" 237 9068 9129
+type(
+  (string * My_std.Digest.t) list
+)
+"ocamlbuild/rule.ml" 237 9068 9100 "ocamlbuild/rule.ml" 237 9068 9129
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 238 9133 9151 "ocamlbuild/rule.ml" 238 9133 9157
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 238 9133 9158 "ocamlbuild/rule.ml" 238 9133 9160
+type(
+  My_std.Digest.t -> My_std.Digest.t -> bool
+)
+"ocamlbuild/rule.ml" 238 9133 9161 "ocamlbuild/rule.ml" 238 9133 9171
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/rule.ml" 238 9133 9151 "ocamlbuild/rule.ml" 238 9133 9171
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 238 9133 9177 "ocamlbuild/rule.ml" 238 9133 9182
+type(
+  exn -> unit
+)
+"ocamlbuild/rule.ml" 238 9133 9183 "ocamlbuild/rule.ml" 238 9133 9192
+type(
+  exn
+)
+"ocamlbuild/rule.ml" 238 9133 9177 "ocamlbuild/rule.ml" 238 9133 9192
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 238 9133 9148 "ocamlbuild/rule.ml" 238 9133 9192
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 237 9068 9083 "ocamlbuild/rule.ml" 238 9133 9192
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 236 9011 9026 "ocamlbuild/rule.ml" 238 9133 9192
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 239 9193 9208 "ocamlbuild/rule.ml" 239 9193 9217
+type(
+  exn
+)
+"ocamlbuild/rule.ml" 239 9193 9221 "ocamlbuild/rule.ml" 239 9193 9252
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 239 9193 9253 "ocamlbuild/rule.ml" 239 9193 9254
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 239 9193 9221 "ocamlbuild/rule.ml" 239 9193 9254
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 236 9011 9021 "ocamlbuild/rule.ml" 239 9193 9255
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 235 8945 8955 "ocamlbuild/rule.ml" 239 9193 9255
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 234 8912 8930 "ocamlbuild/rule.ml" 240 9256 9267
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 240 9256 9268 "ocamlbuild/rule.ml" 240 9256 9269
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 240 9256 9268 "ocamlbuild/rule.ml" 240 9256 9275
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 234 8912 8920 "ocamlbuild/rule.ml" 240 9256 9275
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 233 8861 8869 "ocamlbuild/rule.ml" 240 9256 9275
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 232 8812 8820 "ocamlbuild/rule.ml" 240 9256 9275
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 231 8750 8758 "ocamlbuild/rule.ml" 240 9256 9275
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 230 8724 8730 "ocamlbuild/rule.ml" 240 9256 9276
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 241 9278 9284 "ocamlbuild/rule.ml" 241 9278 9291
+type(
+  int ->
+  ((Format.formatter -> Pathname.t gen_rule -> unit) ->
+   Pathname.t gen_rule -> unit, Format.formatter, unit)
+  format ->
+  (Format.formatter -> Pathname.t gen_rule -> unit) ->
+  Pathname.t gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 241 9278 9292 "ocamlbuild/rule.ml" 241 9278 9293
+type(
+  int
+)
+"ocamlbuild/rule.ml" 241 9278 9294 "ocamlbuild/rule.ml" 241 9278 9307
+type(
+  ((Format.formatter -> Pathname.t gen_rule -> unit) ->
+   Pathname.t gen_rule -> unit, Format.formatter, unit)
+  format
+)
+"ocamlbuild/rule.ml" 241 9278 9308 "ocamlbuild/rule.ml" 241 9278 9313
+type(
+  Format.formatter -> Pathname.t gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 241 9278 9314 "ocamlbuild/rule.ml" 241 9278 9315
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 241 9278 9284 "ocamlbuild/rule.ml" 241 9278 9315
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 230 8724 8730 "ocamlbuild/rule.ml" 241 9278 9315
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 229 8656 8662 "ocamlbuild/rule.ml" 241 9278 9315
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 220 8321 8327 "ocamlbuild/rule.ml" 241 9278 9315
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 242 9316 9325 "ocamlbuild/rule.ml" 242 9316 9328
+type(
+  exn
+)
+"ocamlbuild/rule.ml" 242 9316 9333 "ocamlbuild/rule.ml" 242 9316 9342
+type(
+  (Pathname.t -> unit) -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 242 9316 9343 "ocamlbuild/rule.ml" 242 9316 9357
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 242 9316 9358 "ocamlbuild/rule.ml" 242 9316 9359
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 242 9316 9358 "ocamlbuild/rule.ml" 242 9316 9365
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 242 9316 9333 "ocamlbuild/rule.ml" 242 9316 9365
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 242 9316 9367 "ocamlbuild/rule.ml" 242 9316 9372
+type(
+  exn -> unit
+)
+"ocamlbuild/rule.ml" 242 9316 9373 "ocamlbuild/rule.ml" 242 9316 9376
+type(
+  exn
+)
+"ocamlbuild/rule.ml" 242 9316 9367 "ocamlbuild/rule.ml" 242 9316 9376
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 242 9316 9332 "ocamlbuild/rule.ml" 242 9316 9377
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 219 8313 8317 "ocamlbuild/rule.ml" 242 9316 9377
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 244 9383 9388 "ocamlbuild/rule.ml" 244 9383 9394
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 245 9395 9402 "ocamlbuild/rule.ml" 245 9395 9407
+type(
+  unit -> unit
+)
+"ocamlbuild/rule.ml" 245 9395 9408 "ocamlbuild/rule.ml" 245 9395 9410
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 245 9395 9402 "ocamlbuild/rule.ml" 245 9395 9410
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 246 9411 9418 "ocamlbuild/rule.ml" 246 9411 9427
+type(
+  (Pathname.t -> unit) -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 246 9411 9433 "ocamlbuild/rule.ml" 246 9411 9434
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 246 9411 9438 "ocamlbuild/rule.ml" 246 9411 9469
+type(
+  Pathname.t -> Command.t -> (unit -> unit) -> Pathname.t list -> unit
+)
+"ocamlbuild/rule.ml" 246 9411 9470 "ocamlbuild/rule.ml" 246 9411 9471
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 246 9411 9472 "ocamlbuild/rule.ml" 246 9411 9478
+type(
+  digest_command
+)
+"ocamlbuild/rule.ml" 246 9411 9472 "ocamlbuild/rule.ml" 246 9411 9486
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 246 9411 9487 "ocamlbuild/rule.ml" 246 9411 9492
+type(
+  unit -> unit
+)
+"ocamlbuild/rule.ml" 246 9411 9493 "ocamlbuild/rule.ml" 246 9411 9494
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 246 9411 9493 "ocamlbuild/rule.ml" 246 9411 9500
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 246 9411 9438 "ocamlbuild/rule.ml" 246 9411 9500
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 246 9411 9428 "ocamlbuild/rule.ml" 246 9411 9501
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 246 9411 9502 "ocamlbuild/rule.ml" 246 9411 9503
+type(
+  Pathname.t gen_rule
+)
+"ocamlbuild/rule.ml" 246 9411 9502 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 246 9411 9418 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 244 9383 9385 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 218 8296 8298 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 217 8276 8278 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 213 8048 8050 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 212 7991 7993 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 211 7952 7954 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 194 7069 7071 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 174 6213 6215 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 173 6150 6152 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 172 6122 6124 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 171 6070 6072 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 170 6024 6026 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 169 5976 5978 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 158 5571 5573 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 157 5532 5534 "ocamlbuild/rule.ml" 246 9411 9509
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 248 9511 9516 "ocamlbuild/rule.ml" 248 9511 9525
+type(
+  unit -> Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 248 9511 9527 "ocamlbuild/rule.ml" 248 9511 9535
+type(
+  _[< `after of string | `before of string | `bottom | `top > `bottom ] ->
+  Resource.resource_pattern gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 248 9511 9515 "ocamlbuild/rule.ml" 248 9511 9536
+type(
+  (unit -> Resource.resource_pattern gen_rule list) *
+  ((_[< `after of string | `before of string | `bottom | `top > `bottom ]
+    as 'a) ->
+   Resource.resource_pattern gen_rule -> unit)
+)
+"ocamlbuild/rule.ml" 249 9539 9545 "ocamlbuild/rule.ml" 249 9539 9550
+type(
+  Resource.resource_pattern gen_rule list ref
+)
+"ocamlbuild/rule.ml" 249 9539 9553 "ocamlbuild/rule.ml" 249 9539 9556
+type(
+  Resource.resource_pattern gen_rule list ->
+  Resource.resource_pattern gen_rule list ref
+)
+"ocamlbuild/rule.ml" 249 9539 9557 "ocamlbuild/rule.ml" 249 9539 9559
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 249 9539 9553 "ocamlbuild/rule.ml" 249 9539 9559
+type(
+  Resource.resource_pattern gen_rule list ref
+)
+"ocamlbuild/rule.ml" 250 9563 9570 "ocamlbuild/rule.ml" 250 9563 9572
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 250 9563 9576 "ocamlbuild/rule.ml" 250 9563 9577
+type(
+  Resource.resource_pattern gen_rule list ref ->
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 250 9563 9577 "ocamlbuild/rule.ml" 250 9563 9582
+type(
+  Resource.resource_pattern gen_rule list ref
+)
+"ocamlbuild/rule.ml" 250 9563 9576 "ocamlbuild/rule.ml" 250 9563 9582
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 250 9563 9565 "ocamlbuild/rule.ml" 250 9563 9583
+type(
+  unit -> Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 251 9585 9597 "ocamlbuild/rule.ml" 251 9585 9600
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 251 9585 9601 "ocamlbuild/rule.ml" 251 9585 9602
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 253 9614 9624 "ocamlbuild/rule.ml" 253 9614 9625
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 253 9614 9628 "ocamlbuild/rule.ml" 253 9614 9637
+type(
+  (Resource.resource_pattern gen_rule -> bool) ->
+  Resource.resource_pattern gen_rule list ->
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 253 9614 9643 "ocamlbuild/rule.ml" 253 9614 9644
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 253 9614 9648 "ocamlbuild/rule.ml" 253 9614 9649
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 253 9614 9648 "ocamlbuild/rule.ml" 253 9614 9654
+type(
+  string
+)
+"ocamlbuild/rule.ml" 253 9614 9655 "ocamlbuild/rule.ml" 253 9614 9656
+type(
+  string -> string -> bool
+)
+"ocamlbuild/rule.ml" 253 9614 9657 "ocamlbuild/rule.ml" 253 9614 9658
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 253 9614 9657 "ocamlbuild/rule.ml" 253 9614 9663
+type(
+  string
+)
+"ocamlbuild/rule.ml" 253 9614 9648 "ocamlbuild/rule.ml" 253 9614 9663
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 253 9614 9638 "ocamlbuild/rule.ml" 253 9614 9664
+type(
+  Resource.resource_pattern gen_rule -> bool
+)
+"ocamlbuild/rule.ml" 253 9614 9665 "ocamlbuild/rule.ml" 253 9614 9666
+type(
+  Resource.resource_pattern gen_rule list ref ->
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 253 9614 9666 "ocamlbuild/rule.ml" 253 9614 9671
+type(
+  Resource.resource_pattern gen_rule list ref
+)
+"ocamlbuild/rule.ml" 253 9614 9665 "ocamlbuild/rule.ml" 253 9614 9671
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 253 9614 9628 "ocamlbuild/rule.ml" 253 9614 9671
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 254 9675 9681 "ocamlbuild/rule.ml" 254 9675 9686
+type(
+  exn -> unit
+)
+"ocamlbuild/rule.ml" 254 9675 9705 "ocamlbuild/rule.ml" 254 9675 9713
+type(
+  ((Format.formatter -> Resource.resource_pattern gen_rule -> unit) ->
+   Resource.resource_pattern gen_rule -> string, Format.formatter, unit,
+   string)
+  format4 ->
+  (Format.formatter -> Resource.resource_pattern gen_rule -> unit) ->
+  Resource.resource_pattern gen_rule -> string
+)
+"ocamlbuild/rule.ml" 254 9675 9714 "ocamlbuild/rule.ml" 254 9675 9751
+type(
+  ((Format.formatter -> Resource.resource_pattern gen_rule -> unit) ->
+   Resource.resource_pattern gen_rule -> string, Format.formatter, unit,
+   string)
+  format4
+)
+"ocamlbuild/rule.ml" 254 9675 9752 "ocamlbuild/rule.ml" 254 9675 9757
+type(
+  Format.formatter -> Resource.resource_pattern gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 254 9675 9758 "ocamlbuild/rule.ml" 254 9675 9759
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 254 9675 9704 "ocamlbuild/rule.ml" 254 9675 9760
+type(
+  string
+)
+"ocamlbuild/rule.ml" 254 9675 9687 "ocamlbuild/rule.ml" 254 9675 9761
+type(
+  exn
+)
+"ocamlbuild/rule.ml" 254 9675 9681 "ocamlbuild/rule.ml" 254 9675 9761
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 253 9614 9620 "ocamlbuild/rule.ml" 254 9675 9761
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 255 9762 9771 "ocamlbuild/rule.ml" 255 9762 9780
+type(
+  exn
+)
+"ocamlbuild/rule.ml" 256 9784 9796 "ocamlbuild/rule.ml" 256 9784 9799
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 257 9805 9813 "ocamlbuild/rule.ml" 257 9805 9820
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 257 9805 9824 "ocamlbuild/rule.ml" 257 9805 9829
+type(
+  Resource.resource_pattern gen_rule list ref
+)
+"ocamlbuild/rule.ml" 257 9805 9830 "ocamlbuild/rule.ml" 257 9805 9832
+type(
+  Resource.resource_pattern gen_rule list ref ->
+  Resource.resource_pattern gen_rule list -> unit
+)
+"ocamlbuild/rule.ml" 257 9805 9833 "ocamlbuild/rule.ml" 257 9805 9834
+type(
+  Resource.resource_pattern gen_rule list ref ->
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 257 9805 9834 "ocamlbuild/rule.ml" 257 9805 9839
+type(
+  Resource.resource_pattern gen_rule list ref
+)
+"ocamlbuild/rule.ml" 257 9805 9833 "ocamlbuild/rule.ml" 257 9805 9839
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 257 9805 9840 "ocamlbuild/rule.ml" 257 9805 9841
+type(
+  Resource.resource_pattern gen_rule list ->
+  Resource.resource_pattern gen_rule list ->
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 257 9805 9843 "ocamlbuild/rule.ml" 257 9805 9844
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 257 9805 9842 "ocamlbuild/rule.ml" 257 9805 9845
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 257 9805 9833 "ocamlbuild/rule.ml" 257 9805 9845
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 257 9805 9824 "ocamlbuild/rule.ml" 257 9805 9845
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 258 9846 9854 "ocamlbuild/rule.ml" 258 9846 9858
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 258 9846 9862 "ocamlbuild/rule.ml" 258 9846 9867
+type(
+  Resource.resource_pattern gen_rule list ref
+)
+"ocamlbuild/rule.ml" 258 9846 9868 "ocamlbuild/rule.ml" 258 9846 9870
+type(
+  Resource.resource_pattern gen_rule list ref ->
+  Resource.resource_pattern gen_rule list -> unit
+)
+"ocamlbuild/rule.ml" 258 9846 9871 "ocamlbuild/rule.ml" 258 9846 9872
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 258 9846 9876 "ocamlbuild/rule.ml" 258 9846 9877
+type(
+  Resource.resource_pattern gen_rule list ref ->
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 258 9846 9877 "ocamlbuild/rule.ml" 258 9846 9882
+type(
+  Resource.resource_pattern gen_rule list ref
+)
+"ocamlbuild/rule.ml" 258 9846 9876 "ocamlbuild/rule.ml" 258 9846 9882
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 258 9846 9871 "ocamlbuild/rule.ml" 258 9846 9882
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 258 9846 9862 "ocamlbuild/rule.ml" 258 9846 9882
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 259 9883 9898 "ocamlbuild/rule.ml" 259 9883 9899
+type(
+  string
+)
+"ocamlbuild/rule.ml" 259 9883 9891 "ocamlbuild/rule.ml" 259 9883 9899
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 260 9903 9913 "ocamlbuild/rule.ml" 260 9903 9918
+type(
+  Resource.resource_pattern gen_rule list ref
+)
+"ocamlbuild/rule.ml" 260 9903 9919 "ocamlbuild/rule.ml" 260 9903 9921
+type(
+  Resource.resource_pattern gen_rule list ref ->
+  Resource.resource_pattern gen_rule list -> unit
+)
+"ocamlbuild/rule.ml" 261 9922 9934 "ocamlbuild/rule.ml" 261 9922 9949
+type(
+  (Resource.resource_pattern gen_rule ->
+   Resource.resource_pattern gen_rule list ->
+   Resource.resource_pattern gen_rule list) ->
+  Resource.resource_pattern gen_rule list ->
+  Resource.resource_pattern gen_rule list ->
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 261 9922 9960 "ocamlbuild/rule.ml" 261 9922 9961
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 261 9922 9962 "ocamlbuild/rule.ml" 261 9922 9965
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 262 9969 9986 "ocamlbuild/rule.ml" 262 9969 9987
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 262 9969 9986 "ocamlbuild/rule.ml" 262 9969 9992
+type(
+  string
+)
+"ocamlbuild/rule.ml" 262 9969 9993 "ocamlbuild/rule.ml" 262 9969 9994
+type(
+  string -> string -> bool
+)
+"ocamlbuild/rule.ml" 262 9969 9995 "ocamlbuild/rule.ml" 262 9969 9996
+type(
+  string
+)
+"ocamlbuild/rule.ml" 262 9969 9986 "ocamlbuild/rule.ml" 262 9969 9996
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 262 9969 10002 "ocamlbuild/rule.ml" 262 9969 10003
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 262 9969 10007 "ocamlbuild/rule.ml" 262 9969 10008
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 262 9969 10012 "ocamlbuild/rule.ml" 262 9969 10015
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 262 9969 10007 "ocamlbuild/rule.ml" 262 9969 10015
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 262 9969 10002 "ocamlbuild/rule.ml" 262 9969 10015
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 262 9969 10021 "ocamlbuild/rule.ml" 262 9969 10022
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 262 9969 10026 "ocamlbuild/rule.ml" 262 9969 10029
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 262 9969 10021 "ocamlbuild/rule.ml" 262 9969 10029
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 262 9969 9983 "ocamlbuild/rule.ml" 262 9969 10029
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 261 9922 9950 "ocamlbuild/rule.ml" 263 10030 10045
+type(
+  Resource.resource_pattern gen_rule ->
+  Resource.resource_pattern gen_rule list ->
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 263 10030 10046 "ocamlbuild/rule.ml" 263 10030 10047
+type(
+  Resource.resource_pattern gen_rule list ref ->
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 263 10030 10047 "ocamlbuild/rule.ml" 263 10030 10052
+type(
+  Resource.resource_pattern gen_rule list ref
+)
+"ocamlbuild/rule.ml" 263 10030 10046 "ocamlbuild/rule.ml" 263 10030 10052
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 263 10030 10053 "ocamlbuild/rule.ml" 263 10030 10055
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 261 9922 9934 "ocamlbuild/rule.ml" 263 10030 10055
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 260 9903 9913 "ocamlbuild/rule.ml" 263 10030 10055
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 264 10056 10072 "ocamlbuild/rule.ml" 264 10056 10073
+type(
+  string
+)
+"ocamlbuild/rule.ml" 264 10056 10064 "ocamlbuild/rule.ml" 264 10056 10073
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 265 10077 10087 "ocamlbuild/rule.ml" 265 10077 10092
+type(
+  Resource.resource_pattern gen_rule list ref
+)
+"ocamlbuild/rule.ml" 265 10077 10093 "ocamlbuild/rule.ml" 265 10077 10095
+type(
+  Resource.resource_pattern gen_rule list ref ->
+  Resource.resource_pattern gen_rule list -> unit
+)
+"ocamlbuild/rule.ml" 266 10096 10108 "ocamlbuild/rule.ml" 266 10096 10123
+type(
+  (Resource.resource_pattern gen_rule ->
+   Resource.resource_pattern gen_rule list ->
+   Resource.resource_pattern gen_rule list) ->
+  Resource.resource_pattern gen_rule list ->
+  Resource.resource_pattern gen_rule list ->
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 266 10096 10134 "ocamlbuild/rule.ml" 266 10096 10135
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 266 10096 10136 "ocamlbuild/rule.ml" 266 10096 10139
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 267 10143 10160 "ocamlbuild/rule.ml" 267 10143 10161
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 267 10143 10160 "ocamlbuild/rule.ml" 267 10143 10166
+type(
+  string
+)
+"ocamlbuild/rule.ml" 267 10143 10167 "ocamlbuild/rule.ml" 267 10143 10168
+type(
+  string -> string -> bool
+)
+"ocamlbuild/rule.ml" 267 10143 10169 "ocamlbuild/rule.ml" 267 10143 10170
+type(
+  string
+)
+"ocamlbuild/rule.ml" 267 10143 10160 "ocamlbuild/rule.ml" 267 10143 10170
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 267 10143 10176 "ocamlbuild/rule.ml" 267 10143 10177
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 267 10143 10181 "ocamlbuild/rule.ml" 267 10143 10182
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 267 10143 10186 "ocamlbuild/rule.ml" 267 10143 10189
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 267 10143 10181 "ocamlbuild/rule.ml" 267 10143 10189
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 267 10143 10176 "ocamlbuild/rule.ml" 267 10143 10189
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 267 10143 10195 "ocamlbuild/rule.ml" 267 10143 10196
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 267 10143 10200 "ocamlbuild/rule.ml" 267 10143 10203
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 267 10143 10195 "ocamlbuild/rule.ml" 267 10143 10203
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 267 10143 10157 "ocamlbuild/rule.ml" 267 10143 10203
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 266 10096 10124 "ocamlbuild/rule.ml" 268 10204 10219
+type(
+  Resource.resource_pattern gen_rule ->
+  Resource.resource_pattern gen_rule list ->
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 268 10204 10220 "ocamlbuild/rule.ml" 268 10204 10221
+type(
+  Resource.resource_pattern gen_rule list ref ->
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 268 10204 10221 "ocamlbuild/rule.ml" 268 10204 10226
+type(
+  Resource.resource_pattern gen_rule list ref
+)
+"ocamlbuild/rule.ml" 268 10204 10220 "ocamlbuild/rule.ml" 268 10204 10226
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 268 10204 10227 "ocamlbuild/rule.ml" 268 10204 10229
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 266 10096 10108 "ocamlbuild/rule.ml" 268 10204 10229
+type(
+  Resource.resource_pattern gen_rule list
+)
+"ocamlbuild/rule.ml" 265 10077 10087 "ocamlbuild/rule.ml" 268 10204 10229
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 256 9784 9790 "ocamlbuild/rule.ml" 268 10204 10229
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 252 9606 9610 "ocamlbuild/rule.ml" 268 10204 10229
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 251 9585 9587 "ocamlbuild/rule.ml" 269 10230 10235
+type(
+  'a -> Resource.resource_pattern gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 250 9563 9565 "ocamlbuild/rule.ml" 269 10230 10235
+type(
+  (unit -> Resource.resource_pattern gen_rule list) *
+  ('a -> Resource.resource_pattern gen_rule -> unit)
+)
+"ocamlbuild/rule.ml" 249 9539 9541 "ocamlbuild/rule.ml" 269 10230 10235
+type(
+  (unit -> Resource.resource_pattern gen_rule list) *
+  ('a -> Resource.resource_pattern gen_rule -> unit)
+)
+"ocamlbuild/rule.ml" 271 10237 10241 "ocamlbuild/rule.ml" 271 10237 10245
+type(
+  string ->
+  ?tags:Tags.elt list ->
+  ?prods:string list ->
+  ?deps:string list ->
+  ?prod:string ->
+  ?dep:string ->
+  ?stamp:string ->
+  ?insert:_[< `after of string | `before of string | `bottom | `top
+            > `bottom ] ->
+  (env -> builder -> Command.t) -> unit
+)
+"ocamlbuild/rule.ml" 271 10237 10246 "ocamlbuild/rule.ml" 271 10237 10250
+type(
+  string
+)
+"ocamlbuild/rule.ml" 271 10237 10253 "ocamlbuild/rule.ml" 271 10237 10257
+type(
+  Tags.elt list
+)
+"ocamlbuild/rule.ml" 271 10237 10258 "ocamlbuild/rule.ml" 271 10237 10260
+type(
+  Tags.elt list
+)
+"ocamlbuild/rule.ml" 271 10237 10258 "ocamlbuild/rule.ml" 271 10237 10260
+type(
+  Tags.elt list
+)
+"ocamlbuild/rule.ml" 271 10237 10258 "ocamlbuild/rule.ml" 271 10237 10260
+type(
+  Tags.elt list
+)
+"ocamlbuild/rule.ml" 271 10237 10258 "ocamlbuild/rule.ml" 271 10237 10260
+type(
+  Tags.elt list option
+)
+"ocamlbuild/rule.ml" 271 10237 10258 "ocamlbuild/rule.ml" 271 10237 10260
+type(
+  Tags.elt list option
+)
+"ocamlbuild/rule.ml" 271 10237 10258 "ocamlbuild/rule.ml" 271 10237 10260
+type(
+  Tags.elt list
+)
+"ocamlbuild/rule.ml" 271 10237 10258 "ocamlbuild/rule.ml" 271 10237 10260
+type(
+  Tags.elt list option
+)
+"ocamlbuild/rule.ml" 271 10237 10258 "ocamlbuild/rule.ml" 271 10237 10260
+type(
+  Tags.elt list option
+)
+"ocamlbuild/rule.ml" 271 10237 10264 "ocamlbuild/rule.ml" 271 10237 10269
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 271 10237 10270 "ocamlbuild/rule.ml" 271 10237 10272
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 271 10237 10270 "ocamlbuild/rule.ml" 271 10237 10272
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 271 10237 10270 "ocamlbuild/rule.ml" 271 10237 10272
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 271 10237 10270 "ocamlbuild/rule.ml" 271 10237 10272
+type(
+  string list option
+)
+"ocamlbuild/rule.ml" 271 10237 10270 "ocamlbuild/rule.ml" 271 10237 10272
+type(
+  string list option
+)
+"ocamlbuild/rule.ml" 271 10237 10270 "ocamlbuild/rule.ml" 271 10237 10272
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 271 10237 10270 "ocamlbuild/rule.ml" 271 10237 10272
+type(
+  string list option
+)
+"ocamlbuild/rule.ml" 271 10237 10270 "ocamlbuild/rule.ml" 271 10237 10272
+type(
+  string list option
+)
+"ocamlbuild/rule.ml" 271 10237 10276 "ocamlbuild/rule.ml" 271 10237 10280
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 271 10237 10281 "ocamlbuild/rule.ml" 271 10237 10283
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 271 10237 10281 "ocamlbuild/rule.ml" 271 10237 10283
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 271 10237 10281 "ocamlbuild/rule.ml" 271 10237 10283
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 271 10237 10281 "ocamlbuild/rule.ml" 271 10237 10283
+type(
+  string list option
+)
+"ocamlbuild/rule.ml" 271 10237 10281 "ocamlbuild/rule.ml" 271 10237 10283
+type(
+  string list option
+)
+"ocamlbuild/rule.ml" 271 10237 10281 "ocamlbuild/rule.ml" 271 10237 10283
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 271 10237 10281 "ocamlbuild/rule.ml" 271 10237 10283
+type(
+  string list option
+)
+"ocamlbuild/rule.ml" 271 10237 10281 "ocamlbuild/rule.ml" 271 10237 10283
+type(
+  string list option
+)
+"ocamlbuild/rule.ml" 271 10237 10286 "ocamlbuild/rule.ml" 271 10237 10290
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 271 10237 10292 "ocamlbuild/rule.ml" 271 10237 10295
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 271 10237 10297 "ocamlbuild/rule.ml" 271 10237 10302
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 271 10237 10305 "ocamlbuild/rule.ml" 271 10237 10311
+type(
+  _[< `after of string | `before of string | `bottom | `top > `bottom ] as 'a
+)
+"ocamlbuild/rule.ml" 271 10237 10314 "ocamlbuild/rule.ml" 271 10237 10321
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 271 10237 10314 "ocamlbuild/rule.ml" 271 10237 10321
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 271 10237 10314 "ocamlbuild/rule.ml" 271 10237 10321
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 271 10237 10314 "ocamlbuild/rule.ml" 271 10237 10321
+type(
+  'a option
+)
+"ocamlbuild/rule.ml" 271 10237 10314 "ocamlbuild/rule.ml" 271 10237 10321
+type(
+  'a option
+)
+"ocamlbuild/rule.ml" 271 10237 10314 "ocamlbuild/rule.ml" 271 10237 10321
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 271 10237 10314 "ocamlbuild/rule.ml" 271 10237 10321
+type(
+  'a option
+)
+"ocamlbuild/rule.ml" 271 10237 10314 "ocamlbuild/rule.ml" 271 10237 10321
+type(
+  'a option
+)
+"ocamlbuild/rule.ml" 271 10237 10323 "ocamlbuild/rule.ml" 271 10237 10327
+type(
+  env -> builder -> Command.t
+)
+"ocamlbuild/rule.ml" 272 10330 10336 "ocamlbuild/rule.ml" 272 10330 10343
+type(
+  (string -> 'b) -> string list -> string option -> 'b list
+)
+"ocamlbuild/rule.ml" 272 10330 10344 "ocamlbuild/rule.ml" 272 10330 10350
+type(
+  string -> 'b
+)
+"ocamlbuild/rule.ml" 272 10330 10351 "ocamlbuild/rule.ml" 272 10330 10353
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 272 10330 10354 "ocamlbuild/rule.ml" 272 10330 10358
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 273 10361 10369 "ocamlbuild/rule.ml" 273 10361 10373
+type(
+  'b list
+)
+"ocamlbuild/rule.ml" 274 10376 10388 "ocamlbuild/rule.ml" 274 10376 10392
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 275 10398 10406 "ocamlbuild/rule.ml" 275 10398 10410
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 275 10398 10414 "ocamlbuild/rule.ml" 275 10398 10416
+type(
+  'b list
+)
+"ocamlbuild/rule.ml" 276 10417 10430 "ocamlbuild/rule.ml" 276 10417 10431
+type(
+  string
+)
+"ocamlbuild/rule.ml" 276 10417 10425 "ocamlbuild/rule.ml" 276 10417 10431
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 276 10417 10436 "ocamlbuild/rule.ml" 276 10417 10442
+type(
+  string -> 'b
+)
+"ocamlbuild/rule.ml" 276 10417 10443 "ocamlbuild/rule.ml" 276 10417 10444
+type(
+  string
+)
+"ocamlbuild/rule.ml" 276 10417 10436 "ocamlbuild/rule.ml" 276 10417 10444
+type(
+  'b
+)
+"ocamlbuild/rule.ml" 276 10417 10435 "ocamlbuild/rule.ml" 276 10417 10445
+type(
+  'b list
+)
+"ocamlbuild/rule.ml" 274 10376 10382 "ocamlbuild/rule.ml" 276 10417 10445
+type(
+  'b list
+)
+"ocamlbuild/rule.ml" 278 10453 10457 "ocamlbuild/rule.ml" 278 10453 10472
+type(
+  (string -> 'b list -> 'b list) -> string list -> 'b list -> 'b list
+)
+"ocamlbuild/rule.ml" 278 10453 10483 "ocamlbuild/rule.ml" 278 10453 10484
+type(
+  string
+)
+"ocamlbuild/rule.ml" 278 10453 10485 "ocamlbuild/rule.ml" 278 10453 10488
+type(
+  'b list
+)
+"ocamlbuild/rule.ml" 279 10492 10502 "ocamlbuild/rule.ml" 279 10492 10503
+type(
+  'b
+)
+"ocamlbuild/rule.ml" 279 10492 10506 "ocamlbuild/rule.ml" 279 10492 10512
+type(
+  string -> 'b
+)
+"ocamlbuild/rule.ml" 279 10492 10513 "ocamlbuild/rule.ml" 279 10492 10514
+type(
+  string
+)
+"ocamlbuild/rule.ml" 279 10492 10506 "ocamlbuild/rule.ml" 279 10492 10514
+type(
+  'b
+)
+"ocamlbuild/rule.ml" 280 10518 10527 "ocamlbuild/rule.ml" 280 10518 10535
+type(
+  'b -> 'b list -> bool
+)
+"ocamlbuild/rule.ml" 280 10518 10536 "ocamlbuild/rule.ml" 280 10518 10537
+type(
+  'b
+)
+"ocamlbuild/rule.ml" 280 10518 10538 "ocamlbuild/rule.ml" 280 10518 10541
+type(
+  'b list
+)
+"ocamlbuild/rule.ml" 280 10518 10527 "ocamlbuild/rule.ml" 280 10518 10541
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 281 10547 10555 "ocamlbuild/rule.ml" 281 10547 10563
+type(
+  string -> 'b list
+)
+"ocamlbuild/rule.ml" 281 10547 10565 "ocamlbuild/rule.ml" 281 10547 10572
+type(
+  (string -> string -> string, unit, string) format ->
+  string -> string -> string
+)
+"ocamlbuild/rule.ml" 281 10547 10573 "ocamlbuild/rule.ml" 281 10547 10625
+type(
+  (string -> string -> string, unit, string) format
+)
+"ocamlbuild/rule.ml" 281 10547 10626 "ocamlbuild/rule.ml" 281 10547 10630
+type(
+  string
+)
+"ocamlbuild/rule.ml" 281 10547 10631 "ocamlbuild/rule.ml" 281 10547 10632
+type(
+  string
+)
+"ocamlbuild/rule.ml" 281 10547 10564 "ocamlbuild/rule.ml" 281 10547 10633
+type(
+  string
+)
+"ocamlbuild/rule.ml" 281 10547 10555 "ocamlbuild/rule.ml" 281 10547 10633
+type(
+  'b list
+)
+"ocamlbuild/rule.ml" 282 10634 10645 "ocamlbuild/rule.ml" 282 10634 10646
+type(
+  'b
+)
+"ocamlbuild/rule.ml" 282 10634 10650 "ocamlbuild/rule.ml" 282 10634 10653
+type(
+  'b list
+)
+"ocamlbuild/rule.ml" 282 10634 10645 "ocamlbuild/rule.ml" 282 10634 10653
+type(
+  'b list
+)
+"ocamlbuild/rule.ml" 280 10518 10524 "ocamlbuild/rule.ml" 282 10634 10653
+type(
+  'b list
+)
+"ocamlbuild/rule.ml" 279 10492 10498 "ocamlbuild/rule.ml" 282 10634 10653
+type(
+  'b list
+)
+"ocamlbuild/rule.ml" 278 10453 10473 "ocamlbuild/rule.ml" 283 10654 10661
+type(
+  string -> 'b list -> 'b list
+)
+"ocamlbuild/rule.ml" 283 10654 10662 "ocamlbuild/rule.ml" 283 10654 10664
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 283 10654 10665 "ocamlbuild/rule.ml" 283 10654 10669
+type(
+  'b list
+)
+"ocamlbuild/rule.ml" 278 10453 10457 "ocamlbuild/rule.ml" 283 10654 10669
+type(
+  'b list
+)
+"ocamlbuild/rule.ml" 273 10361 10365 "ocamlbuild/rule.ml" 283 10654 10669
+type(
+  'b list
+)
+"ocamlbuild/rule.ml" 285 10675 10680 "ocamlbuild/rule.ml" 285 10675 10685
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 285 10675 10686 "ocamlbuild/rule.ml" 285 10675 10687
+type(
+  string list -> string list -> bool
+)
+"ocamlbuild/rule.ml" 285 10675 10688 "ocamlbuild/rule.ml" 285 10675 10690
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 285 10675 10680 "ocamlbuild/rule.ml" 285 10675 10690
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 285 10675 10691 "ocamlbuild/rule.ml" 285 10675 10693
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/rule.ml" 285 10675 10694 "ocamlbuild/rule.ml" 285 10675 10698
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 285 10675 10699 "ocamlbuild/rule.ml" 285 10675 10700
+type(
+  string option -> string option -> bool
+)
+"ocamlbuild/rule.ml" 285 10675 10701 "ocamlbuild/rule.ml" 285 10675 10705
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 285 10675 10694 "ocamlbuild/rule.ml" 285 10675 10705
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 285 10675 10706 "ocamlbuild/rule.ml" 285 10675 10708
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/rule.ml" 285 10675 10709 "ocamlbuild/rule.ml" 285 10675 10714
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 285 10675 10715 "ocamlbuild/rule.ml" 285 10675 10716
+type(
+  string option -> string option -> bool
+)
+"ocamlbuild/rule.ml" 285 10675 10717 "ocamlbuild/rule.ml" 285 10675 10721
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 285 10675 10709 "ocamlbuild/rule.ml" 285 10675 10721
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 285 10675 10694 "ocamlbuild/rule.ml" 285 10675 10721
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 285 10675 10680 "ocamlbuild/rule.ml" 285 10675 10721
+type(
+  bool
+)
+"ocamlbuild/rule.ml" 285 10675 10727 "ocamlbuild/rule.ml" 285 10675 10732
+type(
+  exn -> unit
+)
+"ocamlbuild/rule.ml" 285 10675 10750 "ocamlbuild/rule.ml" 285 10675 10790
+type(
+  string
+)
+"ocamlbuild/rule.ml" 285 10675 10733 "ocamlbuild/rule.ml" 285 10675 10791
+type(
+  exn
+)
+"ocamlbuild/rule.ml" 285 10675 10727 "ocamlbuild/rule.ml" 285 10675 10791
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 285 10675 10677 "ocamlbuild/rule.ml" 285 10675 10791
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 286 10793 10799 "ocamlbuild/rule.ml" 286 10793 10804
+type(
+  Resource.resource_pattern option
+)
+"ocamlbuild/rule.ml" 286 10793 10806 "ocamlbuild/rule.ml" 286 10793 10811
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 286 10793 10799 "ocamlbuild/rule.ml" 286 10793 10811
+type(
+  Resource.resource_pattern option * string list
+)
+"ocamlbuild/rule.ml" 287 10814 10824 "ocamlbuild/rule.ml" 287 10814 10829
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 288 10835 10841 "ocamlbuild/rule.ml" 288 10835 10845
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 288 10835 10849 "ocamlbuild/rule.ml" 288 10835 10853
+type(
+  Resource.resource_pattern option
+)
+"ocamlbuild/rule.ml" 288 10835 10855 "ocamlbuild/rule.ml" 288 10835 10860
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 288 10835 10849 "ocamlbuild/rule.ml" 288 10835 10860
+type(
+  Resource.resource_pattern option * string list
+)
+"ocamlbuild/rule.ml" 289 10861 10872 "ocamlbuild/rule.ml" 289 10861 10877
+type(
+  string
+)
+"ocamlbuild/rule.ml" 289 10861 10867 "ocamlbuild/rule.ml" 289 10861 10877
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 290 10881 10895 "ocamlbuild/rule.ml" 290 10881 10918
+type(
+  string -> Resource.resource_pattern
+)
+"ocamlbuild/rule.ml" 290 10881 10919 "ocamlbuild/rule.ml" 290 10881 10924
+type(
+  string
+)
+"ocamlbuild/rule.ml" 290 10881 10894 "ocamlbuild/rule.ml" 290 10881 10925
+type(
+  Resource.resource_pattern
+)
+"ocamlbuild/rule.ml" 290 10881 10889 "ocamlbuild/rule.ml" 290 10881 10925
+type(
+  Resource.resource_pattern option
+)
+"ocamlbuild/rule.ml" 290 10881 10927 "ocamlbuild/rule.ml" 290 10881 10932
+type(
+  string
+)
+"ocamlbuild/rule.ml" 290 10881 10936 "ocamlbuild/rule.ml" 290 10881 10941
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 290 10881 10927 "ocamlbuild/rule.ml" 290 10881 10941
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 290 10881 10889 "ocamlbuild/rule.ml" 290 10881 10941
+type(
+  Resource.resource_pattern option * string list
+)
+"ocamlbuild/rule.ml" 287 10814 10818 "ocamlbuild/rule.ml" 290 10881 10941
+type(
+  Resource.resource_pattern option * string list
+)
+"ocamlbuild/rule.ml" 292 10947 10953 "ocamlbuild/rule.ml" 292 10947 10958
+type(
+  Resource.resource_pattern list
+)
+"ocamlbuild/rule.ml" 292 10947 10961 "ocamlbuild/rule.ml" 292 10947 10968
+type(
+  (string -> Resource.resource_pattern) ->
+  string list -> string option -> Resource.resource_pattern list
+)
+"ocamlbuild/rule.ml" 292 10947 10969 "ocamlbuild/rule.ml" 292 10947 10992
+type(
+  string -> Resource.resource_pattern
+)
+"ocamlbuild/rule.ml" 292 10947 10993 "ocamlbuild/rule.ml" 292 10947 10998
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 292 10947 10999 "ocamlbuild/rule.ml" 292 10947 11003
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 292 10947 10961 "ocamlbuild/rule.ml" 292 10947 11003
+type(
+  Resource.resource_pattern list
+)
+"ocamlbuild/rule.ml" 293 11007 11013 "ocamlbuild/rule.ml" 293 11007 11017
+type(
+  env -> builder -> digest_command
+)
+"ocamlbuild/rule.ml" 293 11007 11018 "ocamlbuild/rule.ml" 293 11007 11021
+type(
+  env
+)
+"ocamlbuild/rule.ml" 293 11007 11022 "ocamlbuild/rule.ml" 293 11007 11027
+type(
+  builder
+)
+"ocamlbuild/rule.ml" 294 11030 11038 "ocamlbuild/rule.ml" 294 11030 11041
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 294 11030 11044 "ocamlbuild/rule.ml" 294 11030 11048
+type(
+  env -> builder -> Command.t
+)
+"ocamlbuild/rule.ml" 294 11030 11049 "ocamlbuild/rule.ml" 294 11030 11052
+type(
+  env
+)
+"ocamlbuild/rule.ml" 294 11030 11053 "ocamlbuild/rule.ml" 294 11030 11058
+type(
+  builder
+)
+"ocamlbuild/rule.ml" 294 11030 11044 "ocamlbuild/rule.ml" 294 11030 11058
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 295 11062 11078 "ocamlbuild/rule.ml" 295 11062 11092
+type(
+  Command.t -> Digest.t
+)
+"ocamlbuild/rule.ml" 295 11062 11093 "ocamlbuild/rule.ml" 295 11062 11096
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 295 11062 11078 "ocamlbuild/rule.ml" 295 11062 11096
+type(
+  Digest.t
+)
+"ocamlbuild/rule.ml" 296 11097 11113 "ocamlbuild/rule.ml" 296 11097 11116
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 295 11062 11066 "ocamlbuild/rule.ml" 296 11097 11118
+type(
+  digest_command
+)
+"ocamlbuild/rule.ml" 294 11030 11034 "ocamlbuild/rule.ml" 296 11097 11118
+type(
+  digest_command
+)
+"ocamlbuild/rule.ml" 298 11124 11126 "ocamlbuild/rule.ml" 298 11124 11134
+type(
+  'a -> Resource.resource_pattern gen_rule -> unit
+)
+"ocamlbuild/rule.ml" 298 11124 11135 "ocamlbuild/rule.ml" 298 11124 11141
+type(
+  'a
+)
+"ocamlbuild/rule.ml" 299 11142 11154 "ocamlbuild/rule.ml" 299 11142 11158
+type(
+  string
+)
+"ocamlbuild/rule.ml" 300 11160 11172 "ocamlbuild/rule.ml" 300 11160 11187
+type(
+  (Tags.elt -> Tags.t -> Tags.t) -> Tags.elt list -> Tags.t -> Tags.t
+)
+"ocamlbuild/rule.ml" 300 11160 11188 "ocamlbuild/rule.ml" 300 11160 11196
+type(
+  Tags.elt -> Tags.t -> Tags.t
+)
+"ocamlbuild/rule.ml" 300 11160 11197 "ocamlbuild/rule.ml" 300 11160 11201
+type(
+  Tags.elt list
+)
+"ocamlbuild/rule.ml" 300 11160 11202 "ocamlbuild/rule.ml" 300 11160 11212
+type(
+  Tags.t
+)
+"ocamlbuild/rule.ml" 300 11160 11172 "ocamlbuild/rule.ml" 300 11160 11212
+type(
+  Tags.t
+)
+"ocamlbuild/rule.ml" 301 11214 11226 "ocamlbuild/rule.ml" 301 11214 11233
+type(
+  (string -> Pathname.t) -> string list -> string option -> Pathname.t list
+)
+"ocamlbuild/rule.ml" 301 11214 11234 "ocamlbuild/rule.ml" 301 11214 11249
+type(
+  string -> Pathname.t
+)
+"ocamlbuild/rule.ml" 301 11214 11273 "ocamlbuild/rule.ml" 301 11214 11277
+type(
+  string list
+)
+"ocamlbuild/rule.ml" 301 11214 11278 "ocamlbuild/rule.ml" 301 11214 11281
+type(
+  string option
+)
+"ocamlbuild/rule.ml" 301 11214 11226 "ocamlbuild/rule.ml" 301 11214 11281
+type(
+  Pathname.t list
+)
+"ocamlbuild/rule.ml" 302 11283 11295 "ocamlbuild/rule.ml" 302 11283 11300
+type(
+  Resource.resource_pattern option
+)
+"ocamlbuild/rule.ml" 303 11302 11314 "ocamlbuild/rule.ml" 303 11302 11319
+type(
+  Resource.resource_pattern list
+)
+"ocamlbuild/rule.ml" 304 11321 11333 "ocamlbuild/rule.ml" 304 11321 11337
+type(
+  env -> builder -> digest_command
+)
+"ocamlbuild/rule.ml" 299 11142 11144 "ocamlbuild/rule.ml" 304 11321 11339
+type(
+  Resource.resource_pattern gen_rule
+)
+"ocamlbuild/rule.ml" 298 11124 11126 "ocamlbuild/rule.ml" 304 11321 11339
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 293 11007 11009 "ocamlbuild/rule.ml" 304 11321 11339
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 292 10947 10949 "ocamlbuild/rule.ml" 304 11321 11339
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 286 10793 10795 "ocamlbuild/rule.ml" 304 11321 11339
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 285 10675 10677 "ocamlbuild/rule.ml" 304 11321 11339
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 272 10330 10332 "ocamlbuild/rule.ml" 304 11321 11339
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 308 11388 11394 "ocamlbuild/rule.ml" 308 11388 11396
+type(
+  Command.pathname -> Command.pathname -> Command.t
+)
+"ocamlbuild/rule.ml" 308 11388 11397 "ocamlbuild/rule.ml" 308 11388 11400
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 308 11388 11401 "ocamlbuild/rule.ml" 308 11388 11405
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 308 11388 11417 "ocamlbuild/rule.ml" 308 11388 11421
+type(
+  string
+)
+"ocamlbuild/rule.ml" 308 11388 11416 "ocamlbuild/rule.ml" 308 11388 11421
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 308 11388 11425 "ocamlbuild/rule.ml" 308 11388 11428
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 308 11388 11423 "ocamlbuild/rule.ml" 308 11388 11428
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 308 11388 11433 "ocamlbuild/rule.ml" 308 11388 11437
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 308 11388 11430 "ocamlbuild/rule.ml" 308 11388 11437
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 308 11388 11415 "ocamlbuild/rule.ml" 308 11388 11438
+type(
+  Command.spec list
+)
+"ocamlbuild/rule.ml" 308 11388 11412 "ocamlbuild/rule.ml" 308 11388 11439
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 308 11388 11408 "ocamlbuild/rule.ml" 308 11388 11439
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 309 11440 11446 "ocamlbuild/rule.ml" 309 11440 11448
+type(
+  Command.pathname -> Command.pathname -> Command.t
+)
+"ocamlbuild/rule.ml" 309 11440 11449 "ocamlbuild/rule.ml" 309 11440 11452
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 309 11440 11453 "ocamlbuild/rule.ml" 309 11440 11457
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 309 11440 11469 "ocamlbuild/rule.ml" 309 11440 11473
+type(
+  string
+)
+"ocamlbuild/rule.ml" 309 11440 11468 "ocamlbuild/rule.ml" 309 11440 11473
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 309 11440 11477 "ocamlbuild/rule.ml" 309 11440 11480
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 309 11440 11475 "ocamlbuild/rule.ml" 309 11440 11480
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 309 11440 11485 "ocamlbuild/rule.ml" 309 11440 11489
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 309 11440 11482 "ocamlbuild/rule.ml" 309 11440 11489
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 309 11440 11467 "ocamlbuild/rule.ml" 309 11440 11490
+type(
+  Command.spec list
+)
+"ocamlbuild/rule.ml" 309 11440 11464 "ocamlbuild/rule.ml" 309 11440 11491
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 309 11440 11460 "ocamlbuild/rule.ml" 309 11440 11491
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 310 11492 11498 "ocamlbuild/rule.ml" 310 11492 11502
+type(
+  Command.pathname -> Command.pathname -> Command.t
+)
+"ocamlbuild/rule.ml" 310 11492 11503 "ocamlbuild/rule.ml" 310 11492 11506
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 310 11492 11507 "ocamlbuild/rule.ml" 310 11492 11511
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 310 11492 11523 "ocamlbuild/rule.ml" 310 11492 11527
+type(
+  string
+)
+"ocamlbuild/rule.ml" 310 11492 11522 "ocamlbuild/rule.ml" 310 11492 11527
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 310 11492 11530 "ocamlbuild/rule.ml" 310 11492 11534
+type(
+  string
+)
+"ocamlbuild/rule.ml" 310 11492 11529 "ocamlbuild/rule.ml" 310 11492 11534
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 310 11492 11538 "ocamlbuild/rule.ml" 310 11492 11541
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 310 11492 11536 "ocamlbuild/rule.ml" 310 11492 11541
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 310 11492 11546 "ocamlbuild/rule.ml" 310 11492 11550
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 310 11492 11543 "ocamlbuild/rule.ml" 310 11492 11550
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 310 11492 11521 "ocamlbuild/rule.ml" 310 11492 11551
+type(
+  Command.spec list
+)
+"ocamlbuild/rule.ml" 310 11492 11518 "ocamlbuild/rule.ml" 310 11492 11552
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 310 11492 11514 "ocamlbuild/rule.ml" 310 11492 11552
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 311 11553 11559 "ocamlbuild/rule.ml" 311 11553 11563
+type(
+  Command.pathname -> Command.pathname -> Command.t
+)
+"ocamlbuild/rule.ml" 311 11553 11564 "ocamlbuild/rule.ml" 311 11553 11571
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 311 11553 11572 "ocamlbuild/rule.ml" 311 11553 11579
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 311 11553 11591 "ocamlbuild/rule.ml" 311 11553 11595
+type(
+  string
+)
+"ocamlbuild/rule.ml" 311 11553 11590 "ocamlbuild/rule.ml" 311 11553 11595
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 311 11553 11598 "ocamlbuild/rule.ml" 311 11553 11602
+type(
+  string
+)
+"ocamlbuild/rule.ml" 311 11553 11597 "ocamlbuild/rule.ml" 311 11553 11602
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 311 11553 11606 "ocamlbuild/rule.ml" 311 11553 11613
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 311 11553 11604 "ocamlbuild/rule.ml" 311 11553 11613
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 311 11553 11618 "ocamlbuild/rule.ml" 311 11553 11625
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 311 11553 11615 "ocamlbuild/rule.ml" 311 11553 11625
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 311 11553 11589 "ocamlbuild/rule.ml" 311 11553 11626
+type(
+  Command.spec list
+)
+"ocamlbuild/rule.ml" 311 11553 11586 "ocamlbuild/rule.ml" 311 11553 11627
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 311 11553 11582 "ocamlbuild/rule.ml" 311 11553 11627
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 312 11628 11634 "ocamlbuild/rule.ml" 312 11628 11638
+type(
+  Command.pathname -> Command.pathname -> Command.t
+)
+"ocamlbuild/rule.ml" 312 11628 11639 "ocamlbuild/rule.ml" 312 11628 11646
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 312 11628 11647 "ocamlbuild/rule.ml" 312 11628 11654
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 312 11628 11665 "ocamlbuild/rule.ml" 312 11628 11669
+type(
+  string
+)
+"ocamlbuild/rule.ml" 312 11628 11664 "ocamlbuild/rule.ml" 312 11628 11669
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 312 11628 11672 "ocamlbuild/rule.ml" 312 11628 11676
+type(
+  string
+)
+"ocamlbuild/rule.ml" 312 11628 11671 "ocamlbuild/rule.ml" 312 11628 11676
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 312 11628 11680 "ocamlbuild/rule.ml" 312 11628 11687
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 312 11628 11678 "ocamlbuild/rule.ml" 312 11628 11687
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 312 11628 11692 "ocamlbuild/rule.ml" 312 11628 11699
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 312 11628 11689 "ocamlbuild/rule.ml" 312 11628 11699
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 312 11628 11663 "ocamlbuild/rule.ml" 312 11628 11700
+type(
+  Command.spec list
+)
+"ocamlbuild/rule.ml" 312 11628 11661 "ocamlbuild/rule.ml" 312 11628 11701
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 312 11628 11657 "ocamlbuild/rule.ml" 312 11628 11701
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 313 11702 11708 "ocamlbuild/rule.ml" 313 11702 11712
+type(
+  Command.pathname -> Command.t
+)
+"ocamlbuild/rule.ml" 313 11702 11713 "ocamlbuild/rule.ml" 313 11702 11714
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 313 11702 11726 "ocamlbuild/rule.ml" 313 11702 11730
+type(
+  string
+)
+"ocamlbuild/rule.ml" 313 11702 11725 "ocamlbuild/rule.ml" 313 11702 11730
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 313 11702 11733 "ocamlbuild/rule.ml" 313 11702 11737
+type(
+  string
+)
+"ocamlbuild/rule.ml" 313 11702 11732 "ocamlbuild/rule.ml" 313 11702 11737
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 313 11702 11742 "ocamlbuild/rule.ml" 313 11702 11743
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 313 11702 11739 "ocamlbuild/rule.ml" 313 11702 11743
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 313 11702 11724 "ocamlbuild/rule.ml" 313 11702 11744
+type(
+  Command.spec list
+)
+"ocamlbuild/rule.ml" 313 11702 11721 "ocamlbuild/rule.ml" 313 11702 11745
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 313 11702 11717 "ocamlbuild/rule.ml" 313 11702 11745
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 314 11746 11752 "ocamlbuild/rule.ml" 314 11746 11757
+type(
+  Command.spec -> Command.pathname -> Command.t
+)
+"ocamlbuild/rule.ml" 314 11746 11758 "ocamlbuild/rule.ml" 314 11746 11762
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 314 11746 11763 "ocamlbuild/rule.ml" 314 11746 11767
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 314 11746 11778 "ocamlbuild/rule.ml" 314 11746 11785
+type(
+  string
+)
+"ocamlbuild/rule.ml" 314 11746 11777 "ocamlbuild/rule.ml" 314 11746 11785
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 314 11746 11787 "ocamlbuild/rule.ml" 314 11746 11791
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 314 11746 11796 "ocamlbuild/rule.ml" 314 11746 11800
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 314 11746 11793 "ocamlbuild/rule.ml" 314 11746 11800
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 314 11746 11776 "ocamlbuild/rule.ml" 314 11746 11801
+type(
+  Command.spec list
+)
+"ocamlbuild/rule.ml" 314 11746 11774 "ocamlbuild/rule.ml" 314 11746 11802
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 314 11746 11770 "ocamlbuild/rule.ml" 314 11746 11802
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 315 11803 11809 "ocamlbuild/rule.ml" 315 11803 11812
+type(
+  Command.pathname -> Command.pathname -> Command.t
+)
+"ocamlbuild/rule.ml" 315 11803 11813 "ocamlbuild/rule.ml" 315 11803 11814
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 315 11803 11815 "ocamlbuild/rule.ml" 315 11803 11816
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 315 11803 11827 "ocamlbuild/rule.ml" 315 11803 11832
+type(
+  string
+)
+"ocamlbuild/rule.ml" 315 11803 11826 "ocamlbuild/rule.ml" 315 11803 11832
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 315 11803 11836 "ocamlbuild/rule.ml" 315 11803 11837
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 315 11803 11834 "ocamlbuild/rule.ml" 315 11803 11837
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 315 11803 11842 "ocamlbuild/rule.ml" 315 11803 11843
+type(
+  Command.pathname
+)
+"ocamlbuild/rule.ml" 315 11803 11839 "ocamlbuild/rule.ml" 315 11803 11843
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 315 11803 11825 "ocamlbuild/rule.ml" 315 11803 11844
+type(
+  Command.spec list
+)
+"ocamlbuild/rule.ml" 315 11803 11823 "ocamlbuild/rule.ml" 315 11803 11845
+type(
+  Command.spec
+)
+"ocamlbuild/rule.ml" 315 11803 11819 "ocamlbuild/rule.ml" 315 11803 11845
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 319 11872 11876 "ocamlbuild/rule.ml" 319 11872 11885
+type(
+  string ->
+  ?insert:_[< `after of string | `before of string | `bottom | `top
+            > `bottom ] ->
+  Pathname.t -> Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 319 11872 11886 "ocamlbuild/rule.ml" 319 11872 11890
+type(
+  string
+)
+"ocamlbuild/rule.ml" 319 11872 11892 "ocamlbuild/rule.ml" 319 11872 11898
+type(
+  (_[< `after of string | `before of string | `bottom | `top > `bottom ]
+   as 'a)
+  option
+)
+"ocamlbuild/rule.ml" 319 11872 11899 "ocamlbuild/rule.ml" 319 11872 11902
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 319 11872 11903 "ocamlbuild/rule.ml" 319 11872 11907
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 320 11910 11912 "ocamlbuild/rule.ml" 320 11910 11916
+type(
+  string ->
+  ?tags:Tags.elt list ->
+  ?prods:Pathname.t list ->
+  ?deps:Pathname.t list ->
+  ?prod:Pathname.t ->
+  ?dep:Pathname.t ->
+  ?stamp:Pathname.t -> ?insert:'a -> (env -> builder -> Command.t) -> unit
+)
+"ocamlbuild/rule.ml" 320 11910 11917 "ocamlbuild/rule.ml" 320 11910 11921
+type(
+  string
+)
+"ocamlbuild/rule.ml" 320 11910 11923 "ocamlbuild/rule.ml" 320 11910 11929
+type(
+  'a option
+)
+"ocamlbuild/rule.ml" 320 11910 11936 "ocamlbuild/rule.ml" 320 11910 11940
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 320 11910 11946 "ocamlbuild/rule.ml" 320 11910 11949
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 321 11950 11964 "ocamlbuild/rule.ml" 321 11950 11967
+type(
+  env
+)
+"ocamlbuild/rule.ml" 321 11950 11968 "ocamlbuild/rule.ml" 321 11950 11969
+type(
+  builder
+)
+"ocamlbuild/rule.ml" 322 11973 11983 "ocamlbuild/rule.ml" 322 11973 11986
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 322 11973 11989 "ocamlbuild/rule.ml" 322 11973 11992
+type(
+  env
+)
+"ocamlbuild/rule.ml" 322 11973 11993 "ocamlbuild/rule.ml" 322 11973 11996
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 322 11973 11989 "ocamlbuild/rule.ml" 322 11973 11996
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 322 11973 12001 "ocamlbuild/rule.ml" 322 11973 12005
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 322 11973 12008 "ocamlbuild/rule.ml" 322 11973 12011
+type(
+  env
+)
+"ocamlbuild/rule.ml" 322 11973 12012 "ocamlbuild/rule.ml" 322 11973 12016
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 322 11973 12008 "ocamlbuild/rule.ml" 322 11973 12016
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 323 12020 12026 "ocamlbuild/rule.ml" 323 12020 12039
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/rule.ml" 323 12020 12041 "ocamlbuild/rule.ml" 323 12020 12057
+type(
+  Pathname.t -> Pathname.t
+)
+"ocamlbuild/rule.ml" 323 12020 12058 "ocamlbuild/rule.ml" 323 12020 12062
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 323 12020 12040 "ocamlbuild/rule.ml" 323 12020 12063
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 323 12020 12026 "ocamlbuild/rule.ml" 323 12020 12063
+type(
+  unit
+)
+"ocamlbuild/rule.ml" 324 12065 12071 "ocamlbuild/rule.ml" 324 12065 12075
+type(
+  Command.pathname -> Command.pathname -> Command.t
+)
+"ocamlbuild/rule.ml" 324 12065 12076 "ocamlbuild/rule.ml" 324 12065 12079
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 324 12065 12080 "ocamlbuild/rule.ml" 324 12065 12084
+type(
+  Pathname.t
+)
+"ocamlbuild/rule.ml" 324 12065 12071 "ocamlbuild/rule.ml" 324 12065 12084
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 323 12020 12026 "ocamlbuild/rule.ml" 324 12065 12084
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 322 11973 11979 "ocamlbuild/rule.ml" 324 12065 12084
+type(
+  Command.t
+)
+"ocamlbuild/rule.ml" 321 11950 11954 "ocamlbuild/rule.ml" 325 12085 12092
+type(
+  env -> builder -> Command.t
+)
+"ocamlbuild/rule.ml" 320 11910 11912 "ocamlbuild/rule.ml" 325 12085 12092
+type(
+  unit
+)

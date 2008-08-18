@@ -1,0 +1,348 @@
+"ocamlbuild/tags.ml" 22 1048 1052 "ocamlbuild/tags.ml" 22 1048 1062
+type(
+  t -> t -> bool
+)
+"ocamlbuild/tags.ml" 22 1048 1063 "ocamlbuild/tags.ml" 22 1048 1064
+type(
+  t
+)
+"ocamlbuild/tags.ml" 22 1048 1065 "ocamlbuild/tags.ml" 22 1048 1066
+type(
+  t
+)
+"ocamlbuild/tags.ml" 22 1048 1069 "ocamlbuild/tags.ml" 22 1048 1075
+type(
+  t -> t -> bool
+)
+"ocamlbuild/tags.ml" 22 1048 1076 "ocamlbuild/tags.ml" 22 1048 1077
+type(
+  t
+)
+"ocamlbuild/tags.ml" 22 1048 1078 "ocamlbuild/tags.ml" 22 1048 1079
+type(
+  t
+)
+"ocamlbuild/tags.ml" 22 1048 1069 "ocamlbuild/tags.ml" 22 1048 1079
+type(
+  bool
+)
+"ocamlbuild/tags.ml" 24 1081 1085 "ocamlbuild/tags.ml" 24 1081 1092
+type(
+  elt list -> t
+)
+"ocamlbuild/tags.ml" 24 1081 1093 "ocamlbuild/tags.ml" 24 1081 1094
+type(
+  elt list
+)
+"ocamlbuild/tags.ml" 24 1081 1097 "ocamlbuild/tags.ml" 24 1081 1112
+type(
+  (elt -> t -> t) -> elt list -> t -> t
+)
+"ocamlbuild/tags.ml" 24 1081 1113 "ocamlbuild/tags.ml" 24 1081 1116
+type(
+  elt -> t -> t
+)
+"ocamlbuild/tags.ml" 24 1081 1117 "ocamlbuild/tags.ml" 24 1081 1118
+type(
+  elt list
+)
+"ocamlbuild/tags.ml" 24 1081 1119 "ocamlbuild/tags.ml" 24 1081 1124
+type(
+  t
+)
+"ocamlbuild/tags.ml" 24 1081 1097 "ocamlbuild/tags.ml" 24 1081 1124
+type(
+  t
+)
+"ocamlbuild/tags.ml" 28 1139 1143 "ocamlbuild/tags.ml" 28 1139 1148
+type(
+  Format.formatter -> t -> unit
+)
+"ocamlbuild/tags.ml" 28 1139 1149 "ocamlbuild/tags.ml" 28 1139 1150
+type(
+  Format.formatter
+)
+"ocamlbuild/tags.ml" 28 1139 1151 "ocamlbuild/tags.ml" 28 1139 1152
+type(
+  t
+)
+"ocamlbuild/tags.ml" 29 1155 1161 "ocamlbuild/tags.ml" 29 1155 1163
+type(
+  unit
+)
+"ocamlbuild/tags.ml" 29 1155 1166 "ocamlbuild/tags.ml" 29 1155 1173
+type(
+  Format.formatter -> (unit, Format.formatter, unit) format -> unit
+)
+"ocamlbuild/tags.ml" 29 1155 1174 "ocamlbuild/tags.ml" 29 1155 1175
+type(
+  Format.formatter
+)
+"ocamlbuild/tags.ml" 29 1155 1176 "ocamlbuild/tags.ml" 29 1155 1183
+type(
+  (unit, Format.formatter, unit) format
+)
+"ocamlbuild/tags.ml" 29 1155 1166 "ocamlbuild/tags.ml" 29 1155 1183
+type(
+  unit
+)
+"ocamlbuild/tags.ml" 30 1187 1193 "ocamlbuild/tags.ml" 30 1187 1194
+type(
+  bool
+)
+"ocamlbuild/tags.ml" 31 1197 1201 "ocamlbuild/tags.ml" 31 1197 1205
+type(
+  (elt -> bool -> bool) -> t -> bool -> bool
+)
+"ocamlbuild/tags.ml" 31 1197 1216 "ocamlbuild/tags.ml" 31 1197 1219
+type(
+  elt
+)
+"ocamlbuild/tags.ml" 31 1197 1220 "ocamlbuild/tags.ml" 31 1197 1225
+type(
+  bool
+)
+"ocamlbuild/tags.ml" 32 1229 1238 "ocamlbuild/tags.ml" 32 1229 1241
+type(
+  bool -> bool
+)
+"ocamlbuild/tags.ml" 32 1229 1242 "ocamlbuild/tags.ml" 32 1229 1247
+type(
+  bool
+)
+"ocamlbuild/tags.ml" 32 1229 1238 "ocamlbuild/tags.ml" 32 1229 1247
+type(
+  bool
+)
+"ocamlbuild/tags.ml" 32 1229 1253 "ocamlbuild/tags.ml" 32 1229 1260
+type(
+  Format.formatter -> (unit, Format.formatter, unit) format -> unit
+)
+"ocamlbuild/tags.ml" 32 1229 1261 "ocamlbuild/tags.ml" 32 1229 1262
+type(
+  Format.formatter
+)
+"ocamlbuild/tags.ml" 32 1229 1263 "ocamlbuild/tags.ml" 32 1229 1268
+type(
+  (unit, Format.formatter, unit) format
+)
+"ocamlbuild/tags.ml" 32 1229 1253 "ocamlbuild/tags.ml" 32 1229 1268
+type(
+  unit
+)
+"ocamlbuild/tags.ml" 32 1229 1235 "ocamlbuild/tags.ml" 32 1229 1268
+type(
+  unit
+)
+"ocamlbuild/tags.ml" 33 1270 1276 "ocamlbuild/tags.ml" 33 1270 1291
+type(
+  Format.formatter -> elt -> unit
+)
+"ocamlbuild/tags.ml" 33 1270 1292 "ocamlbuild/tags.ml" 33 1270 1293
+type(
+  Format.formatter
+)
+"ocamlbuild/tags.ml" 33 1270 1294 "ocamlbuild/tags.ml" 33 1270 1297
+type(
+  elt
+)
+"ocamlbuild/tags.ml" 33 1270 1276 "ocamlbuild/tags.ml" 33 1270 1297
+type(
+  unit
+)
+"ocamlbuild/tags.ml" 34 1299 1305 "ocamlbuild/tags.ml" 34 1299 1310
+type(
+  bool
+)
+"ocamlbuild/tags.ml" 33 1270 1276 "ocamlbuild/tags.ml" 34 1299 1310
+type(
+  bool
+)
+"ocamlbuild/tags.ml" 32 1229 1235 "ocamlbuild/tags.ml" 34 1299 1310
+type(
+  bool
+)
+"ocamlbuild/tags.ml" 31 1197 1206 "ocamlbuild/tags.ml" 35 1311 1318
+type(
+  elt -> bool -> bool
+)
+"ocamlbuild/tags.ml" 35 1311 1319 "ocamlbuild/tags.ml" 35 1311 1320
+type(
+  t
+)
+"ocamlbuild/tags.ml" 35 1311 1321 "ocamlbuild/tags.ml" 35 1311 1325
+type(
+  bool
+)
+"ocamlbuild/tags.ml" 31 1197 1201 "ocamlbuild/tags.ml" 35 1311 1325
+type(
+  bool
+)
+"ocamlbuild/tags.ml" 36 1329 1331 "ocamlbuild/tags.ml" 36 1329 1338
+type(
+  Format.formatter -> (unit, Format.formatter, unit) format -> unit
+)
+"ocamlbuild/tags.ml" 36 1329 1339 "ocamlbuild/tags.ml" 36 1329 1340
+type(
+  Format.formatter
+)
+"ocamlbuild/tags.ml" 36 1329 1341 "ocamlbuild/tags.ml" 36 1329 1345
+type(
+  (unit, Format.formatter, unit) format
+)
+"ocamlbuild/tags.ml" 36 1329 1331 "ocamlbuild/tags.ml" 36 1329 1345
+type(
+  unit
+)
+"ocamlbuild/tags.ml" 30 1187 1189 "ocamlbuild/tags.ml" 36 1329 1345
+type(
+  unit
+)
+"ocamlbuild/tags.ml" 29 1155 1157 "ocamlbuild/tags.ml" 36 1329 1345
+type(
+  unit
+)
+"ocamlbuild/tags.ml" 39 1373 1379 "ocamlbuild/tags.ml" 39 1373 1385
+type(
+  t -> elt -> t
+)
+"ocamlbuild/tags.ml" 39 1373 1386 "ocamlbuild/tags.ml" 39 1373 1387
+type(
+  t
+)
+"ocamlbuild/tags.ml" 39 1373 1388 "ocamlbuild/tags.ml" 39 1373 1389
+type(
+  elt
+)
+"ocamlbuild/tags.ml" 39 1373 1392 "ocamlbuild/tags.ml" 39 1373 1395
+type(
+  elt -> t -> t
+)
+"ocamlbuild/tags.ml" 39 1373 1396 "ocamlbuild/tags.ml" 39 1373 1397
+type(
+  elt
+)
+"ocamlbuild/tags.ml" 39 1373 1398 "ocamlbuild/tags.ml" 39 1373 1399
+type(
+  t
+)
+"ocamlbuild/tags.ml" 39 1373 1392 "ocamlbuild/tags.ml" 39 1373 1399
+type(
+  t
+)
+"ocamlbuild/tags.ml" 40 1400 1406 "ocamlbuild/tags.ml" 40 1400 1412
+type(
+  t -> elt -> t
+)
+"ocamlbuild/tags.ml" 40 1400 1413 "ocamlbuild/tags.ml" 40 1400 1414
+type(
+  t
+)
+"ocamlbuild/tags.ml" 40 1400 1415 "ocamlbuild/tags.ml" 40 1400 1416
+type(
+  elt
+)
+"ocamlbuild/tags.ml" 40 1400 1419 "ocamlbuild/tags.ml" 40 1400 1425
+type(
+  elt -> t -> t
+)
+"ocamlbuild/tags.ml" 40 1400 1426 "ocamlbuild/tags.ml" 40 1400 1427
+type(
+  elt
+)
+"ocamlbuild/tags.ml" 40 1400 1428 "ocamlbuild/tags.ml" 40 1400 1429
+type(
+  t
+)
+"ocamlbuild/tags.ml" 40 1400 1419 "ocamlbuild/tags.ml" 40 1400 1429
+type(
+  t
+)
+"ocamlbuild/tags.ml" 41 1430 1436 "ocamlbuild/tags.ml" 41 1430 1443
+type(
+  t -> elt option -> t
+)
+"ocamlbuild/tags.ml" 41 1430 1444 "ocamlbuild/tags.ml" 41 1430 1445
+type(
+  t
+)
+"ocamlbuild/tags.ml" 41 1430 1462 "ocamlbuild/tags.ml" 41 1430 1463
+type(
+  elt
+)
+"ocamlbuild/tags.ml" 41 1430 1457 "ocamlbuild/tags.ml" 41 1430 1463
+type(
+  elt option
+)
+"ocamlbuild/tags.ml" 41 1430 1467 "ocamlbuild/tags.ml" 41 1430 1470
+type(
+  elt -> t -> t
+)
+"ocamlbuild/tags.ml" 41 1430 1471 "ocamlbuild/tags.ml" 41 1430 1472
+type(
+  elt
+)
+"ocamlbuild/tags.ml" 41 1430 1473 "ocamlbuild/tags.ml" 41 1430 1474
+type(
+  t
+)
+"ocamlbuild/tags.ml" 41 1430 1467 "ocamlbuild/tags.ml" 41 1430 1474
+type(
+  t
+)
+"ocamlbuild/tags.ml" 41 1430 1477 "ocamlbuild/tags.ml" 41 1430 1481
+type(
+  elt option
+)
+"ocamlbuild/tags.ml" 41 1430 1485 "ocamlbuild/tags.ml" 41 1430 1486
+type(
+  t
+)
+"ocamlbuild/tags.ml" 41 1430 1448 "ocamlbuild/tags.ml" 41 1430 1486
+type(
+  elt option -> t
+)
+"ocamlbuild/tags.ml" 42 1487 1493 "ocamlbuild/tags.ml" 42 1487 1500
+type(
+  t -> elt option -> t
+)
+"ocamlbuild/tags.ml" 42 1487 1501 "ocamlbuild/tags.ml" 42 1487 1502
+type(
+  t
+)
+"ocamlbuild/tags.ml" 42 1487 1519 "ocamlbuild/tags.ml" 42 1487 1520
+type(
+  elt
+)
+"ocamlbuild/tags.ml" 42 1487 1514 "ocamlbuild/tags.ml" 42 1487 1520
+type(
+  elt option
+)
+"ocamlbuild/tags.ml" 42 1487 1524 "ocamlbuild/tags.ml" 42 1487 1530
+type(
+  elt -> t -> t
+)
+"ocamlbuild/tags.ml" 42 1487 1531 "ocamlbuild/tags.ml" 42 1487 1532
+type(
+  elt
+)
+"ocamlbuild/tags.ml" 42 1487 1533 "ocamlbuild/tags.ml" 42 1487 1534
+type(
+  t
+)
+"ocamlbuild/tags.ml" 42 1487 1524 "ocamlbuild/tags.ml" 42 1487 1534
+type(
+  t
+)
+"ocamlbuild/tags.ml" 42 1487 1537 "ocamlbuild/tags.ml" 42 1487 1541
+type(
+  elt option
+)
+"ocamlbuild/tags.ml" 42 1487 1545 "ocamlbuild/tags.ml" 42 1487 1546
+type(
+  t
+)
+"ocamlbuild/tags.ml" 42 1487 1505 "ocamlbuild/tags.ml" 42 1487 1546
+type(
+  elt option -> t
+)

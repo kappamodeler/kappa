@@ -1,0 +1,1009 @@
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 18 908 912 "ocamlbuild/ocamlbuild_unix_plugin.ml" 18 908 924
+type(
+  Format.formatter -> exn -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 18 908 925 "ocamlbuild/ocamlbuild_unix_plugin.ml" 18 908 926
+type(
+  Format.formatter
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 20 940 960 "ocamlbuild/ocamlbuild_unix_plugin.ml" 20 940 963
+type(
+  Unix.error
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 20 940 965 "ocamlbuild/ocamlbuild_unix_plugin.ml" 20 940 973
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 20 940 975 "ocamlbuild/ocamlbuild_unix_plugin.ml" 20 940 978
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 20 940 944 "ocamlbuild/ocamlbuild_unix_plugin.ml" 20 940 979
+type(
+  exn
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 989 "ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 996
+type(
+  Format.formatter ->
+  (string -> string -> unit, Format.formatter, unit) format ->
+  string -> string -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 997 "ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 998
+type(
+  Format.formatter
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 999 "ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 1014
+type(
+  (string -> string -> unit, Format.formatter, unit) format
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 1015 "ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 1023
+type(
+  string array
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 1025 "ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 1026
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 1015 "ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 1027
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 1028 "ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 1036
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 989 "ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 1036
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 22 1038 1047 "ocamlbuild/ocamlbuild_unix_plugin.ml" 22 1038 1060
+type(
+  string -> int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 22 1038 1061 "ocamlbuild/ocamlbuild_unix_plugin.ml" 22 1038 1064
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 22 1038 1047 "ocamlbuild/ocamlbuild_unix_plugin.ml" 22 1038 1064
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 22 1038 1065 "ocamlbuild/ocamlbuild_unix_plugin.ml" 22 1038 1066
+type(
+  int -> int -> bool
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 22 1038 1067 "ocamlbuild/ocamlbuild_unix_plugin.ml" 22 1038 1068
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 22 1038 1047 "ocamlbuild/ocamlbuild_unix_plugin.ml" 22 1038 1068
+type(
+  bool
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 23 1074 1082 "ocamlbuild/ocamlbuild_unix_plugin.ml" 23 1074 1089
+type(
+  Format.formatter ->
+  (string -> unit, Format.formatter, unit) format -> string -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 23 1074 1090 "ocamlbuild/ocamlbuild_unix_plugin.ml" 23 1074 1091
+type(
+  Format.formatter
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 23 1074 1092 "ocamlbuild/ocamlbuild_unix_plugin.ml" 23 1074 1100
+type(
+  (string -> unit, Format.formatter, unit) format
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 23 1074 1101 "ocamlbuild/ocamlbuild_unix_plugin.ml" 23 1074 1104
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 23 1074 1082 "ocamlbuild/ocamlbuild_unix_plugin.ml" 23 1074 1104
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 22 1038 1044 "ocamlbuild/ocamlbuild_unix_plugin.ml" 23 1074 1104
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 24 1106 1112 "ocamlbuild/ocamlbuild_unix_plugin.ml" 24 1106 1119
+type(
+  Format.formatter ->
+  (string -> unit, Format.formatter, unit) format -> string -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 24 1106 1120 "ocamlbuild/ocamlbuild_unix_plugin.ml" 24 1106 1121
+type(
+  Format.formatter
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 24 1106 1122 "ocamlbuild/ocamlbuild_unix_plugin.ml" 24 1106 1128
+type(
+  (string -> unit, Format.formatter, unit) format
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 24 1106 1130 "ocamlbuild/ocamlbuild_unix_plugin.ml" 24 1106 1148
+type(
+  Unix.error -> string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 24 1106 1149 "ocamlbuild/ocamlbuild_unix_plugin.ml" 24 1106 1152
+type(
+  Unix.error
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 24 1106 1129 "ocamlbuild/ocamlbuild_unix_plugin.ml" 24 1106 1153
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 24 1106 1112 "ocamlbuild/ocamlbuild_unix_plugin.ml" 24 1106 1153
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 22 1038 1044 "ocamlbuild/ocamlbuild_unix_plugin.ml" 24 1106 1153
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 21 983 989 "ocamlbuild/ocamlbuild_unix_plugin.ml" 24 1106 1153
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 25 1154 1158 "ocamlbuild/ocamlbuild_unix_plugin.ml" 25 1154 1161
+type(
+  exn
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 25 1154 1165 "ocamlbuild/ocamlbuild_unix_plugin.ml" 25 1154 1170
+type(
+  exn -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 25 1154 1171 "ocamlbuild/ocamlbuild_unix_plugin.ml" 25 1154 1174
+type(
+  exn
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 25 1154 1165 "ocamlbuild/ocamlbuild_unix_plugin.ml" 25 1154 1174
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 19 929 931 "ocamlbuild/ocamlbuild_unix_plugin.ml" 25 1154 1174
+type(
+  exn -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 27 1176 1180 "ocamlbuild/ocamlbuild_unix_plugin.ml" 27 1176 1186
+type(
+  ('a -> Unix.stats) -> 'a -> Ocamlbuild_pack.My_unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 27 1176 1187 "ocamlbuild/ocamlbuild_unix_plugin.ml" 27 1176 1196
+type(
+  'a -> Unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 27 1176 1197 "ocamlbuild/ocamlbuild_unix_plugin.ml" 27 1176 1198
+type(
+  'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 28 1201 1207 "ocamlbuild/ocamlbuild_unix_plugin.ml" 28 1201 1209
+type(
+  Unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 29 1212 1220 "ocamlbuild/ocamlbuild_unix_plugin.ml" 29 1212 1229
+type(
+  'a -> Unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 29 1212 1230 "ocamlbuild/ocamlbuild_unix_plugin.ml" 29 1212 1231
+type(
+  'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 29 1212 1220 "ocamlbuild/ocamlbuild_unix_plugin.ml" 29 1212 1231
+type(
+  Unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1257 "ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1258
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1257 "ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1258
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1257 "ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1258
+type(
+  Unix.error
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1241 "ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1258
+type(
+  exn
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1241 "ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1263
+type(
+  exn
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1267 "ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1272
+type(
+  exn -> Unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1285 "ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1300
+type(
+  ((Format.formatter -> exn -> unit) -> exn -> string, Format.formatter,
+   unit, string)
+  format4 -> (Format.formatter -> exn -> unit) -> exn -> string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1301 "ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1305
+type(
+  ((Format.formatter -> exn -> unit) -> exn -> string, Format.formatter,
+   unit, string)
+  format4
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1306 "ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1318
+type(
+  Format.formatter -> exn -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1319 "ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1320
+type(
+  exn
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1284 "ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1321
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1273 "ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1322
+type(
+  exn
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1267 "ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1322
+type(
+  Unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 29 1212 1216 "ocamlbuild/ocamlbuild_unix_plugin.ml" 30 1232 1322
+type(
+  Unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 32 1328 1343 "ocamlbuild/ocamlbuild_unix_plugin.ml" 32 1328 1350
+type(
+  (int -> int -> string, unit, string) format -> int -> int -> string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 32 1328 1351 "ocamlbuild/ocamlbuild_unix_plugin.ml" 32 1328 1360
+type(
+  (int -> int -> string, unit, string) format
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 32 1328 1361 "ocamlbuild/ocamlbuild_unix_plugin.ml" 32 1328 1363
+type(
+  Unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 32 1328 1361 "ocamlbuild/ocamlbuild_unix_plugin.ml" 32 1328 1375
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 32 1328 1376 "ocamlbuild/ocamlbuild_unix_plugin.ml" 32 1328 1378
+type(
+  Unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 32 1328 1376 "ocamlbuild/ocamlbuild_unix_plugin.ml" 32 1328 1390
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 32 1328 1343 "ocamlbuild/ocamlbuild_unix_plugin.ml" 32 1328 1390
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 34 1413 1425 "ocamlbuild/ocamlbuild_unix_plugin.ml" 34 1413 1427
+type(
+  Unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 34 1413 1425 "ocamlbuild/ocamlbuild_unix_plugin.ml" 34 1413 1440
+type(
+  Unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 35 1446 1454 "ocamlbuild/ocamlbuild_unix_plugin.ml" 35 1446 1464
+type(
+  Unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 35 1446 1468 "ocamlbuild/ocamlbuild_unix_plugin.ml" 35 1446 1475
+type(
+  Ocamlbuild_pack.My_unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 36 1476 1484 "ocamlbuild/ocamlbuild_unix_plugin.ml" 36 1476 1494
+type(
+  Unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 36 1476 1498 "ocamlbuild/ocamlbuild_unix_plugin.ml" 36 1476 1504
+type(
+  Ocamlbuild_pack.My_unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 37 1505 1513 "ocamlbuild/ocamlbuild_unix_plugin.ml" 37 1505 1523
+type(
+  Unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 37 1505 1526 "ocamlbuild/ocamlbuild_unix_plugin.ml" 37 1505 1536
+type(
+  Unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 37 1505 1513 "ocamlbuild/ocamlbuild_unix_plugin.ml" 37 1505 1536
+type(
+  Unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 37 1505 1539 "ocamlbuild/ocamlbuild_unix_plugin.ml" 37 1505 1550
+type(
+  Unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 37 1505 1513 "ocamlbuild/ocamlbuild_unix_plugin.ml" 37 1505 1550
+type(
+  Unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 37 1505 1553 "ocamlbuild/ocamlbuild_unix_plugin.ml" 37 1505 1564
+type(
+  Unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 37 1505 1513 "ocamlbuild/ocamlbuild_unix_plugin.ml" 37 1505 1564
+type(
+  Unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 37 1505 1568 "ocamlbuild/ocamlbuild_unix_plugin.ml" 37 1505 1576
+type(
+  Ocamlbuild_pack.My_unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 38 1577 1585 "ocamlbuild/ocamlbuild_unix_plugin.ml" 38 1577 1595
+type(
+  Unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 38 1577 1599 "ocamlbuild/ocamlbuild_unix_plugin.ml" 38 1577 1606
+type(
+  Ocamlbuild_pack.My_unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 34 1413 1419 "ocamlbuild/ocamlbuild_unix_plugin.ml" 38 1577 1606
+type(
+  Ocamlbuild_pack.My_unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 32 1328 1330 "ocamlbuild/ocamlbuild_unix_plugin.ml" 38 1577 1608
+type(
+  Ocamlbuild_pack.My_unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 28 1201 1203 "ocamlbuild/ocamlbuild_unix_plugin.ml" 38 1577 1608
+type(
+  Ocamlbuild_pack.My_unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1614 "ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1621
+type(
+  string -> bool
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1622 "ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1623
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1627 "ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1637
+type(
+  string -> Unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1638 "ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1639
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1626 "ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1640
+type(
+  Unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1626 "ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1653
+type(
+  Unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1654 "ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1655
+type(
+  Unix.file_kind -> Unix.file_kind -> bool
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1656 "ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1666
+type(
+  Unix.file_kind
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1626 "ocamlbuild/ocamlbuild_unix_plugin.ml" 40 1610 1666
+type(
+  bool
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 42 1668 1672 "ocamlbuild/ocamlbuild_unix_plugin.ml" 42 1668 1684
+type(
+  (unit -> unit) -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 42 1668 1685 "ocamlbuild/ocamlbuild_unix_plugin.ml" 42 1668 1693
+type(
+  unit -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 43 1696 1702 "ocamlbuild/ocamlbuild_unix_plugin.ml" 43 1696 1705
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 43 1696 1708 "ocamlbuild/ocamlbuild_unix_plugin.ml" 43 1696 1719
+type(
+  unit -> int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 43 1696 1720 "ocamlbuild/ocamlbuild_unix_plugin.ml" 43 1696 1722
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 43 1696 1708 "ocamlbuild/ocamlbuild_unix_plugin.ml" 43 1696 1722
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 44 1726 1728 "ocamlbuild/ocamlbuild_unix_plugin.ml" 44 1726 1735
+type(
+  (unit -> unit) -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 44 1726 1746 "ocamlbuild/ocamlbuild_unix_plugin.ml" 44 1726 1748
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1759 "ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1762
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1763 "ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1764
+type(
+  int -> int -> bool
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1765 "ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1776
+type(
+  unit -> int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1777 "ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1779
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1765 "ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1779
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1759 "ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1779
+type(
+  bool
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1785 "ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1793
+type(
+  unit -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1794 "ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1796
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1785 "ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1796
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1756 "ocamlbuild/ocamlbuild_unix_plugin.ml" 45 1752 1796
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 44 1726 1736 "ocamlbuild/ocamlbuild_unix_plugin.ml" 46 1797 1802
+type(
+  unit -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 44 1726 1728 "ocamlbuild/ocamlbuild_unix_plugin.ml" 46 1797 1802
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 43 1696 1698 "ocamlbuild/ocamlbuild_unix_plugin.ml" 46 1797 1802
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 48 1804 1808 "ocamlbuild/ocamlbuild_unix_plugin.ml" 48 1804 1820
+type(
+  string -> (in_channel -> 'a) -> 'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 48 1804 1821 "ocamlbuild/ocamlbuild_unix_plugin.ml" 48 1804 1822
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 48 1804 1823 "ocamlbuild/ocamlbuild_unix_plugin.ml" 48 1804 1827
+type(
+  in_channel -> 'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 49 1830 1836 "ocamlbuild/ocamlbuild_unix_plugin.ml" 49 1830 1838
+type(
+  in_channel
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 49 1830 1841 "ocamlbuild/ocamlbuild_unix_plugin.ml" 49 1830 1861
+type(
+  string -> in_channel
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 49 1830 1862 "ocamlbuild/ocamlbuild_unix_plugin.ml" 49 1830 1863
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 49 1830 1841 "ocamlbuild/ocamlbuild_unix_plugin.ml" 49 1830 1863
+type(
+  in_channel
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 50 1867 1873 "ocamlbuild/ocamlbuild_unix_plugin.ml" 50 1867 1878
+type(
+  unit -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 50 1867 1879 "ocamlbuild/ocamlbuild_unix_plugin.ml" 50 1867 1881
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 51 1884 1894 "ocamlbuild/ocamlbuild_unix_plugin.ml" 51 1884 1915
+type(
+  in_channel -> Unix.process_status
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 51 1884 1916 "ocamlbuild/ocamlbuild_unix_plugin.ml" 51 1884 1918
+type(
+  in_channel
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 51 1884 1894 "ocamlbuild/ocamlbuild_unix_plugin.ml" 51 1884 1918
+type(
+  Unix.process_status
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 52 1924 1943 "ocamlbuild/ocamlbuild_unix_plugin.ml" 52 1924 1944
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 52 1924 1930 "ocamlbuild/ocamlbuild_unix_plugin.ml" 52 1924 1944
+type(
+  Unix.process_status
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 52 1924 1948 "ocamlbuild/ocamlbuild_unix_plugin.ml" 52 1924 1950
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 53 1951 1970 "ocamlbuild/ocamlbuild_unix_plugin.ml" 53 1951 1971
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 53 1951 1957 "ocamlbuild/ocamlbuild_unix_plugin.ml" 53 1951 1971
+type(
+  Unix.process_status
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 53 1951 1989 "ocamlbuild/ocamlbuild_unix_plugin.ml" 53 1951 1990
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 53 1951 1974 "ocamlbuild/ocamlbuild_unix_plugin.ml" 53 1951 1990
+type(
+  Unix.process_status
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 53 1951 1957 "ocamlbuild/ocamlbuild_unix_plugin.ml" 53 1951 1990
+type(
+  Unix.process_status
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 53 1951 2007 "ocamlbuild/ocamlbuild_unix_plugin.ml" 53 1951 2008
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 53 1951 1993 "ocamlbuild/ocamlbuild_unix_plugin.ml" 53 1951 2008
+type(
+  Unix.process_status
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 53 1951 1957 "ocamlbuild/ocamlbuild_unix_plugin.ml" 53 1951 2008
+type(
+  Unix.process_status
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 54 2012 2020 "ocamlbuild/ocamlbuild_unix_plugin.ml" 54 2012 2028
+type(
+  string -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 54 2012 2030 "ocamlbuild/ocamlbuild_unix_plugin.ml" 54 2012 2044
+type(
+  (string -> string, unit, string) format -> string -> string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 54 2012 2045 "ocamlbuild/ocamlbuild_unix_plugin.ml" 54 2012 2070
+type(
+  (string -> string, unit, string) format
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 54 2012 2071 "ocamlbuild/ocamlbuild_unix_plugin.ml" 54 2012 2072
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 54 2012 2029 "ocamlbuild/ocamlbuild_unix_plugin.ml" 54 2012 2073
+type(
+  string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 54 2012 2020 "ocamlbuild/ocamlbuild_unix_plugin.ml" 54 2012 2073
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 51 1884 1888 "ocamlbuild/ocamlbuild_unix_plugin.ml" 54 2012 2073
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2091 "ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2094
+type(
+  'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2097 "ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2101
+type(
+  in_channel -> 'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2102 "ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2104
+type(
+  in_channel
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2097 "ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2104
+type(
+  'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2108 "ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2113
+type(
+  unit -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2114 "ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2116
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2108 "ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2116
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2118 "ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2121
+type(
+  'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2108 "ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2121
+type(
+  'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2087 "ocamlbuild/ocamlbuild_unix_plugin.ml" 56 2083 2121
+type(
+  'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2129 "ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2130
+type(
+  exn
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2135 "ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2140
+type(
+  unit -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2141 "ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2143
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2135 "ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2143
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2145 "ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2150
+type(
+  exn -> 'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2151 "ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2152
+type(
+  exn
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2145 "ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2152
+type(
+  'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2134 "ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2153
+type(
+  'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 55 2077 2079 "ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2153
+type(
+  'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 50 1867 1869 "ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2153
+type(
+  'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 49 1830 1832 "ocamlbuild/ocamlbuild_unix_plugin.ml" 57 2122 2153
+type(
+  'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 59 2155 2159 "ocamlbuild/ocamlbuild_unix_plugin.ml" 59 2155 2172
+type(
+  unit -> bool
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 59 2155 2173 "ocamlbuild/ocamlbuild_unix_plugin.ml" 59 2155 2175
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 60 2178 2180 "ocamlbuild/ocamlbuild_unix_plugin.ml" 60 2178 2191
+type(
+  Unix.file_descr -> bool
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 60 2178 2192 "ocamlbuild/ocamlbuild_unix_plugin.ml" 60 2178 2203
+type(
+  Unix.file_descr
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 60 2178 2180 "ocamlbuild/ocamlbuild_unix_plugin.ml" 60 2178 2203
+type(
+  bool
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 62 2205 2209 "ocamlbuild/ocamlbuild_unix_plugin.ml" 62 2205 2221
+type(
+  ?max_jobs:int ->
+  ?ticker:(unit -> unit) ->
+  ?period:float ->
+  ?display:((out_channel -> unit) -> unit) ->
+  (unit -> string) list list -> (bool list * exn) option
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 63 2224 2230 "ocamlbuild/ocamlbuild_unix_plugin.ml" 63 2224 2234
+type(
+  Ocamlbuild_executor.error -> 'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 64 2246 2252 "ocamlbuild/ocamlbuild_unix_plugin.ml" 64 2246 2289
+type(
+  Ocamlbuild_executor.error
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 64 2246 2293 "ocamlbuild/ocamlbuild_unix_plugin.ml" 64 2246 2297
+type(
+  int -> 'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 64 2246 2298 "ocamlbuild/ocamlbuild_unix_plugin.ml" 64 2246 2338
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 64 2246 2293 "ocamlbuild/ocamlbuild_unix_plugin.ml" 64 2246 2338
+type(
+  'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 65 2339 2345 "ocamlbuild/ocamlbuild_unix_plugin.ml" 65 2339 2386
+type(
+  Ocamlbuild_executor.error
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 65 2339 2390 "ocamlbuild/ocamlbuild_unix_plugin.ml" 65 2339 2394
+type(
+  int -> 'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 65 2339 2395 "ocamlbuild/ocamlbuild_unix_plugin.ml" 65 2339 2439
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 65 2339 2390 "ocamlbuild/ocamlbuild_unix_plugin.ml" 65 2339 2439
+type(
+  'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 66 2440 2446 "ocamlbuild/ocamlbuild_unix_plugin.ml" 66 2440 2474
+type(
+  Ocamlbuild_executor.error
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 66 2440 2478 "ocamlbuild/ocamlbuild_unix_plugin.ml" 66 2440 2482
+type(
+  int -> 'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 66 2440 2483 "ocamlbuild/ocamlbuild_unix_plugin.ml" 66 2440 2514
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 66 2440 2478 "ocamlbuild/ocamlbuild_unix_plugin.ml" 66 2440 2514
+type(
+  'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 67 2515 2521 "ocamlbuild/ocamlbuild_unix_plugin.ml" 67 2515 2561
+type(
+  Ocamlbuild_executor.error
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 67 2515 2565 "ocamlbuild/ocamlbuild_unix_plugin.ml" 67 2515 2569
+type(
+  int -> 'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 67 2515 2570 "ocamlbuild/ocamlbuild_unix_plugin.ml" 67 2515 2615
+type(
+  int
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 67 2515 2565 "ocamlbuild/ocamlbuild_unix_plugin.ml" 67 2515 2615
+type(
+  'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 63 2224 2237 "ocamlbuild/ocamlbuild_unix_plugin.ml" 67 2515 2615
+type(
+  Ocamlbuild_executor.error -> 'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 69 2621 2623 "ocamlbuild/ocamlbuild_unix_plugin.ml" 69 2621 2650
+type(
+  ?max_jobs:int ->
+  ?ticker:(unit -> unit) ->
+  ?period:float ->
+  ?display:((out_channel -> unit) -> unit) ->
+  exit:(Ocamlbuild_executor.error -> unit) ->
+  (unit -> string) list list -> (bool list * exn) option
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 69 2621 2652 "ocamlbuild/ocamlbuild_unix_plugin.ml" 69 2621 2656
+type(
+  Ocamlbuild_executor.error -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 69 2621 2623 "ocamlbuild/ocamlbuild_unix_plugin.ml" 69 2621 2656
+type(
+  ?max_jobs:int ->
+  ?ticker:(unit -> unit) ->
+  ?period:float ->
+  ?display:((out_channel -> unit) -> unit) ->
+  (unit -> string) list list -> (bool list * exn) option
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 63 2224 2226 "ocamlbuild/ocamlbuild_unix_plugin.ml" 69 2621 2656
+type(
+  ?max_jobs:int ->
+  ?ticker:(unit -> unit) ->
+  ?period:float ->
+  ?display:((out_channel -> unit) -> unit) ->
+  (unit -> string) list list -> (bool list * exn) option
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 71 2658 2662 "ocamlbuild/ocamlbuild_unix_plugin.ml" 71 2658 2667
+type(
+  unit -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 71 2658 2668 "ocamlbuild/ocamlbuild_unix_plugin.ml" 71 2658 2670
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 72 2673 2675 "ocamlbuild/ocamlbuild_unix_plugin.ml" 72 2673 2681
+type(
+  Ocamlbuild_pack.My_unix.implem
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 72 2673 2697 "ocamlbuild/ocamlbuild_unix_plugin.ml" 72 2673 2702
+type(
+  bool
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 72 2673 2675 "ocamlbuild/ocamlbuild_unix_plugin.ml" 72 2673 2702
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 73 2704 2706 "ocamlbuild/ocamlbuild_unix_plugin.ml" 73 2704 2712
+type(
+  Ocamlbuild_pack.My_unix.implem
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 73 2704 2730 "ocamlbuild/ocamlbuild_unix_plugin.ml" 73 2704 2743
+type(
+  unit -> bool
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 73 2704 2706 "ocamlbuild/ocamlbuild_unix_plugin.ml" 73 2704 2743
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 74 2745 2747 "ocamlbuild/ocamlbuild_unix_plugin.ml" 74 2745 2753
+type(
+  Ocamlbuild_pack.My_unix.implem
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 74 2745 2770 "ocamlbuild/ocamlbuild_unix_plugin.ml" 74 2745 2787
+type(
+  unit -> float
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 74 2745 2747 "ocamlbuild/ocamlbuild_unix_plugin.ml" 74 2745 2787
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 75 2789 2791 "ocamlbuild/ocamlbuild_unix_plugin.ml" 75 2789 2797
+type(
+  Ocamlbuild_pack.My_unix.implem
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 75 2789 2814 "ocamlbuild/ocamlbuild_unix_plugin.ml" 75 2789 2826
+type(
+  Format.formatter -> exn -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 75 2789 2791 "ocamlbuild/ocamlbuild_unix_plugin.ml" 75 2789 2826
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 76 2828 2830 "ocamlbuild/ocamlbuild_unix_plugin.ml" 76 2828 2836
+type(
+  Ocamlbuild_pack.My_unix.implem
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 76 2828 2853 "ocamlbuild/ocamlbuild_unix_plugin.ml" 76 2828 2865
+type(
+  ?max_jobs:int ->
+  ?ticker:(unit -> unit) ->
+  ?period:float ->
+  ?display:((out_channel -> unit) -> unit) ->
+  (unit -> string) list list -> (bool list * exn) option
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 76 2828 2830 "ocamlbuild/ocamlbuild_unix_plugin.ml" 76 2828 2865
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 77 2867 2869 "ocamlbuild/ocamlbuild_unix_plugin.ml" 77 2867 2875
+type(
+  Ocamlbuild_pack.My_unix.implem
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 77 2867 2888 "ocamlbuild/ocamlbuild_unix_plugin.ml" 77 2867 2901
+type(
+  string -> string
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 77 2867 2869 "ocamlbuild/ocamlbuild_unix_plugin.ml" 77 2867 2901
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 78 2903 2905 "ocamlbuild/ocamlbuild_unix_plugin.ml" 78 2903 2911
+type(
+  Ocamlbuild_pack.My_unix.implem
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 78 2903 2928 "ocamlbuild/ocamlbuild_unix_plugin.ml" 78 2903 2940
+type(
+  string -> (in_channel -> 'a) -> 'a
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 78 2903 2905 "ocamlbuild/ocamlbuild_unix_plugin.ml" 78 2903 2940
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 79 2942 2944 "ocamlbuild/ocamlbuild_unix_plugin.ml" 79 2942 2950
+type(
+  Ocamlbuild_pack.My_unix.implem
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 79 2942 2967 "ocamlbuild/ocamlbuild_unix_plugin.ml" 79 2942 2979
+type(
+  (unit -> unit) -> unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 79 2942 2944 "ocamlbuild/ocamlbuild_unix_plugin.ml" 79 2942 2979
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 80 2981 2983 "ocamlbuild/ocamlbuild_unix_plugin.ml" 80 2981 2989
+type(
+  Ocamlbuild_pack.My_unix.implem
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 80 2981 3001 "ocamlbuild/ocamlbuild_unix_plugin.ml" 80 2981 3008
+type(
+  string -> bool
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 80 2981 2983 "ocamlbuild/ocamlbuild_unix_plugin.ml" 80 2981 3008
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 81 3010 3012 "ocamlbuild/ocamlbuild_unix_plugin.ml" 81 3010 3018
+type(
+  Ocamlbuild_pack.My_unix.implem
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 81 3010 3027 "ocamlbuild/ocamlbuild_unix_plugin.ml" 81 3010 3033
+type(
+  (string -> Unix.stats) -> string -> Ocamlbuild_pack.My_unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 81 3010 3034 "ocamlbuild/ocamlbuild_unix_plugin.ml" 81 3010 3043
+type(
+  string -> Unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 81 3010 3027 "ocamlbuild/ocamlbuild_unix_plugin.ml" 81 3010 3043
+type(
+  string -> Ocamlbuild_pack.My_unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 81 3010 3012 "ocamlbuild/ocamlbuild_unix_plugin.ml" 81 3010 3043
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3047 "ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3053
+type(
+  Ocamlbuild_pack.My_unix.implem
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3063 "ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3069
+type(
+  (string -> Unix.stats) -> string -> Ocamlbuild_pack.My_unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3070 "ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3080
+type(
+  string -> Unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3063 "ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3080
+type(
+  string -> Ocamlbuild_pack.My_unix.stats
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3047 "ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3081
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 81 3010 3012 "ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3081
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 80 2981 2983 "ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3081
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 79 2942 2944 "ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3081
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 78 2903 2905 "ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3081
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 77 2867 2869 "ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3081
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 76 2828 2830 "ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3081
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 75 2789 2791 "ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3081
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 74 2745 2747 "ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3081
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 73 2704 2706 "ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3081
+type(
+  unit
+)
+"ocamlbuild/ocamlbuild_unix_plugin.ml" 72 2673 2675 "ocamlbuild/ocamlbuild_unix_plugin.ml" 82 3045 3081
+type(
+  unit
+)

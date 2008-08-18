@@ -1,0 +1,4 @@
+CLEANUP=rm -f *.cm* *.o *~ *.a
+
+clean:
+	$(CLEANUP) 

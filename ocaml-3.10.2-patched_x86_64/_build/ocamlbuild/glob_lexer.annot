@@ -1,0 +1,2079 @@
+"ocamlbuild/glob_lexer.mll" 31 156 160 "ocamlbuild/glob_lexer.mll" 31 156 162
+type(
+  ('a, unit, string) format -> 'a
+)
+"ocamlbuild/glob_lexer.mll" 31 156 165 "ocamlbuild/glob_lexer.mll" 31 156 179
+type(
+  ('a, unit, string) format -> 'a
+)
+"ocamlbuild/glob_lexer.mll" 33 183 187 "ocamlbuild/glob_lexer.mll" 33 183 202
+type(
+  Glob_ast.pattern -> Glob_ast.pattern -> Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 33 183 203 "ocamlbuild/glob_lexer.mll" 33 183 205
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 33 183 206 "ocamlbuild/glob_lexer.mll" 33 183 208
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 34 211 220 "ocamlbuild/glob_lexer.mll" 34 211 222
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 34 211 223 "ocamlbuild/glob_lexer.mll" 34 211 225
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 34 211 219 "ocamlbuild/glob_lexer.mll" 34 211 226
+type(
+  Glob_ast.pattern * Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 35 232 237 "ocamlbuild/glob_lexer.mll" 35 232 244
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 35 232 245 "ocamlbuild/glob_lexer.mll" 35 232 246
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 35 232 236 "ocamlbuild/glob_lexer.mll" 35 232 247
+type(
+  Glob_ast.pattern * Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 35 232 251 "ocamlbuild/glob_lexer.mll" 35 232 253
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 36 254 259 "ocamlbuild/glob_lexer.mll" 36 254 260
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 36 254 261 "ocamlbuild/glob_lexer.mll" 36 254 268
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 36 254 258 "ocamlbuild/glob_lexer.mll" 36 254 269
+type(
+  Glob_ast.pattern * Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 36 254 273 "ocamlbuild/glob_lexer.mll" 36 254 275
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 37 276 281 "ocamlbuild/glob_lexer.mll" 37 276 282
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 37 276 283 "ocamlbuild/glob_lexer.mll" 37 276 284
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 37 276 280 "ocamlbuild/glob_lexer.mll" 37 276 285
+type(
+  Glob_ast.pattern * Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 37 276 302 "ocamlbuild/glob_lexer.mll" 37 276 304
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 37 276 305 "ocamlbuild/glob_lexer.mll" 37 276 307
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 37 276 295 "ocamlbuild/glob_lexer.mll" 37 276 308
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 34 211 213 "ocamlbuild/glob_lexer.mll" 37 276 308
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 40 313 317 "ocamlbuild/glob_lexer.mll" 40 313 322
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 40 313 336 "ocamlbuild/glob_lexer.mll" 40 313 339
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 40 313 340 "ocamlbuild/glob_lexer.mll" 40 313 343
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 40 313 335 "ocamlbuild/glob_lexer.mll" 40 313 344
+type(
+  char * char
+)
+"ocamlbuild/glob_lexer.mll" 40 313 330 "ocamlbuild/glob_lexer.mll" 40 313 345
+type(
+  Glob_ast.character_class
+)
+"ocamlbuild/glob_lexer.mll" 40 313 325 "ocamlbuild/glob_lexer.mll" 40 313 345
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 41 348 352 "ocamlbuild/glob_lexer.mll" 41 348 361
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 41 348 379 "ocamlbuild/glob_lexer.mll" 41 348 382
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 41 348 383 "ocamlbuild/glob_lexer.mll" 41 348 386
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 41 348 378 "ocamlbuild/glob_lexer.mll" 41 348 387
+type(
+  char * char
+)
+"ocamlbuild/glob_lexer.mll" 41 348 373 "ocamlbuild/glob_lexer.mll" 41 348 388
+type(
+  (char * char) Bool.boolean
+)
+"ocamlbuild/glob_lexer.mll" 41 348 369 "ocamlbuild/glob_lexer.mll" 41 348 389
+type(
+  Glob_ast.character_class
+)
+"ocamlbuild/glob_lexer.mll" 41 348 364 "ocamlbuild/glob_lexer.mll" 41 348 389
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 42 392 396 "ocamlbuild/glob_lexer.mll" 42 392 399
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 42 392 408 "ocamlbuild/glob_lexer.mll" 42 392 412
+type(
+  Glob_ast.character_class
+)
+"ocamlbuild/glob_lexer.mll" 42 392 402 "ocamlbuild/glob_lexer.mll" 42 392 412
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.ml" 32 448 452 "ocamlbuild/glob_lexer.ml" 32 448 470
+type(
+  Lexing.lex_tables
+)
+"ocamlbuild/glob_lexer.ml" 34 496 499 "ocamlbuild/glob_lexer.ml" 39 846 899
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 41 925 928 "ocamlbuild/glob_lexer.ml" 46 1275 1328
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 48 1354 1357 "ocamlbuild/glob_lexer.ml" 53 1704 1757
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 55 1781 1784 "ocamlbuild/glob_lexer.ml" 107 5421 5450
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 109 5474 5477 "ocamlbuild/glob_lexer.ml" 161 9114 9143
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 163 9171 9174 "ocamlbuild/glob_lexer.ml" 163 9171 9176
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 165 9207 9210 "ocamlbuild/glob_lexer.ml" 165 9207 9212
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 167 9243 9246 "ocamlbuild/glob_lexer.ml" 167 9243 9248
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 169 9277 9280 "ocamlbuild/glob_lexer.ml" 169 9277 9282
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 171 9311 9314 "ocamlbuild/glob_lexer.ml" 171 9311 9316
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 173 9339 9342 "ocamlbuild/glob_lexer.ml" 173 9339 9344
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 32 448 473 "ocamlbuild/glob_lexer.ml" 174 9346 9347
+type(
+  Lexing.lex_tables
+)
+"ocamlbuild/glob_lexer.ml" 176 9349 9357 "ocamlbuild/glob_lexer.ml" 176 9349 9362
+type(
+  Lexing.lexbuf -> token
+)
+"ocamlbuild/glob_lexer.ml" 176 9349 9363 "ocamlbuild/glob_lexer.ml" 176 9349 9369
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 177 9372 9376 "ocamlbuild/glob_lexer.ml" 177 9372 9397
+type(
+  Lexing.lexbuf -> int -> token
+)
+"ocamlbuild/glob_lexer.ml" 177 9372 9398 "ocamlbuild/glob_lexer.ml" 177 9372 9404
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 177 9372 9405 "ocamlbuild/glob_lexer.ml" 177 9372 9406
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 177 9372 9376 "ocamlbuild/glob_lexer.ml" 177 9372 9406
+type(
+  token
+)
+"ocamlbuild/glob_lexer.ml" 178 9407 9411 "ocamlbuild/glob_lexer.ml" 178 9407 9432
+type(
+  Lexing.lexbuf -> int -> token
+)
+"ocamlbuild/glob_lexer.ml" 178 9407 9433 "ocamlbuild/glob_lexer.ml" 178 9407 9439
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 178 9407 9440 "ocamlbuild/glob_lexer.ml" 178 9407 9457
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 179 9460 9468 "ocamlbuild/glob_lexer.ml" 179 9460 9481
+type(
+  Lexing.lex_tables -> int -> Lexing.lexbuf -> int
+)
+"ocamlbuild/glob_lexer.ml" 179 9460 9482 "ocamlbuild/glob_lexer.ml" 179 9460 9500
+type(
+  Lexing.lex_tables
+)
+"ocamlbuild/glob_lexer.ml" 179 9460 9501 "ocamlbuild/glob_lexer.ml" 179 9460 9518
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 179 9460 9519 "ocamlbuild/glob_lexer.ml" 179 9460 9525
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 179 9460 9468 "ocamlbuild/glob_lexer.ml" 179 9460 9525
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 180 9531 9539 "ocamlbuild/glob_lexer.ml" 180 9531 9540
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 49 9577 9615 "ocamlbuild/glob_lexer.mll" 49 9577 9616
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 49 9577 9617 "ocamlbuild/glob_lexer.mll" 49 9577 9618
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 49 9577 9614 "ocamlbuild/glob_lexer.mll" 49 9577 9619
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 49 9577 9622 "ocamlbuild/glob_lexer.mll" 49 9577 9635
+type(
+  char list -> Glob_ast.pattern -> Lexing.lexbuf -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 49 9577 9637 "ocamlbuild/glob_lexer.mll" 49 9577 9640
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 49 9577 9636 "ocamlbuild/glob_lexer.mll" 49 9577 9641
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.mll" 49 9577 9642 "ocamlbuild/glob_lexer.mll" 49 9577 9649
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 49 9577 9650 "ocamlbuild/glob_lexer.mll" 49 9577 9656
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 49 9577 9622 "ocamlbuild/glob_lexer.mll" 49 9577 9656
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 49 9577 9660 "ocamlbuild/glob_lexer.mll" 49 9577 9661
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 49 9577 9609 "ocamlbuild/glob_lexer.mll" 49 9577 9662
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 49 9577 9601 "ocamlbuild/glob_lexer.mll" 49 9577 9663
+type(
+  Glob_ast.pattern Glob_ast.atom
+)
+"ocamlbuild/glob_lexer.mll" 49 9577 9595 "ocamlbuild/glob_lexer.mll" 49 9577 9665
+type(
+  token
+)
+"ocamlbuild/glob_lexer.ml" 185 9700 9704 "ocamlbuild/glob_lexer.ml" 185 9700 9705
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 50 9742 9776 "ocamlbuild/glob_lexer.mll" 50 9742 9788
+type(
+  Buffer.t -> Lexing.lexbuf -> string
+)
+"ocamlbuild/glob_lexer.mll" 50 9742 9790 "ocamlbuild/glob_lexer.mll" 50 9742 9803
+type(
+  int -> Buffer.t
+)
+"ocamlbuild/glob_lexer.mll" 50 9742 9804 "ocamlbuild/glob_lexer.mll" 50 9742 9806
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 50 9742 9789 "ocamlbuild/glob_lexer.mll" 50 9742 9807
+type(
+  Buffer.t
+)
+"ocamlbuild/glob_lexer.mll" 50 9742 9808 "ocamlbuild/glob_lexer.mll" 50 9742 9814
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 50 9742 9775 "ocamlbuild/glob_lexer.mll" 50 9742 9815
+type(
+  string
+)
+"ocamlbuild/glob_lexer.mll" 50 9742 9766 "ocamlbuild/glob_lexer.mll" 50 9742 9816
+type(
+  Glob_ast.pattern Glob_ast.atom
+)
+"ocamlbuild/glob_lexer.mll" 50 9742 9760 "ocamlbuild/glob_lexer.mll" 50 9742 9818
+type(
+  token
+)
+"ocamlbuild/glob_lexer.ml" 190 9853 9857 "ocamlbuild/glob_lexer.ml" 190 9853 9858
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 51 9895 9913 "ocamlbuild/glob_lexer.mll" 51 9895 9920
+type(
+  token
+)
+"ocamlbuild/glob_lexer.ml" 195 9955 9959 "ocamlbuild/glob_lexer.ml" 195 9955 9960
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 52 9997 10015 "ocamlbuild/glob_lexer.mll" 52 9997 10021
+type(
+  token
+)
+"ocamlbuild/glob_lexer.ml" 200 10056 10060 "ocamlbuild/glob_lexer.ml" 200 10056 10061
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 53 10098 10116 "ocamlbuild/glob_lexer.mll" 53 10098 10123
+type(
+  token
+)
+"ocamlbuild/glob_lexer.ml" 205 10158 10162 "ocamlbuild/glob_lexer.ml" 205 10158 10163
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 54 10200 10218 "ocamlbuild/glob_lexer.mll" 54 10200 10226
+type(
+  token
+)
+"ocamlbuild/glob_lexer.ml" 210 10261 10265 "ocamlbuild/glob_lexer.ml" 210 10261 10266
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 55 10303 10321 "ocamlbuild/glob_lexer.mll" 55 10303 10330
+type(
+  token
+)
+"ocamlbuild/glob_lexer.ml" 215 10365 10369 "ocamlbuild/glob_lexer.ml" 215 10365 10370
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 56 10407 10425 "ocamlbuild/glob_lexer.mll" 56 10407 10433
+type(
+  token
+)
+"ocamlbuild/glob_lexer.ml" 220 10468 10472 "ocamlbuild/glob_lexer.ml" 220 10468 10473
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 57 10510 10528 "ocamlbuild/glob_lexer.mll" 57 10510 10536
+type(
+  token
+)
+"ocamlbuild/glob_lexer.ml" 225 10571 10575 "ocamlbuild/glob_lexer.ml" 225 10571 10576
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 58 10613 10633 "ocamlbuild/glob_lexer.mll" 58 10613 10638
+type(
+  Lexing.lexbuf -> token
+)
+"ocamlbuild/glob_lexer.mll" 58 10613 10639 "ocamlbuild/glob_lexer.mll" 58 10613 10645
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 58 10613 10631 "ocamlbuild/glob_lexer.mll" 58 10613 10647
+type(
+  token
+)
+"ocamlbuild/glob_lexer.ml" 230 10682 10686 "ocamlbuild/glob_lexer.ml" 230 10682 10688
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 59 10725 10743 "ocamlbuild/glob_lexer.mll" 59 10725 10750
+type(
+  token
+)
+"ocamlbuild/glob_lexer.ml" 235 10785 10789 "ocamlbuild/glob_lexer.ml" 235 10785 10806
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 235 10785 10810 "ocamlbuild/glob_lexer.ml" 235 10785 10816
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 235 10785 10810 "ocamlbuild/glob_lexer.ml" 235 10785 10835
+type(
+  Lexing.lexbuf -> unit
+)
+"ocamlbuild/glob_lexer.ml" 235 10785 10836 "ocamlbuild/glob_lexer.ml" 235 10785 10842
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 235 10785 10810 "ocamlbuild/glob_lexer.ml" 235 10785 10842
+type(
+  unit
+)
+"ocamlbuild/glob_lexer.ml" 235 10785 10844 "ocamlbuild/glob_lexer.ml" 235 10785 10865
+type(
+  Lexing.lexbuf -> int -> token
+)
+"ocamlbuild/glob_lexer.ml" 235 10785 10866 "ocamlbuild/glob_lexer.ml" 235 10785 10872
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 235 10785 10873 "ocamlbuild/glob_lexer.ml" 235 10785 10890
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 235 10785 10844 "ocamlbuild/glob_lexer.ml" 235 10785 10890
+type(
+  token
+)
+"ocamlbuild/glob_lexer.ml" 235 10785 10810 "ocamlbuild/glob_lexer.ml" 235 10785 10890
+type(
+  token
+)
+"ocamlbuild/glob_lexer.ml" 179 9460 9462 "ocamlbuild/glob_lexer.ml" 235 10785 10890
+type(
+  token
+)
+"ocamlbuild/glob_lexer.ml" 237 10892 10896 "ocamlbuild/glob_lexer.ml" 237 10892 10909
+type(
+  char list -> Glob_ast.pattern -> Lexing.lexbuf -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 237 10892 10910 "ocamlbuild/glob_lexer.ml" 237 10892 10919
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.ml" 237 10892 10920 "ocamlbuild/glob_lexer.ml" 237 10892 10921
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.ml" 237 10892 10922 "ocamlbuild/glob_lexer.ml" 237 10892 10928
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 238 10931 10935 "ocamlbuild/glob_lexer.ml" 238 10931 10964
+type(
+  char list ->
+  Glob_ast.pattern -> Lexing.lexbuf -> int -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 238 10931 10965 "ocamlbuild/glob_lexer.ml" 238 10931 10974
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.ml" 238 10931 10975 "ocamlbuild/glob_lexer.ml" 238 10931 10976
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.ml" 238 10931 10977 "ocamlbuild/glob_lexer.ml" 238 10931 10983
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 238 10931 10984 "ocamlbuild/glob_lexer.ml" 238 10931 10986
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 238 10931 10935 "ocamlbuild/glob_lexer.ml" 238 10931 10986
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 239 10987 10991 "ocamlbuild/glob_lexer.ml" 239 10987 11020
+type(
+  char list ->
+  Glob_ast.pattern -> Lexing.lexbuf -> int -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 239 10987 11021 "ocamlbuild/glob_lexer.ml" 239 10987 11030
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.ml" 239 10987 11031 "ocamlbuild/glob_lexer.ml" 239 10987 11032
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.ml" 239 10987 11033 "ocamlbuild/glob_lexer.ml" 239 10987 11039
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 239 10987 11040 "ocamlbuild/glob_lexer.ml" 239 10987 11057
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 240 11060 11068 "ocamlbuild/glob_lexer.ml" 240 11060 11081
+type(
+  Lexing.lex_tables -> int -> Lexing.lexbuf -> int
+)
+"ocamlbuild/glob_lexer.ml" 240 11060 11082 "ocamlbuild/glob_lexer.ml" 240 11060 11100
+type(
+  Lexing.lex_tables
+)
+"ocamlbuild/glob_lexer.ml" 240 11060 11101 "ocamlbuild/glob_lexer.ml" 240 11060 11118
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 240 11060 11119 "ocamlbuild/glob_lexer.ml" 240 11060 11125
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 240 11060 11068 "ocamlbuild/glob_lexer.ml" 240 11060 11125
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 241 11131 11139 "ocamlbuild/glob_lexer.ml" 241 11131 11140
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 62 11181 11202 "ocamlbuild/glob_lexer.mll" 62 11181 11203
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 246 11237 11239 "ocamlbuild/glob_lexer.ml" 246 11237 11256
+type(
+  Lexing.lexbuf -> int -> int -> string
+)
+"ocamlbuild/glob_lexer.ml" 246 11237 11257 "ocamlbuild/glob_lexer.ml" 246 11237 11263
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 246 11237 11264 "ocamlbuild/glob_lexer.ml" 246 11237 11270
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 246 11237 11264 "ocamlbuild/glob_lexer.ml" 246 11237 11291
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 246 11237 11292 "ocamlbuild/glob_lexer.ml" 246 11237 11298
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 246 11237 11292 "ocamlbuild/glob_lexer.ml" 246 11237 11318
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 246 11237 11239 "ocamlbuild/glob_lexer.ml" 246 11237 11318
+type(
+  string
+)
+"ocamlbuild/glob_lexer.mll" 62 11355 11381 "ocamlbuild/glob_lexer.mll" 62 11355 11394
+type(
+  char list -> Glob_ast.pattern -> Lexing.lexbuf -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 62 11355 11395 "ocamlbuild/glob_lexer.mll" 62 11355 11404
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.mll" 62 11355 11406 "ocamlbuild/glob_lexer.mll" 62 11355 11421
+type(
+  Glob_ast.pattern -> Glob_ast.pattern -> Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 62 11355 11422 "ocamlbuild/glob_lexer.mll" 62 11355 11423
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 62 11355 11430 "ocamlbuild/glob_lexer.mll" 62 11355 11431
+type(
+  string
+)
+"ocamlbuild/glob_lexer.mll" 62 11355 11424 "ocamlbuild/glob_lexer.mll" 62 11355 11432
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 62 11355 11405 "ocamlbuild/glob_lexer.mll" 62 11355 11433
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 62 11355 11434 "ocamlbuild/glob_lexer.mll" 62 11355 11440
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 62 11355 11379 "ocamlbuild/glob_lexer.mll" 62 11355 11442
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 242 11144 11144 "ocamlbuild/glob_lexer.mll" 62 11355 11442
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 251 11477 11481 "ocamlbuild/glob_lexer.ml" 251 11477 11482
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 65 11523 11535 "ocamlbuild/glob_lexer.mll" 65 11523 11539
+type(
+  Glob_ast.pattern list -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 65 11523 11540 "ocamlbuild/glob_lexer.mll" 65 11523 11542
+type(
+  Glob_ast.pattern list
+)
+"ocamlbuild/glob_lexer.mll" 66 11545 11556 "ocamlbuild/glob_lexer.mll" 66 11545 11558
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 66 11545 11559 "ocamlbuild/glob_lexer.mll" 66 11545 11560
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 66 11545 11555 "ocamlbuild/glob_lexer.mll" 66 11545 11561
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 66 11545 11564 "ocamlbuild/glob_lexer.mll" 66 11545 11577
+type(
+  char list -> Glob_ast.pattern -> Lexing.lexbuf -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 66 11545 11579 "ocamlbuild/glob_lexer.mll" 66 11545 11582
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 66 11545 11583 "ocamlbuild/glob_lexer.mll" 66 11545 11586
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 66 11545 11578 "ocamlbuild/glob_lexer.mll" 66 11545 11587
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.mll" 66 11545 11588 "ocamlbuild/glob_lexer.mll" 66 11545 11595
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 66 11545 11596 "ocamlbuild/glob_lexer.mll" 66 11545 11602
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 66 11545 11564 "ocamlbuild/glob_lexer.mll" 66 11545 11602
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 67 11606 11616 "ocamlbuild/glob_lexer.mll" 67 11606 11618
+type(
+  Glob_ast.pattern list
+)
+"ocamlbuild/glob_lexer.mll" 67 11606 11621 "ocamlbuild/glob_lexer.mll" 67 11606 11623
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 67 11606 11627 "ocamlbuild/glob_lexer.mll" 67 11606 11629
+type(
+  Glob_ast.pattern list
+)
+"ocamlbuild/glob_lexer.mll" 67 11606 11621 "ocamlbuild/glob_lexer.mll" 67 11606 11629
+type(
+  Glob_ast.pattern list
+)
+"ocamlbuild/glob_lexer.mll" 68 11633 11642 "ocamlbuild/glob_lexer.mll" 68 11633 11643
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 68 11633 11644 "ocamlbuild/glob_lexer.mll" 68 11633 11645
+type(
+  char -> char -> bool
+)
+"ocamlbuild/glob_lexer.mll" 68 11633 11646 "ocamlbuild/glob_lexer.mll" 68 11633 11649
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 68 11633 11642 "ocamlbuild/glob_lexer.mll" 68 11633 11649
+type(
+  bool
+)
+"ocamlbuild/glob_lexer.mll" 69 11655 11663 "ocamlbuild/glob_lexer.mll" 69 11655 11667
+type(
+  Glob_ast.pattern list -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 69 11655 11668 "ocamlbuild/glob_lexer.mll" 69 11655 11670
+type(
+  Glob_ast.pattern list
+)
+"ocamlbuild/glob_lexer.mll" 69 11655 11663 "ocamlbuild/glob_lexer.mll" 69 11655 11670
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 71 11682 11690 "ocamlbuild/glob_lexer.mll" 71 11682 11703
+type(
+  char list -> Glob_ast.pattern -> Lexing.lexbuf -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 71 11682 11704 "ocamlbuild/glob_lexer.mll" 71 11682 11713
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.mll" 71 11682 11715 "ocamlbuild/glob_lexer.mll" 71 11682 11730
+type(
+  Glob_ast.pattern -> Glob_ast.pattern -> Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 71 11682 11731 "ocamlbuild/glob_lexer.mll" 71 11682 11732
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 71 11682 11740 "ocamlbuild/glob_lexer.mll" 71 11682 11742
+type(
+  Glob_ast.pattern list
+)
+"ocamlbuild/glob_lexer.mll" 71 11682 11733 "ocamlbuild/glob_lexer.mll" 71 11682 11743
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 71 11682 11714 "ocamlbuild/glob_lexer.mll" 71 11682 11744
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 71 11682 11745 "ocamlbuild/glob_lexer.mll" 71 11682 11751
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 71 11682 11690 "ocamlbuild/glob_lexer.mll" 71 11682 11751
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 68 11633 11639 "ocamlbuild/glob_lexer.mll" 71 11682 11751
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 67 11606 11612 "ocamlbuild/glob_lexer.mll" 71 11682 11751
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 66 11545 11551 "ocamlbuild/glob_lexer.mll" 71 11682 11751
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 73 11759 11763 "ocamlbuild/glob_lexer.mll" 73 11759 11767
+type(
+  Glob_ast.pattern list -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 73 11759 11768 "ocamlbuild/glob_lexer.mll" 73 11759 11770
+type(
+  Glob_ast.pattern list
+)
+"ocamlbuild/glob_lexer.mll" 73 11759 11763 "ocamlbuild/glob_lexer.mll" 73 11759 11770
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 64 11519 11521 "ocamlbuild/glob_lexer.mll" 74 11771 11774
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 266 11809 11813 "ocamlbuild/glob_lexer.ml" 266 11809 11814
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 77 11855 11863 "ocamlbuild/glob_lexer.mll" 77 11855 11865
+type(
+  (char * char) Bool.boolean
+)
+"ocamlbuild/glob_lexer.mll" 77 11855 11875 "ocamlbuild/glob_lexer.mll" 77 11855 11886
+type(
+  (char * char) Bool.boolean list ->
+  Lexing.lexbuf -> (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.mll" 77 11855 11887 "ocamlbuild/glob_lexer.mll" 77 11855 11889
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.mll" 77 11855 11890 "ocamlbuild/glob_lexer.mll" 77 11855 11896
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 77 11855 11874 "ocamlbuild/glob_lexer.mll" 77 11855 11897
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.mll" 77 11855 11871 "ocamlbuild/glob_lexer.mll" 77 11855 11898
+type(
+  (char * char) Bool.boolean
+)
+"ocamlbuild/glob_lexer.mll" 77 11855 11868 "ocamlbuild/glob_lexer.mll" 77 11855 11898
+type(
+  (char * char) Bool.boolean
+)
+"ocamlbuild/glob_lexer.mll" 78 11902 11906 "ocamlbuild/glob_lexer.mll" 78 11902 11919
+type(
+  char list -> Glob_ast.pattern -> Lexing.lexbuf -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 78 11902 11920 "ocamlbuild/glob_lexer.mll" 78 11902 11929
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.mll" 78 11902 11931 "ocamlbuild/glob_lexer.mll" 78 11902 11946
+type(
+  Glob_ast.pattern -> Glob_ast.pattern -> Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 78 11902 11947 "ocamlbuild/glob_lexer.mll" 78 11902 11948
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 78 11902 11956 "ocamlbuild/glob_lexer.mll" 78 11902 11958
+type(
+  Glob_ast.character_class
+)
+"ocamlbuild/glob_lexer.mll" 78 11902 11949 "ocamlbuild/glob_lexer.mll" 78 11902 11959
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 78 11902 11930 "ocamlbuild/glob_lexer.mll" 78 11902 11960
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 78 11902 11961 "ocamlbuild/glob_lexer.mll" 78 11902 11967
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 78 11902 11906 "ocamlbuild/glob_lexer.mll" 78 11902 11967
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 76 11851 11853 "ocamlbuild/glob_lexer.mll" 79 11968 11971
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 274 12006 12010 "ocamlbuild/glob_lexer.ml" 274 12006 12011
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 82 12052 12060 "ocamlbuild/glob_lexer.mll" 82 12052 12062
+type(
+  (char * char) Bool.boolean
+)
+"ocamlbuild/glob_lexer.mll" 82 12052 12068 "ocamlbuild/glob_lexer.mll" 82 12052 12079
+type(
+  (char * char) Bool.boolean list ->
+  Lexing.lexbuf -> (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.mll" 82 12052 12080 "ocamlbuild/glob_lexer.mll" 82 12052 12082
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.mll" 82 12052 12083 "ocamlbuild/glob_lexer.mll" 82 12052 12089
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 82 12052 12067 "ocamlbuild/glob_lexer.mll" 82 12052 12090
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.mll" 82 12052 12065 "ocamlbuild/glob_lexer.mll" 82 12052 12090
+type(
+  (char * char) Bool.boolean
+)
+"ocamlbuild/glob_lexer.mll" 83 12094 12098 "ocamlbuild/glob_lexer.mll" 83 12094 12111
+type(
+  char list -> Glob_ast.pattern -> Lexing.lexbuf -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 83 12094 12112 "ocamlbuild/glob_lexer.mll" 83 12094 12121
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.mll" 83 12094 12123 "ocamlbuild/glob_lexer.mll" 83 12094 12138
+type(
+  Glob_ast.pattern -> Glob_ast.pattern -> Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 83 12094 12139 "ocamlbuild/glob_lexer.mll" 83 12094 12140
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 83 12094 12148 "ocamlbuild/glob_lexer.mll" 83 12094 12150
+type(
+  Glob_ast.character_class
+)
+"ocamlbuild/glob_lexer.mll" 83 12094 12141 "ocamlbuild/glob_lexer.mll" 83 12094 12151
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 83 12094 12122 "ocamlbuild/glob_lexer.mll" 83 12094 12152
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 83 12094 12153 "ocamlbuild/glob_lexer.mll" 83 12094 12159
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 83 12094 12098 "ocamlbuild/glob_lexer.mll" 83 12094 12159
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 81 12048 12050 "ocamlbuild/glob_lexer.mll" 84 12160 12163
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 282 12198 12202 "ocamlbuild/glob_lexer.ml" 282 12198 12203
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 87 12240 12248 "ocamlbuild/glob_lexer.mll" 87 12240 12249
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 87 12240 12258 "ocamlbuild/glob_lexer.mll" 87 12240 12263
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 87 12240 12272 "ocamlbuild/glob_lexer.mll" 87 12240 12277
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 87 12240 12291 "ocamlbuild/glob_lexer.mll" 87 12240 12294
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 87 12240 12286 "ocamlbuild/glob_lexer.mll" 87 12240 12294
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 87 12240 12296 "ocamlbuild/glob_lexer.mll" 87 12240 12301
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 87 12240 12279 "ocamlbuild/glob_lexer.mll" 87 12240 12302
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 87 12240 12265 "ocamlbuild/glob_lexer.mll" 87 12240 12303
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 87 12240 12257 "ocamlbuild/glob_lexer.mll" 87 12240 12305
+type(
+  Glob_ast.pattern list
+)
+"ocamlbuild/glob_lexer.mll" 87 12240 12252 "ocamlbuild/glob_lexer.mll" 87 12240 12305
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 88 12309 12313 "ocamlbuild/glob_lexer.mll" 88 12309 12326
+type(
+  char list -> Glob_ast.pattern -> Lexing.lexbuf -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 88 12309 12327 "ocamlbuild/glob_lexer.mll" 88 12309 12336
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.mll" 88 12309 12338 "ocamlbuild/glob_lexer.mll" 88 12309 12353
+type(
+  Glob_ast.pattern -> Glob_ast.pattern -> Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 88 12309 12354 "ocamlbuild/glob_lexer.mll" 88 12309 12355
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 88 12309 12356 "ocamlbuild/glob_lexer.mll" 88 12309 12357
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 88 12309 12337 "ocamlbuild/glob_lexer.mll" 88 12309 12358
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 88 12309 12359 "ocamlbuild/glob_lexer.mll" 88 12309 12365
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 88 12309 12313 "ocamlbuild/glob_lexer.mll" 88 12309 12365
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 87 12240 12242 "ocamlbuild/glob_lexer.mll" 88 12309 12367
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 288 12402 12406 "ocamlbuild/glob_lexer.ml" 288 12402 12407
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 90 12444 12452 "ocamlbuild/glob_lexer.mll" 90 12444 12453
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 90 12444 12462 "ocamlbuild/glob_lexer.mll" 90 12444 12469
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 90 12444 12478 "ocamlbuild/glob_lexer.mll" 90 12444 12483
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 90 12444 12490 "ocamlbuild/glob_lexer.mll" 90 12444 12493
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 90 12444 12485 "ocamlbuild/glob_lexer.mll" 90 12444 12493
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 90 12444 12471 "ocamlbuild/glob_lexer.mll" 90 12444 12494
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 90 12444 12461 "ocamlbuild/glob_lexer.mll" 90 12444 12495
+type(
+  Glob_ast.pattern list
+)
+"ocamlbuild/glob_lexer.mll" 90 12444 12456 "ocamlbuild/glob_lexer.mll" 90 12444 12495
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 91 12499 12503 "ocamlbuild/glob_lexer.mll" 91 12499 12516
+type(
+  char list -> Glob_ast.pattern -> Lexing.lexbuf -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 91 12499 12517 "ocamlbuild/glob_lexer.mll" 91 12499 12526
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.mll" 91 12499 12528 "ocamlbuild/glob_lexer.mll" 91 12499 12543
+type(
+  Glob_ast.pattern -> Glob_ast.pattern -> Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 91 12499 12544 "ocamlbuild/glob_lexer.mll" 91 12499 12545
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 91 12499 12546 "ocamlbuild/glob_lexer.mll" 91 12499 12547
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 91 12499 12527 "ocamlbuild/glob_lexer.mll" 91 12499 12548
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 91 12499 12549 "ocamlbuild/glob_lexer.mll" 91 12499 12555
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 91 12499 12503 "ocamlbuild/glob_lexer.mll" 91 12499 12555
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 90 12444 12446 "ocamlbuild/glob_lexer.mll" 91 12499 12557
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 294 12592 12596 "ocamlbuild/glob_lexer.ml" 294 12592 12597
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 93 12634 12642 "ocamlbuild/glob_lexer.mll" 93 12634 12643
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 93 12634 12652 "ocamlbuild/glob_lexer.mll" 93 12634 12659
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 93 12634 12673 "ocamlbuild/glob_lexer.mll" 93 12634 12676
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 93 12634 12668 "ocamlbuild/glob_lexer.mll" 93 12634 12676
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 93 12634 12678 "ocamlbuild/glob_lexer.mll" 93 12634 12683
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 93 12634 12661 "ocamlbuild/glob_lexer.mll" 93 12634 12684
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 93 12634 12651 "ocamlbuild/glob_lexer.mll" 93 12634 12685
+type(
+  Glob_ast.pattern list
+)
+"ocamlbuild/glob_lexer.mll" 93 12634 12646 "ocamlbuild/glob_lexer.mll" 93 12634 12685
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 94 12689 12693 "ocamlbuild/glob_lexer.mll" 94 12689 12706
+type(
+  char list -> Glob_ast.pattern -> Lexing.lexbuf -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 94 12689 12707 "ocamlbuild/glob_lexer.mll" 94 12689 12716
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.mll" 94 12689 12718 "ocamlbuild/glob_lexer.mll" 94 12689 12733
+type(
+  Glob_ast.pattern -> Glob_ast.pattern -> Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 94 12689 12734 "ocamlbuild/glob_lexer.mll" 94 12689 12735
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 94 12689 12736 "ocamlbuild/glob_lexer.mll" 94 12689 12737
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 94 12689 12717 "ocamlbuild/glob_lexer.mll" 94 12689 12738
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 94 12689 12739 "ocamlbuild/glob_lexer.mll" 94 12689 12745
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 94 12689 12693 "ocamlbuild/glob_lexer.mll" 94 12689 12745
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 93 12634 12636 "ocamlbuild/glob_lexer.mll" 94 12689 12747
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 300 12782 12786 "ocamlbuild/glob_lexer.ml" 300 12782 12787
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 95 12824 12833 "ocamlbuild/glob_lexer.mll" 95 12824 12838
+type(
+  exn -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 95 12824 12851 "ocamlbuild/glob_lexer.mll" 95 12824 12928
+type(
+  string
+)
+"ocamlbuild/glob_lexer.mll" 95 12824 12839 "ocamlbuild/glob_lexer.mll" 95 12824 12929
+type(
+  exn
+)
+"ocamlbuild/glob_lexer.mll" 95 12824 12831 "ocamlbuild/glob_lexer.mll" 95 12824 12931
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 305 12966 12970 "ocamlbuild/glob_lexer.ml" 305 12966 12971
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 96 13008 13016 "ocamlbuild/glob_lexer.mll" 96 13008 13029
+type(
+  char list -> Glob_ast.pattern -> Lexing.lexbuf -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 96 13008 13030 "ocamlbuild/glob_lexer.mll" 96 13008 13039
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.mll" 96 13008 13041 "ocamlbuild/glob_lexer.mll" 96 13008 13056
+type(
+  Glob_ast.pattern -> Glob_ast.pattern -> Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 96 13008 13057 "ocamlbuild/glob_lexer.mll" 96 13008 13058
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 96 13008 13065 "ocamlbuild/glob_lexer.mll" 96 13008 13074
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 96 13008 13059 "ocamlbuild/glob_lexer.mll" 96 13008 13075
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 96 13008 13040 "ocamlbuild/glob_lexer.mll" 96 13008 13076
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 96 13008 13077 "ocamlbuild/glob_lexer.mll" 96 13008 13083
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 96 13008 13014 "ocamlbuild/glob_lexer.mll" 96 13008 13085
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 310 13120 13124 "ocamlbuild/glob_lexer.ml" 310 13120 13125
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 97 13162 13170 "ocamlbuild/glob_lexer.mll" 97 13162 13183
+type(
+  char list -> Glob_ast.pattern -> Lexing.lexbuf -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 97 13162 13184 "ocamlbuild/glob_lexer.mll" 97 13162 13193
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.mll" 97 13162 13195 "ocamlbuild/glob_lexer.mll" 97 13162 13210
+type(
+  Glob_ast.pattern -> Glob_ast.pattern -> Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 97 13162 13211 "ocamlbuild/glob_lexer.mll" 97 13162 13212
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 97 13162 13213 "ocamlbuild/glob_lexer.mll" 97 13162 13218
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 97 13162 13194 "ocamlbuild/glob_lexer.mll" 97 13162 13219
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 97 13162 13220 "ocamlbuild/glob_lexer.mll" 97 13162 13226
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 97 13162 13168 "ocamlbuild/glob_lexer.mll" 97 13162 13228
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 315 13263 13267 "ocamlbuild/glob_lexer.ml" 315 13263 13269
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 98 13306 13314 "ocamlbuild/glob_lexer.mll" 98 13306 13327
+type(
+  char list -> Glob_ast.pattern -> Lexing.lexbuf -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 98 13306 13328 "ocamlbuild/glob_lexer.mll" 98 13306 13337
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.mll" 98 13306 13339 "ocamlbuild/glob_lexer.mll" 98 13306 13354
+type(
+  Glob_ast.pattern -> Glob_ast.pattern -> Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 98 13306 13355 "ocamlbuild/glob_lexer.mll" 98 13306 13356
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 98 13306 13357 "ocamlbuild/glob_lexer.mll" 98 13306 13366
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 98 13306 13338 "ocamlbuild/glob_lexer.mll" 98 13306 13367
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 98 13306 13368 "ocamlbuild/glob_lexer.mll" 98 13306 13374
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 98 13306 13312 "ocamlbuild/glob_lexer.mll" 98 13306 13376
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 320 13411 13415 "ocamlbuild/glob_lexer.ml" 320 13411 13417
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 99 13458 13465 "ocamlbuild/glob_lexer.mll" 99 13458 13466
+type(
+  char
+)
+"ocamlbuild/glob_lexer.ml" 325 13500 13502 "ocamlbuild/glob_lexer.ml" 325 13500 13524
+type(
+  Lexing.lexbuf -> int -> char
+)
+"ocamlbuild/glob_lexer.ml" 325 13500 13525 "ocamlbuild/glob_lexer.ml" 325 13500 13531
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 325 13500 13532 "ocamlbuild/glob_lexer.ml" 325 13500 13538
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 325 13500 13532 "ocamlbuild/glob_lexer.ml" 325 13500 13559
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 325 13500 13502 "ocamlbuild/glob_lexer.ml" 325 13500 13559
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 100 13597 13604 "ocamlbuild/glob_lexer.mll" 100 13597 13612
+type(
+  char -> char list -> bool
+)
+"ocamlbuild/glob_lexer.mll" 100 13597 13613 "ocamlbuild/glob_lexer.mll" 100 13597 13614
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 100 13597 13615 "ocamlbuild/glob_lexer.mll" 100 13597 13624
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.mll" 100 13597 13604 "ocamlbuild/glob_lexer.mll" 100 13597 13624
+type(
+  bool
+)
+"ocamlbuild/glob_lexer.mll" 101 13631 13638 "ocamlbuild/glob_lexer.mll" 101 13631 13639
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.mll" 101 13631 13640 "ocamlbuild/glob_lexer.mll" 101 13631 13641
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 101 13631 13637 "ocamlbuild/glob_lexer.mll" 101 13631 13642
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 103 13652 13658 "ocamlbuild/glob_lexer.mll" 103 13652 13663
+type(
+  exn -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 103 13652 13677 "ocamlbuild/glob_lexer.mll" 103 13652 13679
+type(
+  (char -> string, unit, string) format -> char -> string
+)
+"ocamlbuild/glob_lexer.mll" 103 13652 13680 "ocamlbuild/glob_lexer.mll" 103 13652 13721
+type(
+  (char -> string, unit, string) format
+)
+"ocamlbuild/glob_lexer.mll" 103 13652 13722 "ocamlbuild/glob_lexer.mll" 103 13652 13723
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 103 13652 13676 "ocamlbuild/glob_lexer.mll" 103 13652 13724
+type(
+  string
+)
+"ocamlbuild/glob_lexer.mll" 103 13652 13664 "ocamlbuild/glob_lexer.mll" 103 13652 13725
+type(
+  exn
+)
+"ocamlbuild/glob_lexer.mll" 103 13652 13658 "ocamlbuild/glob_lexer.mll" 103 13652 13725
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.mll" 100 13597 13599 "ocamlbuild/glob_lexer.mll" 104 13726 13729
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 321 13421 13421 "ocamlbuild/glob_lexer.mll" 104 13726 13729
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 334 13764 13768 "ocamlbuild/glob_lexer.ml" 334 13764 13785
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 334 13764 13789 "ocamlbuild/glob_lexer.ml" 334 13764 13795
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 334 13764 13789 "ocamlbuild/glob_lexer.ml" 334 13764 13814
+type(
+  Lexing.lexbuf -> unit
+)
+"ocamlbuild/glob_lexer.ml" 334 13764 13815 "ocamlbuild/glob_lexer.ml" 334 13764 13821
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 334 13764 13789 "ocamlbuild/glob_lexer.ml" 334 13764 13821
+type(
+  unit
+)
+"ocamlbuild/glob_lexer.ml" 334 13764 13823 "ocamlbuild/glob_lexer.ml" 334 13764 13852
+type(
+  char list ->
+  Glob_ast.pattern -> Lexing.lexbuf -> int -> Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 334 13764 13853 "ocamlbuild/glob_lexer.ml" 334 13764 13862
+type(
+  char list
+)
+"ocamlbuild/glob_lexer.ml" 334 13764 13863 "ocamlbuild/glob_lexer.ml" 334 13764 13864
+type(
+  Glob_ast.pattern
+)
+"ocamlbuild/glob_lexer.ml" 334 13764 13865 "ocamlbuild/glob_lexer.ml" 334 13764 13871
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 334 13764 13872 "ocamlbuild/glob_lexer.ml" 334 13764 13889
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 334 13764 13823 "ocamlbuild/glob_lexer.ml" 334 13764 13889
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 334 13764 13789 "ocamlbuild/glob_lexer.ml" 334 13764 13889
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 240 11060 11062 "ocamlbuild/glob_lexer.ml" 334 13764 13889
+type(
+  Glob_ast.pattern * char
+)
+"ocamlbuild/glob_lexer.ml" 336 13891 13895 "ocamlbuild/glob_lexer.ml" 336 13891 13907
+type(
+  Buffer.t -> Lexing.lexbuf -> string
+)
+"ocamlbuild/glob_lexer.ml" 336 13891 13908 "ocamlbuild/glob_lexer.ml" 336 13891 13909
+type(
+  Buffer.t
+)
+"ocamlbuild/glob_lexer.ml" 336 13891 13910 "ocamlbuild/glob_lexer.ml" 336 13891 13916
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 337 13919 13923 "ocamlbuild/glob_lexer.ml" 337 13919 13951
+type(
+  Buffer.t -> Lexing.lexbuf -> int -> string
+)
+"ocamlbuild/glob_lexer.ml" 337 13919 13952 "ocamlbuild/glob_lexer.ml" 337 13919 13953
+type(
+  Buffer.t
+)
+"ocamlbuild/glob_lexer.ml" 337 13919 13954 "ocamlbuild/glob_lexer.ml" 337 13919 13960
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 337 13919 13961 "ocamlbuild/glob_lexer.ml" 337 13919 13963
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 337 13919 13923 "ocamlbuild/glob_lexer.ml" 337 13919 13963
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 338 13964 13968 "ocamlbuild/glob_lexer.ml" 338 13964 13996
+type(
+  Buffer.t -> Lexing.lexbuf -> int -> string
+)
+"ocamlbuild/glob_lexer.ml" 338 13964 13997 "ocamlbuild/glob_lexer.ml" 338 13964 13998
+type(
+  Buffer.t
+)
+"ocamlbuild/glob_lexer.ml" 338 13964 13999 "ocamlbuild/glob_lexer.ml" 338 13964 14005
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 338 13964 14006 "ocamlbuild/glob_lexer.ml" 338 13964 14023
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 339 14026 14034 "ocamlbuild/glob_lexer.ml" 339 14026 14047
+type(
+  Lexing.lex_tables -> int -> Lexing.lexbuf -> int
+)
+"ocamlbuild/glob_lexer.ml" 339 14026 14048 "ocamlbuild/glob_lexer.ml" 339 14026 14066
+type(
+  Lexing.lex_tables
+)
+"ocamlbuild/glob_lexer.ml" 339 14026 14067 "ocamlbuild/glob_lexer.ml" 339 14026 14084
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 339 14026 14085 "ocamlbuild/glob_lexer.ml" 339 14026 14091
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 339 14026 14034 "ocamlbuild/glob_lexer.ml" 339 14026 14091
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 340 14097 14105 "ocamlbuild/glob_lexer.ml" 340 14097 14106
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 107 14144 14170 "ocamlbuild/glob_lexer.mll" 107 14144 14185
+type(
+  Buffer.t -> string
+)
+"ocamlbuild/glob_lexer.mll" 107 14144 14186 "ocamlbuild/glob_lexer.mll" 107 14144 14187
+type(
+  Buffer.t
+)
+"ocamlbuild/glob_lexer.mll" 107 14144 14168 "ocamlbuild/glob_lexer.mll" 107 14144 14189
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 345 14224 14228 "ocamlbuild/glob_lexer.ml" 345 14224 14229
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 108 14267 14293 "ocamlbuild/glob_lexer.mll" 108 14267 14308
+type(
+  Buffer.t -> char -> unit
+)
+"ocamlbuild/glob_lexer.mll" 108 14267 14309 "ocamlbuild/glob_lexer.mll" 108 14267 14310
+type(
+  Buffer.t
+)
+"ocamlbuild/glob_lexer.mll" 108 14267 14311 "ocamlbuild/glob_lexer.mll" 108 14267 14314
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 108 14267 14293 "ocamlbuild/glob_lexer.mll" 108 14267 14314
+type(
+  unit
+)
+"ocamlbuild/glob_lexer.mll" 108 14267 14316 "ocamlbuild/glob_lexer.mll" 108 14267 14328
+type(
+  Buffer.t -> Lexing.lexbuf -> string
+)
+"ocamlbuild/glob_lexer.mll" 108 14267 14329 "ocamlbuild/glob_lexer.mll" 108 14267 14330
+type(
+  Buffer.t
+)
+"ocamlbuild/glob_lexer.mll" 108 14267 14331 "ocamlbuild/glob_lexer.mll" 108 14267 14337
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 108 14267 14316 "ocamlbuild/glob_lexer.mll" 108 14267 14337
+type(
+  string
+)
+"ocamlbuild/glob_lexer.mll" 108 14267 14291 "ocamlbuild/glob_lexer.mll" 108 14267 14339
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 350 14374 14378 "ocamlbuild/glob_lexer.ml" 350 14374 14379
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 109 14421 14439 "ocamlbuild/glob_lexer.mll" 109 14421 14440
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 355 14474 14476 "ocamlbuild/glob_lexer.ml" 355 14474 14493
+type(
+  Lexing.lexbuf -> int -> int -> string
+)
+"ocamlbuild/glob_lexer.ml" 355 14474 14494 "ocamlbuild/glob_lexer.ml" 355 14474 14500
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 355 14474 14501 "ocamlbuild/glob_lexer.ml" 355 14474 14507
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 355 14474 14501 "ocamlbuild/glob_lexer.ml" 355 14474 14528
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 355 14474 14529 "ocamlbuild/glob_lexer.ml" 355 14474 14535
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 355 14474 14529 "ocamlbuild/glob_lexer.ml" 355 14474 14555
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 355 14474 14476 "ocamlbuild/glob_lexer.ml" 355 14474 14555
+type(
+  string
+)
+"ocamlbuild/glob_lexer.mll" 109 14593 14619 "ocamlbuild/glob_lexer.mll" 109 14593 14636
+type(
+  Buffer.t -> string -> unit
+)
+"ocamlbuild/glob_lexer.mll" 109 14593 14637 "ocamlbuild/glob_lexer.mll" 109 14593 14638
+type(
+  Buffer.t
+)
+"ocamlbuild/glob_lexer.mll" 109 14593 14639 "ocamlbuild/glob_lexer.mll" 109 14593 14640
+type(
+  string
+)
+"ocamlbuild/glob_lexer.mll" 109 14593 14619 "ocamlbuild/glob_lexer.mll" 109 14593 14640
+type(
+  unit
+)
+"ocamlbuild/glob_lexer.mll" 109 14593 14642 "ocamlbuild/glob_lexer.mll" 109 14593 14654
+type(
+  Buffer.t -> Lexing.lexbuf -> string
+)
+"ocamlbuild/glob_lexer.mll" 109 14593 14655 "ocamlbuild/glob_lexer.mll" 109 14593 14656
+type(
+  Buffer.t
+)
+"ocamlbuild/glob_lexer.mll" 109 14593 14657 "ocamlbuild/glob_lexer.mll" 109 14593 14663
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 109 14593 14642 "ocamlbuild/glob_lexer.mll" 109 14593 14663
+type(
+  string
+)
+"ocamlbuild/glob_lexer.mll" 109 14593 14617 "ocamlbuild/glob_lexer.mll" 109 14593 14665
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 351 14383 14383 "ocamlbuild/glob_lexer.mll" 109 14593 14665
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 360 14700 14704 "ocamlbuild/glob_lexer.ml" 360 14700 14705
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 110 14747 14754 "ocamlbuild/glob_lexer.mll" 110 14747 14755
+type(
+  char
+)
+"ocamlbuild/glob_lexer.ml" 365 14789 14791 "ocamlbuild/glob_lexer.ml" 365 14789 14813
+type(
+  Lexing.lexbuf -> int -> char
+)
+"ocamlbuild/glob_lexer.ml" 365 14789 14814 "ocamlbuild/glob_lexer.ml" 365 14789 14820
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 365 14789 14821 "ocamlbuild/glob_lexer.ml" 365 14789 14827
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 365 14789 14821 "ocamlbuild/glob_lexer.ml" 365 14789 14848
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 365 14789 14791 "ocamlbuild/glob_lexer.ml" 365 14789 14848
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 110 14886 14912 "ocamlbuild/glob_lexer.mll" 110 14886 14917
+type(
+  exn -> string
+)
+"ocamlbuild/glob_lexer.mll" 110 14886 14931 "ocamlbuild/glob_lexer.mll" 110 14886 14933
+type(
+  (char -> string, unit, string) format -> char -> string
+)
+"ocamlbuild/glob_lexer.mll" 110 14886 14934 "ocamlbuild/glob_lexer.mll" 110 14886 14969
+type(
+  (char -> string, unit, string) format
+)
+"ocamlbuild/glob_lexer.mll" 110 14886 14970 "ocamlbuild/glob_lexer.mll" 110 14886 14971
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 110 14886 14930 "ocamlbuild/glob_lexer.mll" 110 14886 14972
+type(
+  string
+)
+"ocamlbuild/glob_lexer.mll" 110 14886 14918 "ocamlbuild/glob_lexer.mll" 110 14886 14973
+type(
+  exn
+)
+"ocamlbuild/glob_lexer.mll" 110 14886 14910 "ocamlbuild/glob_lexer.mll" 110 14886 14975
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 361 14709 14709 "ocamlbuild/glob_lexer.mll" 110 14886 14975
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 370 15010 15014 "ocamlbuild/glob_lexer.ml" 370 15010 15031
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 370 15010 15035 "ocamlbuild/glob_lexer.ml" 370 15010 15041
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 370 15010 15035 "ocamlbuild/glob_lexer.ml" 370 15010 15060
+type(
+  Lexing.lexbuf -> unit
+)
+"ocamlbuild/glob_lexer.ml" 370 15010 15061 "ocamlbuild/glob_lexer.ml" 370 15010 15067
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 370 15010 15035 "ocamlbuild/glob_lexer.ml" 370 15010 15067
+type(
+  unit
+)
+"ocamlbuild/glob_lexer.ml" 370 15010 15069 "ocamlbuild/glob_lexer.ml" 370 15010 15097
+type(
+  Buffer.t -> Lexing.lexbuf -> int -> string
+)
+"ocamlbuild/glob_lexer.ml" 370 15010 15098 "ocamlbuild/glob_lexer.ml" 370 15010 15099
+type(
+  Buffer.t
+)
+"ocamlbuild/glob_lexer.ml" 370 15010 15100 "ocamlbuild/glob_lexer.ml" 370 15010 15106
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 370 15010 15107 "ocamlbuild/glob_lexer.ml" 370 15010 15124
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 370 15010 15069 "ocamlbuild/glob_lexer.ml" 370 15010 15124
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 370 15010 15035 "ocamlbuild/glob_lexer.ml" 370 15010 15124
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 339 14026 14028 "ocamlbuild/glob_lexer.ml" 370 15010 15124
+type(
+  string
+)
+"ocamlbuild/glob_lexer.ml" 372 15126 15130 "ocamlbuild/glob_lexer.ml" 372 15126 15141
+type(
+  (char * char) Bool.boolean list ->
+  Lexing.lexbuf -> (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 372 15126 15142 "ocamlbuild/glob_lexer.ml" 372 15126 15144
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 372 15126 15145 "ocamlbuild/glob_lexer.ml" 372 15126 15151
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 373 15154 15158 "ocamlbuild/glob_lexer.ml" 373 15154 15185
+type(
+  (char * char) Bool.boolean list ->
+  Lexing.lexbuf -> int -> (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 373 15154 15186 "ocamlbuild/glob_lexer.ml" 373 15154 15188
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 373 15154 15189 "ocamlbuild/glob_lexer.ml" 373 15154 15195
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 373 15154 15196 "ocamlbuild/glob_lexer.ml" 373 15154 15198
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 373 15154 15158 "ocamlbuild/glob_lexer.ml" 373 15154 15198
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 374 15199 15203 "ocamlbuild/glob_lexer.ml" 374 15199 15230
+type(
+  (char * char) Bool.boolean list ->
+  Lexing.lexbuf -> int -> (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 374 15199 15231 "ocamlbuild/glob_lexer.ml" 374 15199 15233
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 374 15199 15234 "ocamlbuild/glob_lexer.ml" 374 15199 15240
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 374 15199 15241 "ocamlbuild/glob_lexer.ml" 374 15199 15258
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 375 15261 15269 "ocamlbuild/glob_lexer.ml" 375 15261 15282
+type(
+  Lexing.lex_tables -> int -> Lexing.lexbuf -> int
+)
+"ocamlbuild/glob_lexer.ml" 375 15261 15283 "ocamlbuild/glob_lexer.ml" 375 15261 15301
+type(
+  Lexing.lex_tables
+)
+"ocamlbuild/glob_lexer.ml" 375 15261 15302 "ocamlbuild/glob_lexer.ml" 375 15261 15319
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 375 15261 15320 "ocamlbuild/glob_lexer.ml" 375 15261 15326
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 375 15261 15269 "ocamlbuild/glob_lexer.ml" 375 15261 15326
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 376 15332 15340 "ocamlbuild/glob_lexer.ml" 376 15332 15341
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 113 15379 15405 "ocamlbuild/glob_lexer.mll" 113 15379 15411
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 381 15446 15450 "ocamlbuild/glob_lexer.ml" 381 15446 15451
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 114 15489 15524 "ocamlbuild/glob_lexer.mll" 114 15489 15527
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 114 15489 15528 "ocamlbuild/glob_lexer.mll" 114 15489 15531
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 114 15489 15523 "ocamlbuild/glob_lexer.mll" 114 15489 15532
+type(
+  char * char
+)
+"ocamlbuild/glob_lexer.mll" 114 15489 15518 "ocamlbuild/glob_lexer.mll" 114 15489 15533
+type(
+  (char * char) Bool.boolean
+)
+"ocamlbuild/glob_lexer.mll" 114 15489 15535 "ocamlbuild/glob_lexer.mll" 114 15489 15537
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.mll" 114 15489 15515 "ocamlbuild/glob_lexer.mll" 114 15489 15540
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 386 15575 15579 "ocamlbuild/glob_lexer.ml" 386 15575 15580
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 115 15622 15630 "ocamlbuild/glob_lexer.mll" 115 15622 15632
+type(
+  char
+)
+"ocamlbuild/glob_lexer.ml" 391 15666 15668 "ocamlbuild/glob_lexer.ml" 391 15666 15690
+type(
+  Lexing.lexbuf -> int -> char
+)
+"ocamlbuild/glob_lexer.ml" 391 15666 15691 "ocamlbuild/glob_lexer.ml" 391 15666 15697
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 391 15666 15698 "ocamlbuild/glob_lexer.ml" 391 15666 15704
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 391 15666 15698 "ocamlbuild/glob_lexer.ml" 391 15666 15725
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 391 15666 15668 "ocamlbuild/glob_lexer.ml" 391 15666 15725
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 115 15764 15786 "ocamlbuild/glob_lexer.mll" 115 15764 15788
+type(
+  char
+)
+"ocamlbuild/glob_lexer.ml" 396 15822 15824 "ocamlbuild/glob_lexer.ml" 396 15822 15846
+type(
+  Lexing.lexbuf -> int -> char
+)
+"ocamlbuild/glob_lexer.ml" 396 15822 15847 "ocamlbuild/glob_lexer.ml" 396 15822 15853
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 396 15822 15855 "ocamlbuild/glob_lexer.ml" 396 15822 15861
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 396 15822 15855 "ocamlbuild/glob_lexer.ml" 396 15822 15882
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 396 15822 15883 "ocamlbuild/glob_lexer.ml" 396 15822 15884
+type(
+  int -> int -> int
+)
+"ocamlbuild/glob_lexer.ml" 396 15822 15885 "ocamlbuild/glob_lexer.ml" 396 15822 15886
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 396 15822 15854 "ocamlbuild/glob_lexer.ml" 396 15822 15887
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 396 15822 15824 "ocamlbuild/glob_lexer.ml" 396 15822 15887
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 115 15925 15953 "ocamlbuild/glob_lexer.mll" 115 15925 15964
+type(
+  (char * char) Bool.boolean list ->
+  Lexing.lexbuf -> (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.mll" 115 15925 15972 "ocamlbuild/glob_lexer.mll" 115 15925 15974
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 115 15925 15975 "ocamlbuild/glob_lexer.mll" 115 15925 15977
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 115 15925 15971 "ocamlbuild/glob_lexer.mll" 115 15925 15978
+type(
+  char * char
+)
+"ocamlbuild/glob_lexer.mll" 115 15925 15966 "ocamlbuild/glob_lexer.mll" 115 15925 15979
+type(
+  (char * char) Bool.boolean
+)
+"ocamlbuild/glob_lexer.mll" 115 15925 15981 "ocamlbuild/glob_lexer.mll" 115 15925 15983
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.mll" 115 15925 15965 "ocamlbuild/glob_lexer.mll" 115 15925 15984
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.mll" 115 15925 15985 "ocamlbuild/glob_lexer.mll" 115 15925 15991
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 115 15925 15951 "ocamlbuild/glob_lexer.mll" 115 15925 15993
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 387 15584 15584 "ocamlbuild/glob_lexer.mll" 115 15925 15993
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 401 16028 16032 "ocamlbuild/glob_lexer.ml" 401 16028 16033
+type(
+  int
+)
+"ocamlbuild/glob_lexer.mll" 116 16075 16082 "ocamlbuild/glob_lexer.mll" 116 16075 16083
+type(
+  char
+)
+"ocamlbuild/glob_lexer.ml" 406 16117 16119 "ocamlbuild/glob_lexer.ml" 406 16117 16141
+type(
+  Lexing.lexbuf -> int -> char
+)
+"ocamlbuild/glob_lexer.ml" 406 16117 16142 "ocamlbuild/glob_lexer.ml" 406 16117 16148
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 406 16117 16149 "ocamlbuild/glob_lexer.ml" 406 16117 16155
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 406 16117 16149 "ocamlbuild/glob_lexer.ml" 406 16117 16176
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 406 16117 16119 "ocamlbuild/glob_lexer.ml" 406 16117 16176
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 116 16214 16242 "ocamlbuild/glob_lexer.mll" 116 16214 16253
+type(
+  (char * char) Bool.boolean list ->
+  Lexing.lexbuf -> (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.mll" 116 16214 16261 "ocamlbuild/glob_lexer.mll" 116 16214 16262
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 116 16214 16263 "ocamlbuild/glob_lexer.mll" 116 16214 16264
+type(
+  char
+)
+"ocamlbuild/glob_lexer.mll" 116 16214 16260 "ocamlbuild/glob_lexer.mll" 116 16214 16265
+type(
+  char * char
+)
+"ocamlbuild/glob_lexer.mll" 116 16214 16255 "ocamlbuild/glob_lexer.mll" 116 16214 16266
+type(
+  (char * char) Bool.boolean
+)
+"ocamlbuild/glob_lexer.mll" 116 16214 16268 "ocamlbuild/glob_lexer.mll" 116 16214 16270
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.mll" 116 16214 16254 "ocamlbuild/glob_lexer.mll" 116 16214 16271
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.mll" 116 16214 16272 "ocamlbuild/glob_lexer.mll" 116 16214 16278
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.mll" 116 16214 16240 "ocamlbuild/glob_lexer.mll" 116 16214 16280
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 402 16037 16037 "ocamlbuild/glob_lexer.mll" 116 16214 16280
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 411 16315 16319 "ocamlbuild/glob_lexer.ml" 411 16315 16336
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 411 16315 16340 "ocamlbuild/glob_lexer.ml" 411 16315 16346
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 411 16315 16340 "ocamlbuild/glob_lexer.ml" 411 16315 16365
+type(
+  Lexing.lexbuf -> unit
+)
+"ocamlbuild/glob_lexer.ml" 411 16315 16366 "ocamlbuild/glob_lexer.ml" 411 16315 16372
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 411 16315 16340 "ocamlbuild/glob_lexer.ml" 411 16315 16372
+type(
+  unit
+)
+"ocamlbuild/glob_lexer.ml" 411 16315 16374 "ocamlbuild/glob_lexer.ml" 411 16315 16401
+type(
+  (char * char) Bool.boolean list ->
+  Lexing.lexbuf -> int -> (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 411 16315 16402 "ocamlbuild/glob_lexer.ml" 411 16315 16404
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 411 16315 16405 "ocamlbuild/glob_lexer.ml" 411 16315 16411
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/glob_lexer.ml" 411 16315 16412 "ocamlbuild/glob_lexer.ml" 411 16315 16429
+type(
+  int
+)
+"ocamlbuild/glob_lexer.ml" 411 16315 16374 "ocamlbuild/glob_lexer.ml" 411 16315 16429
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 411 16315 16340 "ocamlbuild/glob_lexer.ml" 411 16315 16429
+type(
+  (char * char) Bool.boolean list
+)
+"ocamlbuild/glob_lexer.ml" 375 15261 15263 "ocamlbuild/glob_lexer.ml" 411 16315 16429
+type(
+  (char * char) Bool.boolean list
+)

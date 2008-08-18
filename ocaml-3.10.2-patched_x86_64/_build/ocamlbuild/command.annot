@@ -1,0 +1,4302 @@
+"ocamlbuild/command.ml" 22 926 930 "ocamlbuild/command.ml" 22 926 934
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 22 926 937 "ocamlbuild/command.ml" 22 926 940
+type(
+  int -> int ref
+)
+"ocamlbuild/command.ml" 22 926 941 "ocamlbuild/command.ml" 22 926 942
+type(
+  int
+)
+"ocamlbuild/command.ml" 22 926 937 "ocamlbuild/command.ml" 22 926 942
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 83 2116 2120 "ocamlbuild/command.ml" 83 2116 2134
+type(
+  'a -> 'b
+)
+"ocamlbuild/command.ml" 83 2116 2135 "ocamlbuild/command.ml" 83 2116 2136
+type(
+  'a
+)
+"ocamlbuild/command.ml" 83 2116 2139 "ocamlbuild/command.ml" 83 2116 2147
+type(
+  string -> 'b
+)
+"ocamlbuild/command.ml" 83 2116 2148 "ocamlbuild/command.ml" 83 2116 2164
+type(
+  string
+)
+"ocamlbuild/command.ml" 83 2116 2139 "ocamlbuild/command.ml" 83 2116 2164
+type(
+  'b
+)
+"ocamlbuild/command.ml" 85 2166 2170 "ocamlbuild/command.ml" 85 2166 2181
+type(
+  (Tags.t -> spec) ref
+)
+"ocamlbuild/command.ml" 85 2166 2184 "ocamlbuild/command.ml" 85 2166 2187
+type(
+  (Tags.t -> spec) -> (Tags.t -> spec) ref
+)
+"ocamlbuild/command.ml" 85 2166 2188 "ocamlbuild/command.ml" 85 2166 2202
+type(
+  Tags.t -> spec
+)
+"ocamlbuild/command.ml" 85 2166 2184 "ocamlbuild/command.ml" 85 2166 2202
+type(
+  (Tags.t -> spec) ref
+)
+"ocamlbuild/command.ml" 88 2220 2224 "ocamlbuild/command.ml" 88 2220 2231
+type(
+  string list -> spec
+)
+"ocamlbuild/command.ml" 88 2220 2232 "ocamlbuild/command.ml" 88 2220 2233
+type(
+  string list
+)
+"ocamlbuild/command.ml" 88 2220 2238 "ocamlbuild/command.ml" 88 2220 2246
+type(
+  (string -> spec) -> string list -> spec list
+)
+"ocamlbuild/command.ml" 88 2220 2252 "ocamlbuild/command.ml" 88 2220 2253
+type(
+  string
+)
+"ocamlbuild/command.ml" 88 2220 2259 "ocamlbuild/command.ml" 88 2220 2260
+type(
+  string
+)
+"ocamlbuild/command.ml" 88 2220 2257 "ocamlbuild/command.ml" 88 2220 2260
+type(
+  spec
+)
+"ocamlbuild/command.ml" 88 2220 2247 "ocamlbuild/command.ml" 88 2220 2261
+type(
+  string -> spec
+)
+"ocamlbuild/command.ml" 88 2220 2262 "ocamlbuild/command.ml" 88 2220 2263
+type(
+  string list
+)
+"ocamlbuild/command.ml" 88 2220 2237 "ocamlbuild/command.ml" 88 2220 2264
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 88 2220 2236 "ocamlbuild/command.ml" 88 2220 2264
+type(
+  spec
+)
+"ocamlbuild/command.ml" 89 2265 2269 "ocamlbuild/command.ml" 89 2265 2282
+type(
+  pathname list -> spec
+)
+"ocamlbuild/command.ml" 89 2265 2283 "ocamlbuild/command.ml" 89 2265 2284
+type(
+  pathname list
+)
+"ocamlbuild/command.ml" 89 2265 2289 "ocamlbuild/command.ml" 89 2265 2297
+type(
+  (pathname -> spec) -> pathname list -> spec list
+)
+"ocamlbuild/command.ml" 89 2265 2303 "ocamlbuild/command.ml" 89 2265 2304
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 89 2265 2310 "ocamlbuild/command.ml" 89 2265 2311
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 89 2265 2308 "ocamlbuild/command.ml" 89 2265 2311
+type(
+  spec
+)
+"ocamlbuild/command.ml" 89 2265 2298 "ocamlbuild/command.ml" 89 2265 2312
+type(
+  pathname -> spec
+)
+"ocamlbuild/command.ml" 89 2265 2313 "ocamlbuild/command.ml" 89 2265 2314
+type(
+  pathname list
+)
+"ocamlbuild/command.ml" 89 2265 2288 "ocamlbuild/command.ml" 89 2265 2315
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 89 2265 2287 "ocamlbuild/command.ml" 89 2265 2315
+type(
+  spec
+)
+"ocamlbuild/command.ml" 92 2325 2329 "ocamlbuild/command.ml" 92 2325 2337
+type(
+  string list lazy_t
+)
+"ocamlbuild/command.ml" 93 2351 2357 "ocamlbuild/command.ml" 93 2351 2365
+type(
+  string
+)
+"ocamlbuild/command.ml" 93 2351 2368 "ocamlbuild/command.ml" 93 2351 2378
+type(
+  string -> string
+)
+"ocamlbuild/command.ml" 93 2351 2379 "ocamlbuild/command.ml" 93 2351 2385
+type(
+  string
+)
+"ocamlbuild/command.ml" 93 2351 2368 "ocamlbuild/command.ml" 93 2351 2385
+type(
+  string
+)
+"ocamlbuild/command.ml" 94 2389 2391 "ocamlbuild/command.ml" 94 2389 2415
+type(
+  Lexing.lexbuf -> string list
+)
+"ocamlbuild/command.ml" 94 2389 2417 "ocamlbuild/command.ml" 94 2389 2435
+type(
+  string -> Lexing.lexbuf
+)
+"ocamlbuild/command.ml" 94 2389 2436 "ocamlbuild/command.ml" 94 2389 2444
+type(
+  string
+)
+"ocamlbuild/command.ml" 94 2389 2416 "ocamlbuild/command.ml" 94 2389 2445
+type(
+  Lexing.lexbuf
+)
+"ocamlbuild/command.ml" 94 2389 2391 "ocamlbuild/command.ml" 94 2389 2445
+type(
+  string list
+)
+"ocamlbuild/command.ml" 92 2325 2345 "ocamlbuild/command.ml" 95 2446 2449
+type(
+  string list
+)
+"ocamlbuild/command.ml" 92 2325 2340 "ocamlbuild/command.ml" 95 2446 2449
+type(
+  string list lazy_t
+)
+"ocamlbuild/command.ml" 97 2451 2455 "ocamlbuild/command.ml" 97 2451 2470
+type(
+  (string, unit -> spec) Hashtbl.t
+)
+"ocamlbuild/command.ml" 97 2451 2473 "ocamlbuild/command.ml" 97 2451 2487
+type(
+  int -> (string, unit -> spec) Hashtbl.t
+)
+"ocamlbuild/command.ml" 97 2451 2488 "ocamlbuild/command.ml" 97 2451 2490
+type(
+  int
+)
+"ocamlbuild/command.ml" 97 2451 2473 "ocamlbuild/command.ml" 97 2451 2490
+type(
+  (string, unit -> spec) Hashtbl.t
+)
+"ocamlbuild/command.ml" 98 2491 2495 "ocamlbuild/command.ml" 98 2491 2523
+type(
+  string -> (unit -> spec) -> unit
+)
+"ocamlbuild/command.ml" 98 2491 2524 "ocamlbuild/command.ml" 98 2491 2539
+type(
+  string
+)
+"ocamlbuild/command.ml" 98 2491 2540 "ocamlbuild/command.ml" 98 2491 2546
+type(
+  unit -> spec
+)
+"ocamlbuild/command.ml" 99 2549 2551 "ocamlbuild/command.ml" 99 2549 2566
+type(
+  (string, unit -> spec) Hashtbl.t -> string -> (unit -> spec) -> unit
+)
+"ocamlbuild/command.ml" 99 2549 2567 "ocamlbuild/command.ml" 99 2549 2582
+type(
+  (string, unit -> spec) Hashtbl.t
+)
+"ocamlbuild/command.ml" 99 2549 2583 "ocamlbuild/command.ml" 99 2549 2598
+type(
+  string
+)
+"ocamlbuild/command.ml" 99 2549 2599 "ocamlbuild/command.ml" 99 2549 2605
+type(
+  unit -> spec
+)
+"ocamlbuild/command.ml" 99 2549 2551 "ocamlbuild/command.ml" 99 2549 2605
+type(
+  unit
+)
+"ocamlbuild/command.ml" 100 2606 2610 "ocamlbuild/command.ml" 100 2606 2624
+type(
+  string -> spec
+)
+"ocamlbuild/command.ml" 100 2606 2625 "ocamlbuild/command.ml" 100 2606 2640
+type(
+  string
+)
+"ocamlbuild/command.ml" 101 2643 2649 "ocamlbuild/command.ml" 101 2643 2655
+type(
+  unit -> spec
+)
+"ocamlbuild/command.ml" 103 2666 2672 "ocamlbuild/command.ml" 103 2666 2684
+type(
+  (string, unit -> spec) Hashtbl.t -> string -> unit -> spec
+)
+"ocamlbuild/command.ml" 103 2666 2685 "ocamlbuild/command.ml" 103 2666 2700
+type(
+  (string, unit -> spec) Hashtbl.t
+)
+"ocamlbuild/command.ml" 103 2666 2701 "ocamlbuild/command.ml" 103 2666 2716
+type(
+  string
+)
+"ocamlbuild/command.ml" 103 2666 2672 "ocamlbuild/command.ml" 103 2666 2716
+type(
+  unit -> spec
+)
+"ocamlbuild/command.ml" 104 2717 2726 "ocamlbuild/command.ml" 104 2717 2735
+type(
+  exn
+)
+"ocamlbuild/command.ml" 105 2739 2745 "ocamlbuild/command.ml" 105 2739 2753
+type(
+  string -> unit -> spec
+)
+"ocamlbuild/command.ml" 105 2739 2755 "ocamlbuild/command.ml" 105 2739 2763
+type(
+  (string -> string, Format.formatter, unit, string) format4 ->
+  string -> string
+)
+"ocamlbuild/command.ml" 105 2739 2764 "ocamlbuild/command.ml" 106 2804 2884
+type(
+  (string -> string, Format.formatter, unit, string) format4
+)
+"ocamlbuild/command.ml" 107 2885 2901 "ocamlbuild/command.ml" 107 2885 2916
+type(
+  string
+)
+"ocamlbuild/command.ml" 105 2739 2754 "ocamlbuild/command.ml" 107 2885 2917
+type(
+  string
+)
+"ocamlbuild/command.ml" 105 2739 2745 "ocamlbuild/command.ml" 107 2885 2917
+type(
+  unit -> spec
+)
+"ocamlbuild/command.ml" 102 2658 2662 "ocamlbuild/command.ml" 107 2885 2917
+type(
+  unit -> spec
+)
+"ocamlbuild/command.ml" 109 2923 2929 "ocamlbuild/command.ml" 109 2923 2935
+type(
+  unit -> spec
+)
+"ocamlbuild/command.ml" 109 2923 2936 "ocamlbuild/command.ml" 109 2923 2938
+type(
+  unit
+)
+"ocamlbuild/command.ml" 109 2923 2929 "ocamlbuild/command.ml" 109 2923 2938
+type(
+  spec
+)
+"ocamlbuild/command.ml" 110 2939 2946 "ocamlbuild/command.ml" 110 2939 2955
+type(
+  exn
+)
+"ocamlbuild/command.ml" 111 2959 2963 "ocamlbuild/command.ml" 111 2959 2971
+type(
+  string -> spec
+)
+"ocamlbuild/command.ml" 111 2959 2973 "ocamlbuild/command.ml" 111 2959 2987
+type(
+  (string -> string, unit, string) format -> string -> string
+)
+"ocamlbuild/command.ml" 111 2959 2988 "ocamlbuild/command.ml" 112 3029 3094
+type(
+  (string -> string, unit, string) format
+)
+"ocamlbuild/command.ml" 112 3029 3095 "ocamlbuild/command.ml" 112 3029 3110
+type(
+  string
+)
+"ocamlbuild/command.ml" 111 2959 2972 "ocamlbuild/command.ml" 112 3029 3111
+type(
+  string
+)
+"ocamlbuild/command.ml" 111 2959 2963 "ocamlbuild/command.ml" 112 3029 3111
+type(
+  spec
+)
+"ocamlbuild/command.ml" 109 2923 2925 "ocamlbuild/command.ml" 112 3029 3111
+type(
+  spec
+)
+"ocamlbuild/command.ml" 101 2643 2645 "ocamlbuild/command.ml" 112 3029 3111
+type(
+  spec
+)
+"ocamlbuild/command.ml" 116 3134 3138 "ocamlbuild/command.ml" 116 3134 3152
+type(
+  string -> string
+)
+"ocamlbuild/command.ml" 116 3134 3153 "ocamlbuild/command.ml" 116 3134 3156
+type(
+  string
+)
+"ocamlbuild/command.ml" 117 3159 3164 "ocamlbuild/command.ml" 117 3159 3184
+type(
+  string -> bool
+)
+"ocamlbuild/command.ml" 117 3159 3185 "ocamlbuild/command.ml" 117 3159 3188
+type(
+  string
+)
+"ocamlbuild/command.ml" 117 3159 3164 "ocamlbuild/command.ml" 117 3159 3188
+type(
+  bool
+)
+"ocamlbuild/command.ml" 118 3194 3202 "ocamlbuild/command.ml" 118 3194 3206
+type(
+  string
+)
+"ocamlbuild/command.ml" 118 3194 3209 "ocamlbuild/command.ml" 118 3194 3218
+type(
+  (string -> bool) -> string list -> string
+)
+"ocamlbuild/command.ml" 118 3194 3229 "ocamlbuild/command.ml" 118 3194 3233
+type(
+  string
+)
+"ocamlbuild/command.ml" 119 3237 3246 "ocamlbuild/command.ml" 119 3237 3250
+type(
+  string
+)
+"ocamlbuild/command.ml" 119 3237 3251 "ocamlbuild/command.ml" 119 3237 3252
+type(
+  string -> string -> bool
+)
+"ocamlbuild/command.ml" 119 3237 3253 "ocamlbuild/command.ml" 119 3237 3278
+type(
+  string
+)
+"ocamlbuild/command.ml" 119 3237 3246 "ocamlbuild/command.ml" 119 3237 3278
+type(
+  bool
+)
+"ocamlbuild/command.ml" 119 3237 3284 "ocamlbuild/command.ml" 119 3237 3299
+type(
+  string -> bool
+)
+"ocamlbuild/command.ml" 119 3237 3300 "ocamlbuild/command.ml" 119 3237 3303
+type(
+  string
+)
+"ocamlbuild/command.ml" 119 3237 3284 "ocamlbuild/command.ml" 119 3237 3303
+type(
+  bool
+)
+"ocamlbuild/command.ml" 120 3304 3315 "ocamlbuild/command.ml" 120 3304 3330
+type(
+  string -> bool
+)
+"ocamlbuild/command.ml" 120 3304 3332 "ocamlbuild/command.ml" 120 3304 3347
+type(
+  string -> string -> string
+)
+"ocamlbuild/command.ml" 120 3304 3348 "ocamlbuild/command.ml" 120 3304 3352
+type(
+  string
+)
+"ocamlbuild/command.ml" 120 3304 3353 "ocamlbuild/command.ml" 120 3304 3356
+type(
+  string
+)
+"ocamlbuild/command.ml" 120 3304 3331 "ocamlbuild/command.ml" 120 3304 3357
+type(
+  string
+)
+"ocamlbuild/command.ml" 120 3304 3315 "ocamlbuild/command.ml" 120 3304 3357
+type(
+  bool
+)
+"ocamlbuild/command.ml" 119 3237 3243 "ocamlbuild/command.ml" 120 3304 3357
+type(
+  bool
+)
+"ocamlbuild/command.ml" 118 3194 3219 "ocamlbuild/command.ml" 121 3358 3365
+type(
+  string -> bool
+)
+"ocamlbuild/command.ml" 121 3358 3366 "ocamlbuild/command.ml" 121 3358 3368
+type(
+  string list Lazy.t -> string list
+)
+"ocamlbuild/command.ml" 121 3358 3368 "ocamlbuild/command.ml" 121 3358 3376
+type(
+  string list Lazy.t
+)
+"ocamlbuild/command.ml" 121 3358 3366 "ocamlbuild/command.ml" 121 3358 3376
+type(
+  string list
+)
+"ocamlbuild/command.ml" 118 3194 3209 "ocamlbuild/command.ml" 121 3358 3376
+type(
+  string
+)
+"ocamlbuild/command.ml" 122 3380 3384 "ocamlbuild/command.ml" 122 3380 3399
+type(
+  string -> string -> string
+)
+"ocamlbuild/command.ml" 122 3380 3400 "ocamlbuild/command.ml" 122 3380 3404
+type(
+  string
+)
+"ocamlbuild/command.ml" 122 3380 3405 "ocamlbuild/command.ml" 122 3380 3408
+type(
+  string
+)
+"ocamlbuild/command.ml" 122 3380 3384 "ocamlbuild/command.ml" 122 3380 3408
+type(
+  string
+)
+"ocamlbuild/command.ml" 118 3194 3198 "ocamlbuild/command.ml" 122 3380 3408
+type(
+  string
+)
+"ocamlbuild/command.ml" 123 3409 3416 "ocamlbuild/command.ml" 123 3409 3419
+type(
+  string
+)
+"ocamlbuild/command.ml" 117 3159 3161 "ocamlbuild/command.ml" 123 3409 3419
+type(
+  string
+)
+"ocamlbuild/command.ml" 126 3465 3473 "ocamlbuild/command.ml" 126 3465 3506
+type(
+  (Tags.t -> 'a) -> (pathname -> unit) -> bool -> spec -> string
+)
+"ocamlbuild/command.ml" 126 3465 3507 "ocamlbuild/command.ml" 126 3465 3521
+type(
+  Tags.t -> 'a
+)
+"ocamlbuild/command.ml" 126 3465 3522 "ocamlbuild/command.ml" 126 3465 3538
+type(
+  pathname -> unit
+)
+"ocamlbuild/command.ml" 126 3465 3539 "ocamlbuild/command.ml" 126 3465 3555
+type(
+  bool
+)
+"ocamlbuild/command.ml" 126 3465 3556 "ocamlbuild/command.ml" 126 3465 3560
+type(
+  spec
+)
+"ocamlbuild/command.ml" 127 3563 3569 "ocamlbuild/command.ml" 127 3563 3573
+type(
+  spec -> string
+)
+"ocamlbuild/command.ml" 127 3563 3576 "ocamlbuild/command.ml" 127 3563 3609
+type(
+  (Tags.t -> 'a) -> (pathname -> unit) -> bool -> spec -> string
+)
+"ocamlbuild/command.ml" 127 3563 3610 "ocamlbuild/command.ml" 127 3563 3624
+type(
+  Tags.t -> 'a
+)
+"ocamlbuild/command.ml" 127 3563 3625 "ocamlbuild/command.ml" 127 3563 3641
+type(
+  pathname -> unit
+)
+"ocamlbuild/command.ml" 127 3563 3642 "ocamlbuild/command.ml" 127 3563 3658
+type(
+  bool
+)
+"ocamlbuild/command.ml" 127 3563 3576 "ocamlbuild/command.ml" 127 3563 3658
+type(
+  spec -> string
+)
+"ocamlbuild/command.ml" 128 3662 3668 "ocamlbuild/command.ml" 128 3662 3669
+type(
+  Buffer.t
+)
+"ocamlbuild/command.ml" 128 3662 3672 "ocamlbuild/command.ml" 128 3662 3685
+type(
+  int -> Buffer.t
+)
+"ocamlbuild/command.ml" 128 3662 3686 "ocamlbuild/command.ml" 128 3662 3689
+type(
+  int
+)
+"ocamlbuild/command.ml" 128 3662 3672 "ocamlbuild/command.ml" 128 3662 3689
+type(
+  Buffer.t
+)
+"ocamlbuild/command.ml" 129 3693 3699 "ocamlbuild/command.ml" 129 3693 3704
+type(
+  bool ref
+)
+"ocamlbuild/command.ml" 129 3693 3707 "ocamlbuild/command.ml" 129 3693 3710
+type(
+  bool -> bool ref
+)
+"ocamlbuild/command.ml" 129 3693 3711 "ocamlbuild/command.ml" 129 3693 3715
+type(
+  bool
+)
+"ocamlbuild/command.ml" 129 3693 3707 "ocamlbuild/command.ml" 129 3693 3715
+type(
+  bool ref
+)
+"ocamlbuild/command.ml" 130 3719 3725 "ocamlbuild/command.ml" 130 3719 3734
+type(
+  unit -> unit
+)
+"ocamlbuild/command.ml" 130 3719 3735 "ocamlbuild/command.ml" 130 3719 3737
+type(
+  unit
+)
+"ocamlbuild/command.ml" 131 3740 3747 "ocamlbuild/command.ml" 131 3740 3748
+type(
+  bool ref -> bool
+)
+"ocamlbuild/command.ml" 131 3740 3748 "ocamlbuild/command.ml" 131 3740 3753
+type(
+  bool ref
+)
+"ocamlbuild/command.ml" 131 3740 3747 "ocamlbuild/command.ml" 131 3740 3753
+type(
+  bool
+)
+"ocamlbuild/command.ml" 132 3759 3765 "ocamlbuild/command.ml" 132 3759 3770
+type(
+  bool ref
+)
+"ocamlbuild/command.ml" 132 3759 3771 "ocamlbuild/command.ml" 132 3759 3773
+type(
+  bool ref -> bool -> unit
+)
+"ocamlbuild/command.ml" 132 3759 3774 "ocamlbuild/command.ml" 132 3759 3779
+type(
+  bool
+)
+"ocamlbuild/command.ml" 132 3759 3765 "ocamlbuild/command.ml" 132 3759 3779
+type(
+  unit
+)
+"ocamlbuild/command.ml" 134 3789 3795 "ocamlbuild/command.ml" 134 3789 3810
+type(
+  Buffer.t -> char -> unit
+)
+"ocamlbuild/command.ml" 134 3789 3811 "ocamlbuild/command.ml" 134 3789 3812
+type(
+  Buffer.t
+)
+"ocamlbuild/command.ml" 134 3789 3813 "ocamlbuild/command.ml" 134 3789 3816
+type(
+  char
+)
+"ocamlbuild/command.ml" 134 3789 3795 "ocamlbuild/command.ml" 134 3789 3816
+type(
+  unit
+)
+"ocamlbuild/command.ml" 131 3740 3744 "ocamlbuild/command.ml" 134 3789 3816
+type(
+  unit
+)
+"ocamlbuild/command.ml" 136 3822 3828 "ocamlbuild/command.ml" 136 3822 3840
+type(
+  string -> unit
+)
+"ocamlbuild/command.ml" 136 3822 3841 "ocamlbuild/command.ml" 136 3822 3842
+type(
+  string
+)
+"ocamlbuild/command.ml" 137 3845 3849 "ocamlbuild/command.ml" 137 3845 3866
+type(
+  Buffer.t -> string -> unit
+)
+"ocamlbuild/command.ml" 137 3845 3867 "ocamlbuild/command.ml" 137 3845 3868
+type(
+  Buffer.t
+)
+"ocamlbuild/command.ml" 137 3845 3870 "ocamlbuild/command.ml" 137 3845 3900
+type(
+  string -> string
+)
+"ocamlbuild/command.ml" 137 3845 3901 "ocamlbuild/command.ml" 137 3845 3902
+type(
+  string
+)
+"ocamlbuild/command.ml" 137 3845 3869 "ocamlbuild/command.ml" 137 3845 3903
+type(
+  string
+)
+"ocamlbuild/command.ml" 137 3845 3849 "ocamlbuild/command.ml" 137 3845 3903
+type(
+  unit
+)
+"ocamlbuild/command.ml" 139 3909 3919 "ocamlbuild/command.ml" 139 3909 3926
+type(
+  spec -> unit
+)
+"ocamlbuild/command.ml" 140 3938 3944 "ocamlbuild/command.ml" 140 3938 3945
+type(
+  spec
+)
+"ocamlbuild/command.ml" 140 3938 3949 "ocamlbuild/command.ml" 140 3938 3951
+type(
+  unit
+)
+"ocamlbuild/command.ml" 141 3952 3960 "ocamlbuild/command.ml" 141 3952 3961
+type(
+  string
+)
+"ocamlbuild/command.ml" 141 3952 3958 "ocamlbuild/command.ml" 141 3952 3961
+type(
+  spec
+)
+"ocamlbuild/command.ml" 141 3952 3965 "ocamlbuild/command.ml" 141 3952 3974
+type(
+  unit -> unit
+)
+"ocamlbuild/command.ml" 141 3952 3975 "ocamlbuild/command.ml" 141 3952 3977
+type(
+  unit
+)
+"ocamlbuild/command.ml" 141 3952 3965 "ocamlbuild/command.ml" 141 3952 3977
+type(
+  unit
+)
+"ocamlbuild/command.ml" 141 3952 3979 "ocamlbuild/command.ml" 141 3952 3991
+type(
+  string -> unit
+)
+"ocamlbuild/command.ml" 141 3952 3992 "ocamlbuild/command.ml" 141 3952 3993
+type(
+  string
+)
+"ocamlbuild/command.ml" 141 3952 3979 "ocamlbuild/command.ml" 141 3952 3993
+type(
+  unit
+)
+"ocamlbuild/command.ml" 141 3952 3965 "ocamlbuild/command.ml" 141 3952 3993
+type(
+  unit
+)
+"ocamlbuild/command.ml" 142 3994 4003 "ocamlbuild/command.ml" 142 3994 4004
+type(
+  string
+)
+"ocamlbuild/command.ml" 142 3994 4000 "ocamlbuild/command.ml" 142 3994 4004
+type(
+  spec
+)
+"ocamlbuild/command.ml" 142 3994 4008 "ocamlbuild/command.ml" 142 3994 4017
+type(
+  unit -> unit
+)
+"ocamlbuild/command.ml" 142 3994 4018 "ocamlbuild/command.ml" 142 3994 4020
+type(
+  unit
+)
+"ocamlbuild/command.ml" 142 3994 4008 "ocamlbuild/command.ml" 142 3994 4020
+type(
+  unit
+)
+"ocamlbuild/command.ml" 142 3994 4022 "ocamlbuild/command.ml" 142 3994 4039
+type(
+  Buffer.t -> string -> unit
+)
+"ocamlbuild/command.ml" 142 3994 4040 "ocamlbuild/command.ml" 142 3994 4041
+type(
+  Buffer.t
+)
+"ocamlbuild/command.ml" 142 3994 4042 "ocamlbuild/command.ml" 142 3994 4043
+type(
+  string
+)
+"ocamlbuild/command.ml" 142 3994 4022 "ocamlbuild/command.ml" 142 3994 4043
+type(
+  unit
+)
+"ocamlbuild/command.ml" 142 3994 4008 "ocamlbuild/command.ml" 142 3994 4043
+type(
+  unit
+)
+"ocamlbuild/command.ml" 143 4044 4052 "ocamlbuild/command.ml" 143 4044 4053
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 143 4044 4050 "ocamlbuild/command.ml" 143 4044 4053
+type(
+  spec
+)
+"ocamlbuild/command.ml" 143 4044 4057 "ocamlbuild/command.ml" 143 4044 4066
+type(
+  unit -> unit
+)
+"ocamlbuild/command.ml" 143 4044 4067 "ocamlbuild/command.ml" 143 4044 4069
+type(
+  unit
+)
+"ocamlbuild/command.ml" 143 4044 4057 "ocamlbuild/command.ml" 143 4044 4069
+type(
+  unit
+)
+"ocamlbuild/command.ml" 143 4044 4071 "ocamlbuild/command.ml" 143 4044 4083
+type(
+  pathname -> unit
+)
+"ocamlbuild/command.ml" 143 4044 4084 "ocamlbuild/command.ml" 143 4044 4085
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 143 4044 4071 "ocamlbuild/command.ml" 143 4044 4085
+type(
+  unit
+)
+"ocamlbuild/command.ml" 143 4044 4057 "ocamlbuild/command.ml" 143 4044 4085
+type(
+  unit
+)
+"ocamlbuild/command.ml" 144 4086 4095 "ocamlbuild/command.ml" 144 4086 4096
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 144 4086 4092 "ocamlbuild/command.ml" 144 4086 4096
+type(
+  spec
+)
+"ocamlbuild/command.ml" 144 4086 4100 "ocamlbuild/command.ml" 144 4086 4109
+type(
+  unit -> unit
+)
+"ocamlbuild/command.ml" 144 4086 4110 "ocamlbuild/command.ml" 144 4086 4112
+type(
+  unit
+)
+"ocamlbuild/command.ml" 144 4086 4100 "ocamlbuild/command.ml" 144 4086 4112
+type(
+  unit
+)
+"ocamlbuild/command.ml" 144 4086 4114 "ocamlbuild/command.ml" 144 4086 4126
+type(
+  pathname -> unit
+)
+"ocamlbuild/command.ml" 144 4086 4127 "ocamlbuild/command.ml" 144 4086 4128
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 144 4086 4114 "ocamlbuild/command.ml" 144 4086 4128
+type(
+  unit
+)
+"ocamlbuild/command.ml" 144 4086 4130 "ocamlbuild/command.ml" 144 4086 4146
+type(
+  pathname -> unit
+)
+"ocamlbuild/command.ml" 144 4086 4147 "ocamlbuild/command.ml" 144 4086 4148
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 144 4086 4130 "ocamlbuild/command.ml" 144 4086 4148
+type(
+  unit
+)
+"ocamlbuild/command.ml" 144 4086 4114 "ocamlbuild/command.ml" 144 4086 4148
+type(
+  unit
+)
+"ocamlbuild/command.ml" 144 4086 4100 "ocamlbuild/command.ml" 144 4086 4148
+type(
+  unit
+)
+"ocamlbuild/command.ml" 145 4149 4157 "ocamlbuild/command.ml" 145 4149 4158
+type(
+  string
+)
+"ocamlbuild/command.ml" 145 4149 4155 "ocamlbuild/command.ml" 145 4149 4158
+type(
+  spec
+)
+"ocamlbuild/command.ml" 145 4149 4165 "ocamlbuild/command.ml" 145 4149 4181
+type(
+  bool
+)
+"ocamlbuild/command.ml" 145 4149 4187 "ocamlbuild/command.ml" 145 4149 4194
+type(
+  spec -> unit
+)
+"ocamlbuild/command.ml" 145 4149 4196 "ocamlbuild/command.ml" 145 4149 4210
+type(
+  string -> spec
+)
+"ocamlbuild/command.ml" 145 4149 4211 "ocamlbuild/command.ml" 145 4149 4212
+type(
+  string
+)
+"ocamlbuild/command.ml" 145 4149 4195 "ocamlbuild/command.ml" 145 4149 4213
+type(
+  spec
+)
+"ocamlbuild/command.ml" 145 4149 4187 "ocamlbuild/command.ml" 145 4149 4213
+type(
+  unit
+)
+"ocamlbuild/command.ml" 146 4214 4233 "ocamlbuild/command.ml" 146 4214 4242
+type(
+  unit -> unit
+)
+"ocamlbuild/command.ml" 146 4214 4243 "ocamlbuild/command.ml" 146 4214 4245
+type(
+  unit
+)
+"ocamlbuild/command.ml" 146 4214 4233 "ocamlbuild/command.ml" 146 4214 4245
+type(
+  unit
+)
+"ocamlbuild/command.ml" 146 4214 4247 "ocamlbuild/command.ml" 146 4214 4261
+type(
+  Buffer.t -> (string -> unit, Buffer.t, unit) format -> string -> unit
+)
+"ocamlbuild/command.ml" 146 4214 4262 "ocamlbuild/command.ml" 146 4214 4263
+type(
+  Buffer.t
+)
+"ocamlbuild/command.ml" 146 4214 4264 "ocamlbuild/command.ml" 146 4214 4278
+type(
+  (string -> unit, Buffer.t, unit) format
+)
+"ocamlbuild/command.ml" 146 4214 4280 "ocamlbuild/command.ml" 146 4214 4310
+type(
+  string -> string
+)
+"ocamlbuild/command.ml" 146 4214 4311 "ocamlbuild/command.ml" 146 4214 4312
+type(
+  string
+)
+"ocamlbuild/command.ml" 146 4214 4279 "ocamlbuild/command.ml" 146 4214 4313
+type(
+  string
+)
+"ocamlbuild/command.ml" 146 4214 4247 "ocamlbuild/command.ml" 146 4214 4313
+type(
+  unit
+)
+"ocamlbuild/command.ml" 146 4214 4232 "ocamlbuild/command.ml" 146 4214 4314
+type(
+  unit
+)
+"ocamlbuild/command.ml" 145 4149 4162 "ocamlbuild/command.ml" 146 4214 4314
+type(
+  unit
+)
+"ocamlbuild/command.ml" 147 4315 4323 "ocamlbuild/command.ml" 147 4315 4324
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 147 4315 4321 "ocamlbuild/command.ml" 147 4315 4324
+type(
+  spec
+)
+"ocamlbuild/command.ml" 147 4315 4328 "ocamlbuild/command.ml" 147 4315 4337
+type(
+  (spec -> unit) -> spec list -> unit
+)
+"ocamlbuild/command.ml" 147 4315 4338 "ocamlbuild/command.ml" 147 4315 4345
+type(
+  spec -> unit
+)
+"ocamlbuild/command.ml" 147 4315 4346 "ocamlbuild/command.ml" 147 4315 4347
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 147 4315 4328 "ocamlbuild/command.ml" 147 4315 4347
+type(
+  unit
+)
+"ocamlbuild/command.ml" 148 4348 4356 "ocamlbuild/command.ml" 148 4348 4360
+type(
+  Tags.t
+)
+"ocamlbuild/command.ml" 148 4348 4354 "ocamlbuild/command.ml" 148 4348 4360
+type(
+  spec
+)
+"ocamlbuild/command.ml" 148 4348 4364 "ocamlbuild/command.ml" 148 4348 4378
+type(
+  Tags.t -> 'a
+)
+"ocamlbuild/command.ml" 148 4348 4379 "ocamlbuild/command.ml" 148 4348 4383
+type(
+  Tags.t
+)
+"ocamlbuild/command.ml" 148 4348 4364 "ocamlbuild/command.ml" 148 4348 4383
+type(
+  'a
+)
+"ocamlbuild/command.ml" 148 4348 4385 "ocamlbuild/command.ml" 148 4348 4392
+type(
+  spec -> unit
+)
+"ocamlbuild/command.ml" 148 4348 4394 "ocamlbuild/command.ml" 148 4348 4395
+type(
+  (Tags.t -> spec) ref -> Tags.t -> spec
+)
+"ocamlbuild/command.ml" 148 4348 4395 "ocamlbuild/command.ml" 148 4348 4406
+type(
+  (Tags.t -> spec) ref
+)
+"ocamlbuild/command.ml" 148 4348 4394 "ocamlbuild/command.ml" 148 4348 4406
+type(
+  Tags.t -> spec
+)
+"ocamlbuild/command.ml" 148 4348 4407 "ocamlbuild/command.ml" 148 4348 4411
+type(
+  Tags.t
+)
+"ocamlbuild/command.ml" 148 4348 4393 "ocamlbuild/command.ml" 148 4348 4412
+type(
+  spec
+)
+"ocamlbuild/command.ml" 148 4348 4385 "ocamlbuild/command.ml" 148 4348 4412
+type(
+  unit
+)
+"ocamlbuild/command.ml" 148 4348 4364 "ocamlbuild/command.ml" 148 4348 4412
+type(
+  unit
+)
+"ocamlbuild/command.ml" 149 4413 4425 "ocamlbuild/command.ml" 149 4413 4426
+type(
+  spec
+)
+"ocamlbuild/command.ml" 149 4413 4419 "ocamlbuild/command.ml" 149 4413 4426
+type(
+  spec
+)
+"ocamlbuild/command.ml" 149 4413 4430 "ocamlbuild/command.ml" 149 4413 4439
+type(
+  unit -> unit
+)
+"ocamlbuild/command.ml" 149 4413 4440 "ocamlbuild/command.ml" 149 4413 4442
+type(
+  unit
+)
+"ocamlbuild/command.ml" 149 4413 4430 "ocamlbuild/command.ml" 149 4413 4442
+type(
+  unit
+)
+"ocamlbuild/command.ml" 149 4413 4444 "ocamlbuild/command.ml" 149 4413 4456
+type(
+  string -> unit
+)
+"ocamlbuild/command.ml" 149 4413 4458 "ocamlbuild/command.ml" 149 4413 4462
+type(
+  spec -> string
+)
+"ocamlbuild/command.ml" 149 4413 4463 "ocamlbuild/command.ml" 149 4413 4464
+type(
+  spec
+)
+"ocamlbuild/command.ml" 149 4413 4457 "ocamlbuild/command.ml" 149 4413 4465
+type(
+  string
+)
+"ocamlbuild/command.ml" 149 4413 4444 "ocamlbuild/command.ml" 149 4413 4465
+type(
+  unit
+)
+"ocamlbuild/command.ml" 149 4413 4430 "ocamlbuild/command.ml" 149 4413 4465
+type(
+  unit
+)
+"ocamlbuild/command.ml" 139 3909 3929 "ocamlbuild/command.ml" 149 4413 4465
+type(
+  spec -> unit
+)
+"ocamlbuild/command.ml" 151 4471 4473 "ocamlbuild/command.ml" 151 4471 4480
+type(
+  spec -> unit
+)
+"ocamlbuild/command.ml" 151 4471 4481 "ocamlbuild/command.ml" 151 4471 4485
+type(
+  spec
+)
+"ocamlbuild/command.ml" 151 4471 4473 "ocamlbuild/command.ml" 151 4471 4485
+type(
+  unit
+)
+"ocamlbuild/command.ml" 152 4487 4489 "ocamlbuild/command.ml" 152 4487 4504
+type(
+  Buffer.t -> string
+)
+"ocamlbuild/command.ml" 152 4487 4505 "ocamlbuild/command.ml" 152 4487 4506
+type(
+  Buffer.t
+)
+"ocamlbuild/command.ml" 152 4487 4489 "ocamlbuild/command.ml" 152 4487 4506
+type(
+  string
+)
+"ocamlbuild/command.ml" 151 4471 4473 "ocamlbuild/command.ml" 152 4487 4506
+type(
+  string
+)
+"ocamlbuild/command.ml" 139 3909 3911 "ocamlbuild/command.ml" 152 4487 4506
+type(
+  string
+)
+"ocamlbuild/command.ml" 136 3822 3824 "ocamlbuild/command.ml" 152 4487 4506
+type(
+  string
+)
+"ocamlbuild/command.ml" 130 3719 3721 "ocamlbuild/command.ml" 152 4487 4506
+type(
+  string
+)
+"ocamlbuild/command.ml" 129 3693 3695 "ocamlbuild/command.ml" 152 4487 4506
+type(
+  string
+)
+"ocamlbuild/command.ml" 128 3662 3664 "ocamlbuild/command.ml" 152 4487 4506
+type(
+  string
+)
+"ocamlbuild/command.ml" 127 3563 3565 "ocamlbuild/command.ml" 152 4487 4506
+type(
+  string
+)
+"ocamlbuild/command.ml" 154 4508 4512 "ocamlbuild/command.ml" 154 4508 4534
+type(
+  spec -> string
+)
+"ocamlbuild/command.ml" 154 4508 4535 "ocamlbuild/command.ml" 154 4508 4536
+type(
+  spec
+)
+"ocamlbuild/command.ml" 154 4508 4539 "ocamlbuild/command.ml" 154 4508 4572
+type(
+  (Tags.t -> unit) -> (pathname -> unit) -> bool -> spec -> string
+)
+"ocamlbuild/command.ml" 154 4508 4573 "ocamlbuild/command.ml" 154 4508 4579
+type(
+  Tags.t -> unit
+)
+"ocamlbuild/command.ml" 154 4508 4580 "ocamlbuild/command.ml" 154 4508 4586
+type(
+  pathname -> unit
+)
+"ocamlbuild/command.ml" 154 4508 4587 "ocamlbuild/command.ml" 154 4508 4592
+type(
+  bool
+)
+"ocamlbuild/command.ml" 154 4508 4593 "ocamlbuild/command.ml" 154 4508 4594
+type(
+  spec
+)
+"ocamlbuild/command.ml" 154 4508 4539 "ocamlbuild/command.ml" 154 4508 4594
+type(
+  string
+)
+"ocamlbuild/command.ml" 156 4596 4600 "ocamlbuild/command.ml" 156 4596 4638
+type(
+  spec -> string * pathname * Tags.t
+)
+"ocamlbuild/command.ml" 156 4596 4639 "ocamlbuild/command.ml" 156 4596 4643
+type(
+  spec
+)
+"ocamlbuild/command.ml" 157 4646 4652 "ocamlbuild/command.ml" 157 4646 4657
+type(
+  Tags.t ref
+)
+"ocamlbuild/command.ml" 157 4646 4660 "ocamlbuild/command.ml" 157 4646 4663
+type(
+  Tags.t -> Tags.t ref
+)
+"ocamlbuild/command.ml" 157 4646 4664 "ocamlbuild/command.ml" 157 4646 4674
+type(
+  Tags.t
+)
+"ocamlbuild/command.ml" 157 4646 4660 "ocamlbuild/command.ml" 157 4646 4674
+type(
+  Tags.t ref
+)
+"ocamlbuild/command.ml" 158 4678 4684 "ocamlbuild/command.ml" 158 4678 4691
+type(
+  pathname ref
+)
+"ocamlbuild/command.ml" 158 4678 4694 "ocamlbuild/command.ml" 158 4678 4697
+type(
+  pathname -> pathname ref
+)
+"ocamlbuild/command.ml" 158 4678 4698 "ocamlbuild/command.ml" 158 4678 4700
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 158 4678 4694 "ocamlbuild/command.ml" 158 4678 4700
+type(
+  pathname ref
+)
+"ocamlbuild/command.ml" 159 4704 4710 "ocamlbuild/command.ml" 159 4704 4711
+type(
+  string
+)
+"ocamlbuild/command.ml" 159 4704 4714 "ocamlbuild/command.ml" 159 4704 4747
+type(
+  (Tags.t -> unit) -> (pathname -> unit) -> bool -> spec -> string
+)
+"ocamlbuild/command.ml" 159 4704 4749 "ocamlbuild/command.ml" 159 4704 4753
+type(
+  Tags.t ref -> Tags.t -> unit
+)
+"ocamlbuild/command.ml" 159 4704 4754 "ocamlbuild/command.ml" 159 4704 4759
+type(
+  Tags.t ref
+)
+"ocamlbuild/command.ml" 159 4704 4748 "ocamlbuild/command.ml" 159 4704 4760
+type(
+  Tags.t -> unit
+)
+"ocamlbuild/command.ml" 159 4704 4762 "ocamlbuild/command.ml" 159 4704 4766
+type(
+  pathname ref -> pathname -> unit
+)
+"ocamlbuild/command.ml" 159 4704 4767 "ocamlbuild/command.ml" 159 4704 4774
+type(
+  pathname ref
+)
+"ocamlbuild/command.ml" 159 4704 4761 "ocamlbuild/command.ml" 159 4704 4775
+type(
+  pathname -> unit
+)
+"ocamlbuild/command.ml" 159 4704 4776 "ocamlbuild/command.ml" 159 4704 4780
+type(
+  bool
+)
+"ocamlbuild/command.ml" 159 4704 4781 "ocamlbuild/command.ml" 159 4704 4785
+type(
+  spec
+)
+"ocamlbuild/command.ml" 159 4704 4714 "ocamlbuild/command.ml" 159 4704 4785
+type(
+  string
+)
+"ocamlbuild/command.ml" 160 4789 4795 "ocamlbuild/command.ml" 160 4789 4801
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 160 4789 4807 "ocamlbuild/command.ml" 160 4789 4808
+type(
+  pathname ref -> pathname
+)
+"ocamlbuild/command.ml" 160 4789 4808 "ocamlbuild/command.ml" 160 4789 4815
+type(
+  pathname ref
+)
+"ocamlbuild/command.ml" 160 4789 4807 "ocamlbuild/command.ml" 160 4789 4815
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 160 4789 4816 "ocamlbuild/command.ml" 160 4789 4817
+type(
+  pathname -> pathname -> bool
+)
+"ocamlbuild/command.ml" 160 4789 4818 "ocamlbuild/command.ml" 160 4789 4820
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 160 4789 4807 "ocamlbuild/command.ml" 160 4789 4820
+type(
+  bool
+)
+"ocamlbuild/command.ml" 160 4789 4826 "ocamlbuild/command.ml" 160 4789 4827
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 160 4789 4833 "ocamlbuild/command.ml" 160 4789 4834
+type(
+  pathname ref -> pathname
+)
+"ocamlbuild/command.ml" 160 4789 4834 "ocamlbuild/command.ml" 160 4789 4841
+type(
+  pathname ref
+)
+"ocamlbuild/command.ml" 160 4789 4833 "ocamlbuild/command.ml" 160 4789 4841
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 160 4789 4804 "ocamlbuild/command.ml" 160 4789 4841
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 161 4845 4847 "ocamlbuild/command.ml" 161 4845 4848
+type(
+  string
+)
+"ocamlbuild/command.ml" 161 4845 4850 "ocamlbuild/command.ml" 161 4845 4856
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 161 4845 4858 "ocamlbuild/command.ml" 161 4845 4859
+type(
+  Tags.t ref -> Tags.t
+)
+"ocamlbuild/command.ml" 161 4845 4859 "ocamlbuild/command.ml" 161 4845 4864
+type(
+  Tags.t ref
+)
+"ocamlbuild/command.ml" 161 4845 4858 "ocamlbuild/command.ml" 161 4845 4864
+type(
+  Tags.t
+)
+"ocamlbuild/command.ml" 161 4845 4847 "ocamlbuild/command.ml" 161 4845 4864
+type(
+  string * pathname * Tags.t
+)
+"ocamlbuild/command.ml" 160 4789 4791 "ocamlbuild/command.ml" 161 4845 4864
+type(
+  string * pathname * Tags.t
+)
+"ocamlbuild/command.ml" 159 4704 4706 "ocamlbuild/command.ml" 161 4845 4864
+type(
+  string * pathname * Tags.t
+)
+"ocamlbuild/command.ml" 158 4678 4680 "ocamlbuild/command.ml" 161 4845 4864
+type(
+  string * pathname * Tags.t
+)
+"ocamlbuild/command.ml" 157 4646 4648 "ocamlbuild/command.ml" 161 4845 4864
+type(
+  string * pathname * Tags.t
+)
+"ocamlbuild/command.ml" 163 4866 4870 "ocamlbuild/command.ml" 163 4866 4898
+type(
+  spec -> bool -> bool -> unit -> string
+)
+"ocamlbuild/command.ml" 163 4866 4899 "ocamlbuild/command.ml" 163 4866 4903
+type(
+  spec
+)
+"ocamlbuild/command.ml" 163 4866 4904 "ocamlbuild/command.ml" 163 4866 4909
+type(
+  bool
+)
+"ocamlbuild/command.ml" 163 4866 4910 "ocamlbuild/command.ml" 163 4866 4917
+type(
+  bool
+)
+"ocamlbuild/command.ml" 164 4920 4926 "ocamlbuild/command.ml" 164 4920 4927
+type(
+  string
+)
+"ocamlbuild/command.ml" 164 4920 4929 "ocamlbuild/command.ml" 164 4920 4935
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 164 4920 4937 "ocamlbuild/command.ml" 164 4920 4941
+type(
+  Tags.t
+)
+"ocamlbuild/command.ml" 164 4920 4926 "ocamlbuild/command.ml" 164 4920 4941
+type(
+  string * pathname * Tags.t
+)
+"ocamlbuild/command.ml" 164 4920 4944 "ocamlbuild/command.ml" 164 4920 4982
+type(
+  spec -> string * pathname * Tags.t
+)
+"ocamlbuild/command.ml" 164 4920 4983 "ocamlbuild/command.ml" 164 4920 4987
+type(
+  spec
+)
+"ocamlbuild/command.ml" 164 4920 4944 "ocamlbuild/command.ml" 164 4920 4987
+type(
+  string * pathname * Tags.t
+)
+"ocamlbuild/command.ml" 165 4991 4997 "ocamlbuild/command.ml" 165 4991 4999
+type(
+  unit
+)
+"ocamlbuild/command.ml" 165 4991 5006 "ocamlbuild/command.ml" 165 4991 5009
+type(
+  bool -> bool
+)
+"ocamlbuild/command.ml" 165 4991 5010 "ocamlbuild/command.ml" 165 4991 5015
+type(
+  bool
+)
+"ocamlbuild/command.ml" 165 4991 5006 "ocamlbuild/command.ml" 165 4991 5015
+type(
+  bool
+)
+"ocamlbuild/command.ml" 165 4991 5021 "ocamlbuild/command.ml" 165 4991 5030
+type(
+  ?pretend:bool -> string -> pathname -> Tags.t -> unit
+)
+"ocamlbuild/command.ml" 165 4991 5032 "ocamlbuild/command.ml" 165 4991 5039
+type(
+  bool
+)
+"ocamlbuild/command.ml" 165 4991 5040 "ocamlbuild/command.ml" 165 4991 5041
+type(
+  string
+)
+"ocamlbuild/command.ml" 165 4991 5042 "ocamlbuild/command.ml" 165 4991 5048
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 165 4991 5049 "ocamlbuild/command.ml" 165 4991 5053
+type(
+  Tags.t
+)
+"ocamlbuild/command.ml" 165 4991 5021 "ocamlbuild/command.ml" 165 4991 5053
+type(
+  unit
+)
+"ocamlbuild/command.ml" 165 4991 5003 "ocamlbuild/command.ml" 165 4991 5053
+type(
+  unit
+)
+"ocamlbuild/command.ml" 165 4991 5055 "ocamlbuild/command.ml" 165 4991 5056
+type(
+  string
+)
+"ocamlbuild/command.ml" 165 4991 5003 "ocamlbuild/command.ml" 165 4991 5056
+type(
+  string
+)
+"ocamlbuild/command.ml" 165 4991 4993 "ocamlbuild/command.ml" 165 4991 5056
+type(
+  unit -> string
+)
+"ocamlbuild/command.ml" 164 4920 4922 "ocamlbuild/command.ml" 165 4991 5056
+type(
+  unit -> string
+)
+"ocamlbuild/command.ml" 168 5066 5070 "ocamlbuild/command.ml" 168 5066 5090
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/command.ml" 168 5066 5091 "ocamlbuild/command.ml" 168 5066 5092
+type(
+  Format.formatter
+)
+"ocamlbuild/command.ml" 168 5066 5095 "ocamlbuild/command.ml" 168 5066 5109
+type(
+  Format.formatter ->
+  (string -> unit, Format.formatter, unit) format -> string -> unit
+)
+"ocamlbuild/command.ml" 168 5066 5110 "ocamlbuild/command.ml" 168 5066 5111
+type(
+  Format.formatter
+)
+"ocamlbuild/command.ml" 168 5066 5112 "ocamlbuild/command.ml" 168 5066 5116
+type(
+  (string -> unit, Format.formatter, unit) format
+)
+"ocamlbuild/command.ml" 168 5066 5095 "ocamlbuild/command.ml" 168 5066 5116
+type(
+  string -> unit
+)
+"ocamlbuild/command.ml" 170 5118 5126 "ocamlbuild/command.ml" 170 5118 5131
+type(
+  Format.formatter -> t -> unit
+)
+"ocamlbuild/command.ml" 170 5118 5132 "ocamlbuild/command.ml" 170 5118 5133
+type(
+  Format.formatter
+)
+"ocamlbuild/command.ml" 172 5147 5155 "ocamlbuild/command.ml" 172 5147 5159
+type(
+  spec
+)
+"ocamlbuild/command.ml" 172 5147 5151 "ocamlbuild/command.ml" 172 5147 5159
+type(
+  t
+)
+"ocamlbuild/command.ml" 172 5147 5163 "ocamlbuild/command.ml" 172 5147 5185
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/command.ml" 172 5147 5186 "ocamlbuild/command.ml" 172 5147 5187
+type(
+  Format.formatter
+)
+"ocamlbuild/command.ml" 172 5147 5189 "ocamlbuild/command.ml" 172 5147 5211
+type(
+  spec -> string
+)
+"ocamlbuild/command.ml" 172 5147 5212 "ocamlbuild/command.ml" 172 5147 5216
+type(
+  spec
+)
+"ocamlbuild/command.ml" 172 5147 5188 "ocamlbuild/command.ml" 172 5147 5217
+type(
+  string
+)
+"ocamlbuild/command.ml" 172 5147 5163 "ocamlbuild/command.ml" 172 5147 5217
+type(
+  unit
+)
+"ocamlbuild/command.ml" 173 5218 5226 "ocamlbuild/command.ml" 173 5218 5229
+type(
+  t list
+)
+"ocamlbuild/command.ml" 173 5218 5222 "ocamlbuild/command.ml" 173 5218 5229
+type(
+  t
+)
+"ocamlbuild/command.ml" 173 5218 5233 "ocamlbuild/command.ml" 173 5218 5243
+type(
+  (Format.formatter -> t -> unit) -> Format.formatter -> t list -> unit
+)
+"ocamlbuild/command.ml" 173 5218 5244 "ocamlbuild/command.ml" 173 5218 5249
+type(
+  Format.formatter -> t -> unit
+)
+"ocamlbuild/command.ml" 173 5218 5250 "ocamlbuild/command.ml" 173 5218 5251
+type(
+  Format.formatter
+)
+"ocamlbuild/command.ml" 173 5218 5252 "ocamlbuild/command.ml" 173 5218 5255
+type(
+  t list
+)
+"ocamlbuild/command.ml" 173 5218 5233 "ocamlbuild/command.ml" 173 5218 5255
+type(
+  unit
+)
+"ocamlbuild/command.ml" 174 5256 5260 "ocamlbuild/command.ml" 174 5256 5263
+type(
+  t
+)
+"ocamlbuild/command.ml" 174 5256 5267 "ocamlbuild/command.ml" 174 5256 5289
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/command.ml" 174 5256 5290 "ocamlbuild/command.ml" 174 5256 5291
+type(
+  Format.formatter
+)
+"ocamlbuild/command.ml" 174 5256 5292 "ocamlbuild/command.ml" 174 5256 5297
+type(
+  string
+)
+"ocamlbuild/command.ml" 174 5256 5267 "ocamlbuild/command.ml" 174 5256 5297
+type(
+  unit
+)
+"ocamlbuild/command.ml" 175 5298 5307 "ocamlbuild/command.ml" 175 5298 5312
+type(
+  string list
+)
+"ocamlbuild/command.ml" 175 5298 5314 "ocamlbuild/command.ml" 175 5298 5323
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 175 5298 5302 "ocamlbuild/command.ml" 175 5298 5324
+type(
+  t
+)
+"ocamlbuild/command.ml" 176 5328 5334 "ocamlbuild/command.ml" 176 5328 5348
+type(
+  Format.formatter ->
+  ((Format.formatter -> string list -> unit) ->
+   string list -> (Format.formatter -> pathname -> unit) -> pathname -> unit,
+   Format.formatter, unit)
+  format ->
+  (Format.formatter -> string list -> unit) ->
+  string list -> (Format.formatter -> pathname -> unit) -> pathname -> unit
+)
+"ocamlbuild/command.ml" 176 5328 5349 "ocamlbuild/command.ml" 176 5328 5350
+type(
+  Format.formatter
+)
+"ocamlbuild/command.ml" 176 5328 5351 "ocamlbuild/command.ml" 176 5328 5373
+type(
+  ((Format.formatter -> string list -> unit) ->
+   string list -> (Format.formatter -> pathname -> unit) -> pathname -> unit,
+   Format.formatter, unit)
+  format
+)
+"ocamlbuild/command.ml" 177 5374 5383 "ocamlbuild/command.ml" 177 5374 5393
+type(
+  (Format.formatter -> string -> unit) ->
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/command.ml" 177 5374 5394 "ocamlbuild/command.ml" 177 5374 5414
+type(
+  Format.formatter -> string -> unit
+)
+"ocamlbuild/command.ml" 177 5374 5382 "ocamlbuild/command.ml" 177 5374 5415
+type(
+  Format.formatter -> string list -> unit
+)
+"ocamlbuild/command.ml" 177 5374 5416 "ocamlbuild/command.ml" 177 5374 5421
+type(
+  string list
+)
+"ocamlbuild/command.ml" 177 5374 5422 "ocamlbuild/command.ml" 177 5374 5442
+type(
+  Format.formatter -> pathname -> unit
+)
+"ocamlbuild/command.ml" 177 5374 5443 "ocamlbuild/command.ml" 177 5374 5452
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 176 5328 5334 "ocamlbuild/command.ml" 177 5374 5452
+type(
+  unit
+)
+"ocamlbuild/command.ml" 171 5136 5138 "ocamlbuild/command.ml" 177 5374 5452
+type(
+  t -> unit
+)
+"ocamlbuild/command.ml" 179 5454 5458 "ocamlbuild/command.ml" 179 5454 5467
+type(
+  t -> string
+)
+"ocamlbuild/command.ml" 179 5454 5468 "ocamlbuild/command.ml" 179 5454 5469
+type(
+  t
+)
+"ocamlbuild/command.ml" 179 5454 5472 "ocamlbuild/command.ml" 179 5454 5480
+type(
+  ((Format.formatter -> t -> unit) -> t -> string, Format.formatter, 
+   unit, string)
+  format4 -> (Format.formatter -> t -> unit) -> t -> string
+)
+"ocamlbuild/command.ml" 179 5454 5481 "ocamlbuild/command.ml" 179 5454 5485
+type(
+  ((Format.formatter -> t -> unit) -> t -> string, Format.formatter, 
+   unit, string)
+  format4
+)
+"ocamlbuild/command.ml" 179 5454 5486 "ocamlbuild/command.ml" 179 5454 5491
+type(
+  Format.formatter -> t -> unit
+)
+"ocamlbuild/command.ml" 179 5454 5492 "ocamlbuild/command.ml" 179 5454 5493
+type(
+  t
+)
+"ocamlbuild/command.ml" 179 5454 5472 "ocamlbuild/command.ml" 179 5454 5493
+type(
+  string
+)
+"ocamlbuild/command.ml" 181 5495 5499 "ocamlbuild/command.ml" 181 5495 5516
+type(
+  int -> unit
+)
+"ocamlbuild/command.ml" 181 5495 5518 "ocamlbuild/command.ml" 181 5495 5537
+type(
+  unit -> unit
+)
+"ocamlbuild/command.ml" 181 5495 5499 "ocamlbuild/command.ml" 181 5495 5537
+type(
+  (int -> unit) * (unit -> unit)
+)
+"ocamlbuild/command.ml" 182 5540 5546 "ocamlbuild/command.ml" 182 5540 5550
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 182 5540 5553 "ocamlbuild/command.ml" 182 5540 5556
+type(
+  int -> int ref
+)
+"ocamlbuild/command.ml" 182 5540 5557 "ocamlbuild/command.ml" 182 5540 5564
+type(
+  int
+)
+"ocamlbuild/command.ml" 182 5540 5553 "ocamlbuild/command.ml" 182 5540 5564
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 183 5568 5574 "ocamlbuild/command.ml" 183 5568 5578
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 183 5568 5581 "ocamlbuild/command.ml" 183 5568 5584
+type(
+  int -> int ref
+)
+"ocamlbuild/command.ml" 183 5568 5585 "ocamlbuild/command.ml" 183 5568 5586
+type(
+  int
+)
+"ocamlbuild/command.ml" 183 5568 5581 "ocamlbuild/command.ml" 183 5568 5586
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 184 5590 5596 "ocamlbuild/command.ml" 184 5590 5600
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 184 5590 5603 "ocamlbuild/command.ml" 184 5590 5606
+type(
+  int -> int ref
+)
+"ocamlbuild/command.ml" 184 5590 5607 "ocamlbuild/command.ml" 184 5590 5608
+type(
+  int
+)
+"ocamlbuild/command.ml" 184 5590 5603 "ocamlbuild/command.ml" 184 5590 5608
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 185 5612 5618 "ocamlbuild/command.ml" 185 5612 5625
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 185 5612 5628 "ocamlbuild/command.ml" 185 5612 5631
+type(
+  int -> int ref
+)
+"ocamlbuild/command.ml" 185 5612 5632 "ocamlbuild/command.ml" 185 5612 5633
+type(
+  int
+)
+"ocamlbuild/command.ml" 185 5612 5628 "ocamlbuild/command.ml" 185 5612 5633
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 186 5637 5643 "ocamlbuild/command.ml" 186 5637 5649
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 186 5637 5652 "ocamlbuild/command.ml" 186 5637 5655
+type(
+  int -> int ref
+)
+"ocamlbuild/command.ml" 186 5637 5656 "ocamlbuild/command.ml" 186 5637 5657
+type(
+  int
+)
+"ocamlbuild/command.ml" 186 5637 5652 "ocamlbuild/command.ml" 186 5637 5657
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 187 5661 5667 "ocamlbuild/command.ml" 187 5661 5676
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 187 5661 5679 "ocamlbuild/command.ml" 187 5661 5682
+type(
+  int -> int ref
+)
+"ocamlbuild/command.ml" 187 5661 5683 "ocamlbuild/command.ml" 187 5661 5684
+type(
+  int
+)
+"ocamlbuild/command.ml" 187 5661 5679 "ocamlbuild/command.ml" 187 5661 5684
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 188 5688 5694 "ocamlbuild/command.ml" 188 5688 5711
+type(
+  int -> unit
+)
+"ocamlbuild/command.ml" 188 5688 5712 "ocamlbuild/command.ml" 188 5688 5713
+type(
+  int
+)
+"ocamlbuild/command.ml" 189 5716 5723 "ocamlbuild/command.ml" 189 5716 5724
+type(
+  int
+)
+"ocamlbuild/command.ml" 189 5716 5725 "ocamlbuild/command.ml" 189 5716 5726
+type(
+  int -> int -> bool
+)
+"ocamlbuild/command.ml" 189 5716 5727 "ocamlbuild/command.ml" 189 5716 5728
+type(
+  int
+)
+"ocamlbuild/command.ml" 189 5716 5723 "ocamlbuild/command.ml" 189 5716 5728
+type(
+  bool
+)
+"ocamlbuild/command.ml" 190 5740 5746 "ocamlbuild/command.ml" 190 5740 5750
+type(
+  int ref -> unit
+)
+"ocamlbuild/command.ml" 190 5740 5751 "ocamlbuild/command.ml" 190 5740 5760
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 190 5740 5746 "ocamlbuild/command.ml" 190 5740 5760
+type(
+  unit
+)
+"ocamlbuild/command.ml" 191 5762 5768 "ocamlbuild/command.ml" 191 5762 5775
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 191 5762 5776 "ocamlbuild/command.ml" 191 5762 5778
+type(
+  int ref -> int -> unit
+)
+"ocamlbuild/command.ml" 191 5762 5779 "ocamlbuild/command.ml" 191 5762 5780
+type(
+  int
+)
+"ocamlbuild/command.ml" 191 5762 5781 "ocamlbuild/command.ml" 191 5762 5782
+type(
+  int -> int -> int
+)
+"ocamlbuild/command.ml" 191 5762 5783 "ocamlbuild/command.ml" 191 5762 5784
+type(
+  int ref -> int
+)
+"ocamlbuild/command.ml" 191 5762 5784 "ocamlbuild/command.ml" 191 5762 5791
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 191 5762 5783 "ocamlbuild/command.ml" 191 5762 5791
+type(
+  int
+)
+"ocamlbuild/command.ml" 191 5762 5779 "ocamlbuild/command.ml" 191 5762 5791
+type(
+  int
+)
+"ocamlbuild/command.ml" 191 5762 5768 "ocamlbuild/command.ml" 191 5762 5792
+type(
+  unit
+)
+"ocamlbuild/command.ml" 189 5716 5734 "ocamlbuild/command.ml" 192 5793 5800
+type(
+  unit
+)
+"ocamlbuild/command.ml" 189 5716 5720 "ocamlbuild/command.ml" 192 5793 5800
+type(
+  unit
+)
+"ocamlbuild/command.ml" 193 5802 5809 "ocamlbuild/command.ml" 193 5802 5810
+type(
+  int
+)
+"ocamlbuild/command.ml" 193 5802 5811 "ocamlbuild/command.ml" 193 5802 5812
+type(
+  int -> int -> bool
+)
+"ocamlbuild/command.ml" 193 5802 5813 "ocamlbuild/command.ml" 193 5802 5814
+type(
+  int
+)
+"ocamlbuild/command.ml" 193 5802 5809 "ocamlbuild/command.ml" 193 5802 5814
+type(
+  bool
+)
+"ocamlbuild/command.ml" 194 5826 5832 "ocamlbuild/command.ml" 194 5826 5836
+type(
+  int ref -> unit
+)
+"ocamlbuild/command.ml" 194 5826 5837 "ocamlbuild/command.ml" 194 5826 5843
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 194 5826 5832 "ocamlbuild/command.ml" 194 5826 5843
+type(
+  unit
+)
+"ocamlbuild/command.ml" 195 5845 5851 "ocamlbuild/command.ml" 195 5845 5855
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 195 5845 5856 "ocamlbuild/command.ml" 195 5845 5858
+type(
+  int ref -> int -> unit
+)
+"ocamlbuild/command.ml" 195 5845 5859 "ocamlbuild/command.ml" 195 5845 5860
+type(
+  int
+)
+"ocamlbuild/command.ml" 195 5845 5861 "ocamlbuild/command.ml" 195 5845 5862
+type(
+  int -> int -> int
+)
+"ocamlbuild/command.ml" 195 5845 5863 "ocamlbuild/command.ml" 195 5845 5864
+type(
+  int ref -> int
+)
+"ocamlbuild/command.ml" 195 5845 5864 "ocamlbuild/command.ml" 195 5845 5868
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 195 5845 5863 "ocamlbuild/command.ml" 195 5845 5868
+type(
+  int
+)
+"ocamlbuild/command.ml" 195 5845 5859 "ocamlbuild/command.ml" 195 5845 5868
+type(
+  int
+)
+"ocamlbuild/command.ml" 195 5845 5851 "ocamlbuild/command.ml" 195 5845 5868
+type(
+  unit
+)
+"ocamlbuild/command.ml" 196 5870 5876 "ocamlbuild/command.ml" 196 5870 5880
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 196 5870 5881 "ocamlbuild/command.ml" 196 5870 5883
+type(
+  int ref -> int -> unit
+)
+"ocamlbuild/command.ml" 196 5870 5884 "ocamlbuild/command.ml" 196 5870 5887
+type(
+  int -> int -> int
+)
+"ocamlbuild/command.ml" 196 5870 5888 "ocamlbuild/command.ml" 196 5870 5889
+type(
+  int ref -> int
+)
+"ocamlbuild/command.ml" 196 5870 5889 "ocamlbuild/command.ml" 196 5870 5893
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 196 5870 5888 "ocamlbuild/command.ml" 196 5870 5893
+type(
+  int
+)
+"ocamlbuild/command.ml" 196 5870 5894 "ocamlbuild/command.ml" 196 5870 5895
+type(
+  int
+)
+"ocamlbuild/command.ml" 196 5870 5884 "ocamlbuild/command.ml" 196 5870 5895
+type(
+  int
+)
+"ocamlbuild/command.ml" 196 5870 5876 "ocamlbuild/command.ml" 196 5870 5895
+type(
+  unit
+)
+"ocamlbuild/command.ml" 197 5897 5903 "ocamlbuild/command.ml" 197 5897 5907
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 197 5897 5908 "ocamlbuild/command.ml" 197 5897 5910
+type(
+  int ref -> int -> unit
+)
+"ocamlbuild/command.ml" 197 5897 5911 "ocamlbuild/command.ml" 197 5897 5914
+type(
+  int -> int -> int
+)
+"ocamlbuild/command.ml" 197 5897 5915 "ocamlbuild/command.ml" 197 5897 5916
+type(
+  int ref -> int
+)
+"ocamlbuild/command.ml" 197 5897 5916 "ocamlbuild/command.ml" 197 5897 5920
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 197 5897 5915 "ocamlbuild/command.ml" 197 5897 5920
+type(
+  int
+)
+"ocamlbuild/command.ml" 197 5897 5921 "ocamlbuild/command.ml" 197 5897 5922
+type(
+  int
+)
+"ocamlbuild/command.ml" 197 5897 5911 "ocamlbuild/command.ml" 197 5897 5922
+type(
+  int
+)
+"ocamlbuild/command.ml" 197 5897 5903 "ocamlbuild/command.ml" 197 5897 5923
+type(
+  unit
+)
+"ocamlbuild/command.ml" 196 5870 5876 "ocamlbuild/command.ml" 197 5897 5923
+type(
+  unit
+)
+"ocamlbuild/command.ml" 195 5845 5851 "ocamlbuild/command.ml" 197 5897 5923
+type(
+  unit
+)
+"ocamlbuild/command.ml" 193 5802 5820 "ocamlbuild/command.ml" 198 5924 5931
+type(
+  unit
+)
+"ocamlbuild/command.ml" 193 5802 5806 "ocamlbuild/command.ml" 198 5924 5931
+type(
+  unit
+)
+"ocamlbuild/command.ml" 189 5716 5720 "ocamlbuild/command.ml" 198 5924 5931
+type(
+  unit
+)
+"ocamlbuild/command.ml" 200 5937 5943 "ocamlbuild/command.ml" 200 5937 5962
+type(
+  unit -> unit
+)
+"ocamlbuild/command.ml" 200 5937 5963 "ocamlbuild/command.ml" 200 5937 5965
+type(
+  unit
+)
+"ocamlbuild/command.ml" 201 5968 5975 "ocamlbuild/command.ml" 201 5968 5976
+type(
+  int ref -> int
+)
+"ocamlbuild/command.ml" 201 5968 5976 "ocamlbuild/command.ml" 201 5968 5980
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 201 5968 5975 "ocamlbuild/command.ml" 201 5968 5980
+type(
+  int
+)
+"ocamlbuild/command.ml" 201 5968 5981 "ocamlbuild/command.ml" 201 5968 5983
+type(
+  int -> int -> bool
+)
+"ocamlbuild/command.ml" 201 5968 5984 "ocamlbuild/command.ml" 201 5968 5985
+type(
+  int
+)
+"ocamlbuild/command.ml" 201 5968 5975 "ocamlbuild/command.ml" 201 5968 5985
+type(
+  bool
+)
+"ocamlbuild/command.ml" 202 5991 6000 "ocamlbuild/command.ml" 202 5991 6001
+type(
+  int ref -> int
+)
+"ocamlbuild/command.ml" 202 5991 6001 "ocamlbuild/command.ml" 202 5991 6007
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 202 5991 6000 "ocamlbuild/command.ml" 202 5991 6007
+type(
+  int
+)
+"ocamlbuild/command.ml" 202 5991 6008 "ocamlbuild/command.ml" 202 5991 6009
+type(
+  int -> int -> bool
+)
+"ocamlbuild/command.ml" 202 5991 6010 "ocamlbuild/command.ml" 202 5991 6011
+type(
+  int
+)
+"ocamlbuild/command.ml" 202 5991 6000 "ocamlbuild/command.ml" 202 5991 6011
+type(
+  bool
+)
+"ocamlbuild/command.ml" 203 6017 6025 "ocamlbuild/command.ml" 203 6017 6032
+type(
+  int -> (unit, Format.formatter, unit) format -> unit
+)
+"ocamlbuild/command.ml" 203 6017 6033 "ocamlbuild/command.ml" 203 6017 6034
+type(
+  int
+)
+"ocamlbuild/command.ml" 203 6017 6035 "ocamlbuild/command.ml" 203 6017 6058
+type(
+  (unit, Format.formatter, unit) format
+)
+"ocamlbuild/command.ml" 203 6017 6025 "ocamlbuild/command.ml" 203 6017 6058
+type(
+  unit
+)
+"ocamlbuild/command.ml" 205 6070 6082 "ocamlbuild/command.ml" 205 6070 6090
+type(
+  float
+)
+"ocamlbuild/command.ml" 205 6070 6093 "ocamlbuild/command.ml" 205 6070 6105
+type(
+  int -> float
+)
+"ocamlbuild/command.ml" 205 6070 6106 "ocamlbuild/command.ml" 205 6070 6107
+type(
+  int ref -> int
+)
+"ocamlbuild/command.ml" 205 6070 6107 "ocamlbuild/command.ml" 205 6070 6114
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 205 6070 6106 "ocamlbuild/command.ml" 205 6070 6114
+type(
+  int
+)
+"ocamlbuild/command.ml" 205 6070 6093 "ocamlbuild/command.ml" 205 6070 6114
+type(
+  float
+)
+"ocamlbuild/command.ml" 205 6070 6115 "ocamlbuild/command.ml" 205 6070 6117
+type(
+  float -> float -> float
+)
+"ocamlbuild/command.ml" 205 6070 6118 "ocamlbuild/command.ml" 205 6070 6130
+type(
+  int -> float
+)
+"ocamlbuild/command.ml" 205 6070 6131 "ocamlbuild/command.ml" 205 6070 6132
+type(
+  int ref -> int
+)
+"ocamlbuild/command.ml" 205 6070 6132 "ocamlbuild/command.ml" 205 6070 6141
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 205 6070 6131 "ocamlbuild/command.ml" 205 6070 6141
+type(
+  int
+)
+"ocamlbuild/command.ml" 205 6070 6118 "ocamlbuild/command.ml" 205 6070 6141
+type(
+  float
+)
+"ocamlbuild/command.ml" 205 6070 6093 "ocamlbuild/command.ml" 205 6070 6141
+type(
+  float
+)
+"ocamlbuild/command.ml" 206 6145 6157 "ocamlbuild/command.ml" 206 6145 6169
+type(
+  float
+)
+"ocamlbuild/command.ml" 206 6145 6172 "ocamlbuild/command.ml" 206 6145 6184
+type(
+  int -> float
+)
+"ocamlbuild/command.ml" 206 6145 6185 "ocamlbuild/command.ml" 206 6145 6186
+type(
+  int ref -> int
+)
+"ocamlbuild/command.ml" 206 6145 6186 "ocamlbuild/command.ml" 206 6145 6190
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 206 6145 6185 "ocamlbuild/command.ml" 206 6145 6190
+type(
+  int
+)
+"ocamlbuild/command.ml" 206 6145 6172 "ocamlbuild/command.ml" 206 6145 6190
+type(
+  float
+)
+"ocamlbuild/command.ml" 206 6145 6191 "ocamlbuild/command.ml" 206 6145 6193
+type(
+  float -> float -> float
+)
+"ocamlbuild/command.ml" 206 6145 6194 "ocamlbuild/command.ml" 206 6145 6206
+type(
+  int -> float
+)
+"ocamlbuild/command.ml" 206 6145 6207 "ocamlbuild/command.ml" 206 6145 6208
+type(
+  int ref -> int
+)
+"ocamlbuild/command.ml" 206 6145 6208 "ocamlbuild/command.ml" 206 6145 6214
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 206 6145 6207 "ocamlbuild/command.ml" 206 6145 6214
+type(
+  int
+)
+"ocamlbuild/command.ml" 206 6145 6194 "ocamlbuild/command.ml" 206 6145 6214
+type(
+  float
+)
+"ocamlbuild/command.ml" 206 6145 6172 "ocamlbuild/command.ml" 206 6145 6214
+type(
+  float
+)
+"ocamlbuild/command.ml" 207 6218 6226 "ocamlbuild/command.ml" 207 6218 6233
+type(
+  int ->
+  (int -> int -> int -> int -> float -> float -> unit, Format.formatter,
+   unit)
+  format -> int -> int -> int -> int -> float -> float -> unit
+)
+"ocamlbuild/command.ml" 207 6218 6234 "ocamlbuild/command.ml" 207 6218 6235
+type(
+  int
+)
+"ocamlbuild/command.ml" 207 6218 6236 "ocamlbuild/command.ml" 207 6218 6331
+type(
+  (int -> int -> int -> int -> float -> float -> unit, Format.formatter,
+   unit)
+  format
+)
+"ocamlbuild/command.ml" 208 6332 6350 "ocamlbuild/command.ml" 208 6332 6351
+type(
+  int ref -> int
+)
+"ocamlbuild/command.ml" 208 6332 6351 "ocamlbuild/command.ml" 208 6332 6357
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 208 6332 6350 "ocamlbuild/command.ml" 208 6332 6357
+type(
+  int
+)
+"ocamlbuild/command.ml" 208 6332 6358 "ocamlbuild/command.ml" 208 6332 6359
+type(
+  int ref -> int
+)
+"ocamlbuild/command.ml" 208 6332 6359 "ocamlbuild/command.ml" 208 6332 6368
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 208 6332 6358 "ocamlbuild/command.ml" 208 6332 6368
+type(
+  int
+)
+"ocamlbuild/command.ml" 208 6332 6369 "ocamlbuild/command.ml" 208 6332 6370
+type(
+  int ref -> int
+)
+"ocamlbuild/command.ml" 208 6332 6370 "ocamlbuild/command.ml" 208 6332 6374
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 208 6332 6369 "ocamlbuild/command.ml" 208 6332 6374
+type(
+  int
+)
+"ocamlbuild/command.ml" 208 6332 6375 "ocamlbuild/command.ml" 208 6332 6376
+type(
+  int ref -> int
+)
+"ocamlbuild/command.ml" 208 6332 6376 "ocamlbuild/command.ml" 208 6332 6380
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 208 6332 6375 "ocamlbuild/command.ml" 208 6332 6380
+type(
+  int
+)
+"ocamlbuild/command.ml" 208 6332 6381 "ocamlbuild/command.ml" 208 6332 6393
+type(
+  float
+)
+"ocamlbuild/command.ml" 208 6332 6394 "ocamlbuild/command.ml" 208 6332 6402
+type(
+  float
+)
+"ocamlbuild/command.ml" 207 6218 6226 "ocamlbuild/command.ml" 208 6332 6402
+type(
+  unit
+)
+"ocamlbuild/command.ml" 206 6145 6153 "ocamlbuild/command.ml" 208 6332 6402
+type(
+  unit
+)
+"ocamlbuild/command.ml" 205 6070 6078 "ocamlbuild/command.ml" 208 6332 6402
+type(
+  unit
+)
+"ocamlbuild/command.ml" 202 5991 5997 "ocamlbuild/command.ml" 208 6332 6402
+type(
+  unit
+)
+"ocamlbuild/command.ml" 201 5968 5972 "ocamlbuild/command.ml" 208 6332 6402
+type(
+  unit
+)
+"ocamlbuild/command.ml" 210 6408 6410 "ocamlbuild/command.ml" 210 6408 6427
+type(
+  int -> unit
+)
+"ocamlbuild/command.ml" 210 6408 6429 "ocamlbuild/command.ml" 210 6408 6448
+type(
+  unit -> unit
+)
+"ocamlbuild/command.ml" 210 6408 6410 "ocamlbuild/command.ml" 210 6408 6448
+type(
+  (int -> unit) * (unit -> unit)
+)
+"ocamlbuild/command.ml" 200 5937 5939 "ocamlbuild/command.ml" 210 6408 6448
+type(
+  (int -> unit) * (unit -> unit)
+)
+"ocamlbuild/command.ml" 188 5688 5690 "ocamlbuild/command.ml" 210 6408 6448
+type(
+  (int -> unit) * (unit -> unit)
+)
+"ocamlbuild/command.ml" 187 5661 5663 "ocamlbuild/command.ml" 210 6408 6448
+type(
+  (int -> unit) * (unit -> unit)
+)
+"ocamlbuild/command.ml" 186 5637 5639 "ocamlbuild/command.ml" 210 6408 6448
+type(
+  (int -> unit) * (unit -> unit)
+)
+"ocamlbuild/command.ml" 185 5612 5614 "ocamlbuild/command.ml" 210 6408 6448
+type(
+  (int -> unit) * (unit -> unit)
+)
+"ocamlbuild/command.ml" 184 5590 5592 "ocamlbuild/command.ml" 210 6408 6448
+type(
+  (int -> unit) * (unit -> unit)
+)
+"ocamlbuild/command.ml" 183 5568 5570 "ocamlbuild/command.ml" 210 6408 6448
+type(
+  (int -> unit) * (unit -> unit)
+)
+"ocamlbuild/command.ml" 182 5540 5542 "ocamlbuild/command.ml" 210 6408 6448
+type(
+  (int -> unit) * (unit -> unit)
+)
+"ocamlbuild/command.ml" 213 6477 6483 "ocamlbuild/command.ml" 213 6477 6490
+type(
+  string list -> string -> unit
+)
+"ocamlbuild/command.ml" 213 6477 6491 "ocamlbuild/command.ml" 213 6477 6496
+type(
+  string list
+)
+"ocamlbuild/command.ml" 213 6477 6497 "ocamlbuild/command.ml" 213 6477 6506
+type(
+  string
+)
+"ocamlbuild/command.ml" 214 6509 6513 "ocamlbuild/command.ml" 214 6509 6529
+type(
+  ?bin:bool -> string -> (out_channel -> unit) -> unit
+)
+"ocamlbuild/command.ml" 214 6509 6530 "ocamlbuild/command.ml" 214 6509 6539
+type(
+  string
+)
+"ocamlbuild/command.ml" 214 6509 6550 "ocamlbuild/command.ml" 214 6509 6552
+type(
+  out_channel
+)
+"ocamlbuild/command.ml" 215 6556 6562 "ocamlbuild/command.ml" 215 6556 6571
+type(
+  (string -> unit) -> string list -> unit
+)
+"ocamlbuild/command.ml" 215 6556 6573 "ocamlbuild/command.ml" 215 6556 6586
+type(
+  out_channel -> string -> unit
+)
+"ocamlbuild/command.ml" 215 6556 6587 "ocamlbuild/command.ml" 215 6556 6589
+type(
+  out_channel
+)
+"ocamlbuild/command.ml" 215 6556 6572 "ocamlbuild/command.ml" 215 6556 6590
+type(
+  string -> unit
+)
+"ocamlbuild/command.ml" 215 6556 6591 "ocamlbuild/command.ml" 215 6556 6596
+type(
+  string list
+)
+"ocamlbuild/command.ml" 215 6556 6562 "ocamlbuild/command.ml" 215 6556 6596
+type(
+  unit
+)
+"ocamlbuild/command.ml" 214 6509 6540 "ocamlbuild/command.ml" 216 6597 6604
+type(
+  out_channel -> unit
+)
+"ocamlbuild/command.ml" 214 6509 6513 "ocamlbuild/command.ml" 216 6597 6604
+type(
+  unit
+)
+"ocamlbuild/command.ml" 217 6605 6611 "ocamlbuild/command.ml" 217 6605 6615
+type(
+  string list -> string -> unit -> string
+)
+"ocamlbuild/command.ml" 217 6605 6616 "ocamlbuild/command.ml" 217 6605 6617
+type(
+  string list
+)
+"ocamlbuild/command.ml" 217 6605 6618 "ocamlbuild/command.ml" 217 6605 6619
+type(
+  string
+)
+"ocamlbuild/command.ml" 217 6605 6620 "ocamlbuild/command.ml" 217 6605 6622
+type(
+  unit
+)
+"ocamlbuild/command.ml" 217 6605 6649 "ocamlbuild/command.ml" 217 6605 6656
+type(
+  string list -> string -> unit
+)
+"ocamlbuild/command.ml" 217 6605 6657 "ocamlbuild/command.ml" 217 6605 6658
+type(
+  string list
+)
+"ocamlbuild/command.ml" 217 6605 6659 "ocamlbuild/command.ml" 217 6605 6660
+type(
+  string
+)
+"ocamlbuild/command.ml" 217 6605 6649 "ocamlbuild/command.ml" 217 6605 6660
+type(
+  unit
+)
+"ocamlbuild/command.ml" 217 6605 6662 "ocamlbuild/command.ml" 217 6605 6664
+type(
+  string
+)
+"ocamlbuild/command.ml" 217 6605 6649 "ocamlbuild/command.ml" 217 6605 6664
+type(
+  string
+)
+"ocamlbuild/command.ml" 220 6670 6678 "ocamlbuild/command.ml" 220 6670 6691
+type(
+  ('a -> unit) -> 'a list -> unit
+)
+"ocamlbuild/command.ml" 220 6670 6692 "ocamlbuild/command.ml" 220 6670 6693
+type(
+  'a -> unit
+)
+"ocamlbuild/command.ml" 222 6707 6711 "ocamlbuild/command.ml" 222 6707 6713
+type(
+  'a list
+)
+"ocamlbuild/command.ml" 222 6707 6717 "ocamlbuild/command.ml" 222 6707 6719
+type(
+  unit
+)
+"ocamlbuild/command.ml" 223 6720 6724 "ocamlbuild/command.ml" 223 6720 6725
+type(
+  'a
+)
+"ocamlbuild/command.ml" 223 6720 6729 "ocamlbuild/command.ml" 223 6720 6731
+type(
+  'a list
+)
+"ocamlbuild/command.ml" 223 6720 6724 "ocamlbuild/command.ml" 223 6720 6731
+type(
+  'a list
+)
+"ocamlbuild/command.ml" 223 6720 6735 "ocamlbuild/command.ml" 223 6720 6748
+type(
+  ('a -> unit) -> 'a list -> unit
+)
+"ocamlbuild/command.ml" 223 6720 6749 "ocamlbuild/command.ml" 223 6720 6750
+type(
+  'a -> unit
+)
+"ocamlbuild/command.ml" 223 6720 6751 "ocamlbuild/command.ml" 223 6720 6753
+type(
+  'a list
+)
+"ocamlbuild/command.ml" 223 6720 6735 "ocamlbuild/command.ml" 223 6720 6753
+type(
+  unit
+)
+"ocamlbuild/command.ml" 223 6720 6755 "ocamlbuild/command.ml" 223 6720 6756
+type(
+  'a -> unit
+)
+"ocamlbuild/command.ml" 223 6720 6757 "ocamlbuild/command.ml" 223 6720 6758
+type(
+  'a
+)
+"ocamlbuild/command.ml" 223 6720 6755 "ocamlbuild/command.ml" 223 6720 6758
+type(
+  unit
+)
+"ocamlbuild/command.ml" 223 6720 6735 "ocamlbuild/command.ml" 223 6720 6758
+type(
+  unit
+)
+"ocamlbuild/command.ml" 221 6696 6698 "ocamlbuild/command.ml" 223 6720 6758
+type(
+  'a list -> unit
+)
+"ocamlbuild/command.ml" 225 6760 6764 "ocamlbuild/command.ml" 225 6760 6780
+type(
+  bool -> bool -> t -> (unit -> string) list
+)
+"ocamlbuild/command.ml" 225 6760 6781 "ocamlbuild/command.ml" 225 6760 6786
+type(
+  bool
+)
+"ocamlbuild/command.ml" 225 6760 6787 "ocamlbuild/command.ml" 225 6760 6794
+type(
+  bool
+)
+"ocamlbuild/command.ml" 225 6760 6795 "ocamlbuild/command.ml" 225 6760 6798
+type(
+  t
+)
+"ocamlbuild/command.ml" 226 6801 6811 "ocamlbuild/command.ml" 226 6801 6815
+type(
+  (unit -> string) list -> t list -> (unit -> string) list
+)
+"ocamlbuild/command.ml" 226 6801 6816 "ocamlbuild/command.ml" 226 6801 6819
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 228 6835 6841 "ocamlbuild/command.ml" 228 6835 6843
+type(
+  t list
+)
+"ocamlbuild/command.ml" 228 6835 6847 "ocamlbuild/command.ml" 228 6835 6850
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 229 6851 6857 "ocamlbuild/command.ml" 229 6851 6860
+type(
+  t
+)
+"ocamlbuild/command.ml" 229 6851 6864 "ocamlbuild/command.ml" 229 6851 6866
+type(
+  t list
+)
+"ocamlbuild/command.ml" 229 6851 6857 "ocamlbuild/command.ml" 229 6851 6866
+type(
+  t list
+)
+"ocamlbuild/command.ml" 229 6851 6870 "ocamlbuild/command.ml" 229 6851 6874
+type(
+  (unit -> string) list -> t list -> (unit -> string) list
+)
+"ocamlbuild/command.ml" 229 6851 6875 "ocamlbuild/command.ml" 229 6851 6878
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 229 6851 6879 "ocamlbuild/command.ml" 229 6851 6881
+type(
+  t list
+)
+"ocamlbuild/command.ml" 229 6851 6870 "ocamlbuild/command.ml" 229 6851 6881
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 230 6882 6892 "ocamlbuild/command.ml" 230 6882 6896
+type(
+  spec
+)
+"ocamlbuild/command.ml" 230 6882 6888 "ocamlbuild/command.ml" 230 6882 6896
+type(
+  t
+)
+"ocamlbuild/command.ml" 230 6882 6900 "ocamlbuild/command.ml" 230 6882 6902
+type(
+  t list
+)
+"ocamlbuild/command.ml" 230 6882 6888 "ocamlbuild/command.ml" 230 6882 6902
+type(
+  t list
+)
+"ocamlbuild/command.ml" 230 6882 6906 "ocamlbuild/command.ml" 230 6882 6910
+type(
+  (unit -> string) list -> t list -> (unit -> string) list
+)
+"ocamlbuild/command.ml" 230 6882 6912 "ocamlbuild/command.ml" 230 6882 6940
+type(
+  spec -> bool -> bool -> unit -> string
+)
+"ocamlbuild/command.ml" 230 6882 6941 "ocamlbuild/command.ml" 230 6882 6945
+type(
+  spec
+)
+"ocamlbuild/command.ml" 230 6882 6946 "ocamlbuild/command.ml" 230 6882 6951
+type(
+  bool
+)
+"ocamlbuild/command.ml" 230 6882 6952 "ocamlbuild/command.ml" 230 6882 6959
+type(
+  bool
+)
+"ocamlbuild/command.ml" 230 6882 6912 "ocamlbuild/command.ml" 230 6882 6959
+type(
+  unit -> string
+)
+"ocamlbuild/command.ml" 230 6882 6963 "ocamlbuild/command.ml" 230 6882 6966
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 230 6882 6911 "ocamlbuild/command.ml" 230 6882 6967
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 230 6882 6968 "ocamlbuild/command.ml" 230 6882 6970
+type(
+  t list
+)
+"ocamlbuild/command.ml" 230 6882 6906 "ocamlbuild/command.ml" 230 6882 6970
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 231 6971 6982 "ocamlbuild/command.ml" 231 6971 6987
+type(
+  string list
+)
+"ocamlbuild/command.ml" 231 6971 6989 "ocamlbuild/command.ml" 231 6971 6998
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 231 6971 6977 "ocamlbuild/command.ml" 231 6971 6999
+type(
+  t
+)
+"ocamlbuild/command.ml" 231 6971 7003 "ocamlbuild/command.ml" 231 6971 7005
+type(
+  t list
+)
+"ocamlbuild/command.ml" 231 6971 6977 "ocamlbuild/command.ml" 231 6971 7005
+type(
+  t list
+)
+"ocamlbuild/command.ml" 231 6971 7009 "ocamlbuild/command.ml" 231 6971 7013
+type(
+  (unit -> string) list -> t list -> (unit -> string) list
+)
+"ocamlbuild/command.ml" 231 6971 7015 "ocamlbuild/command.ml" 231 6971 7030
+type(
+  string list -> pathname -> unit -> string
+)
+"ocamlbuild/command.ml" 231 6971 7031 "ocamlbuild/command.ml" 231 6971 7036
+type(
+  string list
+)
+"ocamlbuild/command.ml" 231 6971 7037 "ocamlbuild/command.ml" 231 6971 7046
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 231 6971 7015 "ocamlbuild/command.ml" 231 6971 7046
+type(
+  unit -> string
+)
+"ocamlbuild/command.ml" 231 6971 7050 "ocamlbuild/command.ml" 231 6971 7053
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 231 6971 7014 "ocamlbuild/command.ml" 231 6971 7054
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 231 6971 7055 "ocamlbuild/command.ml" 231 6971 7057
+type(
+  t list
+)
+"ocamlbuild/command.ml" 231 6971 7009 "ocamlbuild/command.ml" 231 6971 7057
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 232 7058 7068 "ocamlbuild/command.ml" 232 7058 7069
+type(
+  t list
+)
+"ocamlbuild/command.ml" 232 7058 7064 "ocamlbuild/command.ml" 232 7058 7069
+type(
+  t
+)
+"ocamlbuild/command.ml" 232 7058 7073 "ocamlbuild/command.ml" 232 7058 7075
+type(
+  t list
+)
+"ocamlbuild/command.ml" 232 7058 7064 "ocamlbuild/command.ml" 232 7058 7075
+type(
+  t list
+)
+"ocamlbuild/command.ml" 232 7058 7079 "ocamlbuild/command.ml" 232 7058 7083
+type(
+  (unit -> string) list -> t list -> (unit -> string) list
+)
+"ocamlbuild/command.ml" 232 7058 7085 "ocamlbuild/command.ml" 232 7058 7089
+type(
+  (unit -> string) list -> t list -> (unit -> string) list
+)
+"ocamlbuild/command.ml" 232 7058 7090 "ocamlbuild/command.ml" 232 7058 7093
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 232 7058 7094 "ocamlbuild/command.ml" 232 7058 7095
+type(
+  t list
+)
+"ocamlbuild/command.ml" 232 7058 7084 "ocamlbuild/command.ml" 232 7058 7096
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 232 7058 7097 "ocamlbuild/command.ml" 232 7058 7099
+type(
+  t list
+)
+"ocamlbuild/command.ml" 232 7058 7079 "ocamlbuild/command.ml" 232 7058 7099
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 227 6822 6826 "ocamlbuild/command.ml" 232 7058 7099
+type(
+  t list -> (unit -> string) list
+)
+"ocamlbuild/command.ml" 233 7100 7105 "ocamlbuild/command.ml" 233 7100 7113
+type(
+  (unit -> string) list -> (unit -> string) list
+)
+"ocamlbuild/command.ml" 233 7100 7115 "ocamlbuild/command.ml" 233 7100 7119
+type(
+  (unit -> string) list -> t list -> (unit -> string) list
+)
+"ocamlbuild/command.ml" 233 7100 7120 "ocamlbuild/command.ml" 233 7100 7122
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 233 7100 7124 "ocamlbuild/command.ml" 233 7100 7127
+type(
+  t
+)
+"ocamlbuild/command.ml" 233 7100 7123 "ocamlbuild/command.ml" 233 7100 7128
+type(
+  t list
+)
+"ocamlbuild/command.ml" 233 7100 7114 "ocamlbuild/command.ml" 233 7100 7129
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 233 7100 7105 "ocamlbuild/command.ml" 233 7100 7129
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 226 6801 6803 "ocamlbuild/command.ml" 233 7100 7129
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 235 7131 7135 "ocamlbuild/command.ml" 235 7131 7147
+type(
+  ?quiet:bool -> ?pretend:bool -> t list -> (bool list * exn) option
+)
+"ocamlbuild/command.ml" 235 7131 7150 "ocamlbuild/command.ml" 235 7131 7155
+type(
+  bool
+)
+"ocamlbuild/command.ml" 235 7131 7156 "ocamlbuild/command.ml" 235 7131 7161
+type(
+  bool
+)
+"ocamlbuild/command.ml" 235 7131 7156 "ocamlbuild/command.ml" 235 7131 7161
+type(
+  bool
+)
+"ocamlbuild/command.ml" 235 7131 7156 "ocamlbuild/command.ml" 235 7131 7161
+type(
+  bool
+)
+"ocamlbuild/command.ml" 235 7131 7156 "ocamlbuild/command.ml" 235 7131 7161
+type(
+  bool option
+)
+"ocamlbuild/command.ml" 235 7131 7156 "ocamlbuild/command.ml" 235 7131 7161
+type(
+  bool option
+)
+"ocamlbuild/command.ml" 235 7131 7156 "ocamlbuild/command.ml" 235 7131 7161
+type(
+  bool
+)
+"ocamlbuild/command.ml" 235 7131 7156 "ocamlbuild/command.ml" 235 7131 7161
+type(
+  bool option
+)
+"ocamlbuild/command.ml" 235 7131 7156 "ocamlbuild/command.ml" 235 7131 7161
+type(
+  bool option
+)
+"ocamlbuild/command.ml" 235 7131 7165 "ocamlbuild/command.ml" 235 7131 7172
+type(
+  bool
+)
+"ocamlbuild/command.ml" 235 7131 7173 "ocamlbuild/command.ml" 235 7131 7178
+type(
+  bool
+)
+"ocamlbuild/command.ml" 235 7131 7173 "ocamlbuild/command.ml" 235 7131 7178
+type(
+  bool
+)
+"ocamlbuild/command.ml" 235 7131 7173 "ocamlbuild/command.ml" 235 7131 7178
+type(
+  bool
+)
+"ocamlbuild/command.ml" 235 7131 7173 "ocamlbuild/command.ml" 235 7131 7178
+type(
+  bool option
+)
+"ocamlbuild/command.ml" 235 7131 7173 "ocamlbuild/command.ml" 235 7131 7178
+type(
+  bool option
+)
+"ocamlbuild/command.ml" 235 7131 7173 "ocamlbuild/command.ml" 235 7131 7178
+type(
+  bool
+)
+"ocamlbuild/command.ml" 235 7131 7173 "ocamlbuild/command.ml" 235 7131 7178
+type(
+  bool option
+)
+"ocamlbuild/command.ml" 235 7131 7173 "ocamlbuild/command.ml" 235 7131 7178
+type(
+  bool option
+)
+"ocamlbuild/command.ml" 235 7131 7180 "ocamlbuild/command.ml" 235 7131 7184
+type(
+  t list
+)
+"ocamlbuild/command.ml" 236 7187 7189 "ocamlbuild/command.ml" 236 7187 7206
+type(
+  int -> unit
+)
+"ocamlbuild/command.ml" 236 7187 7208 "ocamlbuild/command.ml" 236 7187 7219
+type(
+  t list -> int
+)
+"ocamlbuild/command.ml" 236 7187 7220 "ocamlbuild/command.ml" 236 7187 7224
+type(
+  t list
+)
+"ocamlbuild/command.ml" 236 7187 7207 "ocamlbuild/command.ml" 236 7187 7225
+type(
+  int
+)
+"ocamlbuild/command.ml" 236 7187 7189 "ocamlbuild/command.ml" 236 7187 7225
+type(
+  unit
+)
+"ocamlbuild/command.ml" 237 7227 7233 "ocamlbuild/command.ml" 237 7227 7241
+type(
+  bool
+)
+"ocamlbuild/command.ml" 237 7227 7244 "ocamlbuild/command.ml" 237 7227 7246
+type(
+  bool Lazy.t -> bool
+)
+"ocamlbuild/command.ml" 237 7227 7246 "ocamlbuild/command.ml" 237 7227 7265
+type(
+  bool Lazy.t
+)
+"ocamlbuild/command.ml" 237 7227 7244 "ocamlbuild/command.ml" 237 7227 7265
+type(
+  bool
+)
+"ocamlbuild/command.ml" 237 7227 7266 "ocamlbuild/command.ml" 237 7227 7268
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/command.ml" 237 7227 7269 "ocamlbuild/command.ml" 237 7227 7280
+type(
+  string
+)
+"ocamlbuild/command.ml" 237 7227 7281 "ocamlbuild/command.ml" 237 7227 7282
+type(
+  string -> string -> bool
+)
+"ocamlbuild/command.ml" 237 7227 7283 "ocamlbuild/command.ml" 237 7227 7290
+type(
+  string
+)
+"ocamlbuild/command.ml" 237 7227 7269 "ocamlbuild/command.ml" 237 7227 7290
+type(
+  bool
+)
+"ocamlbuild/command.ml" 237 7227 7244 "ocamlbuild/command.ml" 237 7227 7290
+type(
+  bool
+)
+"ocamlbuild/command.ml" 238 7294 7300 "ocamlbuild/command.ml" 238 7294 7304
+type(
+  int
+)
+"ocamlbuild/command.ml" 238 7294 7307 "ocamlbuild/command.ml" 238 7294 7308
+type(
+  int ref -> int
+)
+"ocamlbuild/command.ml" 238 7294 7308 "ocamlbuild/command.ml" 238 7294 7312
+type(
+  int ref
+)
+"ocamlbuild/command.ml" 238 7294 7307 "ocamlbuild/command.ml" 238 7294 7312
+type(
+  int
+)
+"ocamlbuild/command.ml" 239 7316 7321 "ocamlbuild/command.ml" 239 7316 7325
+type(
+  int
+)
+"ocamlbuild/command.ml" 239 7316 7326 "ocamlbuild/command.ml" 239 7316 7327
+type(
+  int -> int -> bool
+)
+"ocamlbuild/command.ml" 239 7316 7328 "ocamlbuild/command.ml" 239 7316 7329
+type(
+  int
+)
+"ocamlbuild/command.ml" 239 7316 7321 "ocamlbuild/command.ml" 239 7316 7329
+type(
+  bool
+)
+"ocamlbuild/command.ml" 239 7316 7335 "ocamlbuild/command.ml" 239 7316 7346
+type(
+  string -> unit
+)
+"ocamlbuild/command.ml" 239 7316 7347 "ocamlbuild/command.ml" 239 7316 7357
+type(
+  string
+)
+"ocamlbuild/command.ml" 239 7316 7335 "ocamlbuild/command.ml" 239 7316 7357
+type(
+  unit
+)
+"ocamlbuild/command.ml" 239 7316 7318 "ocamlbuild/command.ml" 239 7316 7357
+type(
+  unit
+)
+"ocamlbuild/command.ml" 240 7359 7365 "ocamlbuild/command.ml" 240 7359 7373
+type(
+  int option
+)
+"ocamlbuild/command.ml" 240 7359 7379 "ocamlbuild/command.ml" 240 7359 7383
+type(
+  int
+)
+"ocamlbuild/command.ml" 240 7359 7384 "ocamlbuild/command.ml" 240 7359 7385
+type(
+  int -> int -> bool
+)
+"ocamlbuild/command.ml" 240 7359 7386 "ocamlbuild/command.ml" 240 7359 7387
+type(
+  int
+)
+"ocamlbuild/command.ml" 240 7359 7379 "ocamlbuild/command.ml" 240 7359 7387
+type(
+  bool
+)
+"ocamlbuild/command.ml" 240 7359 7393 "ocamlbuild/command.ml" 240 7359 7397
+type(
+  int option
+)
+"ocamlbuild/command.ml" 240 7359 7408 "ocamlbuild/command.ml" 240 7359 7412
+type(
+  int
+)
+"ocamlbuild/command.ml" 240 7359 7403 "ocamlbuild/command.ml" 240 7359 7412
+type(
+  int option
+)
+"ocamlbuild/command.ml" 240 7359 7376 "ocamlbuild/command.ml" 240 7359 7412
+type(
+  int option
+)
+"ocamlbuild/command.ml" 242 7417 7423 "ocamlbuild/command.ml" 242 7417 7429
+type(
+  unit -> unit
+)
+"ocamlbuild/command.ml" 242 7417 7432 "ocamlbuild/command.ml" 242 7417 7442
+type(
+  unit -> unit
+)
+"ocamlbuild/command.ml" 243 7446 7452 "ocamlbuild/command.ml" 243 7446 7459
+type(
+  (out_channel -> unit) -> unit
+)
+"ocamlbuild/command.ml" 243 7446 7462 "ocamlbuild/command.ml" 243 7446 7473
+type(
+  (out_channel -> unit) -> unit
+)
+"ocamlbuild/command.ml" 245 7478 7483 "ocamlbuild/command.ml" 245 7478 7487
+type(
+  t list
+)
+"ocamlbuild/command.ml" 245 7478 7488 "ocamlbuild/command.ml" 245 7478 7489
+type(
+  t list -> t list -> bool
+)
+"ocamlbuild/command.ml" 245 7478 7490 "ocamlbuild/command.ml" 245 7478 7492
+type(
+  t list
+)
+"ocamlbuild/command.ml" 245 7478 7483 "ocamlbuild/command.ml" 245 7478 7492
+type(
+  bool
+)
+"ocamlbuild/command.ml" 246 7498 7502 "ocamlbuild/command.ml" 246 7498 7506
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 249 7524 7534 "ocamlbuild/command.ml" 249 7524 7539
+type(
+  (unit -> string) list list
+)
+"ocamlbuild/command.ml" 249 7524 7542 "ocamlbuild/command.ml" 249 7524 7550
+type(
+  (t -> (unit -> string) list) -> t list -> (unit -> string) list list
+)
+"ocamlbuild/command.ml" 249 7524 7552 "ocamlbuild/command.ml" 249 7524 7568
+type(
+  bool -> bool -> t -> (unit -> string) list
+)
+"ocamlbuild/command.ml" 249 7524 7569 "ocamlbuild/command.ml" 249 7524 7574
+type(
+  bool
+)
+"ocamlbuild/command.ml" 249 7524 7575 "ocamlbuild/command.ml" 249 7524 7582
+type(
+  bool
+)
+"ocamlbuild/command.ml" 249 7524 7551 "ocamlbuild/command.ml" 249 7524 7583
+type(
+  t -> (unit -> string) list
+)
+"ocamlbuild/command.ml" 249 7524 7584 "ocamlbuild/command.ml" 249 7524 7588
+type(
+  t list
+)
+"ocamlbuild/command.ml" 249 7524 7542 "ocamlbuild/command.ml" 249 7524 7588
+type(
+  (unit -> string) list list
+)
+"ocamlbuild/command.ml" 250 7592 7601 "ocamlbuild/command.ml" 250 7592 7608
+type(
+  bool
+)
+"ocamlbuild/command.ml" 252 7628 7638 "ocamlbuild/command.ml" 252 7628 7647
+type(
+  ((unit -> string) list -> unit) -> (unit -> string) list list -> unit
+)
+"ocamlbuild/command.ml" 252 7628 7649 "ocamlbuild/command.ml" 252 7628 7658
+type(
+  ((unit -> string) -> unit) -> (unit -> string) list -> unit
+)
+"ocamlbuild/command.ml" 252 7628 7664 "ocamlbuild/command.ml" 252 7628 7665
+type(
+  unit -> string
+)
+"ocamlbuild/command.ml" 252 7628 7669 "ocamlbuild/command.ml" 252 7628 7675
+type(
+  string -> unit
+)
+"ocamlbuild/command.ml" 252 7628 7677 "ocamlbuild/command.ml" 252 7628 7678
+type(
+  unit -> string
+)
+"ocamlbuild/command.ml" 252 7628 7679 "ocamlbuild/command.ml" 252 7628 7681
+type(
+  unit
+)
+"ocamlbuild/command.ml" 252 7628 7676 "ocamlbuild/command.ml" 252 7628 7682
+type(
+  string
+)
+"ocamlbuild/command.ml" 252 7628 7669 "ocamlbuild/command.ml" 252 7628 7682
+type(
+  unit
+)
+"ocamlbuild/command.ml" 252 7628 7659 "ocamlbuild/command.ml" 252 7628 7683
+type(
+  (unit -> string) -> unit
+)
+"ocamlbuild/command.ml" 252 7628 7648 "ocamlbuild/command.ml" 252 7628 7684
+type(
+  (unit -> string) list -> unit
+)
+"ocamlbuild/command.ml" 252 7628 7685 "ocamlbuild/command.ml" 252 7628 7690
+type(
+  (unit -> string) list list
+)
+"ocamlbuild/command.ml" 252 7628 7638 "ocamlbuild/command.ml" 252 7628 7690
+type(
+  unit
+)
+"ocamlbuild/command.ml" 253 7692 7702 "ocamlbuild/command.ml" 253 7692 7706
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 251 7614 7622 "ocamlbuild/command.ml" 254 7707 7718
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 257 7744 7754 "ocamlbuild/command.ml" 257 7744 7773
+type(
+  unit -> unit
+)
+"ocamlbuild/command.ml" 257 7744 7774 "ocamlbuild/command.ml" 257 7744 7776
+type(
+  unit
+)
+"ocamlbuild/command.ml" 257 7744 7754 "ocamlbuild/command.ml" 257 7744 7776
+type(
+  unit
+)
+"ocamlbuild/command.ml" 258 7778 7791 "ocamlbuild/command.ml" 258 7778 7799
+type(
+  bool
+)
+"ocamlbuild/command.ml" 259 7805 7821 "ocamlbuild/command.ml" 259 7805 7824
+type(
+  bool list
+)
+"ocamlbuild/command.ml" 259 7805 7826 "ocamlbuild/command.ml" 259 7805 7833
+type(
+  exn option
+)
+"ocamlbuild/command.ml" 259 7805 7821 "ocamlbuild/command.ml" 259 7805 7833
+type(
+  bool list * exn option
+)
+"ocamlbuild/command.ml" 260 7836 7850 "ocamlbuild/command.ml" 260 7836 7864
+type(
+  (bool list * exn option -> (unit -> string) list -> bool list * exn option) ->
+  bool list * exn option ->
+  (unit -> string) list list -> bool list * exn option
+)
+"ocamlbuild/command.ml" 260 7836 7876 "ocamlbuild/command.ml" 260 7836 7883
+type(
+  bool list
+)
+"ocamlbuild/command.ml" 260 7836 7885 "ocamlbuild/command.ml" 260 7836 7892
+type(
+  exn option
+)
+"ocamlbuild/command.ml" 260 7836 7875 "ocamlbuild/command.ml" 260 7836 7893
+type(
+  bool list * exn option
+)
+"ocamlbuild/command.ml" 260 7836 7894 "ocamlbuild/command.ml" 260 7836 7898
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 261 7902 7924 "ocamlbuild/command.ml" 261 7902 7931
+type(
+  exn option
+)
+"ocamlbuild/command.ml" 262 7937 7955 "ocamlbuild/command.ml" 262 7937 7959
+type(
+  exn option
+)
+"ocamlbuild/command.ml" 264 7993 8015 "ocamlbuild/command.ml" 264 7993 8024
+type(
+  ((unit -> string) -> unit) -> (unit -> string) list -> unit
+)
+"ocamlbuild/command.ml" 264 7993 8035 "ocamlbuild/command.ml" 264 7993 8041
+type(
+  unit -> string
+)
+"ocamlbuild/command.ml" 265 8045 8073 "ocamlbuild/command.ml" 265 8045 8076
+type(
+  string
+)
+"ocamlbuild/command.ml" 265 8045 8079 "ocamlbuild/command.ml" 265 8045 8085
+type(
+  unit -> string
+)
+"ocamlbuild/command.ml" 265 8045 8086 "ocamlbuild/command.ml" 265 8045 8088
+type(
+  unit
+)
+"ocamlbuild/command.ml" 265 8045 8079 "ocamlbuild/command.ml" 265 8045 8088
+type(
+  string
+)
+"ocamlbuild/command.ml" 266 8092 8120 "ocamlbuild/command.ml" 266 8092 8122
+type(
+  int
+)
+"ocamlbuild/command.ml" 266 8092 8125 "ocamlbuild/command.ml" 266 8092 8136
+type(
+  string -> int
+)
+"ocamlbuild/command.ml" 266 8092 8137 "ocamlbuild/command.ml" 266 8092 8140
+type(
+  string
+)
+"ocamlbuild/command.ml" 266 8092 8125 "ocamlbuild/command.ml" 266 8092 8140
+type(
+  int
+)
+"ocamlbuild/command.ml" 267 8144 8171 "ocamlbuild/command.ml" 267 8144 8173
+type(
+  int
+)
+"ocamlbuild/command.ml" 267 8144 8174 "ocamlbuild/command.ml" 267 8144 8176
+type(
+  int -> int -> bool
+)
+"ocamlbuild/command.ml" 267 8144 8177 "ocamlbuild/command.ml" 267 8144 8178
+type(
+  int
+)
+"ocamlbuild/command.ml" 267 8144 8171 "ocamlbuild/command.ml" 267 8144 8178
+type(
+  bool
+)
+"ocamlbuild/command.ml" 268 8190 8219 "ocamlbuild/command.ml" 268 8190 8222
+type(
+  bool -> bool
+)
+"ocamlbuild/command.ml" 268 8190 8223 "ocamlbuild/command.ml" 268 8190 8228
+type(
+  bool
+)
+"ocamlbuild/command.ml" 268 8190 8219 "ocamlbuild/command.ml" 268 8190 8228
+type(
+  bool
+)
+"ocamlbuild/command.ml" 269 8234 8262 "ocamlbuild/command.ml" 269 8234 8269
+type(
+  (int -> string -> unit, Format.formatter, unit) format ->
+  int -> string -> unit
+)
+"ocamlbuild/command.ml" 269 8234 8270 "ocamlbuild/command.ml" 270 8307 8357
+type(
+  (int -> string -> unit, Format.formatter, unit) format
+)
+"ocamlbuild/command.ml" 270 8307 8358 "ocamlbuild/command.ml" 270 8307 8360
+type(
+  int
+)
+"ocamlbuild/command.ml" 270 8307 8361 "ocamlbuild/command.ml" 270 8307 8364
+type(
+  string
+)
+"ocamlbuild/command.ml" 269 8234 8262 "ocamlbuild/command.ml" 270 8307 8364
+type(
+  unit
+)
+"ocamlbuild/command.ml" 268 8190 8216 "ocamlbuild/command.ml" 270 8307 8364
+type(
+  unit
+)
+"ocamlbuild/command.ml" 271 8366 8392 "ocamlbuild/command.ml" 271 8366 8397
+type(
+  exn -> unit
+)
+"ocamlbuild/command.ml" 271 8366 8414 "ocamlbuild/command.ml" 271 8366 8416
+type(
+  int
+)
+"ocamlbuild/command.ml" 271 8366 8398 "ocamlbuild/command.ml" 271 8366 8417
+type(
+  exn
+)
+"ocamlbuild/command.ml" 271 8366 8392 "ocamlbuild/command.ml" 271 8366 8417
+type(
+  unit
+)
+"ocamlbuild/command.ml" 267 8144 8184 "ocamlbuild/command.ml" 272 8418 8445
+type(
+  unit
+)
+"ocamlbuild/command.ml" 267 8144 8168 "ocamlbuild/command.ml" 272 8418 8445
+type(
+  unit
+)
+"ocamlbuild/command.ml" 266 8092 8116 "ocamlbuild/command.ml" 272 8418 8445
+type(
+  unit
+)
+"ocamlbuild/command.ml" 265 8045 8069 "ocamlbuild/command.ml" 272 8418 8445
+type(
+  unit
+)
+"ocamlbuild/command.ml" 264 7993 8025 "ocamlbuild/command.ml" 273 8446 8471
+type(
+  (unit -> string) -> unit
+)
+"ocamlbuild/command.ml" 273 8446 8472 "ocamlbuild/command.ml" 273 8446 8476
+type(
+  (unit -> string) list
+)
+"ocamlbuild/command.ml" 264 7993 8015 "ocamlbuild/command.ml" 273 8446 8476
+type(
+  unit
+)
+"ocamlbuild/command.ml" 274 8478 8500 "ocamlbuild/command.ml" 274 8478 8504
+type(
+  bool
+)
+"ocamlbuild/command.ml" 274 8478 8508 "ocamlbuild/command.ml" 274 8478 8515
+type(
+  bool list
+)
+"ocamlbuild/command.ml" 274 8478 8500 "ocamlbuild/command.ml" 274 8478 8515
+type(
+  bool list
+)
+"ocamlbuild/command.ml" 274 8478 8517 "ocamlbuild/command.ml" 274 8478 8521
+type(
+  exn option
+)
+"ocamlbuild/command.ml" 274 8478 8500 "ocamlbuild/command.ml" 274 8478 8521
+type(
+  bool list * exn option
+)
+"ocamlbuild/command.ml" 264 7993 8015 "ocamlbuild/command.ml" 274 8478 8521
+type(
+  bool list * exn option
+)
+"ocamlbuild/command.ml" 275 8522 8547 "ocamlbuild/command.ml" 275 8522 8548
+type(
+  exn
+)
+"ocamlbuild/command.ml" 275 8522 8552 "ocamlbuild/command.ml" 275 8522 8557
+type(
+  bool
+)
+"ocamlbuild/command.ml" 275 8522 8561 "ocamlbuild/command.ml" 275 8522 8568
+type(
+  bool list
+)
+"ocamlbuild/command.ml" 275 8522 8552 "ocamlbuild/command.ml" 275 8522 8568
+type(
+  bool list
+)
+"ocamlbuild/command.ml" 275 8522 8575 "ocamlbuild/command.ml" 275 8522 8576
+type(
+  exn
+)
+"ocamlbuild/command.ml" 275 8522 8570 "ocamlbuild/command.ml" 275 8522 8576
+type(
+  exn option
+)
+"ocamlbuild/command.ml" 275 8522 8552 "ocamlbuild/command.ml" 275 8522 8576
+type(
+  bool list * exn option
+)
+"ocamlbuild/command.ml" 263 7963 7983 "ocamlbuild/command.ml" 276 8577 8600
+type(
+  bool list * exn option
+)
+"ocamlbuild/command.ml" 277 8601 8624 "ocamlbuild/command.ml" 277 8601 8625
+type(
+  exn
+)
+"ocamlbuild/command.ml" 277 8601 8619 "ocamlbuild/command.ml" 277 8601 8625
+type(
+  exn option
+)
+"ocamlbuild/command.ml" 277 8601 8629 "ocamlbuild/command.ml" 277 8601 8634
+type(
+  bool
+)
+"ocamlbuild/command.ml" 277 8601 8638 "ocamlbuild/command.ml" 277 8601 8645
+type(
+  bool list
+)
+"ocamlbuild/command.ml" 277 8601 8629 "ocamlbuild/command.ml" 277 8601 8645
+type(
+  bool list
+)
+"ocamlbuild/command.ml" 277 8601 8647 "ocamlbuild/command.ml" 277 8601 8654
+type(
+  exn option
+)
+"ocamlbuild/command.ml" 277 8601 8629 "ocamlbuild/command.ml" 277 8601 8654
+type(
+  bool list * exn option
+)
+"ocamlbuild/command.ml" 261 7902 7918 "ocamlbuild/command.ml" 277 8601 8654
+type(
+  bool list * exn option
+)
+"ocamlbuild/command.ml" 260 7836 7865 "ocamlbuild/command.ml" 278 8655 8672
+type(
+  bool list * exn option -> (unit -> string) list -> bool list * exn option
+)
+"ocamlbuild/command.ml" 278 8655 8674 "ocamlbuild/command.ml" 278 8655 8676
+type(
+  bool list
+)
+"ocamlbuild/command.ml" 278 8655 8678 "ocamlbuild/command.ml" 278 8655 8682
+type(
+  exn option
+)
+"ocamlbuild/command.ml" 278 8655 8673 "ocamlbuild/command.ml" 278 8655 8683
+type(
+  bool list * exn option
+)
+"ocamlbuild/command.ml" 278 8655 8684 "ocamlbuild/command.ml" 278 8655 8689
+type(
+  (unit -> string) list list
+)
+"ocamlbuild/command.ml" 260 7836 7850 "ocamlbuild/command.ml" 278 8655 8689
+type(
+  bool list * exn option
+)
+"ocamlbuild/command.ml" 279 8690 8711 "ocamlbuild/command.ml" 279 8690 8718
+type(
+  exn option
+)
+"ocamlbuild/command.ml" 280 8724 8742 "ocamlbuild/command.ml" 280 8724 8747
+type(
+  exn
+)
+"ocamlbuild/command.ml" 280 8724 8738 "ocamlbuild/command.ml" 280 8724 8747
+type(
+  exn option
+)
+"ocamlbuild/command.ml" 280 8724 8756 "ocamlbuild/command.ml" 280 8724 8759
+type(
+  bool list
+)
+"ocamlbuild/command.ml" 280 8724 8761 "ocamlbuild/command.ml" 280 8724 8764
+type(
+  exn
+)
+"ocamlbuild/command.ml" 280 8724 8755 "ocamlbuild/command.ml" 280 8724 8765
+type(
+  bool list * exn
+)
+"ocamlbuild/command.ml" 280 8724 8751 "ocamlbuild/command.ml" 280 8724 8765
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 281 8766 8780 "ocamlbuild/command.ml" 281 8766 8784
+type(
+  exn option
+)
+"ocamlbuild/command.ml" 281 8766 8788 "ocamlbuild/command.ml" 281 8766 8792
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 279 8690 8705 "ocamlbuild/command.ml" 281 8766 8792
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 259 7805 7817 "ocamlbuild/command.ml" 281 8766 8792
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 283 8808 8820 "ocamlbuild/command.ml" 283 8808 8840
+type(
+  ?max_jobs:int ->
+  ?ticker:(unit -> unit) ->
+  ?period:float ->
+  ?display:((out_channel -> unit) -> unit) ->
+  (unit -> string) list list -> (bool list * exn) option
+)
+"ocamlbuild/command.ml" 283 8808 8842 "ocamlbuild/command.ml" 283 8808 8848
+type(
+  unit -> unit
+)
+"ocamlbuild/command.ml" 283 8808 8850 "ocamlbuild/command.ml" 283 8808 8858
+type(
+  int option
+)
+"ocamlbuild/command.ml" 283 8808 8860 "ocamlbuild/command.ml" 283 8808 8867
+type(
+  (out_channel -> unit) -> unit
+)
+"ocamlbuild/command.ml" 283 8808 8868 "ocamlbuild/command.ml" 283 8808 8873
+type(
+  (unit -> string) list list
+)
+"ocamlbuild/command.ml" 283 8808 8820 "ocamlbuild/command.ml" 283 8808 8873
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 258 7778 7788 "ocamlbuild/command.ml" 283 8808 8873
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 256 7730 7738 "ocamlbuild/command.ml" 284 8874 8885
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 250 7592 7598 "ocamlbuild/command.ml" 284 8874 8885
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 248 7514 7518 "ocamlbuild/command.ml" 285 8886 8893
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 245 7478 7480 "ocamlbuild/command.ml" 285 8886 8893
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 243 7446 7448 "ocamlbuild/command.ml" 285 8886 8893
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 242 7417 7419 "ocamlbuild/command.ml" 285 8886 8893
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 240 7359 7361 "ocamlbuild/command.ml" 285 8886 8893
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 239 7316 7318 "ocamlbuild/command.ml" 285 8886 8893
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 238 7294 7296 "ocamlbuild/command.ml" 285 8886 8893
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 237 7227 7229 "ocamlbuild/command.ml" 285 8886 8893
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 236 7187 7189 "ocamlbuild/command.ml" 285 8886 8893
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 288 8898 8902 "ocamlbuild/command.ml" 288 8898 8909
+type(
+  ?quiet:bool -> ?pretend:bool -> t -> unit
+)
+"ocamlbuild/command.ml" 288 8898 8911 "ocamlbuild/command.ml" 288 8898 8916
+type(
+  bool option
+)
+"ocamlbuild/command.ml" 288 8898 8918 "ocamlbuild/command.ml" 288 8898 8925
+type(
+  bool option
+)
+"ocamlbuild/command.ml" 288 8898 8926 "ocamlbuild/command.ml" 288 8898 8929
+type(
+  t
+)
+"ocamlbuild/command.ml" 289 8932 8940 "ocamlbuild/command.ml" 289 8932 8952
+type(
+  ?quiet:bool -> ?pretend:bool -> t list -> (bool list * exn) option
+)
+"ocamlbuild/command.ml" 289 8932 8954 "ocamlbuild/command.ml" 289 8932 8959
+type(
+  bool option
+)
+"ocamlbuild/command.ml" 289 8932 8961 "ocamlbuild/command.ml" 289 8932 8968
+type(
+  bool option
+)
+"ocamlbuild/command.ml" 289 8932 8970 "ocamlbuild/command.ml" 289 8932 8973
+type(
+  t
+)
+"ocamlbuild/command.ml" 289 8932 8969 "ocamlbuild/command.ml" 289 8932 8974
+type(
+  t list
+)
+"ocamlbuild/command.ml" 289 8932 8940 "ocamlbuild/command.ml" 289 8932 8974
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 290 8980 8989 "ocamlbuild/command.ml" 290 8980 8990
+type(
+  bool list
+)
+"ocamlbuild/command.ml" 290 8980 8992 "ocamlbuild/command.ml" 290 8980 8995
+type(
+  exn
+)
+"ocamlbuild/command.ml" 290 8980 8988 "ocamlbuild/command.ml" 290 8980 8996
+type(
+  bool list * exn
+)
+"ocamlbuild/command.ml" 290 8980 8984 "ocamlbuild/command.ml" 290 8980 8996
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 290 8980 9000 "ocamlbuild/command.ml" 290 8980 9005
+type(
+  exn -> unit
+)
+"ocamlbuild/command.ml" 290 8980 9006 "ocamlbuild/command.ml" 290 8980 9009
+type(
+  exn
+)
+"ocamlbuild/command.ml" 290 8980 9000 "ocamlbuild/command.ml" 290 8980 9009
+type(
+  unit
+)
+"ocamlbuild/command.ml" 291 9010 9014 "ocamlbuild/command.ml" 291 9010 9015
+type(
+  (bool list * exn) option
+)
+"ocamlbuild/command.ml" 291 9010 9019 "ocamlbuild/command.ml" 291 9010 9021
+type(
+  unit
+)
+"ocamlbuild/command.ml" 289 8932 8934 "ocamlbuild/command.ml" 291 9010 9021
+type(
+  unit
+)
+"ocamlbuild/command.ml" 293 9023 9027 "ocamlbuild/command.ml" 293 9023 9036
+type(
+  (Tags.t -> unit) -> t -> unit
+)
+"ocamlbuild/command.ml" 293 9023 9037 "ocamlbuild/command.ml" 293 9023 9038
+type(
+  Tags.t -> unit
+)
+"ocamlbuild/command.ml" 293 9023 9039 "ocamlbuild/command.ml" 293 9023 9040
+type(
+  t
+)
+"ocamlbuild/command.ml" 294 9043 9053 "ocamlbuild/command.ml" 294 9043 9057
+type(
+  spec -> unit
+)
+"ocamlbuild/command.ml" 294 9043 9058 "ocamlbuild/command.ml" 294 9043 9059
+type(
+  spec
+)
+"ocamlbuild/command.ml" 295 9062 9072 "ocamlbuild/command.ml" 295 9062 9073
+type(
+  spec
+)
+"ocamlbuild/command.ml" 296 9079 9085 "ocamlbuild/command.ml" 296 9079 9086
+type(
+  spec
+)
+"ocamlbuild/command.ml" 296 9079 9091 "ocamlbuild/command.ml" 296 9079 9092
+type(
+  string
+)
+"ocamlbuild/command.ml" 296 9079 9089 "ocamlbuild/command.ml" 296 9079 9092
+type(
+  spec
+)
+"ocamlbuild/command.ml" 296 9079 9085 "ocamlbuild/command.ml" 296 9079 9092
+type(
+  spec
+)
+"ocamlbuild/command.ml" 296 9079 9098 "ocamlbuild/command.ml" 296 9079 9099
+type(
+  string
+)
+"ocamlbuild/command.ml" 296 9079 9095 "ocamlbuild/command.ml" 296 9079 9099
+type(
+  spec
+)
+"ocamlbuild/command.ml" 296 9079 9085 "ocamlbuild/command.ml" 296 9079 9099
+type(
+  spec
+)
+"ocamlbuild/command.ml" 296 9079 9104 "ocamlbuild/command.ml" 296 9079 9105
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 296 9079 9102 "ocamlbuild/command.ml" 296 9079 9105
+type(
+  spec
+)
+"ocamlbuild/command.ml" 296 9079 9085 "ocamlbuild/command.ml" 296 9079 9105
+type(
+  spec
+)
+"ocamlbuild/command.ml" 296 9079 9111 "ocamlbuild/command.ml" 296 9079 9112
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 296 9079 9108 "ocamlbuild/command.ml" 296 9079 9112
+type(
+  spec
+)
+"ocamlbuild/command.ml" 296 9079 9085 "ocamlbuild/command.ml" 296 9079 9112
+type(
+  spec
+)
+"ocamlbuild/command.ml" 296 9079 9117 "ocamlbuild/command.ml" 296 9079 9118
+type(
+  string
+)
+"ocamlbuild/command.ml" 296 9079 9115 "ocamlbuild/command.ml" 296 9079 9118
+type(
+  spec
+)
+"ocamlbuild/command.ml" 296 9079 9085 "ocamlbuild/command.ml" 296 9079 9118
+type(
+  spec
+)
+"ocamlbuild/command.ml" 296 9079 9127 "ocamlbuild/command.ml" 296 9079 9128
+type(
+  spec
+)
+"ocamlbuild/command.ml" 296 9079 9121 "ocamlbuild/command.ml" 296 9079 9128
+type(
+  spec
+)
+"ocamlbuild/command.ml" 296 9079 9085 "ocamlbuild/command.ml" 296 9079 9128
+type(
+  spec
+)
+"ocamlbuild/command.ml" 296 9079 9132 "ocamlbuild/command.ml" 296 9079 9134
+type(
+  unit
+)
+"ocamlbuild/command.ml" 297 9135 9143 "ocamlbuild/command.ml" 297 9135 9144
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 297 9135 9141 "ocamlbuild/command.ml" 297 9135 9144
+type(
+  spec
+)
+"ocamlbuild/command.ml" 297 9135 9148 "ocamlbuild/command.ml" 297 9135 9157
+type(
+  (spec -> unit) -> spec list -> unit
+)
+"ocamlbuild/command.ml" 297 9135 9158 "ocamlbuild/command.ml" 297 9135 9162
+type(
+  spec -> unit
+)
+"ocamlbuild/command.ml" 297 9135 9163 "ocamlbuild/command.ml" 297 9135 9164
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 297 9135 9148 "ocamlbuild/command.ml" 297 9135 9164
+type(
+  unit
+)
+"ocamlbuild/command.ml" 298 9165 9173 "ocamlbuild/command.ml" 298 9165 9177
+type(
+  Tags.t
+)
+"ocamlbuild/command.ml" 298 9165 9171 "ocamlbuild/command.ml" 298 9165 9177
+type(
+  spec
+)
+"ocamlbuild/command.ml" 298 9165 9181 "ocamlbuild/command.ml" 298 9165 9182
+type(
+  Tags.t -> unit
+)
+"ocamlbuild/command.ml" 298 9165 9183 "ocamlbuild/command.ml" 298 9165 9187
+type(
+  Tags.t
+)
+"ocamlbuild/command.ml" 298 9165 9181 "ocamlbuild/command.ml" 298 9165 9187
+type(
+  unit
+)
+"ocamlbuild/command.ml" 295 9062 9066 "ocamlbuild/command.ml" 298 9165 9187
+type(
+  unit
+)
+"ocamlbuild/command.ml" 300 9193 9203 "ocamlbuild/command.ml" 300 9193 9206
+type(
+  t -> unit
+)
+"ocamlbuild/command.ml" 300 9193 9207 "ocamlbuild/command.ml" 300 9193 9208
+type(
+  t
+)
+"ocamlbuild/command.ml" 301 9211 9221 "ocamlbuild/command.ml" 301 9211 9222
+type(
+  t
+)
+"ocamlbuild/command.ml" 302 9228 9234 "ocamlbuild/command.ml" 302 9228 9237
+type(
+  t
+)
+"ocamlbuild/command.ml" 302 9228 9245 "ocamlbuild/command.ml" 302 9228 9246
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 302 9228 9245 "ocamlbuild/command.ml" 302 9228 9246
+type(
+  string list
+)
+"ocamlbuild/command.ml" 302 9228 9240 "ocamlbuild/command.ml" 302 9228 9246
+type(
+  t
+)
+"ocamlbuild/command.ml" 302 9228 9234 "ocamlbuild/command.ml" 302 9228 9246
+type(
+  t
+)
+"ocamlbuild/command.ml" 302 9228 9250 "ocamlbuild/command.ml" 302 9228 9252
+type(
+  unit
+)
+"ocamlbuild/command.ml" 303 9253 9262 "ocamlbuild/command.ml" 303 9253 9265
+type(
+  spec
+)
+"ocamlbuild/command.ml" 303 9253 9259 "ocamlbuild/command.ml" 303 9253 9265
+type(
+  t
+)
+"ocamlbuild/command.ml" 303 9253 9269 "ocamlbuild/command.ml" 303 9253 9273
+type(
+  spec -> unit
+)
+"ocamlbuild/command.ml" 303 9253 9274 "ocamlbuild/command.ml" 303 9253 9275
+type(
+  spec
+)
+"ocamlbuild/command.ml" 303 9253 9269 "ocamlbuild/command.ml" 303 9253 9275
+type(
+  unit
+)
+"ocamlbuild/command.ml" 304 9276 9285 "ocamlbuild/command.ml" 304 9276 9288
+type(
+  t list
+)
+"ocamlbuild/command.ml" 304 9276 9282 "ocamlbuild/command.ml" 304 9276 9288
+type(
+  t
+)
+"ocamlbuild/command.ml" 304 9276 9292 "ocamlbuild/command.ml" 304 9276 9301
+type(
+  (t -> unit) -> t list -> unit
+)
+"ocamlbuild/command.ml" 304 9276 9302 "ocamlbuild/command.ml" 304 9276 9305
+type(
+  t -> unit
+)
+"ocamlbuild/command.ml" 304 9276 9306 "ocamlbuild/command.ml" 304 9276 9307
+type(
+  t list
+)
+"ocamlbuild/command.ml" 304 9276 9292 "ocamlbuild/command.ml" 304 9276 9307
+type(
+  unit
+)
+"ocamlbuild/command.ml" 301 9211 9215 "ocamlbuild/command.ml" 304 9276 9307
+type(
+  unit
+)
+"ocamlbuild/command.ml" 305 9311 9313 "ocamlbuild/command.ml" 305 9311 9316
+type(
+  t -> unit
+)
+"ocamlbuild/command.ml" 305 9311 9317 "ocamlbuild/command.ml" 305 9311 9318
+type(
+  t
+)
+"ocamlbuild/command.ml" 305 9311 9313 "ocamlbuild/command.ml" 305 9311 9318
+type(
+  unit
+)
+"ocamlbuild/command.ml" 300 9193 9195 "ocamlbuild/command.ml" 305 9311 9318
+type(
+  unit
+)
+"ocamlbuild/command.ml" 294 9043 9045 "ocamlbuild/command.ml" 305 9311 9318
+type(
+  unit
+)
+"ocamlbuild/command.ml" 307 9320 9328 "ocamlbuild/command.ml" 307 9320 9334
+type(
+  spec -> spec
+)
+"ocamlbuild/command.ml" 307 9320 9335 "ocamlbuild/command.ml" 307 9320 9336
+type(
+  spec
+)
+"ocamlbuild/command.ml" 308 9339 9349 "ocamlbuild/command.ml" 308 9339 9353
+type(
+  spec -> spec list -> spec list
+)
+"ocamlbuild/command.ml" 308 9339 9354 "ocamlbuild/command.ml" 308 9339 9355
+type(
+  spec
+)
+"ocamlbuild/command.ml" 308 9339 9356 "ocamlbuild/command.ml" 308 9339 9359
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 309 9362 9372 "ocamlbuild/command.ml" 309 9362 9373
+type(
+  spec
+)
+"ocamlbuild/command.ml" 310 9379 9385 "ocamlbuild/command.ml" 310 9379 9386
+type(
+  spec
+)
+"ocamlbuild/command.ml" 310 9379 9390 "ocamlbuild/command.ml" 310 9379 9393
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 311 9394 9402 "ocamlbuild/command.ml" 311 9394 9403
+type(
+  string
+)
+"ocamlbuild/command.ml" 311 9394 9400 "ocamlbuild/command.ml" 311 9394 9403
+type(
+  spec
+)
+"ocamlbuild/command.ml" 311 9394 9409 "ocamlbuild/command.ml" 311 9394 9410
+type(
+  string
+)
+"ocamlbuild/command.ml" 311 9394 9406 "ocamlbuild/command.ml" 311 9394 9410
+type(
+  spec
+)
+"ocamlbuild/command.ml" 311 9394 9400 "ocamlbuild/command.ml" 311 9394 9410
+type(
+  spec
+)
+"ocamlbuild/command.ml" 311 9394 9415 "ocamlbuild/command.ml" 311 9394 9416
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 311 9394 9413 "ocamlbuild/command.ml" 311 9394 9416
+type(
+  spec
+)
+"ocamlbuild/command.ml" 311 9394 9400 "ocamlbuild/command.ml" 311 9394 9416
+type(
+  spec
+)
+"ocamlbuild/command.ml" 311 9394 9422 "ocamlbuild/command.ml" 311 9394 9423
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 311 9394 9419 "ocamlbuild/command.ml" 311 9394 9423
+type(
+  spec
+)
+"ocamlbuild/command.ml" 311 9394 9400 "ocamlbuild/command.ml" 311 9394 9423
+type(
+  spec
+)
+"ocamlbuild/command.ml" 311 9394 9428 "ocamlbuild/command.ml" 311 9394 9429
+type(
+  string
+)
+"ocamlbuild/command.ml" 311 9394 9426 "ocamlbuild/command.ml" 311 9394 9429
+type(
+  spec
+)
+"ocamlbuild/command.ml" 311 9394 9400 "ocamlbuild/command.ml" 311 9394 9429
+type(
+  spec
+)
+"ocamlbuild/command.ml" 311 9394 9433 "ocamlbuild/command.ml" 311 9394 9434
+type(
+  spec
+)
+"ocamlbuild/command.ml" 311 9394 9438 "ocamlbuild/command.ml" 311 9394 9441
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 311 9394 9433 "ocamlbuild/command.ml" 311 9394 9441
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 312 9442 9450 "ocamlbuild/command.ml" 312 9442 9451
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 312 9442 9448 "ocamlbuild/command.ml" 312 9442 9451
+type(
+  spec
+)
+"ocamlbuild/command.ml" 312 9442 9455 "ocamlbuild/command.ml" 312 9442 9470
+type(
+  (spec -> spec list -> spec list) -> spec list -> spec list -> spec list
+)
+"ocamlbuild/command.ml" 312 9442 9471 "ocamlbuild/command.ml" 312 9442 9475
+type(
+  spec -> spec list -> spec list
+)
+"ocamlbuild/command.ml" 312 9442 9476 "ocamlbuild/command.ml" 312 9442 9477
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 312 9442 9478 "ocamlbuild/command.ml" 312 9442 9481
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 312 9442 9455 "ocamlbuild/command.ml" 312 9442 9481
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 313 9482 9490 "ocamlbuild/command.ml" 313 9482 9494
+type(
+  Tags.t
+)
+"ocamlbuild/command.ml" 313 9482 9488 "ocamlbuild/command.ml" 313 9482 9494
+type(
+  spec
+)
+"ocamlbuild/command.ml" 313 9482 9498 "ocamlbuild/command.ml" 313 9482 9502
+type(
+  spec -> spec list -> spec list
+)
+"ocamlbuild/command.ml" 313 9482 9504 "ocamlbuild/command.ml" 313 9482 9505
+type(
+  (Tags.t -> spec) ref -> Tags.t -> spec
+)
+"ocamlbuild/command.ml" 313 9482 9505 "ocamlbuild/command.ml" 313 9482 9516
+type(
+  (Tags.t -> spec) ref
+)
+"ocamlbuild/command.ml" 313 9482 9504 "ocamlbuild/command.ml" 313 9482 9516
+type(
+  Tags.t -> spec
+)
+"ocamlbuild/command.ml" 313 9482 9517 "ocamlbuild/command.ml" 313 9482 9521
+type(
+  Tags.t
+)
+"ocamlbuild/command.ml" 313 9482 9503 "ocamlbuild/command.ml" 313 9482 9522
+type(
+  spec
+)
+"ocamlbuild/command.ml" 313 9482 9523 "ocamlbuild/command.ml" 313 9482 9526
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 313 9482 9498 "ocamlbuild/command.ml" 313 9482 9526
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 314 9527 9539 "ocamlbuild/command.ml" 314 9527 9540
+type(
+  spec
+)
+"ocamlbuild/command.ml" 314 9527 9533 "ocamlbuild/command.ml" 314 9527 9540
+type(
+  spec
+)
+"ocamlbuild/command.ml" 314 9527 9551 "ocamlbuild/command.ml" 314 9527 9557
+type(
+  spec -> spec
+)
+"ocamlbuild/command.ml" 314 9527 9558 "ocamlbuild/command.ml" 314 9527 9559
+type(
+  spec
+)
+"ocamlbuild/command.ml" 314 9527 9550 "ocamlbuild/command.ml" 314 9527 9560
+type(
+  spec
+)
+"ocamlbuild/command.ml" 314 9527 9544 "ocamlbuild/command.ml" 314 9527 9560
+type(
+  spec
+)
+"ocamlbuild/command.ml" 314 9527 9564 "ocamlbuild/command.ml" 314 9527 9567
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 314 9527 9544 "ocamlbuild/command.ml" 314 9527 9567
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 309 9362 9366 "ocamlbuild/command.ml" 314 9527 9567
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 315 9571 9579 "ocamlbuild/command.ml" 315 9571 9583
+type(
+  spec -> spec list -> spec list
+)
+"ocamlbuild/command.ml" 315 9571 9584 "ocamlbuild/command.ml" 315 9571 9585
+type(
+  spec
+)
+"ocamlbuild/command.ml" 315 9571 9586 "ocamlbuild/command.ml" 315 9571 9588
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 315 9571 9579 "ocamlbuild/command.ml" 315 9571 9588
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 316 9594 9598 "ocamlbuild/command.ml" 316 9594 9600
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 316 9594 9604 "ocamlbuild/command.ml" 316 9594 9605
+type(
+  spec
+)
+"ocamlbuild/command.ml" 317 9606 9611 "ocamlbuild/command.ml" 317 9606 9612
+type(
+  spec
+)
+"ocamlbuild/command.ml" 317 9606 9610 "ocamlbuild/command.ml" 317 9606 9613
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 317 9606 9617 "ocamlbuild/command.ml" 317 9606 9618
+type(
+  spec
+)
+"ocamlbuild/command.ml" 318 9619 9623 "ocamlbuild/command.ml" 318 9619 9625
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 318 9619 9631 "ocamlbuild/command.ml" 318 9619 9633
+type(
+  spec list
+)
+"ocamlbuild/command.ml" 318 9619 9629 "ocamlbuild/command.ml" 318 9619 9633
+type(
+  spec
+)
+"ocamlbuild/command.ml" 315 9571 9573 "ocamlbuild/command.ml" 318 9619 9633
+type(
+  spec
+)
+"ocamlbuild/command.ml" 308 9339 9341 "ocamlbuild/command.ml" 318 9619 9633
+type(
+  spec
+)
+"ocamlbuild/command.ml" 320 9635 9639 "ocamlbuild/command.ml" 320 9635 9645
+type(
+  t -> My_std.Digest.t
+)
+"ocamlbuild/command.ml" 321 9648 9654 "ocamlbuild/command.ml" 321 9648 9658
+type(
+  ('a -> 'b -> 'b) -> 'a list -> 'b -> 'b
+)
+"ocamlbuild/command.ml" 321 9648 9661 "ocamlbuild/command.ml" 321 9648 9676
+type(
+  ('a -> 'b -> 'b) -> 'a list -> 'b -> 'b
+)
+"ocamlbuild/command.ml" 322 9680 9686 "ocamlbuild/command.ml" 322 9680 9690
+type(
+  string -> My_std.Digest.t list -> My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 322 9680 9691 "ocamlbuild/command.ml" 322 9680 9692
+type(
+  string
+)
+"ocamlbuild/command.ml" 322 9680 9693 "ocamlbuild/command.ml" 322 9680 9696
+type(
+  My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 322 9680 9699 "ocamlbuild/command.ml" 322 9680 9712
+type(
+  string -> My_std.Digest.t
+)
+"ocamlbuild/command.ml" 322 9680 9713 "ocamlbuild/command.ml" 322 9680 9714
+type(
+  string
+)
+"ocamlbuild/command.ml" 322 9680 9699 "ocamlbuild/command.ml" 322 9680 9714
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/command.ml" 322 9680 9718 "ocamlbuild/command.ml" 322 9680 9721
+type(
+  My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 322 9680 9699 "ocamlbuild/command.ml" 322 9680 9721
+type(
+  My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 323 9725 9735 "ocamlbuild/command.ml" 323 9725 9738
+type(
+  t -> My_std.Digest.t list -> My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 325 9754 9764 "ocamlbuild/command.ml" 325 9754 9768
+type(
+  spec
+)
+"ocamlbuild/command.ml" 325 9754 9760 "ocamlbuild/command.ml" 325 9754 9768
+type(
+  t
+)
+"ocamlbuild/command.ml" 325 9754 9776 "ocamlbuild/command.ml" 325 9754 9779
+type(
+  My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 325 9754 9783 "ocamlbuild/command.ml" 325 9754 9805
+type(
+  spec -> My_std.Digest.t
+)
+"ocamlbuild/command.ml" 325 9754 9806 "ocamlbuild/command.ml" 325 9754 9810
+type(
+  spec
+)
+"ocamlbuild/command.ml" 325 9754 9783 "ocamlbuild/command.ml" 325 9754 9810
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/command.ml" 325 9754 9814 "ocamlbuild/command.ml" 325 9754 9817
+type(
+  My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 325 9754 9783 "ocamlbuild/command.ml" 325 9754 9817
+type(
+  My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 325 9754 9772 "ocamlbuild/command.ml" 325 9754 9817
+type(
+  My_std.Digest.t list -> My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 326 9818 9828 "ocamlbuild/command.ml" 326 9818 9831
+type(
+  t list
+)
+"ocamlbuild/command.ml" 326 9818 9824 "ocamlbuild/command.ml" 326 9818 9831
+type(
+  t
+)
+"ocamlbuild/command.ml" 326 9818 9835 "ocamlbuild/command.ml" 326 9818 9839
+type(
+  (t -> My_std.Digest.t list -> My_std.Digest.t list) ->
+  t list -> My_std.Digest.t list -> My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 326 9818 9840 "ocamlbuild/command.ml" 326 9818 9843
+type(
+  t -> My_std.Digest.t list -> My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 326 9818 9844 "ocamlbuild/command.ml" 326 9818 9847
+type(
+  t list
+)
+"ocamlbuild/command.ml" 326 9818 9835 "ocamlbuild/command.ml" 326 9818 9847
+type(
+  My_std.Digest.t list -> My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 327 9848 9854 "ocamlbuild/command.ml" 327 9848 9857
+type(
+  t
+)
+"ocamlbuild/command.ml" 327 9848 9865 "ocamlbuild/command.ml" 327 9848 9868
+type(
+  My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 327 9848 9872 "ocamlbuild/command.ml" 327 9848 9875
+type(
+  My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 327 9848 9861 "ocamlbuild/command.ml" 327 9848 9875
+type(
+  My_std.Digest.t list -> My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 328 9876 9887 "ocamlbuild/command.ml" 328 9876 9892
+type(
+  pathname list
+)
+"ocamlbuild/command.ml" 328 9876 9894 "ocamlbuild/command.ml" 328 9876 9903
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 328 9876 9882 "ocamlbuild/command.ml" 328 9876 9904
+type(
+  t
+)
+"ocamlbuild/command.ml" 328 9876 9908 "ocamlbuild/command.ml" 328 9876 9912
+type(
+  (pathname -> My_std.Digest.t list -> My_std.Digest.t list) ->
+  pathname list -> My_std.Digest.t list -> My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 328 9876 9913 "ocamlbuild/command.ml" 328 9876 9917
+type(
+  pathname -> My_std.Digest.t list -> My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 328 9876 9919 "ocamlbuild/command.ml" 328 9876 9928
+type(
+  pathname
+)
+"ocamlbuild/command.ml" 328 9876 9932 "ocamlbuild/command.ml" 328 9876 9937
+type(
+  pathname list
+)
+"ocamlbuild/command.ml" 328 9876 9918 "ocamlbuild/command.ml" 328 9876 9938
+type(
+  pathname list
+)
+"ocamlbuild/command.ml" 328 9876 9908 "ocamlbuild/command.ml" 328 9876 9938
+type(
+  My_std.Digest.t list -> My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 324 9741 9745 "ocamlbuild/command.ml" 328 9876 9938
+type(
+  t -> My_std.Digest.t list -> My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 330 9944 9950 "ocamlbuild/command.ml" 330 9944 9951
+type(
+  t
+)
+"ocamlbuild/command.ml" 331 9955 9965 "ocamlbuild/command.ml" 331 9955 9968
+type(
+  t -> My_std.Digest.t list -> My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 331 9955 9969 "ocamlbuild/command.ml" 331 9955 9970
+type(
+  t
+)
+"ocamlbuild/command.ml" 331 9955 9971 "ocamlbuild/command.ml" 331 9955 9973
+type(
+  My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 331 9955 9965 "ocamlbuild/command.ml" 331 9955 9973
+type(
+  My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 332 9979 9986 "ocamlbuild/command.ml" 332 9979 9987
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/command.ml" 332 9979 9985 "ocamlbuild/command.ml" 332 9979 9988
+type(
+  My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 332 9979 9992 "ocamlbuild/command.ml" 332 9979 9993
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/command.ml" 333 9994 10000 "ocamlbuild/command.ml" 333 9994 10002
+type(
+  My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 333 9994 10007 "ocamlbuild/command.ml" 333 9994 10020
+type(
+  string -> My_std.Digest.t
+)
+"ocamlbuild/command.ml" 333 9994 10022 "ocamlbuild/command.ml" 333 9994 10025
+type(
+  string
+)
+"ocamlbuild/command.ml" 333 9994 10025 "ocamlbuild/command.ml" 333 9994 10026
+type(
+  string -> string -> string
+)
+"ocamlbuild/command.ml" 333 9994 10026 "ocamlbuild/command.ml" 333 9994 10039
+type(
+  string -> My_std.Digest.t list -> string
+)
+"ocamlbuild/command.ml" 333 9994 10040 "ocamlbuild/command.ml" 333 9994 10043
+type(
+  string
+)
+"ocamlbuild/command.ml" 333 9994 10044 "ocamlbuild/command.ml" 333 9994 10046
+type(
+  My_std.Digest.t list
+)
+"ocamlbuild/command.ml" 333 9994 10026 "ocamlbuild/command.ml" 333 9994 10046
+type(
+  string
+)
+"ocamlbuild/command.ml" 333 9994 10046 "ocamlbuild/command.ml" 333 9994 10047
+type(
+  string -> string -> string
+)
+"ocamlbuild/command.ml" 333 9994 10047 "ocamlbuild/command.ml" 333 9994 10050
+type(
+  string
+)
+"ocamlbuild/command.ml" 333 9994 10026 "ocamlbuild/command.ml" 333 9994 10050
+type(
+  string
+)
+"ocamlbuild/command.ml" 333 9994 10021 "ocamlbuild/command.ml" 333 9994 10051
+type(
+  string
+)
+"ocamlbuild/command.ml" 333 9994 10007 "ocamlbuild/command.ml" 333 9994 10051
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/command.ml" 331 9955 9959 "ocamlbuild/command.ml" 333 9994 10051
+type(
+  My_std.Digest.t
+)
+"ocamlbuild/command.ml" 330 9944 9946 "ocamlbuild/command.ml" 333 9994 10051
+type(
+  t -> My_std.Digest.t
+)
+"ocamlbuild/command.ml" 323 9725 9727 "ocamlbuild/command.ml" 333 9994 10051
+type(
+  t -> My_std.Digest.t
+)
+"ocamlbuild/command.ml" 322 9680 9682 "ocamlbuild/command.ml" 333 9994 10051
+type(
+  t -> My_std.Digest.t
+)
+"ocamlbuild/command.ml" 321 9648 9650 "ocamlbuild/command.ml" 333 9994 10051
+type(
+  t -> My_std.Digest.t
+)

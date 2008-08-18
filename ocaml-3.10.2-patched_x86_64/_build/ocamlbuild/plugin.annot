@@ -1,0 +1,1380 @@
+"ocamlbuild/plugin.ml" 26 994 1002 "ocamlbuild/plugin.ml" 26 994 1008
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 26 994 1026 "ocamlbuild/plugin.ml" 26 994 1040
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 27 1041 1049 "ocamlbuild/plugin.ml" 27 1041 1060
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 27 1041 1073 "ocamlbuild/plugin.ml" 27 1041 1079
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 27 1041 1079 "ocamlbuild/plugin.ml" 27 1041 1080
+type(
+  string -> string -> string
+)
+"ocamlbuild/plugin.ml" 27 1041 1080 "ocamlbuild/plugin.ml" 27 1041 1085
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 27 1041 1073 "ocamlbuild/plugin.ml" 27 1041 1085
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 28 1086 1094 "ocamlbuild/plugin.ml" 28 1086 1112
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 28 1086 1118 "ocamlbuild/plugin.ml" 28 1086 1124
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 28 1086 1124 "ocamlbuild/plugin.ml" 28 1086 1125
+type(
+  string -> string -> string
+)
+"ocamlbuild/plugin.ml" 28 1086 1125 "ocamlbuild/plugin.ml" 28 1086 1137
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 28 1086 1118 "ocamlbuild/plugin.ml" 28 1086 1137
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 29 1138 1146 "ocamlbuild/plugin.ml" 29 1138 1174
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 29 1138 1177 "ocamlbuild/plugin.ml" 29 1138 1183
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 29 1138 1183 "ocamlbuild/plugin.ml" 29 1138 1184
+type(
+  string -> string -> string
+)
+"ocamlbuild/plugin.ml" 29 1138 1184 "ocamlbuild/plugin.ml" 29 1138 1197
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 29 1138 1177 "ocamlbuild/plugin.ml" 29 1138 1197
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 31 1199 1207 "ocamlbuild/plugin.ml" 31 1199 1228
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 31 1199 1231 "ocamlbuild/plugin.ml" 31 1199 1246
+type(
+  string -> bool
+)
+"ocamlbuild/plugin.ml" 31 1199 1247 "ocamlbuild/plugin.ml" 31 1199 1265
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 31 1199 1231 "ocamlbuild/plugin.ml" 31 1199 1265
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 32 1266 1274 "ocamlbuild/plugin.ml" 32 1266 1290
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 32 1266 1298 "ocamlbuild/plugin.ml" 32 1266 1299
+type(
+  bool ref -> bool
+)
+"ocamlbuild/plugin.ml" 32 1266 1299 "ocamlbuild/plugin.ml" 32 1266 1313
+type(
+  bool ref
+)
+"ocamlbuild/plugin.ml" 32 1266 1298 "ocamlbuild/plugin.ml" 32 1266 1313
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 32 1266 1314 "ocamlbuild/plugin.ml" 32 1266 1316
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/plugin.ml" 32 1266 1317 "ocamlbuild/plugin.ml" 32 1266 1332
+type(
+  string -> bool
+)
+"ocamlbuild/plugin.ml" 32 1266 1333 "ocamlbuild/plugin.ml" 32 1266 1344
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 32 1266 1317 "ocamlbuild/plugin.ml" 32 1266 1344
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 32 1266 1298 "ocamlbuild/plugin.ml" 32 1266 1344
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 33 1345 1353 "ocamlbuild/plugin.ml" 33 1345 1369
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 33 1345 1377 "ocamlbuild/plugin.ml" 33 1345 1392
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/plugin.ml" 33 1345 1394 "ocamlbuild/plugin.ml" 33 1345 1395
+type(
+  Pathname.t ref -> Pathname.t
+)
+"ocamlbuild/plugin.ml" 33 1345 1395 "ocamlbuild/plugin.ml" 33 1345 1412
+type(
+  Pathname.t ref
+)
+"ocamlbuild/plugin.ml" 33 1345 1394 "ocamlbuild/plugin.ml" 33 1345 1412
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 33 1345 1412 "ocamlbuild/plugin.ml" 33 1345 1413
+type(
+  Pathname.t -> Pathname.t -> Pathname.t
+)
+"ocamlbuild/plugin.ml" 33 1345 1413 "ocamlbuild/plugin.ml" 33 1345 1419
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 33 1345 1393 "ocamlbuild/plugin.ml" 33 1345 1420
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 33 1345 1377 "ocamlbuild/plugin.ml" 33 1345 1420
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 34 1421 1429 "ocamlbuild/plugin.ml" 34 1421 1460
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 34 1421 1463 "ocamlbuild/plugin.ml" 34 1421 1478
+type(
+  string -> bool
+)
+"ocamlbuild/plugin.ml" 34 1421 1479 "ocamlbuild/plugin.ml" 34 1421 1507
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 34 1421 1463 "ocamlbuild/plugin.ml" 34 1421 1507
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 36 1509 1517 "ocamlbuild/plugin.ml" 36 1509 1535
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/plugin.ml" 36 1509 1536 "ocamlbuild/plugin.ml" 36 1509 1538
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 37 1541 1551 "ocamlbuild/plugin.ml" 37 1541 1554
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 37 1541 1557 "ocamlbuild/plugin.ml" 37 1541 1558
+type(
+  Pathname.t ref -> Pathname.t
+)
+"ocamlbuild/plugin.ml" 37 1541 1558 "ocamlbuild/plugin.ml" 37 1541 1575
+type(
+  Pathname.t ref
+)
+"ocamlbuild/plugin.ml" 37 1541 1557 "ocamlbuild/plugin.ml" 37 1541 1575
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 37 1541 1575 "ocamlbuild/plugin.ml" 37 1541 1576
+type(
+  Pathname.t -> Pathname.t -> Pathname.t
+)
+"ocamlbuild/plugin.ml" 37 1541 1576 "ocamlbuild/plugin.ml" 37 1541 1578
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 37 1541 1557 "ocamlbuild/plugin.ml" 37 1541 1578
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 38 1582 1588 "ocamlbuild/plugin.ml" 38 1582 1603
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/plugin.ml" 38 1582 1604 "ocamlbuild/plugin.ml" 38 1582 1606
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 38 1582 1588 "ocamlbuild/plugin.ml" 38 1582 1606
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 38 1582 1607 "ocamlbuild/plugin.ml" 38 1582 1609
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/plugin.ml" 40 1624 1634 "ocamlbuild/plugin.ml" 40 1624 1649
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/plugin.ml" 40 1624 1650 "ocamlbuild/plugin.ml" 40 1624 1653
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 40 1624 1634 "ocamlbuild/plugin.ml" 40 1624 1653
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 40 1624 1654 "ocamlbuild/plugin.ml" 40 1624 1656
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/plugin.ml" 40 1624 1657 "ocamlbuild/plugin.ml" 40 1624 1679
+type(
+  Pathname.t -> Pathname.t -> bool
+)
+"ocamlbuild/plugin.ml" 40 1624 1680 "ocamlbuild/plugin.ml" 40 1624 1682
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 40 1624 1683 "ocamlbuild/plugin.ml" 40 1624 1686
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 40 1624 1657 "ocamlbuild/plugin.ml" 40 1624 1686
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 40 1624 1634 "ocamlbuild/plugin.ml" 40 1624 1686
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 40 1624 1687 "ocamlbuild/plugin.ml" 40 1624 1689
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/plugin.ml" 42 1706 1718 "ocamlbuild/plugin.ml" 42 1706 1726
+type(
+  Pathname.t -> Pathname.t -> unit
+)
+"ocamlbuild/plugin.ml" 42 1706 1727 "ocamlbuild/plugin.ml" 42 1706 1729
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 42 1706 1730 "ocamlbuild/plugin.ml" 42 1706 1733
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 42 1706 1718 "ocamlbuild/plugin.ml" 42 1706 1733
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 43 1735 1747 "ocamlbuild/plugin.ml" 43 1735 1752
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 41 1690 1700 "ocamlbuild/plugin.ml" 44 1753 1766
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 39 1610 1618 "ocamlbuild/plugin.ml" 45 1767 1778
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 38 1582 1588 "ocamlbuild/plugin.ml" 45 1767 1778
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 37 1541 1547 "ocamlbuild/plugin.ml" 45 1767 1778
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 47 1780 1788 "ocamlbuild/plugin.ml" 47 1780 1797
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 47 1780 1800 "ocamlbuild/plugin.ml" 47 1780 1808
+type(
+  Tags.elt -> Tags.t -> bool
+)
+"ocamlbuild/plugin.ml" 47 1780 1809 "ocamlbuild/plugin.ml" 47 1780 1818
+type(
+  Tags.elt
+)
+"ocamlbuild/plugin.ml" 47 1780 1820 "ocamlbuild/plugin.ml" 47 1780 1836
+type(
+  Pathname.t -> Tags.t
+)
+"ocamlbuild/plugin.ml" 47 1780 1837 "ocamlbuild/plugin.ml" 47 1780 1848
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 47 1780 1819 "ocamlbuild/plugin.ml" 47 1780 1849
+type(
+  Tags.t
+)
+"ocamlbuild/plugin.ml" 47 1780 1800 "ocamlbuild/plugin.ml" 47 1780 1849
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 49 1851 1859 "ocamlbuild/plugin.ml" 49 1851 1868
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 49 1851 1871 "ocamlbuild/plugin.ml" 49 1851 1879
+type(
+  Tags.elt -> Tags.t -> bool
+)
+"ocamlbuild/plugin.ml" 49 1851 1880 "ocamlbuild/plugin.ml" 49 1851 1887
+type(
+  Tags.elt
+)
+"ocamlbuild/plugin.ml" 49 1851 1889 "ocamlbuild/plugin.ml" 49 1851 1905
+type(
+  Pathname.t -> Tags.t
+)
+"ocamlbuild/plugin.ml" 49 1851 1906 "ocamlbuild/plugin.ml" 49 1851 1917
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 49 1851 1888 "ocamlbuild/plugin.ml" 49 1851 1918
+type(
+  Tags.t
+)
+"ocamlbuild/plugin.ml" 49 1851 1871 "ocamlbuild/plugin.ml" 49 1851 1918
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 51 1920 1928 "ocamlbuild/plugin.ml" 51 1920 1952
+type(
+  unit -> unit
+)
+"ocamlbuild/plugin.ml" 51 1920 1953 "ocamlbuild/plugin.ml" 51 1920 1955
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 52 1958 1968 "ocamlbuild/plugin.ml" 52 1958 1969
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 52 1958 1972 "ocamlbuild/plugin.ml" 52 1958 1990
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/plugin.ml" 52 1958 1991 "ocamlbuild/plugin.ml" 52 1958 2002
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 52 1958 1972 "ocamlbuild/plugin.ml" 52 1958 2002
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 53 2006 2016 "ocamlbuild/plugin.ml" 53 2006 2017
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 53 2006 2021 "ocamlbuild/plugin.ml" 53 2006 2024
+type(
+  bool -> bool
+)
+"ocamlbuild/plugin.ml" 53 2006 2025 "ocamlbuild/plugin.ml" 53 2006 2046
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 53 2006 2020 "ocamlbuild/plugin.ml" 53 2006 2047
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 53 2006 2048 "ocamlbuild/plugin.ml" 53 2006 2050
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/plugin.ml" 53 2006 2051 "ocamlbuild/plugin.ml" 53 2006 2069
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/plugin.ml" 53 2006 2070 "ocamlbuild/plugin.ml" 53 2006 2088
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 53 2006 2051 "ocamlbuild/plugin.ml" 53 2006 2088
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 53 2006 2020 "ocamlbuild/plugin.ml" 53 2006 2088
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 54 2092 2102 "ocamlbuild/plugin.ml" 54 2092 2103
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 54 2092 2107 "ocamlbuild/plugin.ml" 54 2092 2110
+type(
+  bool -> bool
+)
+"ocamlbuild/plugin.ml" 54 2092 2111 "ocamlbuild/plugin.ml" 54 2092 2142
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 54 2092 2106 "ocamlbuild/plugin.ml" 54 2092 2143
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 54 2092 2144 "ocamlbuild/plugin.ml" 54 2092 2146
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/plugin.ml" 54 2092 2147 "ocamlbuild/plugin.ml" 54 2092 2165
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/plugin.ml" 54 2092 2166 "ocamlbuild/plugin.ml" 54 2092 2194
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 54 2092 2147 "ocamlbuild/plugin.ml" 54 2092 2194
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 54 2092 2106 "ocamlbuild/plugin.ml" 54 2092 2194
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 55 2198 2207 "ocamlbuild/plugin.ml" 55 2198 2208
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 55 2198 2209 "ocamlbuild/plugin.ml" 55 2198 2211
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/plugin.ml" 55 2198 2212 "ocamlbuild/plugin.ml" 55 2198 2213
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 55 2198 2214 "ocamlbuild/plugin.ml" 55 2198 2216
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/plugin.ml" 55 2198 2217 "ocamlbuild/plugin.ml" 55 2198 2218
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 55 2198 2219 "ocamlbuild/plugin.ml" 55 2198 2221
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/plugin.ml" 55 2198 2222 "ocamlbuild/plugin.ml" 55 2198 2238
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 55 2198 2217 "ocamlbuild/plugin.ml" 55 2198 2238
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 55 2198 2212 "ocamlbuild/plugin.ml" 55 2198 2238
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 55 2198 2207 "ocamlbuild/plugin.ml" 55 2198 2238
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 56 2244 2252 "ocamlbuild/plugin.ml" 56 2244 2254
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 59 2373 2385 "ocamlbuild/plugin.ml" 59 2373 2398
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 60 2401 2414 "ocamlbuild/plugin.ml" 60 2401 2435
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 61 2441 2456 "ocamlbuild/plugin.ml" 61 2441 2487
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 62 2493 2511 "ocamlbuild/plugin.ml" 62 2493 2539
+type(
+  Command.pathname
+)
+"ocamlbuild/plugin.ml" 62 2493 2509 "ocamlbuild/plugin.ml" 62 2493 2539
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 62 2493 2543 "ocamlbuild/plugin.ml" 62 2493 2561
+type(
+  Command.pathname
+)
+"ocamlbuild/plugin.ml" 62 2493 2541 "ocamlbuild/plugin.ml" 62 2493 2561
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 62 2493 2508 "ocamlbuild/plugin.ml" 62 2493 2562
+type(
+  Command.spec list
+)
+"ocamlbuild/plugin.ml" 62 2493 2507 "ocamlbuild/plugin.ml" 62 2493 2562
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 63 2563 2582 "ocamlbuild/plugin.ml" 63 2563 2600
+type(
+  Command.pathname
+)
+"ocamlbuild/plugin.ml" 63 2563 2580 "ocamlbuild/plugin.ml" 63 2563 2600
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 61 2441 2453 "ocamlbuild/plugin.ml" 63 2563 2600
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 64 2601 2616 "ocamlbuild/plugin.ml" 64 2601 2617
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 60 2401 2411 "ocamlbuild/plugin.ml" 64 2601 2617
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 65 2621 2633 "ocamlbuild/plugin.ml" 65 2621 2636
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 65 2621 2638 "ocamlbuild/plugin.ml" 65 2621 2641
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 65 2621 2643 "ocamlbuild/plugin.ml" 65 2621 2655
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 65 2621 2657 "ocamlbuild/plugin.ml" 65 2621 2665
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 65 2621 2633 "ocamlbuild/plugin.ml" 65 2621 2665
+type(
+  string * string * Command.spec * Options.command_spec
+)
+"ocamlbuild/plugin.ml" 66 2668 2681 "ocamlbuild/plugin.ml" 66 2668 2682
+type(
+  bool ref -> bool
+)
+"ocamlbuild/plugin.ml" 66 2668 2682 "ocamlbuild/plugin.ml" 66 2668 2703
+type(
+  bool ref
+)
+"ocamlbuild/plugin.ml" 66 2668 2681 "ocamlbuild/plugin.ml" 66 2668 2703
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 67 2709 2721 "ocamlbuild/plugin.ml" 67 2709 2727
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 67 2709 2729 "ocamlbuild/plugin.ml" 67 2709 2734
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 67 2709 2740 "ocamlbuild/plugin.ml" 67 2709 2749
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 67 2709 2756 "ocamlbuild/plugin.ml" 67 2709 2760
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 67 2709 2755 "ocamlbuild/plugin.ml" 67 2709 2760
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 67 2709 2766 "ocamlbuild/plugin.ml" 67 2709 2767
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 67 2709 2736 "ocamlbuild/plugin.ml" 67 2709 2768
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 67 2709 2770 "ocamlbuild/plugin.ml" 67 2709 2771
+type(
+  Options.command_spec ref -> Options.command_spec
+)
+"ocamlbuild/plugin.ml" 67 2709 2771 "ocamlbuild/plugin.ml" 67 2709 2787
+type(
+  Options.command_spec ref
+)
+"ocamlbuild/plugin.ml" 67 2709 2770 "ocamlbuild/plugin.ml" 67 2709 2787
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 67 2709 2721 "ocamlbuild/plugin.ml" 67 2709 2787
+type(
+  string * string * Command.spec * Options.command_spec
+)
+"ocamlbuild/plugin.ml" 69 2803 2815 "ocamlbuild/plugin.ml" 69 2803 2820
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 69 2803 2822 "ocamlbuild/plugin.ml" 69 2803 2827
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 69 2803 2833 "ocamlbuild/plugin.ml" 69 2803 2842
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 69 2803 2849 "ocamlbuild/plugin.ml" 69 2803 2853
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 69 2803 2848 "ocamlbuild/plugin.ml" 69 2803 2853
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 69 2803 2859 "ocamlbuild/plugin.ml" 69 2803 2860
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 69 2803 2829 "ocamlbuild/plugin.ml" 69 2803 2861
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 69 2803 2863 "ocamlbuild/plugin.ml" 69 2803 2864
+type(
+  Options.command_spec ref -> Options.command_spec
+)
+"ocamlbuild/plugin.ml" 69 2803 2864 "ocamlbuild/plugin.ml" 69 2803 2878
+type(
+  Options.command_spec ref
+)
+"ocamlbuild/plugin.ml" 69 2803 2863 "ocamlbuild/plugin.ml" 69 2803 2878
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 69 2803 2815 "ocamlbuild/plugin.ml" 69 2803 2878
+type(
+  string * string * Command.spec * Options.command_spec
+)
+"ocamlbuild/plugin.ml" 66 2668 2678 "ocamlbuild/plugin.ml" 69 2803 2878
+type(
+  string * string * Command.spec * Options.command_spec
+)
+"ocamlbuild/plugin.ml" 71 2890 2902 "ocamlbuild/plugin.ml" 71 2890 2915
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 71 2890 2917 "ocamlbuild/plugin.ml" 71 2890 2927
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 71 2890 2929 "ocamlbuild/plugin.ml" 71 2890 2933
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 71 2890 2902 "ocamlbuild/plugin.ml" 71 2890 2933
+type(
+  string * string * Command.spec
+)
+"ocamlbuild/plugin.ml" 72 2936 2950 "ocamlbuild/plugin.ml" 72 2936 2953
+type(
+  bool -> bool
+)
+"ocamlbuild/plugin.ml" 72 2936 2954 "ocamlbuild/plugin.ml" 72 2936 2955
+type(
+  bool ref -> bool
+)
+"ocamlbuild/plugin.ml" 72 2936 2955 "ocamlbuild/plugin.ml" 72 2936 2976
+type(
+  bool ref
+)
+"ocamlbuild/plugin.ml" 72 2936 2954 "ocamlbuild/plugin.ml" 72 2936 2976
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 72 2936 2949 "ocamlbuild/plugin.ml" 72 2936 2977
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 72 2936 2978 "ocamlbuild/plugin.ml" 72 2936 2980
+type(
+  bool -> bool -> bool
+)
+"ocamlbuild/plugin.ml" 72 2936 2981 "ocamlbuild/plugin.ml" 72 2936 2983
+type(
+  bool Lazy.t -> bool
+)
+"ocamlbuild/plugin.ml" 72 2936 2983 "ocamlbuild/plugin.ml" 72 2936 3002
+type(
+  bool Lazy.t
+)
+"ocamlbuild/plugin.ml" 72 2936 2981 "ocamlbuild/plugin.ml" 72 2936 3002
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 72 2936 2949 "ocamlbuild/plugin.ml" 72 2936 3002
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 73 3008 3020 "ocamlbuild/plugin.ml" 73 3008 3040
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 73 3008 3042 "ocamlbuild/plugin.ml" 73 3008 3059
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 73 3008 3061 "ocamlbuild/plugin.ml" 73 3008 3062
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 73 3008 3020 "ocamlbuild/plugin.ml" 73 3008 3062
+type(
+  string * string * Command.spec
+)
+"ocamlbuild/plugin.ml" 75 3078 3090 "ocamlbuild/plugin.ml" 75 3078 3105
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 75 3078 3107 "ocamlbuild/plugin.ml" 75 3078 3119
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 75 3078 3123 "ocamlbuild/plugin.ml" 75 3078 3129
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 75 3078 3129 "ocamlbuild/plugin.ml" 75 3078 3132
+type(
+  Pathname.t -> string -> Pathname.t
+)
+"ocamlbuild/plugin.ml" 75 3078 3132 "ocamlbuild/plugin.ml" 75 3078 3135
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 75 3078 3122 "ocamlbuild/plugin.ml" 75 3078 3136
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 75 3078 3121 "ocamlbuild/plugin.ml" 75 3078 3136
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 75 3078 3090 "ocamlbuild/plugin.ml" 75 3078 3136
+type(
+  string * string * Command.spec
+)
+"ocamlbuild/plugin.ml" 72 2936 2946 "ocamlbuild/plugin.ml" 75 3078 3136
+type(
+  string * string * Command.spec
+)
+"ocamlbuild/plugin.ml" 77 3148 3160 "ocamlbuild/plugin.ml" 77 3148 3173
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 77 3148 3176 "ocamlbuild/plugin.ml" 77 3148 3189
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 77 3148 3189 "ocamlbuild/plugin.ml" 77 3148 3192
+type(
+  Pathname.t -> string -> Pathname.t
+)
+"ocamlbuild/plugin.ml" 77 3148 3192 "ocamlbuild/plugin.ml" 77 3148 3195
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 77 3148 3176 "ocamlbuild/plugin.ml" 77 3148 3195
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 78 3199 3211 "ocamlbuild/plugin.ml" 78 3199 3221
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 78 3199 3224 "ocamlbuild/plugin.ml" 78 3199 3234
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 78 3199 3234 "ocamlbuild/plugin.ml" 78 3199 3237
+type(
+  Pathname.t -> string -> Pathname.t
+)
+"ocamlbuild/plugin.ml" 78 3199 3237 "ocamlbuild/plugin.ml" 78 3199 3240
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 78 3199 3224 "ocamlbuild/plugin.ml" 78 3199 3240
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 79 3244 3256 "ocamlbuild/plugin.ml" 79 3244 3259
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 79 3244 3262 "ocamlbuild/plugin.ml" 79 3244 3263
+type(
+  string ref -> string
+)
+"ocamlbuild/plugin.ml" 79 3244 3263 "ocamlbuild/plugin.ml" 79 3244 3286
+type(
+  string ref
+)
+"ocamlbuild/plugin.ml" 79 3244 3262 "ocamlbuild/plugin.ml" 79 3244 3286
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 80 3290 3301 "ocamlbuild/plugin.ml" 80 3290 3304
+type(
+  bool -> bool
+)
+"ocamlbuild/plugin.ml" 80 3290 3306 "ocamlbuild/plugin.ml" 80 3290 3321
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/plugin.ml" 80 3290 3323 "ocamlbuild/plugin.ml" 80 3290 3326
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 80 3290 3326 "ocamlbuild/plugin.ml" 80 3290 3327
+type(
+  Pathname.t -> Pathname.t -> Pathname.t
+)
+"ocamlbuild/plugin.ml" 80 3290 3327 "ocamlbuild/plugin.ml" 80 3290 3340
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 80 3290 3322 "ocamlbuild/plugin.ml" 80 3290 3341
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 80 3290 3305 "ocamlbuild/plugin.ml" 80 3290 3342
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 80 3290 3301 "ocamlbuild/plugin.ml" 80 3290 3342
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 81 3349 3359 "ocamlbuild/plugin.ml" 81 3349 3367
+type(
+  string -> unit
+)
+"ocamlbuild/plugin.ml" 81 3349 3369 "ocamlbuild/plugin.ml" 81 3349 3376
+type(
+  (Pathname.t -> string, unit, string) format -> Pathname.t -> string
+)
+"ocamlbuild/plugin.ml" 81 3349 3377 "ocamlbuild/plugin.ml" 81 3349 3424
+type(
+  (Pathname.t -> string, unit, string) format
+)
+"ocamlbuild/plugin.ml" 81 3349 3425 "ocamlbuild/plugin.ml" 81 3349 3438
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 81 3349 3368 "ocamlbuild/plugin.ml" 81 3349 3439
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 81 3349 3359 "ocamlbuild/plugin.ml" 81 3349 3439
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 80 3290 3298 "ocamlbuild/plugin.ml" 81 3349 3439
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 82 3441 3453 "ocamlbuild/plugin.ml" 82 3441 3456
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 82 3441 3462 "ocamlbuild/plugin.ml" 82 3441 3482
+type(
+  Pathname.t -> bool
+)
+"ocamlbuild/plugin.ml" 82 3441 3483 "ocamlbuild/plugin.ml" 82 3441 3486
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 82 3441 3462 "ocamlbuild/plugin.ml" 82 3441 3486
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 82 3441 3492 "ocamlbuild/plugin.ml" 82 3441 3504
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 82 3441 3504 "ocamlbuild/plugin.ml" 82 3441 3505
+type(
+  Pathname.t -> Pathname.t -> Pathname.t
+)
+"ocamlbuild/plugin.ml" 82 3441 3505 "ocamlbuild/plugin.ml" 82 3441 3508
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 82 3441 3492 "ocamlbuild/plugin.ml" 82 3441 3508
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 82 3441 3514 "ocamlbuild/plugin.ml" 82 3441 3517
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 82 3441 3459 "ocamlbuild/plugin.ml" 82 3441 3517
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 83 3521 3533 "ocamlbuild/plugin.ml" 83 3521 3536
+type(
+  Command.t
+)
+"ocamlbuild/plugin.ml" 84 3539 3555 "ocamlbuild/plugin.ml" 84 3539 3563
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 84 3539 3566 "ocamlbuild/plugin.ml" 84 3539 3570
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 84 3539 3565 "ocamlbuild/plugin.ml" 84 3539 3570
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 84 3539 3574 "ocamlbuild/plugin.ml" 84 3539 3577
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 84 3539 3572 "ocamlbuild/plugin.ml" 84 3539 3577
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 84 3539 3579 "ocamlbuild/plugin.ml" 84 3539 3583
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 84 3539 3585 "ocamlbuild/plugin.ml" 84 3539 3597
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 85 3599 3617 "ocamlbuild/plugin.ml" 85 3599 3620
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 85 3599 3620 "ocamlbuild/plugin.ml" 85 3599 3621
+type(
+  Pathname.t -> Pathname.t -> Pathname.t
+)
+"ocamlbuild/plugin.ml" 85 3599 3621 "ocamlbuild/plugin.ml" 85 3599 3634
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 85 3599 3616 "ocamlbuild/plugin.ml" 85 3599 3635
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 85 3599 3615 "ocamlbuild/plugin.ml" 85 3599 3635
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 85 3599 3637 "ocamlbuild/plugin.ml" 85 3599 3650
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 85 3599 3654 "ocamlbuild/plugin.ml" 85 3599 3665
+type(
+  Command.pathname
+)
+"ocamlbuild/plugin.ml" 85 3599 3652 "ocamlbuild/plugin.ml" 85 3599 3665
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 86 3667 3685 "ocamlbuild/plugin.ml" 86 3667 3688
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 86 3667 3688 "ocamlbuild/plugin.ml" 86 3667 3689
+type(
+  Pathname.t -> Pathname.t -> Pathname.t
+)
+"ocamlbuild/plugin.ml" 86 3667 3689 "ocamlbuild/plugin.ml" 86 3667 3699
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 86 3667 3684 "ocamlbuild/plugin.ml" 86 3667 3700
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 86 3667 3683 "ocamlbuild/plugin.ml" 86 3667 3700
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 86 3667 3703 "ocamlbuild/plugin.ml" 86 3667 3707
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 86 3667 3702 "ocamlbuild/plugin.ml" 86 3667 3707
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 86 3667 3712 "ocamlbuild/plugin.ml" 86 3667 3718
+type(
+  Command.pathname
+)
+"ocamlbuild/plugin.ml" 86 3667 3709 "ocamlbuild/plugin.ml" 86 3667 3718
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 84 3539 3554 "ocamlbuild/plugin.ml" 86 3667 3719
+type(
+  Options.command_spec list
+)
+"ocamlbuild/plugin.ml" 84 3539 3552 "ocamlbuild/plugin.ml" 86 3667 3720
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 84 3539 3549 "ocamlbuild/plugin.ml" 86 3667 3720
+type(
+  Command.t
+)
+"ocamlbuild/plugin.ml" 88 3732 3740 "ocamlbuild/plugin.ml" 88 3732 3751
+type(
+  string -> unit
+)
+"ocamlbuild/plugin.ml" 88 3732 3752 "ocamlbuild/plugin.ml" 88 3732 3753
+type(
+  string ref -> string
+)
+"ocamlbuild/plugin.ml" 88 3732 3753 "ocamlbuild/plugin.ml" 88 3732 3770
+type(
+  string ref
+)
+"ocamlbuild/plugin.ml" 88 3732 3752 "ocamlbuild/plugin.ml" 88 3732 3770
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 88 3732 3740 "ocamlbuild/plugin.ml" 88 3732 3770
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 89 3772 3780 "ocamlbuild/plugin.ml" 89 3772 3790
+type(
+  string -> unit
+)
+"ocamlbuild/plugin.ml" 89 3772 3791 "ocamlbuild/plugin.ml" 89 3772 3797
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 89 3772 3780 "ocamlbuild/plugin.ml" 89 3772 3797
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 90 3799 3807 "ocamlbuild/plugin.ml" 90 3799 3822
+type(
+  ?quiet:bool -> ?pretend:bool -> Command.t -> unit
+)
+"ocamlbuild/plugin.ml" 90 3799 3823 "ocamlbuild/plugin.ml" 90 3799 3826
+type(
+  Command.t
+)
+"ocamlbuild/plugin.ml" 90 3799 3807 "ocamlbuild/plugin.ml" 90 3799 3826
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 89 3772 3780 "ocamlbuild/plugin.ml" 90 3799 3826
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 88 3732 3740 "ocamlbuild/plugin.ml" 90 3799 3826
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 83 3521 3529 "ocamlbuild/plugin.ml" 90 3799 3826
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 82 3441 3449 "ocamlbuild/plugin.ml" 90 3799 3826
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 80 3290 3298 "ocamlbuild/plugin.ml" 90 3799 3826
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 79 3244 3252 "ocamlbuild/plugin.ml" 90 3799 3826
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 78 3199 3207 "ocamlbuild/plugin.ml" 90 3799 3826
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 77 3148 3156 "ocamlbuild/plugin.ml" 90 3799 3826
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 71 2890 2898 "ocamlbuild/plugin.ml" 90 3799 3826
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 65 2621 2629 "ocamlbuild/plugin.ml" 90 3799 3826
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 58 2356 2367 "ocamlbuild/plugin.ml" 91 3827 3836
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 55 2198 2204 "ocamlbuild/plugin.ml" 91 3827 3836
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 54 2092 2098 "ocamlbuild/plugin.ml" 91 3827 3836
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 53 2006 2012 "ocamlbuild/plugin.ml" 91 3827 3836
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 52 1958 1964 "ocamlbuild/plugin.ml" 91 3827 3836
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 93 3838 3846 "ocamlbuild/plugin.ml" 93 3838 3870
+type(
+  unit -> unit
+)
+"ocamlbuild/plugin.ml" 93 3838 3871 "ocamlbuild/plugin.ml" 93 3838 3873
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 94 3876 3885 "ocamlbuild/plugin.ml" 94 3876 3901
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 96 3921 3931 "ocamlbuild/plugin.ml" 96 3921 3955
+type(
+  unit -> unit
+)
+"ocamlbuild/plugin.ml" 96 3921 3956 "ocamlbuild/plugin.ml" 96 3921 3958
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 96 3921 3931 "ocamlbuild/plugin.ml" 96 3921 3958
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 97 3960 3970 "ocamlbuild/plugin.ml" 97 3960 3981
+type(
+  Pathname.t -> unit
+)
+"ocamlbuild/plugin.ml" 97 3960 3982 "ocamlbuild/plugin.ml" 97 3960 3994
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 97 3960 3970 "ocamlbuild/plugin.ml" 97 3960 3994
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 98 3996 4009 "ocamlbuild/plugin.ml" 98 3996 4012
+type(
+  bool -> bool
+)
+"ocamlbuild/plugin.ml" 98 3996 4013 "ocamlbuild/plugin.ml" 98 3996 4014
+type(
+  bool ref -> bool
+)
+"ocamlbuild/plugin.ml" 98 3996 4014 "ocamlbuild/plugin.ml" 98 3996 4033
+type(
+  bool ref
+)
+"ocamlbuild/plugin.ml" 98 3996 4013 "ocamlbuild/plugin.ml" 98 3996 4033
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 98 3996 4009 "ocamlbuild/plugin.ml" 98 3996 4033
+type(
+  bool
+)
+"ocamlbuild/plugin.ml" 99 4039 4055 "ocamlbuild/plugin.ml" 99 4039 4059
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 99 4039 4064 "ocamlbuild/plugin.ml" 99 4039 4065
+type(
+  Options.command_spec ref -> Options.command_spec
+)
+"ocamlbuild/plugin.ml" 99 4039 4065 "ocamlbuild/plugin.ml" 99 4039 4081
+type(
+  Options.command_spec ref
+)
+"ocamlbuild/plugin.ml" 99 4039 4064 "ocamlbuild/plugin.ml" 99 4039 4081
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 99 4039 4085 "ocamlbuild/plugin.ml" 99 4039 4086
+type(
+  Pathname.t ref -> Pathname.t
+)
+"ocamlbuild/plugin.ml" 99 4039 4086 "ocamlbuild/plugin.ml" 99 4039 4103
+type(
+  Pathname.t ref
+)
+"ocamlbuild/plugin.ml" 99 4039 4085 "ocamlbuild/plugin.ml" 99 4039 4103
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 99 4039 4103 "ocamlbuild/plugin.ml" 99 4039 4104
+type(
+  Pathname.t -> Pathname.t -> Pathname.t
+)
+"ocamlbuild/plugin.ml" 99 4039 4104 "ocamlbuild/plugin.ml" 99 4039 4110
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 99 4039 4084 "ocamlbuild/plugin.ml" 99 4039 4111
+type(
+  Pathname.t
+)
+"ocamlbuild/plugin.ml" 99 4039 4083 "ocamlbuild/plugin.ml" 99 4039 4111
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 100 4113 4139 "ocamlbuild/plugin.ml" 100 4113 4151
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 100 4113 4138 "ocamlbuild/plugin.ml" 100 4113 4151
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 100 4113 4153 "ocamlbuild/plugin.ml" 100 4113 4160
+type(
+  string list -> Options.command_spec
+)
+"ocamlbuild/plugin.ml" 100 4113 4162 "ocamlbuild/plugin.ml" 100 4113 4169
+type(
+  string list -> string list
+)
+"ocamlbuild/plugin.ml" 100 4113 4171 "ocamlbuild/plugin.ml" 100 4113 4184
+type(
+  string array -> string list
+)
+"ocamlbuild/plugin.ml" 100 4113 4185 "ocamlbuild/plugin.ml" 100 4113 4193
+type(
+  string array
+)
+"ocamlbuild/plugin.ml" 100 4113 4170 "ocamlbuild/plugin.ml" 100 4113 4194
+type(
+  string list
+)
+"ocamlbuild/plugin.ml" 100 4113 4161 "ocamlbuild/plugin.ml" 100 4113 4195
+type(
+  string list
+)
+"ocamlbuild/plugin.ml" 100 4113 4153 "ocamlbuild/plugin.ml" 100 4113 4195
+type(
+  Options.command_spec
+)
+"ocamlbuild/plugin.ml" 99 4039 4063 "ocamlbuild/plugin.ml" 100 4113 4196
+type(
+  Options.command_spec list
+)
+"ocamlbuild/plugin.ml" 99 4039 4062 "ocamlbuild/plugin.ml" 100 4113 4196
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 101 4200 4212 "ocamlbuild/plugin.ml" 101 4200 4217
+type(
+  exn -> unit
+)
+"ocamlbuild/plugin.ml" 101 4200 4244 "ocamlbuild/plugin.ml" 101 4200 4255
+type(
+  string -> int
+)
+"ocamlbuild/plugin.ml" 101 4200 4257 "ocamlbuild/plugin.ml" 101 4200 4287
+type(
+  Command.spec -> string
+)
+"ocamlbuild/plugin.ml" 101 4200 4288 "ocamlbuild/plugin.ml" 101 4200 4292
+type(
+  Command.spec
+)
+"ocamlbuild/plugin.ml" 101 4200 4256 "ocamlbuild/plugin.ml" 101 4200 4293
+type(
+  string
+)
+"ocamlbuild/plugin.ml" 101 4200 4243 "ocamlbuild/plugin.ml" 101 4200 4294
+type(
+  int
+)
+"ocamlbuild/plugin.ml" 101 4200 4218 "ocamlbuild/plugin.ml" 101 4200 4295
+type(
+  exn
+)
+"ocamlbuild/plugin.ml" 101 4200 4212 "ocamlbuild/plugin.ml" 101 4200 4295
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 99 4039 4051 "ocamlbuild/plugin.ml" 101 4200 4295
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 98 3996 4006 "ocamlbuild/plugin.ml" 101 4200 4295
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 97 3960 3970 "ocamlbuild/plugin.ml" 101 4200 4295
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 95 3907 3915 "ocamlbuild/plugin.ml" 102 4296 4307
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 104 4319 4327 "ocamlbuild/plugin.ml" 104 4319 4329
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 94 3876 3882 "ocamlbuild/plugin.ml" 104 4319 4329
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 108 4340 4344 "ocamlbuild/plugin.ml" 108 4340 4368
+type(
+  unit -> unit
+)
+"ocamlbuild/plugin.ml" 108 4340 4369 "ocamlbuild/plugin.ml" 108 4340 4371
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 110 4411 4413 "ocamlbuild/plugin.ml" 110 4411 4439
+type(
+  unit -> unit
+)
+"ocamlbuild/plugin.ml" 110 4411 4440 "ocamlbuild/plugin.ml" 110 4411 4442
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 110 4411 4413 "ocamlbuild/plugin.ml" 110 4411 4442
+type(
+  unit
+)
+"ocamlbuild/plugin.ml" 109 4374 4376 "ocamlbuild/plugin.ml" 110 4411 4442
+type(
+  unit
+)
