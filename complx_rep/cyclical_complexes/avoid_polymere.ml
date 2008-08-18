@@ -12,7 +12,10 @@ let debug = false
 
 let print_port (a,b,c) = 
   (print_string b;
-  print_string c)
+   print_string "(";
+   print_string a;
+    print_string ").";
+   print_string c)
 
 let succ x = 
   match x with None -> None 
@@ -68,7 +71,7 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 	StringMap.add a set map)
       StringMap.empty 
       interface in 
-  let interface x = 
+  let interface x = (* maps agent type to the set of sites that may be bound *)
     try 
       StringMap.find x interface 
     with
@@ -89,7 +92,15 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 	(if mode = Warn then [] else [rule_class]),(l,m) 
       else
 	begin
-	  let here = 
+	  let _ = 
+	    List.iter 
+	      (fun (b,bool) -> 
+		print_b b;
+		print_string (if bool then "T" else "F");
+		print_newline ())
+	      rule.injective_guard in 
+		 
+	  let here = (* Set of agent id of agents in the lhs *)
 	    List.fold_left 
 	      (fun set (b,bool) -> 
 		match b,bool with 
@@ -141,12 +152,18 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 	    StringMap.add ag new_id agfresh,
 	    new_id in 
 
-	  let graph,graph2,cons  = 
+	  let graph (*maps port to port*) ,
+	    graph2  (*maps agent_id to the set of bound sites*),
+	    cons    (*set of type-disjoiness constrains *) 
+	      = 
 	    List.fold_left 
 	      (fun (portmap,graph2,cons) (b,bool) -> 
 		match b,bool with 
 		  B(a,b,s),false -> 
-		    PortMap.add (a,b,s) None portmap,graph2,cons
+		    (print_string "FREE SITE";
+		    print_port (a,b,s);
+		     print_newline ();
+		    PortMap.add (a,b,s) None portmap,graph2,cons)
 		| L((a,b,s),(a',b',s')),true ->
 		    PortMap.add (a,b,s) (Some (a',b',s')) 
 		      (PortMap.add (a',b',s') (Some (a,b,s)) portmap),
@@ -167,7 +184,23 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 	      (PortMap.empty,StringMap.empty,String2Set.empty)
 	      rule.injective_guard
 	  in
-	 
+	  let _ = 
+	    if debug 
+	    then
+	      begin 
+		print_string "GRAPH \n";
+		PortMap.iter
+		  (fun a b  -> 
+		    print_port a;
+		    begin
+		      match b with 
+			None -> print_string "0"
+		      | Some a -> (print_string "!";print_port a)
+		    end;
+	              print_newline ())
+		  graph 
+		  end
+	  in 
 	  let rec connected reste sol = 
 	    if StringSet.is_empty reste 
 	    then 
@@ -197,7 +230,7 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 		  (fun a sol -> StringMap.add a comp sol)
 		  comp sol in
 	      connected reste sol in
-	  let equiv = 
+	  let equiv = (* are two agent ids in the same connected component *)
 	    let m = connected here StringMap.empty in
 	    let f x y = 
 	      try 
@@ -207,6 +240,7 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 	    f in
 
 	  let new_bonds = 
+            (* list of bonds that are created between distinct connected components *)
 	    List.fold_left 
 	      (fun sol (b,bool) -> 
 		match b,bool with 
@@ -223,14 +257,14 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 	 
 	  if new_bonds = [] 
 	  then 
-	    	(if mode = Warn then [] else [rule_class]),(l,m) 
+	    (if mode = Warn then [] else [rule_class]),(l,m) 
 	  else 
 	    let bmap = 
-	    List.fold_left
-	      (fun bmap (b,bool) -> 
-		BMap.add b bool bmap)
-	      BMap.empty 
-	      rule.injective_guard
+	      List.fold_left
+		(fun bmap (b,bool) -> 
+		  BMap.add b bool bmap)
+		BMap.empty 
+		rule.injective_guard
 	    in 
 	    let fadd port depth map = 
 	      try 
@@ -290,7 +324,7 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 				    q,
 				    fadd (id,ag,s') depth' p1,
 				    p2 
-				  |	Some (port) -> 
+				  |  Some (port) -> 
 				      (port,depth',base,(ag,s'))::q,
                                       fadd port depth' p1,
 				    p2
@@ -449,19 +483,14 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 			    print_string b;
 			    print_string ".";
 			    print_string s;
-			    print_string "DEPTH: ";
+			    print_string " DEPTH: ";
 			    print_int c;
-			    print_string "INIT: ";
-			    let _ = 
-			      let (a,b,c) = init in
-			      (print_string a;
-			      print_string b;
-			      print_string c) 
-			    in 
-			    print_string "BASE: ";
+			    print_string " INIT: ";
+			    print_port init;
+			    print_string " BASE: ";
 			    print_string base;
-			    print_string "PATH: ";
-			    List.iter (fun ((a,b,c),d) -> print_string a;print_string b;print_string c;print_string d;print_string ",") a;
+			    print_string " PATH: ";
+			    List.iter (fun (a,d) -> print_port a;print_string d;print_string ",") a;
 			    print_newline ())
 			  potential_port in ()
 	 	in 

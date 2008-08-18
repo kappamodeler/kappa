@@ -542,7 +542,7 @@ let clean_rule_system rl linkable_sites =
 		       r.Pb_sig.cpb_guard)})
 		rl)
   
-let translate_rule_list l init  messages = 
+let translate_rule_list l init interface  messages = 
   let n = List.length l in 
   let logn = String.length (string_of_int n) in 
   let flags,fset,rl,(agents,marks,markable_sites,linkable_sites,mark_site_rel,cpt,contact),messages,with_dots  = 
@@ -556,6 +556,31 @@ let translate_rule_list l init  messages =
   let init,(agents,marks,markable_sites,linkable_sites,mark_site_rel,cpt,contact),messages = 
     translate_init init (agents,marks,markable_sites,linkable_sites,mark_site_rel,cpt,contact) messages logn  in 
   let _ = trace_print "TRANSLATE_INIT DONE\n" in
+  let (agents,markable_sites,linkable_sites) = 
+    match interface 
+    with None -> 
+      agents,markable_sites,linkable_sites
+    | Some interface -> 
+	List.fold_left 
+	  (fun (agents,markable_sites,linkable_sites) (s,b,c) -> 
+	    (StringSet.add s agents),
+	    (let old = 
+	      try 
+		StringMap.find s markable_sites 
+	      with 
+		Not_found -> StringSet.empty 
+	    in
+	    StringMap.add s (List.fold_left (fun set a -> StringSet.add a set) old b) markable_sites),
+	    let old = 
+	      try 
+		StringMap.find s linkable_sites 
+	      with 
+		Not_found -> StringSet.empty 
+	    in
+	    StringMap.add s (List.fold_left (fun set a -> StringSet.add a set) old c) linkable_sites)
+	  (agents,markable_sites,linkable_sites) 
+	  interface 
+  in
   let species_set = agents in 
   let species,interface = 
     StringSet.fold 
