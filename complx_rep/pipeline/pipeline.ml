@@ -250,7 +250,6 @@ module Pipeline =
 	     let _ = print_option prefix (Some stderr)  "Compilation(simplx)...\n" in
 	     let (a,b,c,d) = Kappa_lex.compile s  in 
 	     let b = !Data.pairs in
-	     let _ = print_option prefix (Some stderr) "DONE\n" in 
 	     let _ = trace_print "COMPILATION DONE" in
 	     let l = chrono 
 		 prefix 
@@ -537,8 +536,12 @@ module Pipeline =
 	 let prefix' = add_suffix prefix  "find_potential_cycles" in
 	 match rep with None -> (rep,(l,m))
 	 | Some rep' ->
+	     let n = 
+	       match !Config_complx.cycle_depth
+	       with x when x<0 -> None
+	       | x -> Some x in
 	     let pb,log = build_contact res prefix' rep (l,m) in
-	     let rep' = find_cycles pb in
+	     let rep' = find_cycles n pb in
 	     match pb with None -> (rep,(l,m))
 	     | Some pb -> 
 	     Some {pb with potential_cycles = rep'},(l,m)

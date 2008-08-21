@@ -15,8 +15,8 @@ let time_stamp =
     tm.Unix.tm_mday tm.Unix.tm_mon (tm.Unix.tm_year + 1900) 
     tm.Unix.tm_hour tm.Unix.tm_min tm.Unix.tm_sec
 
-let version = "3.39" 
-let date = "2008.08.13"
+let version = "3.40--2026" 
+let date = "2008.08.21"
 let input_marshalling = ref "" 
 let input_file = ref [""] 
 let input_focus_on = ref ""
@@ -525,7 +525,7 @@ let options = List.rev
 
 (*Refinment*)
 
-  "--cycles-depth",Int cycle_depth,"Define the neighbourhood in which an agent can test for cycles",["Polymers prevention"],Normal; 
+  "--cycles-depth",Int cycle_depth,"Define the neighbourhood in which an agent can test for cycles",["Contact map";"Polymers prevention"],Normal; 
   "--cycle-detection-mode",Bool only_detect_cycles,"Show warning, but do not refine rules",["Polymers prevention"],Normal;
   "--use-constraints-to-refine",Bool only_closing_rules,"Only dump the rules that close a cyclical complex",["Polymers prevention"],Normal;
   "--refine-only-these-rules",String refine_fic,"Only refine these rules",["1_Input";"Polymers prevention"],Normal;

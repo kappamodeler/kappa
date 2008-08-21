@@ -244,72 +244,71 @@ let canonical_fragment_of_subspecies graph  =
 	
 
 (* TEST *)
-	
-let inv (a,b) = (b,a) 
-let g b = {path = b;root= ""} 
-let a = 
-  {(*embedding=
-    StringMap.add "1" []
-      (StringMap.add "2" [("2","a"),("1","a")]
-	 (StringMap.add "3" [("3","a"),("1","b")]
-	    (StringMap.add "4" [("4","b"),("2","b");("2","a"),("1","a")]
-	       StringMap.empty))) ;
-    reverse_embedding = 
-    PathMap.add  [] "1"
-      (PathMap.add  [("2","a"),("1","a")] "2"
-	 (PathMap.add  [("3","a"),("1","b")] "3" 
-	    (PathMap.add [("4","b"),("2","b");("2","a"),("1","a")] "4"
-	       PathMap.empty))) ;*)
-    bonds = 
-    [(g [],"a"),(g [("2","a"),("1","a")],"a") ;
-     (g [],"b"),(g [("3","a"),("1","b")],"a") ;
-     (g [("2","a"),("1","a")],"b"),(g [("1","a"),("2","b");("2","a"),("1","a")],"b"); 
-     (g [("3","a"),("1","b")],"b"),(g [("1","a"),("2","b");("2","a"),("1","a")],"a");
-      inv ((g [],"a"),(g [("2","a"),("1","a")],"a")) ;
-     inv ((g [],"b"),(g [("3","a"),("1","b")],"a")) ;
+let _ = 
+  if debug then 
+    let inv (a,b) = (b,a) in
+    let g b = {path = b;root= ""} in
+    let a = 
+      {(*embedding=
+	  StringMap.add "1" []
+	  (StringMap.add "2" [("2","a"),("1","a")]
+	  (StringMap.add "3" [("3","a"),("1","b")]
+	  (StringMap.add "4" [("4","b"),("2","b");("2","a"),("1","a")]
+	  StringMap.empty))) ;
+	  reverse_embedding = 
+	  PathMap.add  [] "1"
+	  (PathMap.add  [("2","a"),("1","a")] "2"
+	  (PathMap.add  [("3","a"),("1","b")] "3" 
+	  (PathMap.add [("4","b"),("2","b");("2","a"),("1","a")] "4"
+	  PathMap.empty))) ;*)
+      bonds = 
+      [(g [],"a"),(g [("2","a"),("1","a")],"a") ;
+	(g [],"b"),(g [("3","a"),("1","b")],"a") ;
+	(g [("2","a"),("1","a")],"b"),(g [("1","a"),("2","b");("2","a"),("1","a")],"b"); 
+	(g [("3","a"),("1","b")],"b"),(g [("1","a"),("2","b");("2","a"),("1","a")],"a");
+	inv ((g [],"a"),(g [("2","a"),("1","a")],"a")) ;
+	inv ((g [],"b"),(g [("3","a"),("1","b")],"a")) ;
      inv ((g [("2","a"),("1","a")],"b"),(g [("1","a"),("2","b");("2","a"),("1","a")],"b")); 
-     inv ((g [("3","a"),("1","b")],"b"),(g [("1","a"),("2","b");("2","a"),("1","a")],"a"))
-	
-    ] ;
-    bonds_map = 
-    RPathMap.add (g [])
-      (SitetypeMap.add 
-	 "a" (g [("2","a"),("1","a")],"a")
-	 (SitetypeMap.add 
-	 "b" (g [("3","a"),("1","b")],"a")
-	    SitetypeMap.empty))
-      (RPathMap.add (g [("2","a"),("1","a")])
-	 (SitetypeMap.add 
+	inv ((g [("3","a"),("1","b")],"b"),(g [("1","a"),("2","b");("2","a"),("1","a")],"a"))
+	  
+      ] ;
+      bonds_map = 
+      RPathMap.add (g [])
+	(SitetypeMap.add 
+	   "a" (g [("2","a"),("1","a")],"a")
+	   (SitetypeMap.add 
+	      "b" (g [("3","a"),("1","b")],"a")
+	      SitetypeMap.empty))
+	(RPathMap.add (g [("2","a"),("1","a")])
+	   (SitetypeMap.add 
 	    "a" (g [],"a")
-	    (SitetypeMap.add 
-	       "b" (g [("1","a"),("2","b");("2","a"),("1","a")],"b")
-	       SitetypeMap.empty))
-	 (RPathMap.add (g [("3","a"),("1","b")])
-	    (SitetypeMap.add 
-	       "a" (g [],"b")
-	       (SitetypeMap.add
-		  "b" (g [("1","a"),("2","b");("2","a"),("1","a")],"a")
-		  SitetypeMap.empty))
-	    (RPathMap.add 
-	       (g [("1","a"),("2","b");("2","a"),("1","a")])
-	       (SitetypeMap.add 
-		  "b" (g [("2","a"),("1","a")],"b")
-		  (SitetypeMap.add 
-		     "a" (g [("3","a"),("1","b")],"b")
-		     SitetypeMap.empty))
-	      RPathMap.empty)))
-	 ;
-    subspecies_views = 
+	      (SitetypeMap.add 
+		 "b" (g [("1","a"),("2","b");("2","a"),("1","a")],"b")
+		 SitetypeMap.empty))
+	   (RPathMap.add (g [("3","a"),("1","b")])
+	      (SitetypeMap.add 
+		 "a" (g [],"b")
+		 (SitetypeMap.add
+		    "b" (g [("1","a"),("2","b");("2","a"),("1","a")],"a")
+		    SitetypeMap.empty))
+	      (RPathMap.add 
+		 (g [("1","a"),("2","b");("2","a"),("1","a")])
+		 (SitetypeMap.add 
+		    "b" (g [("2","a"),("1","a")],"b")
+		    (SitetypeMap.add 
+		       "a" (g [("3","a"),("1","b")],"b")
+		       SitetypeMap.empty))
+		 RPathMap.empty)))
+	;
+      subspecies_views = 
       RPathMap.add  (g []) 1
-      (RPathMap.add  (g [("2","a"),("1","a")]) 2
-	 (RPathMap.add  (g [("3","a"),("1","b")]) 3 
-	    (RPathMap.add (g [("1","a"),("2","b");("2","a"),("1","a")]) 1
-	       RPathMap.empty))) }
-      
-
-let _ = print_new_subspecies a 
-let b = canonical_fragment_of_subspecies a 
-let _ = print_fragment b
+	(RPathMap.add  (g [("2","a"),("1","a")]) 2
+	   (RPathMap.add  (g [("3","a"),("1","b")]) 3 
+	      (RPathMap.add (g [("1","a"),("2","b");("2","a"),("1","a")]) 1
+		 RPathMap.empty))) } in 
+    let _ = print_new_subspecies a in
+    let b = canonical_fragment_of_subspecies a in
+    let _ = print_fragment b in ()
 
 (* END OF TEST*)  
  

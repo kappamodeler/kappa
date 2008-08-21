@@ -50,7 +50,11 @@ let print_cycles a =
 
 
 
-let find_cycles pb = 
+let find_cycles limit pb = 
+  let too_long = 
+    match limit 
+    with None -> (fun _ -> false)
+    | Some y -> (fun x -> x>y) in
   try (
     match pb with None -> exit 10
     | Some pb -> 
@@ -110,11 +114,6 @@ let find_cycles pb =
 		      (fun sol s -> (x,s)::sol)
 		      sol b)
 		       interface [] in
-	      (*let set_node = 
-		StringMap.fold 
-		  (fun x _ sol -> x::sol)
-		  interface [] in 
-		*)	
 			    
 	      let interface = 
 		(fun a -> 
@@ -122,8 +121,8 @@ let find_cycles pb =
 		    StringMap.find a interface
 		  with 
 		    Not_found -> []) in 
-	      match algo with 
-		Exploration -> 
+	      match algo,limit with 
+		Exploration,_ | _,Some _ -> 
 		  begin (*Exploration*)
 		    Some 
 		      (List.fold_left  
@@ -131,7 +130,8 @@ let find_cycles pb =
 			   let rec aux to_visit cycles = 
 			     match to_visit with 
 			       [] -> cycles 
-		       | (path,blackagent,blackport,blackmap,last)::q -> 
+		       | (path,size,blackagent,blackport,blackmap,last)::q when too_long size -> aux q cycles 
+		       | (path,size,blackagent,blackport,blackmap,last)::q -> 
 			   match last with 
 			     IN(a,s) -> 
 			       let to_visit,cycles = 
@@ -147,7 +147,7 @@ let find_cycles pb =
 					       to_visit,(*((a,s')::path)::*)cycles)
 					 else to_visit,cycles)
 				       else
-					 ((a,s')::path,
+					 ((a,s')::path,size,
 					  blackagent,
 					  String2Set.add (a,s') blackport,
 					  StringMap.add a s' blackmap,
@@ -175,7 +175,7 @@ let find_cycles pb =
 					   to_visit,cycles)
 				       else
 					 (
-					 (a',s')::path,
+					 (a',s')::path,size+1,
 					 StringSet.add a' blackagent,
 					 String2Set.add (a',s') blackport,
 					 blackmap,
@@ -187,14 +187,14 @@ let find_cycles pb =
 			       aux to_visit cycles
 			   in
 			   aux 
-			     [[x],
+			     [[x],1,
 			       StringSet.singleton (fst x),
 			       String2Set.singleton x,
 			       StringMap.add (fst x) (snd x) StringMap.empty,
 			       OUT(x)] cycles)
 			 [] set  )
 		      end(*Exploration*)
-	      |	Warshall -> 
+	      |	Warshall,None -> 
 		  let add_path x y path matrice = 
 		    let old = 
 		      try 
