@@ -146,9 +146,9 @@ let compute_annotated_contact_map_in_approximated_mode system cpb  =
 		    with 
 		      Not_found -> 
 			(String2Map.add (x,x') StringSet.empty sol))
-		|  H _,_ -> sol
+		| H _,_ -> sol
 		| Connected _,_ -> sol 
-		|  B(a,a',b),_ ->  fadd (a,a') b sol
+		| B(a,a',b),_ ->  fadd (a,a') b sol
 		| AL((a,a',b),_),_ -> fadd (a,a') b sol
 		| L((a,a',b),(c,c',d)),_ -> fadd (a,a') b (fadd (c,c') d sol)
 		| M((a,a',b),c),_ -> fadd (a,a') b sol
@@ -278,7 +278,7 @@ let compute_annotated_contact_map_in_compression_mode system cpb =
 	      in 
 	      let modif = 
 		List.fold_left 
-		  (fun modif (_,(a,b,c)) -> 
+		  (fun modif ((a,b,c),_) -> 
 		    fadd (a,b) c modif)
 	          modif rs.passive_species in
 	      modif 

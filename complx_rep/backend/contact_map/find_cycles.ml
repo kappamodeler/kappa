@@ -30,9 +30,9 @@ let print_a_cycle a =
 	     (fun old a -> 
 	       match old 
 	       with 
-		 0 -> (print_string ((fst a)(*^"."^(snd a)*));1)
-	       | 1 -> (print_string (""(*"--"^(fst a)(*^"."^(fst a)*)*));2)
-	       | 2 -> (print_string ("--"^(fst a));1)
+		 0 -> (print_string ((fst a)(**)^"."^(snd a)(**));1)
+	       | 1 -> (print_string ("--"^(snd a)^".");2)
+	       | 2 -> (print_string ((fst a)^"."^(snd a));1)
 	       | _ -> exit 36 )
       0 a in
   print_string ("--"^(fst (List.hd a)));
@@ -74,6 +74,7 @@ let find_cycles limit pb =
 			None -> exit 21
 		      | Some a -> a.Pb_sig.link_of_site)
 		  with Not_found -> ([]))  in
+	      let access = access2 in 
 	      let interface = 
 		StringMap.fold 
 		  (fun a (_,b) sol -> 

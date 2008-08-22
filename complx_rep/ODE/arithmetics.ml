@@ -1,3 +1,4 @@
+let debug = false
 
 type expr = 
     Letter of string 
@@ -63,6 +64,11 @@ type ('subclass,'subspecies) expr_handler =
    get_fragment_extension: 'subclass -> 'subspecies list }
 
 let expr_of_denum expr_handler d = 
+  let _ = 
+    if debug
+    then
+      print_string "Expr_of_denum\n"
+  in
   List.fold_left 
     (fun expr d -> 
       Plus(expr,(Var (expr_handler.hash_subspecies d))))
@@ -70,6 +76,11 @@ let expr_of_denum expr_handler d =
     d
     
 let expr_of_atom expr_handler (a:(string*string*string*string) option) b = 
+  let _ = 
+    if debug
+    then
+      print_string "Expr_of_atom\n"
+  in
   (match a 
   with 
     None -> Var (expr_handler.hash_subspecies b)
@@ -79,6 +90,11 @@ let expr_of_atom expr_handler (a:(string*string*string*string) option) b =
 	   expr_of_denum expr_handler d)) 
     
 let expr_of_subcomponent expr_handler subcla  =
+  let _ = 
+    if debug
+    then
+      print_string "Expr_of_subcomponent\n"
+  in
   let a = expr_handler.get_bond subcla  in
   let b = expr_handler.get_fragment_extension subcla   in 
   List.fold_left 
@@ -88,6 +104,11 @@ let expr_of_subcomponent expr_handler subcla  =
     (Const 0) b 
     
 let expr_of_case expr_handler z = 
+  let _ = 
+    if debug
+    then
+      print_string "Expr_of_case\n"
+  in
   List.fold_left 
     (fun expr subcla -> 
       Mult(expr,expr_of_subcomponent expr_handler subcla))

@@ -307,7 +307,7 @@ let compute_compatible_views_id blist restricted_blist bmap agent_id (specie_of_
 	     print_debug "\n")
 	
       with _ -> ());
-       error 1190)
+       [] (*error 1190*))
 	
   in
   let (tp_list:views_id list) = 

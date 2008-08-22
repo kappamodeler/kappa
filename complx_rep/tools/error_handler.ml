@@ -127,6 +127,7 @@ let string_of_exn x =
   | Lazy.Undefined -> "Lazy.Undefined"
   | UnixLabels.Unix_error _ -> "UnixLabels.Unix_error"
   | Unix.Unix_error _ -> "Unix.Unix.error"
+  | Failure x -> ("Failure "^x)
   | _ -> "Not known"
 
 (** handle_errors app meth f a applies f with a,

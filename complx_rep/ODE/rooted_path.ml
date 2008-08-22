@@ -13,6 +13,12 @@ type rooted_path =
     {root:agent_id;
      path:path}
 
+let build_rpath a b = 
+  {root = a;path=b}
+
+let empty_rpath = 
+  build_rpath "" []
+
 module PathMap = Map2.Make (struct type t = path let compare = compare end)
 module RPathMap = Map2.Make (struct type t = rooted_path let compare = compare end)
 module RPathSet = Set.Make (struct type t = rooted_path let compare = compare end)
@@ -34,3 +40,5 @@ let add_rpath_value a b c map =
 
 (** unify two map between rooted paths and values, if it is possible, return None otherwise*)
 let unify_comp map1 map2 = RPathMap.unify
+
+let build_empty_path x = {root=x;path=[]}

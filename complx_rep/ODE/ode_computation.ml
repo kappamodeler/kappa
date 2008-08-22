@@ -10,6 +10,7 @@ open Output_contact_map
 open Ode_print_sig 
 open Annotated_contact_map 
 open Old_fragments 
+open Fragments 
 open Arithmetics 
 open Ode_print 
 open Views 
@@ -23,36 +24,42 @@ let memory = true
 let error i = 
   unsafe_frozen None (Some "Ode_computation.ml") None (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
 
+let dump_line i = 
+  if debug then 
+    begin
+      print_string "line ";
+      print_int i;
+      print_newline ()
+    end
+
 (* Temporary Linking *)
-type fragment = Fragment.fragment
-type subspecies = Fragment.subspecies 
-let get_denum = Fragment.get_denum 
-let complete_subspecies = Fragment.complete_subspecies 
-let empty_species = Fragment.empty_species 
-(*let from_views_id_list = Fragment.from_views_id_list*)
-(*let to_views_id_list = Fragment.to_views_id_list*)
-let empty_fragment = Fragment.empty_fragment
-let is_empty_fragment = Fragment.is_empty_fragment 
-let is_empty_species = Fragment.is_empty_species 
-let canonical_form = Fragment.canonical_form
-(*let species_from_fragment = Fragment.species_from_fragment *)
-let iter_views = Fragment.iter_views 
-let fold_views = Fragment.fold_views 
-let iter_views_in_species = Fragment.iter_views_in_species 
-let scan_views_in_species = Fragment.scan_views_in_species 
-(*let species_of_fragment = Fragment.species_of_fragment *)
-let plug_views_in_subspecies = Fragment.plug_views_in_subspecies
-let split_tp_list = Fragment.split_subspecies 
-let get_views_from_agent_id = Fragment.get_views_from_agent_id 
-let get_neighbour = Fragment.get_neighbour 
-let build_species = Fragment.build_species  
-let apply_blist_with_species = Fragment.apply_blist_with_species
-let merge = Fragment.merge 
-let split_subspecies = Fragment.split_subspecies 
-let empty_hash = Fragment.empty_hash 
-let check_compatibility = Fragment.check_compatibility 
-let is_agent_in_species = Fragment.is_agent_in_species 
-let print_species = Fragment.print_species
+module F = Fragment
+
+type fragment = F.fragment
+type subspecies = F.subspecies 
+let get_denum = F.get_denum 
+let complete_subspecies = F.complete_subspecies 
+let empty_species = F.empty_species 
+let empty_fragment = F.empty_fragment
+let is_empty_fragment = F.is_empty_fragment 
+let is_empty_species = F.is_empty_species 
+let canonical_form = F.canonical_form
+let iter_views = F.iter_views 
+let fold_views = F.fold_views 
+let iter_views_in_species = F.iter_views_in_species 
+let scan_views_in_species = F.scan_views_in_species 
+let plug_views_in_subspecies = F.plug_views_in_subspecies
+let split_tp_list = F.split_subspecies 
+let get_views_from_agent_id = F.get_views_from_agent_id 
+let get_neighbour = F.get_neighbour 
+let build_species = F.build_species  
+let apply_blist_with_species = F.apply_blist_with_species
+let merge = F.merge 
+let split_subspecies = F.split_subspecies 
+let empty_hash = F.empty_hash 
+let check_compatibility = F.check_compatibility 
+let is_agent_in_species = F.is_agent_in_species 
+let print_species = F.print_species
 (* End of temporary linking *)
 
 module FragmentMap = Map2.Make (struct type t = fragment let compare = compare end) 
@@ -404,7 +411,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
       let n = ref 1 in
       let map = ref FragmentMap.empty in
       let f x = 
-	(*let x' = canonical_form x in *)
 	let x'=x in 
 	try (FragmentMap.find x' (!map))
 	with Not_found -> 
@@ -595,7 +601,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	    try Constf( 
               (List.hd (List.hd x.Pb_sig.rules).Pb_sig.labels).Pb_sig.r_simplx.Rule.kinetics ) with _ -> Constf 1. in 
 	  let _ = if debug then 
-	    let _ = print_string "RULE \n " in
+	    let _ = print_string "RULE (604) \n " in
 	    let _ = print_string rule_id in 
 	    let _ = print_newline () in () in 
 	  let _ = print_comment print_ODE rule_id in 
@@ -636,6 +642,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		  [])
 	      x.Pb_sig.rules
 	  in
+	  let _ = dump_line 646 in 
 	  let classes = 
 	    List.map 
 	      (fun x -> 
@@ -679,6 +686,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		       )
 		  x) 
 	      classes in 
+	  let _ = dump_line 690 in 
 	  let classes = 
 	    List.map 
 	      (fun x -> 
@@ -697,7 +705,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		     {cla with roots = Some roots}) x))
 	      classes 
 	  in
-	 
+	  let _ = dump_line 709 in 
 	  let classes = 
 	    List.map 
 	      (fun x -> 
@@ -830,7 +838,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	     get_fragment_extension=get_fragment_extension} in 
 	 
 	 
-	 
+	 let _ = dump_line 842 in 
 	 let classes = 
 	   List.map 
 	     (fun x -> 
@@ -870,13 +878,14 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	   Intmap.add i ((k,Mult(coef,expr))::old) prod 
 	 in 
 	 
-	
+	 let _ = dump_line 882 in 
 		  
 
 
 	 let mainprod = 
 	   List.fold_left  
 	     (fun (mainprod,bool) x -> 
+	       let _ = dump_line 888 in
 	       let prod = Intmap.empty in 
 	       if control.remove = []
 		   && 
@@ -885,6 +894,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		   control.context_update
 		   
 	       then (* No agent creation or agent suppresion *)
+		 let _ = dump_line 897 in
 		 let rate_map = (*map each connected component to the contribution in the kinetic rate *)
 		   snd (
 		   List.fold_left 
@@ -945,7 +955,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				      (M((a,a',b),m),bool)::sol
 				    else sol
 				|	_ -> sol) [] context_update in
-			  let rep = List.hd rep in 
+		          let _ = dump_line 958 in 
+			  let rep = 
+			    match rep 
+			    with t::_ -> t 
+			    | [] -> [] in 
 			  let blist = b in 
 			  i+1,List.fold_left
 			    (fun (*2*)(c_list,p_list,sl_list) subcla -> 
@@ -1673,8 +1687,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
       				      let product = 
 					apply_blist_with_species ode_handler views_data_structures rule_id consumed_species context_update  in 
 				      let _ = if debug then 
-					let _ = print_string "\n PRODUCT " in
-					  () 
+					let _ = print_string "PRODUCT \n " in
+					let _ = print_species product in 
+					()
 				      in
 					
 
@@ -1716,7 +1731,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				(a,a',b,b')::n_b,r_b
 			      else
 				n_b,
-				(a,a')::r_b
+				((a,a')::r_b)
 			  | _ -> n_b,r_b)
 			([],[]) control.Pb_sig.context_update 
 		    in 
@@ -1725,7 +1740,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			(fun r_b (a,a',b) -> (a,a')::r_b)
 			removed_binding control.Pb_sig.uncontext_update in
 
-		
+
 		    let p_list = 
 		      fst
 			begin 
@@ -2124,7 +2139,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			    (mainprod,true))
 		      prod  (mainprod,bool) 
 		  else
-		    (mainprod,bool) 
+		 let _ = dump_line 2137 in (mainprod,bool) 
 		      )
 		mainprod   
 		classes
