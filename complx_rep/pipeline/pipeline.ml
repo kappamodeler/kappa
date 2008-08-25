@@ -247,13 +247,14 @@ module Pipeline =
 	   if s = "" 
 	   then None,(l,m)
 	   else 
-	     let _ = print_option prefix (Some stderr)  "Compilation(simplx)...\n" in
+	     let _ = print_option prefix (Some stderr) "Compilation(simplx)\n" in 
+	     let _ = add_suffix prefix "Compilation(simplx)\n" in
 	     let (a,b,c,d) = Kappa_lex.compile s  in 
 	     let b = !Data.pairs in
 	     let _ = trace_print "COMPILATION DONE" in
 	     let l = chrono 
 		 prefix 
-		 "Compilation" 
+		 "Compilation(simplx)" 
 		 l in 
 	     (Some {pb_init 
 		   with simplx_encoding = (Some (a,b))}
@@ -264,15 +265,14 @@ module Pipeline =
 	 let _ = Data.compile_mode:=tmp_mode in
 	 rep
        and good_vertice file prefix (l,m) = 
-	 let prefix' = add_suffix prefix "good_vertice" in 
-         let pb,(l,m) = parse_file file  prefix' (l,m) in
+	 let prefix' = add_suffix prefix "compute the agent occuring in the rules" in 
+         let pb,(l,m) = parse_file file prefix' (l,m) in
 	 match pb with 
 	   None -> None,(l,m)
 	 | Some a -> 
 	     (match a.simplx_encoding with 
 	       None -> None,(l,m)
 	     | Some(a,_) -> 
-		 let _ = print_option prefix' (Some stderr)  "Agent enumeration...\n" in 
 		 Some (List.fold_left 
 			 (fun set rule -> 
 			   Mods2.IntMap.fold 
@@ -287,7 +287,7 @@ module Pipeline =
 				rule.Rule.rhs.Solution.agents  set
 				))
 			 StringSet.empty a),
-		 (let l = chrono prefix' "Agent enumeration" l in l,m)
+		 (let l = chrono prefix "set of Agents occuring in rules " l in l,m)
 		     )
 	
        and translate interface prefix input (l,m) = 
@@ -298,7 +298,8 @@ module Pipeline =
 	       Some _,_ | _,None -> input,(l,m)
 	     | _,Some (a,b) -> 
 		 (
-		 let _ = print_option prefix (Some stderr)  "Translation(simplx->ckappa) \n" in
+		 let _ = add_suffix prefix  "Translation(simplx->ckappa) \n" in
+		 let _ = print_option prefix (Some stderr) "Translation(simplx->ckappa)\n" in 
                	 let rep',messages = Translate.translate_rule_list (List.rev a) b interface m in 
 		 let _ = trace_print "TRANSLATE DONE" in
 		 let l = chrono prefix "Translation" l in 
@@ -314,14 +315,14 @@ module Pipeline =
 	     | Some a -> pb,log,a )
 
        and smash_rule_system interface prefix pb (l,m) =
-	 let prefix' = add_suffix prefix "smash_rule_system"  in
+	 let _  = add_suffix prefix "smash_rule_system \n"  in
 	 match pb with None -> None,(l,m)
 	 | Some rep0 ->
 	     (match rep0.gathered_intermediate_encoding with
 	       Some _ -> (pb,(l,m))
 	     | None -> 
 		 (let _ = print_option prefix (Some stderr)  "Quotienting rules\n"  in
-		 let pb,(l,m),rep = get_first_encoding interface prefix' pb (l,m) in 
+		 let pb,(l,m),rep = get_first_encoding interface prefix pb (l,m) in 
 		 match pb with None -> None ,(l,m)
 		 | Some rep0 -> 
 		 let n0 = List.length rep.cpb_rules in 
@@ -330,25 +331,25 @@ module Pipeline =
 		 let n1 =  (List.length (CBnG.divide_list true rep rep.cpb_rules)) in 
 		 let s = "Number of rules   : "^(string_of_int n0)^"\n" in
 		 let s2 = "Number of classes: "^(string_of_int n1)^"\n" in
-		 let _ = print_option prefix' (Some stderr) s in
-		 let _ = print_option prefix' (Some stderr) s2 in
+		 let _ = print_option prefix (Some stderr) s in
+		 let _ = print_option prefix (Some stderr) s2 in
 		 let l = chrono prefix "Quotienting rules" l in 
 		 Some {rep0 with gathered_intermediate_encoding  = Some cpb ;
                         n_rules = Some n0 ; 
 			n_classes = Some n1},(l,m)))
        and no_smash_rule_system interface prefix pb (l,m) =
-	 let prefix' = add_suffix prefix "no_smash_rule_system"  in
+	 let prefix'  = add_suffix prefix "no_smash_rule_system"  in
 	 match pb with None -> None,(l,m)
 	 | Some rep0 ->
 	     (match rep0.intermediate_encoding with
 	       Some _ -> (pb,(l,m))
 	     | None -> 
-		 (let _ = print_option prefix' (Some stderr)  "Renaming\n"  in
+		 (let _ = print_option prefix (Some stderr)  "Renaming\n"  in
 		 let pb,(l,m),rep = get_first_encoding interface prefix' pb (l,m) in 
 		 match pb with None -> None ,(l,m)
 		 | Some rep0 ->
 		    let cpb,m = CBnG.smash_pb false rep  m in 
-		    let l = chrono prefix' "Renaming " l in
+		    let l = chrono prefix "Renaming " l in
 		    let _ = trace_print "RETURN SMASH_PB" in 
 		    let pb = Some {rep0 with intermediate_encoding  = Some cpb} in 
 		      pb,(l,m)))
@@ -372,7 +373,6 @@ module Pipeline =
 	     with None -> error "line 355"
 	     | Some rep -> pb,log,rep
        and compile (interface:interface) mode prefix rep (l,m) =
-	 let prefix' = add_suffix prefix "compile" in 
 	 let title = 
 	   if mode = Smashed 
 	   then
@@ -382,7 +382,8 @@ module Pipeline =
 	 in
 	 match rep with None -> (None,(l,m))
 	 | Some rep0 -> 
-	     let _ = print_option prefix' (Some stderr)  (title^"\n") in
+	     let prefix' = add_suffix prefix  title in
+	     let _ = print_option prefix (Some stderr) (title^"\n") in 
 	     if mode = Smashed 
 	     then 
 	       match rep0.gathered_boolean_encoding
@@ -401,7 +402,7 @@ module Pipeline =
 		       let pb = {pb with packs = Some pack'} in 
 		       let _ =  set_packs pb in 
 		       let pb,messages = CBnG.fill_pretty_map  pb A.f,messages in 
-		       let l = chrono prefix' title l in 
+		       let l = chrono prefix title l in 
 		       ((Some pb),(l,messages)))
 	     else
 	        match rep0.boolean_encoding
@@ -421,10 +422,10 @@ module Pipeline =
 		       let l = chrono prefix title  l in 
 		       ((Some pb),(l,messages)))
        and get_boolean_encoding interface prefix pb log = 
-	 let prefix' = add_suffix prefix "get_boolean_encoding" in
+	 let _ = add_suffix prefix "get_boolean_encoding" in
 	 match pb.boolean_encoding with 
 	   None -> 
-	     (let pb0',log' = compile interface Unsmashed prefix' (Some pb) log in 
+	     (let pb0',log' = compile interface Unsmashed prefix (Some pb) log in 
 	     match pb0'
 	     with None -> frozen_error "line 410" "Boolean encoding cannot be built" "get_boolean_encoding" (fun () -> raise Exit)
 	     | Some pb' -> (
@@ -433,10 +434,10 @@ module Pipeline =
 		 | None -> frozen_error "line 414" "Boolean encoding cannot be built" "get_boolean_encoding" (fun () -> raise Exit)))
 	 | Some a -> pb,log,a 
        and get_gathered_boolean_encoding interface prefix pb log = 
-	 let prefix' = add_suffix prefix "get_gathered_boolean_encoding"in
+	 let _ = add_suffix prefix "get_gathered_boolean_encoding"in
 	 match pb.gathered_boolean_encoding with 
 	   None -> 
-	     (let pb0',log' = compile interface Smashed prefix' (Some pb) log in 
+	     (let pb0',log' = compile interface Smashed prefix (Some pb) log in 
 	     match pb0'
 	     with None -> frozen_error "line 422" "Boolean encoding cannot be built" "get_gathered_boolean_encoding" (fun () -> raise Exit)
 	     | Some pb' -> (
@@ -445,10 +446,10 @@ module Pipeline =
 		 | None -> frozen_error "line 426" "Boolean encoding cannot be built" "get_gathered_boolean_encoding"  (fun () -> raise Exit)))
 	 | Some a -> pb,log,a 
        and get_intermediate_encoding interface prefix pb log = 
-	 let prefix'=add_suffix prefix "get_intermediate_encoding" in
+	 let _ =add_suffix prefix "get_intermediate_encoding" in
 	 match pb.intermediate_encoding  with 
 	   None -> 
-	     let pb',log' = compile interface Unsmashed prefix' (Some pb) log in 
+	     let pb',log' = compile interface Unsmashed prefix (Some pb) log in 
 	     
 	     (match pb' 
 	     with None -> frozen_error "line 435" "Intermediate encoding cannot be built" "get_intermediate_encoding" (fun () -> raise Exit)
@@ -607,6 +608,7 @@ module Pipeline =
 	 | Some a -> pb,log,a
 
        and parse_line_by_line file prefix rep (l,m) = 
+	 let _ = print_option prefix (Some stderr) "Second compilation (pretty printing)\n" in 
 	 match rep with None -> (None,(l,m))
 	 | Some rep -> 
 	    try ( let txt = 
@@ -670,22 +672,22 @@ module Pipeline =
 	 match pb with
 	   None -> None,(l,m)
 	 | Some pb -> 
-		     match pb.bdd_sub_views,pb.bdd_false,pb.contact_map 
+	     match pb.bdd_sub_views,pb.bdd_false,pb.contact_map 
 	     with None,_,_ | _,_,None | _,None,_ -> 
-	       let a,(l,m)=reachability_analysis prefix (Some pb) (l,m) in
-	       refine_subviews prefix a (l,m)
+	       let a,(l,m)=reachability_analysis prefix' (Some pb) (l,m) in
+	       refine_subviews prefix' a (l,m)
 	   | Some bdd,Some bdd2,Some contact ->
 	            let _ = print_option prefix (Some stderr) "Abstract lenses computation\n" in
 
 		    let rep1 = StringMap.map A.restore_subviews bdd  in 
-	       let sp   = StringMap.map A.restore_subviews bdd2 in
-	       let rep2 = contact in
-	       let rep = rep1,rep2 in
-	       let pack_val = Ite.print_subviews rep1 pb in
-	       let pb = {pb with pack_value = Some pack_val} in
-	       let pb,m = Ite.refine_pb rep pb sp m in
-	       let l = chrono prefix "Absract lenses computation" l in
-	       Some pb,(l,m) 
+		    let sp   = StringMap.map A.restore_subviews bdd2 in
+		    let rep2 = contact in
+		    let rep = rep1,rep2 in
+		    let pack_val = Ite.print_subviews rep1 pb in
+		    let pb = {pb with pack_value = Some pack_val} in
+		    let pb,m = Ite.refine_pb rep pb sp m in
+		    let l = chrono prefix "Absract lenses computation" l in
+		    Some pb,(l,m) 
        and refine_views prefix pb (l,m) = 
 	 let old_mem = !Config_complx.memoisation in 
 	 let _ = Config_complx.memoisation:=false in 
@@ -1132,23 +1134,27 @@ module Pipeline =
 	   a,(chrono prefix "dump_html" c,m))
        and refine_system_to_avoid_polymeres =
 	 (fun file subsystem mode k kin_coef prefix pb (l,m) -> 
-	   (*let prefix'= extend_prefix prefix in *)
+	   let prefix'= add_suffix prefix "Refine_system ro avoid polymer"  in
 	   match pb with None -> [],None,(l,m)
 	   | Some pb -> 
 	       let pb,(l,m),cpb = 
-		 get_intermediate_encoding None prefix pb (l,m) in 
+		 get_intermediate_encoding None prefix'  pb (l,m) in 
+	       let pb,(l,m) = 
+		 reachability_analysis prefix' (Some pb) (l,m) in
+	       match pb with None -> [],None,(l,m)
+	       | Some pb -> 
 	       let interface = cpb.cpb_interface in 
 	       let subsystem,(l,m) = 
 		 match subsystem with 
 		   None -> None,(l,m)
 		 | Some a -> 
-		     match build_pb a prefix  
+		     match build_pb a prefix'  
 		     with None -> None,(l,m)
 		     | Some pb' -> 
 		     let pb',(l,m),boolean_encoding  = 
 		       get_boolean_encoding 
 			 (Some interface) 
-			 prefix
+			 prefix'
 			 pb' 
 			 (l,m) in 
 		     let boolean_encoding = 
@@ -1157,12 +1163,9 @@ module Pipeline =
 		       | Some boolean_encoding -> boolean_encoding in
 		     let rule_system = boolean_encoding.system in 
 		     (Some rule_system),(l,m) 
-	   in  
-(*	   match pb with None -> [],None,(l,m)
-	   | Some pb -> *)
-	       let _ = print_option prefix (Some stderr) "Refine system to avoid polymere" in 
+	       in  
 	       let pb,(l,m),_ = 
-		 get_boolean_encoding (Some interface) prefix pb (l,m)  in  
+		 get_boolean_encoding (Some interface) prefix' pb (l,m)  in  
 	       let pb,rep,(l,m)  = 
 		 Ref.avoid_polymere 
 		   file 

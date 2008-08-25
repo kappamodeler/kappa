@@ -7,7 +7,7 @@ open Error_handler
 module PortMap = Map2.Make (struct type t = string * string * string let compare = compare end)
 module PortSet = Set.Make (struct type t = string*string*string let compare= compare end) 
 
-let debug = false
+let debug = false 
 
 
 let print_port (a,b,c) = 
@@ -92,14 +92,6 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 	(if mode = Warn then [] else [rule_class]),(l,m) 
       else
 	begin
-	  let _ = 
-	    List.iter 
-	      (fun (b,bool) -> 
-		print_b b;
-		print_string (if bool then "T" else "F");
-		print_newline ())
-	      rule.injective_guard in 
-		 
 	  let here = (* Set of agent id of agents in the lhs *)
 	    List.fold_left 
 	      (fun set (b,bool) -> 
@@ -160,9 +152,7 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 	      (fun (portmap,graph2,cons) (b,bool) -> 
 		match b,bool with 
 		  B(a,b,s),false -> 
-		    (print_string "FREE SITE";
-		    print_port (a,b,s);
-		     print_newline ();
+		    (
 		    PortMap.add (a,b,s) None portmap,graph2,cons)
 		| L((a,b,s),(a',b',s')),true ->
 		    PortMap.add (a,b,s) (Some (a',b',s')) 
@@ -300,7 +290,7 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 		    match working_list 
 		    with [] -> port_list,unspecified_ports 
 		    | ((id,ag,site),depth,base,(agent',site'))::q when
-			PortSet.mem (id,ag,site) black_list  -> 
+			PortSet.mem (id,ag,site) black_list  or not (smaller depth k) -> 
 			  explore q black_list 
 			    port_list
 			    unspecified_ports 
@@ -548,24 +538,6 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 			  Not_found -> 
 			    aux q (StringMap.add b (Some c) black)
 		  in aux l StringMap.empty in 
-(*		let print_half_path (init,s,a,c,d,e) = 
-		  print_string "PORT";
-		  print_port init;
-		  print_string "\n s";
-		  print_string s;
-		  print_string "\n PATH";
-		  List.iter 
-		    (fun ((a,b,c),d) -> 
-		      print_string d;
-		      print_string b;
-		      print_string c;
-		      print_string ",")
-		    a;
-		  print_string "\n lENGTH:";
-		  print_int c;
-		  print_string "\n D";
-		  print_string d;
-		  print_port e in *)
 		let cycles = 
 		  if not first_seen then []
 		  else
@@ -577,7 +549,7 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 			      let rec aux2 liste2 rep = 
 				match liste2 with (init',s',a',c',d',e')::q2 ->  
 				  if 
-				    a'= [] 
+				    a' = [] 
 				      &&
 				    c+c'>0 
 				      && 
@@ -586,7 +558,8 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 				    compare d d' < 0  
 				      && 
 			  	    s<>s'
-				      && good_cycle a 
+				      && 
+				    good_cycle a 
 				  then 
 
 				    (
@@ -604,47 +577,125 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 				aux2 q  rep 
 			  in aux b  list)
 		    pp [] in 
+		let _ = 
+		  if debug 
+		  then 
+		    begin
+		      print_string "CYCLES : \n";
+		      List.iter 
+			(fun ((l,(a,b,c)),(d,e,f)) -> 
+			  List.iter
+			    (fun ((a,b,c),d) -> 
+			      print_string a;
+			      print_string ".";
+			      print_string b;
+			      print_string ".";
+			      print_string c;
+			      print_string ".";
+			      print_string d;
+			      print_newline ())
+			    l;
+			  print_string a;
+			  print_string ".";
+			  print_string b;
+			  print_string ".";
+			  print_string c;
+			  print_string ".";
+			  print_string d;
+			  print_string ".";
+			  print_string e;
+			  print_string ".";
+			  print_string f)
+			cycles 
+		    end
+		in
 		let sol,nref = (*closing cycles*)
 		  if mode = Warn 
 		  then sol,nref 
 		  else 
 		    List.fold_left 
-		      (fun (sol,nref)  ((a,b),c) ->
-			let inj = 
-			  let rec aux rule (a0,id0,s0) list agmap agfresh = 
-			    match list with [] -> rule
-			    | ((a,id,s),s')::q -> 
-				let rule' = rule in
-				let agmap,agfresh,a'' = if s'="" then agmap,agfresh,let x,_,_ = c in x else new_id id agmap agfresh in 
-				let site = (a0,id0,s0) in 
-				let site' = (a'',id,s) in 
-				let rule' = 
-				  if s<> "" then 
-				    (
-				    (H(a'',id),true)::
-				    (Pb_sig.l(site,site'),true)::
-				    (B(site'),true)::
-				    (B(site),true)::rule) else rule  in 
-				
-				aux rule' (a'',id,s')  q agmap agfresh
-			  in aux rule.injective_guard b (List.rev a) agmap agfresh in
-			let rule = 
-			  {rule with injective_guard = inj ;
-			    labels = 
-			    List.map 
-			      (fun x -> 
-				{x with Pb_sig.r_id = flag^(string_of nref);
-				  Pb_sig.r_simplx = 
-				  {x.Pb_sig.r_simplx with 
-				    Rule.kinetics = x.Pb_sig.r_simplx.Rule.kinetics *. kin_coef}
-				}	
-				  )
-			      rule.labels 
-			  } 
-			in 
-			{rule_class 
-			with rules = [rule]}::sol,succ nref)
-		      (sol,nref) cycles 
+			(fun (sol,nref)  ((a,b),c) ->
+			  let inj,bool = 
+			    let rec aux rule (a0,id0,s0) list agmap agfresh bool = 
+			      match list with [] -> rule,bool 
+			      | ((a,id,s),s')::q -> 
+				  let rule' = rule in
+				  let agmap,agfresh,a'' = 
+				    if s'="" then 
+				      agmap,
+				      agfresh,
+				      let x,_,_ = c in x 
+				    else 
+				      new_id id agmap agfresh in 
+				  let _ = 
+				    if debug 
+				    then 
+				      begin 
+					print_string "CLOSING CYCLE \n";
+					print_string a0;
+					print_string id0;
+					print_string s0;
+					print_string a'';
+					print_string id;
+					print_string s;
+					print_string  ".";
+					print_string s';
+					print_newline ()
+				      end in 
+				  let site = (a0,id0,s0) in 
+				  let site' = (a'',id,s) in 
+				  let rule',agmap,agfresh,bool = 
+				    if s<> "" then 
+				      begin 
+					let site',a'',agmap,agfresh,bool = 
+					  (if 
+					    try 
+					      let _ = 
+						PortMap.find site' graph
+					      in false
+					    with 
+					      _ -> true 
+					  then 
+					    site',a'',agmap,agfresh,true
+					  else
+					  let agmap,agfresh,a'' = 
+					    new_id id agmap agfresh 
+					  in
+					  (a'',id,s),a'',agmap,agfresh,false)
+					in
+					(H(a'',id),true)::
+					(Pb_sig.l(site,site'),true)::
+					(B(site'),true)::
+					(B(site),true)::rule,agmap,agfresh,bool
+				      end
+				    else rule,agmap,agfresh,bool  in 
+				  
+				  aux rule' (a'',id,s')  q agmap agfresh bool
+			    in aux rule.injective_guard b (List.rev a) agmap agfresh true 
+			  in
+			  let rule = 
+			    {rule with injective_guard = inj ;
+			      labels = 
+			      List.map 
+				(fun x -> 
+				  {x with Pb_sig.r_id = flag^(string_of nref);
+				    Pb_sig.r_simplx = 
+				    {x.Pb_sig.r_simplx with 
+				      Rule.kinetics = x.Pb_sig.r_simplx.Rule.kinetics *. kin_coef}
+				  }	
+				    )
+				rule.labels 
+			    }   
+			  in
+			  if bool 
+			  then 
+			    ({rule_class 
+			    with rules = [rule]}::sol,succ nref)
+			  else
+			    sol,nref)
+			
+			(sol,nref) 
+			cycles 
 		in 
 		let sol,nref = (* constraints *) 
 		  if 
@@ -684,34 +735,37 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 	                    let rule = 
 			      match rule_class.rules with [rule] -> rule
 				 | _ -> error 441 in  
-			    let q,nref  = if cyclical then q,nref else 
-			      if 
-				(try let _ = PortMap.find site graph  in false  
-				with _ -> true) 
-				  &&
-				(try not (BMap.find (B(site)) bmap)
-				with _ -> true)
-				  
-			      then 
-			      
-				let rule = 
-				  {rule 
-				  with injective_guard = 
-				    (B(site),false)::rule.injective_guard
-						       ;
-				    labels = 
-				    List.map 
-				      (fun x -> {x with Pb_sig.r_id = flag^(string_of nref)})
-				      rule.labels 
-				  } 
-				in 
-				({rule_class 
-				 with rules = [rule]},agmap,agfresh,
-				 PortMap.add site None graph,
-				 BMap.add (B(site)) false bmap,false
-			           )::q,succ nref  
+			    let q,nref  = 
+			      if cyclical 
+			      then q,nref 
 			      else 
-				q,nref 
+				if 
+				  (try let _ = PortMap.find site graph  in false  
+				  with _ -> true) 
+				    &&
+				  (try not (BMap.find (B(site)) bmap)
+				  with _ -> true)
+				    
+				then 
+				  
+				  let rule = 
+				    {rule 
+				    with injective_guard = 
+				      (B(site),false)::rule.injective_guard
+						       ;
+				      labels = 
+				      List.map 
+					(fun x -> {x with Pb_sig.r_id = flag^(string_of nref)})
+					rule.labels 
+				    } 
+				in 
+				  ({rule_class 
+				   with rules = [rule]},agmap,agfresh,
+				   PortMap.add site None graph,
+				   BMap.add (B(site)) false bmap,false
+			             )::q,succ nref  
+				else 
+				  q,nref 
 			    in
 			    let q,nref  = 
 		      	      if 
@@ -767,7 +821,6 @@ in false
 						  rule.labels 
 					    } 
 					    in
-					  (*let agentset = a''::l0 in*) 
 					    ({rule_class 
 					   with rules = [rule]},
 					     agmap,
@@ -790,69 +843,6 @@ in false
 			      else
 				(q,nref) in (q,nref)
 			      ) ([],nref) base in
-(*		    let free2 site site' nref base  =
-			List.fold_left 
-			  (fun (q,nref) (rule_class,agmap,agfresh,graph,bmap) ->  
-	                    let rule = 
-			      match rule_class.rules with [rule] -> rule
-				 | _ -> error 441 in  
-		
-			    let q,nref  = 
-		      	      if 
-				(try let _ = PortMap.find site graph in false
-				with _ -> true) 
-				  &&
-				(try (*not*) (BMap.find (B(site)) bmap) 
-				with _ -> true)
-				  &&
-				(try let _ = PortMap.find site' graph in false
-				with _ -> true) 
-				  &&
-				(try (*not*) (BMap.find (B(site')) bmap) 
-				with _ -> true)
-			      then 
-				let (a,b,c) = site in 
-				let (a',b',c') = site' in
-				let list = 
-				  try 
-				    String2Map.find (b,c) 
-				      contact_map.link_of_site  
-				  with 
-				    Not_found -> []
-				in
-				if List.exists (fun x -> x=(b',b',c')) list 
-				then 
-				  let rule = 
-				    {rule 
-				    with injective_guard = 
-				      (
-				      (Pb_sig.l(site,site'),true)::
-				      (B(site'),true)::
-				      (B(site),true)::rule.injective_guard)
-					;
-				      labels = 
-				      List.map 
-					(fun x -> {x with Pb_sig.r_id = flag^(string_of nref)})
-					rule.labels 
-				    } 
-				  in
-				  ({rule_class 
-				   with rules = [rule]},
-				   agmap,
-				   agfresh,
-				   PortMap.add 
-				     site'
-				     (Some site) 
-				     (PortMap.add site (Some site') graph),
-				   BMap.add (B(site')) true 
-				     (BMap.add (Pb_sig.l(site,site')) true 
-					(BMap.add (B(site)) true bmap)),false
-				     )::q,succ nref  
-				else
-				  q,nref
-			      else
-				q,nref in q,nref )
-			([],nref) base in *) 
 		    let q,nref  = 
 		      if mode = Warn 
 		      then [],nref 
@@ -918,6 +908,20 @@ let dump_rs chan rs =
 	  sol b)
       A.K.E.V.varset_empty rs in
   let s = A.K.build_kleenean_rule_system rs vars in 
+  let sigma =
+    let map = 
+      (A.K.E.V.fold_vars
+	 (fun v map ->
+	   match A.K.E.V.b_of_var v with H(a',a) -> StringMap.add a' a map
+	   | _ -> map)
+	 vars
+	 StringMap.empty) in
+    (fun x -> 
+      try 
+	StringMap.find x map
+      with
+      Not_found -> x) in 
+
   let s = 
     A.K.print_kleenean_system (fun x->true) 
       (fun x -> 
@@ -930,21 +934,21 @@ let dump_rs chan rs =
   let _ = 
     List.iter 
       (fun (a,b) -> 
-	let flag,kynetic = 
 	  match a with 
 	    [r] -> let rid = r.Pb_sig.r_id in 
 	           let old = name_of_rule r in 
-		   (if string_prefix old rid then rid else old),
-		   kynetic_of_rule r 
-	  | _ -> "",1. in 
-	let _ = print_string "'" in
-	let _ = print_string flag in
-	let _ = print_string "' " in
-	let _ = List.iter print_string (List.rev b) in
-	let _ = print_string " @ " in
-	let _ = print_string (string_of_float kynetic) in
-	let _ = print_newline () in 
-	()) s
+		   let flag = if string_prefix old rid then rid else old in
+		   let kynetic = kynetic_of_rule r in
+		   if r.Pb_sig.r_clone  then () else 
+		   let _ = print_string "'" in
+		   let _ = print_string flag in
+		   let _ = print_string "' " in
+		   let _ = List.iter print_string (List.rev b) in
+		   let _ = print_string " @ " in
+		   let _ = print_string (Printf.sprintf  "%f" kynetic) in
+		   let _ = print_newline () in 
+		   ()
+	  | _ -> error 947 None ) s
   in 
   () 
 
