@@ -852,7 +852,7 @@ let split_subspecies data_structure ode_handler contact_map subspecies =
       
 let is_agent_in_species x s = 
   try
-    (RPathMap.find (build_empty_path x);true)
+    (RPathMap.find (build_empty_path x) s.subspecies_views;true)
   with 
     Not_found -> false
 	
@@ -896,7 +896,7 @@ let merge sp1 sp2 =
     bonds_map = RPathMap.merge sp1.bonds_map sp2.bonds_map
   } 
 
-let apply_blist_with_species ode_handler data_structure rule_id  species blist = 
+let apply_blist_with_species ode_handler data_structure keep_link rule_id  species blist = 
   let _ = 
     if apply_blist_debug 
     then
@@ -994,7 +994,21 @@ let apply_blist_with_species ode_handler data_structure rule_id  species blist =
     try 
       StringBListMap.find hashkey data_structure.blist_to_template 
     with
-      Not_found -> error 861 None 
+      Not_found -> 
+	let _ = print_string x in
+	let _ = print_newline () in 
+	let _ = 
+	  BMap.iter
+	    (fun b bool -> 
+	      print_b b;
+	      if bool 
+	      then 
+		print_string "T\n"
+	      else 
+		print_string "F\n")
+	    bmap in 
+	    
+	       error 861 (Some  "Try to hash unknown view")
   in
   let species = 
     {subspecies 
@@ -1104,4 +1118,9 @@ let get_neighbour species (agent_id,site) agent_type' =
       error 1069 None 
     
 
+
+let add_bond_to_subspecies sp (a,s) (a',s') = 
+  add_bond_to_subspecies sp (build_empty_path a,s) (build_empty_path a',s') 
+
+module FragMap = Map2.Make (struct type t = fragment let compare = compare end) 
 end:Fragments)

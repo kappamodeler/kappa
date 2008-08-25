@@ -375,7 +375,18 @@ let build_species agent_of_view_id subspecies ext =
     ext 
 
 
-let apply_blist_with_species ode_handler views_data_structures rule_id species context_update  = 
+let apply_blist_with_species ode_handler views_data_structures keep_this_link rule_id species context_update  = 
+  let context_update = 
+    List.fold_left
+      (fun list (b,bool) -> 
+	match b,bool  with 
+	  AL((_,b,c),(d,e)),false when  keep_this_link (b,c) (d,e) -> 
+	    ((B(d,d,e),false)::(AL((d,d,e),(b,c)),false)::list)
+	| _ -> list)
+      context_update
+      context_update 
+  in 
+
   begin
     let fadd x b bool map = (* add a boolean attribute for the agent_type x *)
       let old = 
@@ -532,4 +543,8 @@ let is_agent_in_species ag sp =
   with 
     Not_found -> 
       false
+
+let add_bond_to_subspecies x _ _ = x 
+
+module FragMap = Map2.Make (struct type t = fragment let compare = compare end)
 end:Fragments)

@@ -76,7 +76,7 @@ module type Fragments =
 
       val build_species: (views_id -> string) -> views_id Pb_sig.StringMap.t -> ((string*((string*string)*(string*string))list)*views_id) list -> subspecies
 
-      val apply_blist_with_species: ('a,'b,'c,'d,'e,'f,'g)  Views.ode_handler -> 'b Views.view_data_structure -> string -> subspecies -> (Pb_sig.b*bool) list -> subspecies 
+      val apply_blist_with_species: ('a,'b,'c,'d,'e,'f,'g)  Views.ode_handler -> 'b Views.view_data_structure -> ((string*string) -> (string*string) -> bool) -> string -> subspecies -> (Pb_sig.b*bool) list -> subspecies 
 
       val merge:subspecies -> subspecies -> subspecies 
 
@@ -84,4 +84,16 @@ module type Fragments =
       val check_compatibility: 'a Views.view_data_structure -> hash -> subspecies -> hash*bool 
 
       val is_agent_in_species: string -> subspecies -> bool 
+
+      val add_bond_to_subspecies: subspecies -> (agent_id*Pb_sig.name_site) ->  (agent_id * Pb_sig.name_site) -> subspecies 
+
+      module FragMap: 
+	  (sig 
+	    type 'a t 
+	    val is_empty: 'a t -> bool 
+	    val empty: 'a t 
+	    val find: fragment -> 'a t -> 'a
+	    val add: fragment -> 'a -> 'a t -> 'a t 
+	    val fold: (fragment -> 'a -> 'b -> 'b) -> 'a t -> 'b -> 'b
+	  end) 
 end

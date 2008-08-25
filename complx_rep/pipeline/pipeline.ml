@@ -349,7 +349,7 @@ module Pipeline =
 		 match pb with None -> None ,(l,m)
 		 | Some rep0 ->
 		    let cpb,m = CBnG.smash_pb false rep  m in 
-		    let l = chrono prefix "Renaming " l in
+		    let l = chrono prefix "Renaming" l in
 		    let _ = trace_print "RETURN SMASH_PB" in 
 		    let pb = Some {rep0 with intermediate_encoding  = Some cpb} in 
 		      pb,(l,m)))
@@ -1134,7 +1134,8 @@ module Pipeline =
 	   a,(chrono prefix "dump_html" c,m))
        and refine_system_to_avoid_polymeres =
 	 (fun file subsystem mode k kin_coef prefix pb (l,m) -> 
-	   let prefix'= add_suffix prefix "Refine_system ro avoid polymer"  in
+	   let prefix'= add_suffix prefix "Refine_system to avoid polymers"  in
+	   let _ = print_option prefix (Some stderr) "Refine system to avoid polymers\n" in 
 	   match pb with None -> [],None,(l,m)
 	   | Some pb -> 
 	       let pb,(l,m),cpb = 
@@ -1177,6 +1178,7 @@ module Pipeline =
 		   (l,m)  
 	       in  
 	       let _ = Ref.dump (!Config_complx.output_without_polymere) pb (!Config_complx.cycle_depth) in 
+	       let l = chrono prefix "System refinement" l in 
 	       rep,(Some pb),(l,m))
 	   
        and template = 

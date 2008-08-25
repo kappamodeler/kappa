@@ -33,10 +33,13 @@ let dump_line i =
     end
 
 (* Temporary Linking *)
-module F = Fragment
+module Old_F = Fragment 
+module New_F = New_Fragment
 
-type fragment = F.fragment
-type subspecies = F.subspecies 
+module F = Old_F 
+
+(*type fragment = F.fragment
+type subspecies = F.subspecies *)
 let get_denum = F.get_denum 
 let complete_subspecies = F.complete_subspecies 
 let empty_species = F.empty_species 
@@ -60,9 +63,12 @@ let empty_hash = F.empty_hash
 let check_compatibility = F.check_compatibility 
 let is_agent_in_species = F.is_agent_in_species 
 let print_species = F.print_species
+let add_bond_to_subspecies = F.add_bond_to_subspecies 
+module FragmentMap = F.FragMap 
 (* End of temporary linking *)
 
-module FragmentMap = Map2.Make (struct type t = fragment let compare = compare end) 
+
+
 
 type posneg = Creation | Suppression
 
@@ -72,11 +78,11 @@ type update =
 
 type bond = (string*string*string*string)
 
-type subclass = 
+type 'subspecies subclass = 
     {
     bond:bond option;
-    subspecies:subspecies;
-    fragment_extension:subspecies list option ; (* TO DO simplify the hierarchy of list, smash with the next imbrication level in the field subclass of 'a classes *)
+    subspecies:'subspecies;
+    fragment_extension:'subspecies list option ; (* TO DO simplify the hierarchy of list, smash with the next imbrication level in the field subclass of 'a classes *)
     agent_list:string list}
   
 let init_subclass (b,c,d) = 
@@ -86,13 +92,13 @@ let init_subclass (b,c,d) =
    agent_list= d}
 
 
-type 'a classes = 
+type ('a,'b) classes = 
 	{rule:'a rule_guard;
 	agents_id:StringSet.t;
 	guard_as_a_list:(b*bool) list option;
 	guard_as_a_map:bool BMap.t option;
 	roots: StringSet.t option;
-        subclass:subclass list list option ; (* a subclass is 
+        subclass:'b subclass list list option ; (* a subclass is 
 						    a choice (list/an elmt per potential signature of the lens
 						     of compositions (list/an elmt per subcomposant (delimited by dashed edges)
                                                      of choices (list/an elmt per potential completion) *)
@@ -1554,7 +1560,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 								  interface 
 								  q2 
 							      in
-							      (StringMap.add agent_id' tp_i subspecies,extension,pending_bonds')::liste)
+							      (
+							      StringMap.add agent_id' tp_i subspecies,extension,pending_bonds')::liste)
 							    q tp_list in
 							vide liste sol 
 						      end
@@ -1664,9 +1671,28 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 						())
 					      extension in ()
 				      in 
-				      
-					
-				      build_species agent_of_tp_i core extension)
+				      let species = build_species agent_of_tp_i core extension in
+				      let _ =
+					if debug then
+					  print_species species 
+				      in 
+				      let sp = 
+					List.fold_left 
+					  (fun sp ((agent_id,_,site),(agent_id',_,site')) -> 
+					    if is_agent_in_species agent_id sp 
+						&& is_agent_in_species agent_id' sp 
+					    then 
+					    (
+					      add_bond_to_subspecies sp (agent_id,site) (agent_id',site'))
+					    else
+					      sp
+						) 
+					species 
+					  passives  in
+				      let _ = 
+					if debug then
+					  print_species sp
+				      in sp )
 				    extended_list
 				in
 				       
@@ -1685,7 +1711,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					let _ = print_newline () in ()
 				      in
       				      let product = 
-					apply_blist_with_species ode_handler views_data_structures rule_id consumed_species context_update  in 
+					apply_blist_with_species ode_handler views_data_structures keep_this_link rule_id consumed_species context_update  in 
 				      let _ = if debug then 
 					let _ = print_string "PRODUCT \n " in
 					let _ = print_species product in 
@@ -1728,7 +1754,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			    -> 
 			      if bool 
 			      then 
-				(a,a',b,b')::n_b,r_b
+				(a,a',c,b,b',c')::n_b,r_b
 			      else
 				n_b,
 				((a,a')::r_b)
@@ -1765,9 +1791,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				    try 
 				      FragmentMap.find a_frag hash 
 				    with
-				  Not_found -> 
+				      Not_found -> 
 				    empty_hash 
-			      in
+				  in
 				  let (old_hash',bool) = 
 				    check_compatibility 
 				      views_data_structures 
@@ -1776,12 +1802,12 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				  in
 				  if bool 
 				  then 
-				(a,k1,k2)::product_list,
+				    (a,k1,k2)::product_list,
 				    FragmentMap.add a_frag old_hash' hash
 				  else
 				    product_list,hash)
 				(product_list,hash) 
-			    connected_components)
+				connected_components)
 			    ([],FragmentMap.empty) 
 			    product_list 
 			end
@@ -1791,37 +1817,45 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		    let p_list = 
 		      List.fold_left 
 			(fun p_list 
-			    (agent_id,agent_type,agent_id',agent_type') -> 
-			  let a_cand,b_cand,other = 
-			    List.fold_left 
-			      (fun 
-				(a_cand,b_cand,other) 
-				  (c,k1,k2) 
-				-> 
-				  if is_agent_in_species agent_id c
-				  then
-				    (c,k1,k2)::a_cand,
-				    b_cand,
-				    other
-				  else
-				    if is_agent_in_species agent_id' c 
-				    then 
-				      a_cand,
-				      (c,k1,k2)::b_cand,
-				      other
-				    else
-				      a_cand,
-				      b_cand,
-				      (c,k1,k2)::other)
-			      ([],[],[]) p_list in
+			    (agent_id,agent_type,site,agent_id',agent_type',site') -> 
+			      let a_cand,b_cand,other = 
+				List.fold_left 
+				  (fun 
+				    (a_cand,b_cand,other) 
+				      (c,k1,k2) 
+				    -> 
+				      if is_agent_in_species agent_id c
+				      then
+					(
+					(c,k1,k2)::a_cand,
+					b_cand,
+					other)
+				      else
+					if is_agent_in_species agent_id' c 
+					then 
+					  (
+					  a_cand,
+					  (c,k1,k2)::b_cand,
+					  other)
+					else
+					  (
+					  a_cand,
+					  b_cand,
+					  (c,k1,k2)::other))
+				  ([],[],[]) p_list in
 			  List.fold_left 
 			    (fun p_list (ac,ak1,ak2) -> 
 			      (List.fold_left
 				 (fun p_list (bc,bk1,bk2) -> 
-				   (merge ac bc,
+				   (
+				   (
+				   add_bond_to_subspecies 
+				     (merge ac bc) 
+				     (agent_id,site)
+				     (agent_id',site'),
 				    ak1,
 				    ak2@bk2(*,
-				    StringSet.union aag bag*))::p_list)
+				    StringSet.union aag bag*))::p_list))
 				 p_list b_cand))
 				other a_cand)
 			p_list 

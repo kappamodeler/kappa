@@ -212,7 +212,6 @@ let main ()  =
       pb,log in
   let pb,log = methods.dump_dag_refinement_relation (!Config_complx.output_dag_ref_dot) (!Config_complx.output_dag_ref_jpg) prefix pb log in
    let pb,log = methods.dump_maximal_refinement_relation (!Config_complx.output_maximal_ref_dot) (!Config_complx.output_maximal_ref_jpg) prefix pb log in
-   let _,pb,log = methods.export_refinement_relation_maximal_and_automorphism_number prefix pb log in 
    let pb,log = 
     if !Config_complx.do_marshalling
     then methods.marshallize (!Config_complx.output_marshalling) prefix pb log 

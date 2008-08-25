@@ -290,7 +290,7 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 		    match working_list 
 		    with [] -> port_list,unspecified_ports 
 		    | ((id,ag,site),depth,base,(agent',site'))::q when
-			PortSet.mem (id,ag,site) black_list  or not (smaller depth k) -> 
+			PortSet.mem (id,ag,site) black_list  or not (smaller (depth+2) k) -> 
 			  explore q black_list 
 			    port_list
 			    unspecified_ports 
@@ -426,29 +426,31 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 		      [] new_bonds) in
 		 let potential_port = pp2@potential_port in
 		 let _ = 
-		    if debug  then 
-		    let _ = print_string "RULES \n" in 
-		    let _ = print_string "R" in 
-		    let _ = print_string flag in 
-		    let _ = print_newline () in 
-		    let _ = 
-		      BMap.iter 
-			(fun b bool -> 
-			  print_b b ;
-			  print_string (if bool then "T" else "F");
-			  print_newline ())
-			bmap in 
-		    let _ = print_string "PORT LIST \n" in
-		    let _ = 
-		      PortMap.iter 
-			(fun (a,b,c) (k) -> 
-			  print_string a;
-			  print_string ".";
-			  print_string c;
-			  print_string "DEPTH: ";
-			  List.iter print_int k ;
-			  print_newline ())
-			port_list in 
+		    if !Config_complx.trace_rule_iteration  then 
+		      let _ = print_string "RULES \n" in 
+		      let _ = print_string flag in 
+		      let _ = print_newline () in
+		      () in 
+		 let _ = 
+		   if debug then 
+		      let _ = 
+			BMap.iter 
+			  (fun b bool -> 
+			    print_b b ;
+			    print_string (if bool then "T" else "F");
+			    print_newline ())
+			  bmap in 
+		      let _ = print_string "PORT LIST \n" in
+		      let _ = 
+			PortMap.iter 
+			  (fun (a,b,c) (k) -> 
+			    print_string a;
+			    print_string ".";
+			    print_string c;
+			    print_string "DEPTH: ";
+			    List.iter print_int k ;
+			    print_newline ())
+			  port_list in 
 		    
 		    let _ = print_string "UNSPECIFIED PORTS \n" in
 		    

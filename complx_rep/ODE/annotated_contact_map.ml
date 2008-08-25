@@ -427,7 +427,6 @@ let compute_annotated_contact_map_in_compression_mode system cpb =
 		      aux to_visit rep in
 		let aux a b = 
 		  let rep = aux a b in 
-		  let _ = StringSet.iter print_string rep in
 		  rep in 
 		let covering_classes = 
 		  StringMap.fold 
