@@ -11,6 +11,7 @@ open Fragments_sig
 (** Set this boolean to true to dump more debugging information *)
 let trace = false
 let debug = false
+let cannonical_debug = false
 let merge_debug = false
 let map_debug = false 
 let complete_debug = false
@@ -245,7 +246,7 @@ let add_view_to_subspecies subspecies rp view =
 (** compute the cannonical fragment associated with a subspecies *)
 let canonical_fragment_of_subspecies graph  = 
   let _ = 
-    if true
+    if cannonical_debug 
     then 
       begin
 	print_string "START CANONICAL_FRAGMENT\n";
@@ -358,7 +359,7 @@ let canonical_fragment_of_subspecies graph  =
     | [] -> error 105 None 
   in
   let _ = 
-    if debug 
+    if cannonical_debug 
     then 
       print_string "END_CANONICAL\n"
   in
