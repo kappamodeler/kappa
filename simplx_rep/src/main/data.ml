@@ -2,9 +2,10 @@
 
 let version_main = 3
 let version_cpt = 392 (*automorpshims by complx*)
+let version_svn = 2080
 let version_branch = ""
 let arch_type = string_of_int Sys.word_size
-let version = (string_of_int version_main)^"."^(string_of_int version_cpt)^version_branch^"_"^arch_type
+let version = (string_of_int version_main)^"."^(string_of_int version_cpt)^version_branch^"--"^(string_of_int version_svn)^"_"^arch_type
 
 (**<h3>File naming </h3>*)
 

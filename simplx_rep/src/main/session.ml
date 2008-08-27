@@ -271,7 +271,7 @@ let ls_of_simulation rules obs_ind time_map data_map curr_step curr_time =
 				 else IntMap.find t time_map
 			       in
 			       let str = 
-				 Printf.sprintf "%f,%s\n" time
+				 Printf.sprintf "%s,%s\n" (Float_pretty_printing.string_of_float  time)
 				   (String.concat ","
 				      (IntMap.fold (fun _ v cont -> 
 						      (string_of_int (int_of_float v))::cont
@@ -284,12 +284,12 @@ let ls_of_simulation rules obs_ind time_map data_map curr_step curr_time =
   in
   let sim_name = []
   and sim_total_events = [Printf.sprintf "TotalEvents = \"%d\"" curr_step]
-  and sim_total_time = [Printf.sprintf "TotalTime = \"%f\"" curr_time]
-  and sim_init_time = [Printf.sprintf "InitTime = \"%f\"" !init_time]
-  and time_sample = if !time_mode then [Printf.sprintf "TimeSample = \"%f\"" !time_sample] else []
+  and sim_total_time = [Printf.sprintf "TotalTime = \"%s\"" (Float_pretty_printing.string_of_float curr_time)]
+  and sim_init_time = [Printf.sprintf "InitTime = \"%s\"" (Float_pretty_printing.string_of_float !init_time)]
+  and time_sample = if !time_mode then [Printf.sprintf "TimeSample = \"%s\"" (Float_pretty_printing.string_of_float !time_sample)] else []
   and event_sample = if not !time_mode then [Printf.sprintf "EventSample = \"%d\"" !step_sample] else []
   and rescaling = 
-    if !rescale < 1.0 or !rescale > 1.0 then [Printf.sprintf "Rescaling = \"%f\"" !rescale]
+    if !rescale < 1.0 or !rescale > 1.0 then [Printf.sprintf "Rescaling = \"%s\"" (Float_pretty_printing.string_of_float !rescale)]
     else []
   in
   let sim_att = 
@@ -352,7 +352,7 @@ let ls_of_species species curr_time =
 				   ) ls spec_list
 		 ) species LongString.empty
   in
-    (LongString.concat (Printf.sprintf "<FinalState Time=\"%f\">\n" curr_time) LongString.empty,
+    (LongString.concat (Printf.sprintf "<FinalState Time=\"%s\">\n" (Float_pretty_printing.string_of_float curr_time)) LongString.empty,
      ls,
      LongString.concat (Printf.sprintf "</FinalState>") LongString.empty)
   

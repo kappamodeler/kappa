@@ -112,6 +112,7 @@ OBJS = 	./$(COMPLXREP)/tools/exceptions.cmo \
 	./$(COMPLXREP)/tools/error_handler.cmo \
 	./$(COMPLXREP)/tools/memory_usage.cmo \
 	./$(COMPLXREP)/lib/$(KEY)/key.cmo \
+	./$(SIMPLXREP)/src/tools/float_pretty_printing.cmo \
 	./$(SIMPLXREP)/src/tools/error.cmo \
 	./$(SIMPLXREP)/src/html_config/config.cmo \
 	./$(COMPLXREP)/tools/map2.cmo \
