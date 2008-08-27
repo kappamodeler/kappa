@@ -608,10 +608,11 @@ module Pipeline =
 	 | Some a -> pb,log,a
 
        and parse_line_by_line file prefix rep (l,m) = 
-	 let _ = print_option prefix (Some stderr) "Second compilation (pretty printing)\n" in 
 	 match rep with None -> (None,(l,m))
 	 | Some rep -> 
-	    try ( let txt = 
+	     let _ = print_option prefix (Some stderr) "Second compilation (pretty printing)\n" in 
+
+	     try ( let txt = 
 	       let canal = 
 		 (try (open_in file) 
 		 with 

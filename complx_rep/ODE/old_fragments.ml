@@ -81,7 +81,6 @@ let to_views_id_list x = x.fragment
 
 let concat a b = if b = [] then a else a@b
 
-let merge_subspecies sp1 sp2 = sp1@sp2
 
 
 (**If the boolean is true then this function associates a maximal list of compatible fragments to a bond 
@@ -217,7 +216,10 @@ let get_denum bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) =
 		 (fun liste elt_t -> 
 		   List.fold_left  
 		     (fun sol b -> 
-		       (StringMap.merge elt_t (b:'a StringMap.t))::liste)
+		       (match 
+			 (StringMap.unify elt_t (b:'a StringMap.t))
+		       with Some a -> a 
+		       | None -> error 222 None)::liste)
 		     liste sol)
 		 [] 
 		 t) in 

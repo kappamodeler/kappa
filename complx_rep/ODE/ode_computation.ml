@@ -36,7 +36,7 @@ let dump_line i =
 module Old_F = Fragment 
 module New_F = New_Fragment
 
-module F = Old_F 
+module F = New_F 
 
 (*type fragment = F.fragment
 type subspecies = F.subspecies *)

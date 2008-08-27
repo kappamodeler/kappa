@@ -39,6 +39,6 @@ let add_rpath_value a b c map =
   | _ -> None 
 
 (** unify two map between rooted paths and values, if it is possible, return None otherwise*)
-let unify_comp map1 map2 = RPathMap.unify
+(*let unify_comp map1 map2 = RPathMap.unify*)
 
 let build_empty_path x = {root=x;path=[]}

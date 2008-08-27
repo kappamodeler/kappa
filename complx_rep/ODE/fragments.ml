@@ -245,7 +245,7 @@ let add_view_to_subspecies subspecies rp view =
 (** compute the cannonical fragment associated with a subspecies *)
 let canonical_fragment_of_subspecies graph  = 
   let _ = 
-    if debug 
+    if true
     then 
       begin
 	print_string "START CANONICAL_FRAGMENT\n";
@@ -278,7 +278,9 @@ let canonical_fragment_of_subspecies graph  =
 	let rec vide working_list n black_list sol =
 	  match working_list with 
 	    [] -> sol
-	  | (bond,t)::q -> 
+	  | (bond,t)::q ->
+	      print_rpath t;
+	      print_newline ();
 	      try 
 		let _ = RPathMap.find t black_list in
 		vide q n black_list sol 
@@ -311,7 +313,31 @@ let canonical_fragment_of_subspecies graph  =
 		    (try 
 		      RPathMap.find t graph.subspecies_views::sol'.views
 		    with 
-		      Not_found -> error 311 None)} in
+		      Not_found -> 
+			begin
+			  print_string "ERROR 311\n";
+			  RPathMap.iter
+			    (fun rp v -> 
+			      (try
+				(RPathMap.find rp graph.subspecies_views;()) 
+			      with 
+				Not_found -> print_string "!!!ERROR");
+			      print_rpath rp;
+			      print_string ":";
+			      print_int v;
+			      print_string ";";
+			      print_newline ())
+			    graph.subspecies_views;
+			  print_species graph;
+			  print_newline ();
+			  print_rpath t;
+			  print_string ";";
+			  print_newline ();
+			  print_rpath path;
+			  print_string ";";
+			  print_newline ();
+			  error 311 None
+			end)} in
 		vide working_list' (n+1) black_list sol'
 	in
 	let sol = vide [None,path] 0 RPathMap.empty empty_fragment in 
@@ -452,7 +478,7 @@ let shift_subspecies subspecies shift =
       subspecies.subspecies_views 
       subspecies.subspecies_views }
 
-let merge_subspecies sp1 sp2 = 
+let merge sp1 sp2 = 
   let _ = 
     if merge_debug
     then 
@@ -677,7 +703,7 @@ let complete_subspecies (pending_edges,view_of_tp_i,keep_this_link,get_denum) su
 	      (fun sol_list pre_sol -> 
                 let extended_sol = 
 		  (*add_bond_to_subspecies  *)
-		    (merge_subspecies 
+		    (merge
 		       pre_sol 
 		       (shift_subspecies 
 			  extension 
@@ -891,10 +917,7 @@ let check_compatibility data_structure hash subspecies =
   in
   aux hash l
     
-let merge sp1 sp2 = 
-  {subspecies_views = RPathMap.merge sp1.subspecies_views sp2.subspecies_views;
-    bonds_map = RPathMap.merge sp1.bonds_map sp2.bonds_map
-  } 
+
 
 let apply_blist_with_species ode_handler data_structure keep_link rule_id  species blist = 
   let _ = 
