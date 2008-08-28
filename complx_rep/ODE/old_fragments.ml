@@ -9,9 +9,10 @@ open Fragments_sig
 
 (** Set this boolean to true to dump more debugging information *)
 let trace = false 
+let split_trace = false
 
 let error i s = 
-  unsafe_frozen None (Some "fragments.ml") s (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
+  unsafe_frozen None (Some "old_fragments.ml") s (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
 
 
 module Fragment = 
@@ -131,7 +132,10 @@ let get_denum bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) =
 		  StringListMap.find 
 		    [s] 
 		    (StringMap.find a agent_to_int_to_nlist)
-		with Not_found -> error 1135 None 
+		with Not_found -> 
+		  (print_string s;
+		  print_string a;
+		  error 1135 None) 
 	      in
 	      let tp = 
 		List.filter 
@@ -229,16 +233,39 @@ let get_denum bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) =
     sol 
 
 
+let build_map views_data_structure species = 
+  StringMap.fold
+    (fun agent_id view_id (agent_id_to_type,agent_type_to_id) -> 
+	let agent_type = agent_of_tp_i view_id views_data_structure.interface_map  in
+	StringMap.add agent_id agent_type agent_id_to_type,
+	StringMap.add agent_type agent_id agent_type_to_id)
+    species
+    (StringMap.empty,
+     StringMap.empty)
+	  
 
 (** this primitive split a species into a list of maximal connected subspecies *)
 let split_subspecies views_data_structure ode_handler annotated_contact_map subspecies = 
+  let _ = 
+    if split_trace then 
+      begin
+	print_string "SPLIT\n";
+	print_species subspecies 
+      end 
+  in
+  let agent_id_to_type,agent_type_to_id = build_map views_data_structure subspecies in 
+  let agent_id_to_type x = 
+    StringMap.find x agent_id_to_type in 
+  let agent_type_to_id x = 
+    StringMap.find x agent_type_to_id in 
   let tp_set = 
     StringMap.fold 
-      (fun a _ sol -> StringSet.add a sol)
+      (fun a _ sol -> StringSet.add (agent_id_to_type a) sol)
       subspecies 
       StringSet.empty 
   in
   let ag_to_tp = subspecies in 
+  
   let _ = 
     if debug then 
       let _ = print_string "\n SPLIT_TP_LIST \n" in
@@ -265,27 +292,29 @@ let split_subspecies views_data_structure ode_handler annotated_contact_map subs
 	  else
 	    let min = StringSet.min_elt reste in
 	    let reste = StringSet.remove min reste in
+	    let min_id = agent_type_to_id min in 
 	    let image = 
 	      try 
-		StringMap.find min subspecies 
+		StringMap.find min_id subspecies 
 	      with 
 		Not_found -> error 270 None in 
 	    vide 
-	      (StringMap.add min image StringMap.empty) 
+	      (StringMap.add min_id image StringMap.empty) 
 	      (compute_interface_tp_i  image views_data_structure.interface_map ode_handler annotated_contact_map) reste (sol_en_cours::sol)
 	end
     | c::q ->
 	if StringSet.mem c reste 
-	then 
+	then
+	  let c_id = agent_type_to_id c in 
 	  let image = 
 	    try 
-	      StringMap.find c subspecies
+	      StringMap.find c_id subspecies
 	    with 
 	      Not_found -> error 280 None 
 	  in 
 	  
 	  vide 
-	    (StringMap.add c image sol_en_cours) 
+	    (StringMap.add c_id  image sol_en_cours) 
 	    ((compute_interface_tp_i image views_data_structure.interface_map ode_handler annotated_contact_map)@q)
 	    (StringSet.remove c reste)
 	    sol
@@ -301,17 +330,18 @@ let split_subspecies views_data_structure ode_handler annotated_contact_map subs
       []
     else
       let min = StringSet.min_elt reste in
+      let min_id = agent_type_to_id min in 
       let reste = StringSet.remove min reste in
       let image = 
-	try StringMap.find min subspecies 
+	try StringMap.find min_id subspecies 
 	with 
 	  Not_found -> error 305 None 
       in
       vide 
-	(StringMap.add min image StringMap.empty) 
+	(StringMap.add min_id image StringMap.empty) 
 	(compute_interface_tp_i image views_data_structure.interface_map  ode_handler annotated_contact_map) reste [] 
   in 
-  let _ = if debug then 
+  let _ = if split_trace then 
     let _ = print_string "\n SOL \n" in
     let _ = 
       List.iter 
@@ -362,8 +392,7 @@ let plug_views_in_subspecies a x l = StringMap.add a x l
 
 let get_views_from_agent_id views_of_tp_i agent_id agent_type l = 
   try 
-    Some (let a = StringMap.find agent_id l in 
-          a,views_of_tp_i a)
+    Some (let a = StringMap.find agent_id l in a,views_of_tp_i a)
   with 
     Not_found -> None 
 
@@ -377,13 +406,20 @@ let build_species agent_of_view_id subspecies ext =
     ext 
 
 
+
+
 let apply_blist_with_species ode_handler views_data_structures keep_this_link rule_id species context_update  = 
+   let agent_id_to_type,agent_type_to_id = build_map views_data_structures species in 
+  let agent_id_to_type x = 
+    StringMap.find x agent_id_to_type in 
+  let agent_type_to_id x = 
+    StringMap.find x agent_type_to_id in 
   let context_update = 
     List.fold_left
       (fun list (b,bool) -> 
 	match b,bool  with 
 	  AL((_,b,c),(d,e)),false when  keep_this_link (b,c) (d,e) -> 
-	    ((B(d,d,e),false)::(AL((d,d,e),(b,c)),false)::list)
+	    ((B(agent_id_to_type d,d,e),false)::(AL((agent_id_to_type d,d,e),(b,c)),false)::list)
 	| _ -> list)
       context_update
       context_update 
@@ -405,6 +441,7 @@ let apply_blist_with_species ode_handler views_data_structures keep_this_link ru
 	| _ -> old)
 	map  in
     let faddprim x b bool map = (* modifies a boolean attirbute if it is already defined, skip otherwise *)
+      let b = downgrade_b b in 
       let old = 
 	try 
 	  StringMap.find x map 
@@ -500,7 +537,11 @@ let apply_blist_with_species ode_handler views_data_structures keep_this_link ru
       bmap StringMap.empty
   end
 
-let merge  = StringMap.merge
+let merge  = 
+  StringMap.map2 
+    (fun _ a -> a)
+    (fun _ a -> a)
+    (fun _ b c -> if b=c then c else error 517 None)
 
 type hash = string list StringMap.t
 

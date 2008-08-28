@@ -592,8 +592,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
   
 
     let mainprod = Arraymap.create (Const 0)   in   
-  
-
     let activity = 
       List.fold_left  
 	(fun mainprod x -> 
@@ -612,6 +610,15 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	    let _ = print_newline () in () in 
 	  let _ = print_comment print_ODE rule_id in 
 	  let _ = pprint_newline print_ODE  in 
+	  let _ = 
+	    if !Config_complx.trace_rule_iteration 
+	    then 
+	      begin 
+		print_string "Rule: ";
+		print_string rule_id;
+		print_newline ();
+	      end  in 
+		
 	  let control = x.Pb_sig.control in 
 	  let passives = x.Pb_sig.passive_species in 
 	  let specie_of_id y = 
@@ -1266,7 +1273,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					  else
 					    ((AL((a,a,b'),(target_type,target_site)),false)::
 					     context_update),
-					    (target_type,target_type,a,b')::res,solid_half
+					    (target_type,target_site,a,b')::res,solid_half
 				      end
 				    else
 				      context_update,res,solid_half)
@@ -1890,7 +1897,19 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			  match l with 
 			    [i,Mult(Var a,kyn_mod)] -> 
 			      begin 
-			      let d = get_denum_handling_compatibility (a1,a2,a3,a4) in 
+				let _ = 
+				  if debug then 
+				    begin 
+				      print_string a1;
+				      print_string " ";
+				      print_string a2;
+				      print_string " ";
+				      print_string a3;
+				      print_string " ";
+				      print_string a4;
+				      print_newline ();
+				    end in 
+			       let d = get_denum_handling_compatibility (a1,a2,a3,a4) in 
 			      let expr = IntMap.add i (Some (Mult(Var a,kyn_mod))) rate_map in 
 			      let expr = 
 				IntMap.fold 
