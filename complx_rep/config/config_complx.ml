@@ -15,7 +15,7 @@ let time_stamp =
     tm.Unix.tm_mday tm.Unix.tm_mon (tm.Unix.tm_year + 1900) 
     tm.Unix.tm_hour tm.Unix.tm_min tm.Unix.tm_sec
 
-let version = "3.40--2080" 
+let version = "3.40..2080" 
 let date = "2008.08.26"
 let input_marshalling = ref "" 
 let input_file = ref [""] 
