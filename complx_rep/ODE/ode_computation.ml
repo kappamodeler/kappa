@@ -263,17 +263,42 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
       List.map 
 	(fun r -> {r 
 	      with Pb_sig.injective_guard = 
-		List.filter 
-		  (fun x ->
+		List.fold_left
+		  (fun l x  ->
 		    match x with 
 		      H(a,_),_ | 
 		      B(a,_,_),_ | AL((a,_,_),_),_ | M((a,_,_),_),_ -> 
-			not (StringSet.mem a forget_agents)
-		    | L((a,_,_),(b,_,_)),_ -> 
-			not (StringSet.mem a forget_agents) && 
-			not (StringSet.mem b forget_agents)
-		    | _ -> false)
-		  r.Pb_sig.injective_guard
+			if not (StringSet.mem a forget_agents)
+			then x::l
+			else l
+		    | L((aid,atype,asite),(bid,btype,bsite)),bool -> 
+			if not (StringSet.mem aid forget_agents) && 
+			  not (StringSet.mem bid forget_agents)
+			then 
+			  x::l
+			else
+			  if bool then 
+			    let l = 
+			      if not (StringSet.mem aid forget_agents )
+			      then 
+				(AL((aid,atype,asite),(btype,bsite)),true)::l
+			      else
+				l
+			    in
+			    let l = 
+			      if not (StringSet.mem bid forget_agents)
+			      then
+				(AL((bid,btype,bsite),(atype,asite)),true)::l
+			      else
+				l
+			    in
+			    l
+			  else
+			    l
+			      
+		    | _ -> l)
+		      [] r.Pb_sig.injective_guard
+		      
 	      })	
 	rs.Pb_sig.rules } in 
 

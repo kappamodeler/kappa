@@ -495,13 +495,8 @@ let apply_blist_with_species ode_handler views_data_structures keep_this_link ru
 	  try 
 	    StringBListMap.find stringblist views_data_structures.blist_to_template
 	  with Not_found -> (* the view does not exist : this is an error *)
-	    unsafe_frozen 
-	      None 
-	      None 
-	      None 
-	      (Some "line 1827") 
-	      (fun () ->
-		let _ = Printf.fprintf stdout "Rule: %s \n" rule_id in
+	    begin 
+	      	let _ = Printf.fprintf stdout "Rule: %s \n" rule_id in
 		let _ = 
 		  StringMap.iter 
 		    (fun _ a ->  
@@ -531,7 +526,14 @@ let apply_blist_with_species ode_handler views_data_structures keep_this_link ru
 			"%s"
 			(if b then "true" else "false"))
 		    (snd stringblist) in
-		1)
+		unsafe_frozen 
+		  None 
+		  None 
+		  None 
+		  (Some "line 1827") 
+		  (fun () -> raise Exit)
+	    end
+
 	in
 	StringMap.add (StringMap.find x type_to_id) view_id sol))
       bmap StringMap.empty
