@@ -1,6 +1,7 @@
 CLEANUP=rm -f *.cm* *.o *~ *.a
 
 clean:
+	cd automatically_generated ; $(CLEANUP) ; 
 	cd abstract_expr ; $(CLEANUP) ;
 	cd backend ; make -f cleanup ; $(CLEANUP) ;
 	cd compressor ; $(CLEANUP) ;

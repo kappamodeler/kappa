@@ -47,6 +47,7 @@ TKINCLUDES? =
 
 OCAMLINCLUDES= -I $(COMPLXREP)/lib/$(TKREP) \
 		-I $(COMPLXREP)/lib/$(KEY) \
+		-I $(COMPLXREP)/automatically_generated/ \
 		-I $(COMPLXREP)/backend \
 	        -I $(COMPLXREP)/config \
 	        -I $(COMPLXREP)/tools \
@@ -103,12 +104,14 @@ LIBS_CMXFILES = $(LIBS_MLFILES:%.ml=%.cmx)
 #$(LIBSC_CMXA): $(LIBS_CMXFILES) $(LIBS_OFILES)
 #	$(OCAMLOPT) -a -o $@ $+
 
-AUTOGENML=$(SIMPLXREP)/src/bnf/kappa_parse.ml 
+AUTOGENML=$(SIMPLXREP)/src/bnf/kappa_parse.ml $(COMPLXREP)/automatically_generated/svn_number.ml 
+
 MLFULL? = $(COMPLXREP)/lib/$(TKREP)/superargTk.ml 
 
 TKFILE=
 
-OBJS = 	./$(COMPLXREP)/tools/exceptions.cmo \
+OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
+	./$(COMPLXREP)/tools/exceptions.cmo \
 	./$(COMPLXREP)/tools/error_handler.cmo \
 	./$(COMPLXREP)/tools/memory_usage.cmo \
 	./$(COMPLXREP)/lib/$(KEY)/key.cmo \
@@ -276,6 +279,9 @@ toplx: $(MLI) $(CMI) $(LIBSC_CMA) $(LIB_BYTE)
 ./$(SIMPLXREP)/src/bnf/kappa_parse.ml ./$(SIMPLXREP)/src/bnf/kappa_parse.mli : ./$(SIMPLXREP)/src/bnf/kappa_parse.mly
 	ocamlyacc ./$(SIMPLXREP)/src/bnf/kappa_parse.mly 
 
+./$(COMPLXREP)/automatically_generated/svn_number.ml:
+	make grab_svn_version_number
+
 ./$(SIMPLXREP)/src/bnf/kappa_parse.cmo: ./$(SIMPLXREP)/src/bnf/kappa_parse.mli ./$(SIMPLXREP)/src/bnf/kappa_parse.ml
 	$(OCAMLC) $(OCAMLFLAGS) -c ./$(SIMPLXREP)/src/bnf/kappa_parse.mli ./$(SIMPLXREP)/src/bnf/kappa_parse.ml
 
@@ -347,9 +353,16 @@ clean:
 	cd $(INTERPLXREP) ; make -f cleanup
 
 clean_all: clean 
+	rm $(AUTOGENML) 
 	rm -rf bin 
 	rm -f simplx_rep/sim complx_rep/compress complx_rep/compress_light  simplx complx_light bd_influence_map bd_influence_map_light complx *.options* 
 
+grab_svn_version_number:
+	svn up | sed -e "s/\([^0-9]*\)\([0-9]*\)\./let svn_number = \2 +1/" > complx_rep/automatically_generated/svn_number.ml 
+
+commit:
+	make grab_svn_version_number
+	svn commit 
 
 help: 
 	echo Usage: ;\
@@ -364,3 +377,4 @@ help:
 	echo make clean: clean compiled files;\
 	echo make clean_data: clean analysis results;\
 	echo make clean_all: clean all
+

@@ -2,7 +2,7 @@
 
 let version_main = 3
 let version_cpt = 392 (*automorpshims by complx*)
-let version_svn = 2101
+let version_svn = Svn_number.svn_number
 let version_branch = ""
 let arch_type = string_of_int Sys.word_size
 let version = (string_of_int version_main)^"."^(string_of_int version_cpt)^version_branch^".."^(string_of_int version_svn)^"_"^arch_type
