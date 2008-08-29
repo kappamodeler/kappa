@@ -99,6 +99,12 @@ let pprint_var print k i =
       None -> () 
     | Some a -> a.print_string k;a.print_string i
   in
+   let _ = 
+    match print.dump
+    with 
+      None -> ()
+    | Some a -> a.print_string k;a.print_string "(";a.print_string i;a.print_string ")"
+  in
   ()
 
 let pprint_lvar print k i =
@@ -108,6 +114,13 @@ let pprint_lvar print k i =
       None -> () 
     | Some a -> a.print_string k;a.print_string i
   in
+  let _ = 
+    match print.dump
+    with 
+      None -> () 
+    | Some a -> a.print_string k;a.print_string i
+  in
+  
   ()
 
 
@@ -133,7 +146,15 @@ let pprint_ty print =
    match print.matlab with 
      None -> ()
    | Some a -> a.print_string "(y)"
- in ()
+ in 
+ let _ = 
+   match print.dump with 
+     None -> ()
+   | Some a -> a.print_string "(y)"
+ in 
+ ()
+
+   
 
 let pprint_t print = 
  let _ = 
@@ -297,11 +318,17 @@ let print_comment print s =
     | Some a -> a.print_string ("\n %"^s^"\n")
   in () 
 
-let pprint_y print = 
-  match print.matlab with 
-    None -> ()
-  | Some a -> a.print_string "(y)"
-
+let pprint_y print =
+  let _ = 
+    match print.matlab with 
+      None -> ()
+    | Some a -> a.print_string "(y)"
+  in
+  let _ = 
+    match print.dump with 
+      None -> ()
+    | Some a -> a.print_string "(y)"
+  in ()
 
 
 let channel_set print set = 

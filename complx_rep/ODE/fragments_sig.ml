@@ -86,6 +86,8 @@ module type Fragments =
       val is_agent_in_species: string -> subspecies -> bool 
 
       val add_bond_to_subspecies: subspecies -> (agent_id*Pb_sig.name_site) ->  (agent_id * Pb_sig.name_site) -> subspecies 
+      val release_bond_from_subspecies: subspecies -> (rooted_path*site_type)-> (rooted_path*site_type) -> subspecies 
+
 
       module FragMap: 
 	  (sig 

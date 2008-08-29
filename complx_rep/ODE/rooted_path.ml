@@ -42,3 +42,28 @@ let add_rpath_value a b c map =
 (*let unify_comp map1 map2 = RPathMap.unify*)
 
 let build_empty_path x = {root=x;path=[]}
+
+let build_rp_bond_from_half_bond (target_type,target_site,origin_type,origin_site) = 
+  (({root = "";path=[]},origin_site),({root="";path=[(target_type,target_site),(origin_type,origin_site)]},target_site))
+
+
+let print_path p = 
+  let _ = 
+    List.fold_left 
+      (fun bool ((a,s),(a',s')) -> 
+	let _ = if bool then print_string "/" in
+	let _ = print_string a in
+	let _ = print_string "." in
+	let _ = print_string s in
+	let _ = print_string "-" in
+	let _ = print_string s' in
+	let _ = print_string "." in
+	let _ = print_string a' in true)
+      false p in () 
+    
+let print_rpath p = 
+  print_path p.path;
+  (match p.path with 
+    [] -> ()
+  | _ ->   print_string ".");
+  print_string p.root

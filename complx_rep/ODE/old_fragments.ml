@@ -590,6 +590,7 @@ let is_agent_in_species ag sp =
       false
 
 let add_bond_to_subspecies x _ _ = x 
+let release_bond_from_subspecies x _ _ = x
 
 module FragMap = Map2.Make (struct type t = fragment let compare = compare end)
 end:Fragments)

@@ -8,6 +8,7 @@ open Pb_sig
 open Tools 
 open Output_contact_map
 open Ode_print_sig 
+open Rooted_path 
 open Annotated_contact_map 
 open Old_fragments 
 open Fragments 
@@ -64,6 +65,7 @@ let check_compatibility = F.check_compatibility
 let is_agent_in_species = F.is_agent_in_species 
 let print_species = F.print_species
 let add_bond_to_subspecies = F.add_bond_to_subspecies 
+let release_bond = F.release_bond_from_subspecies 
 module FragmentMap = F.FragMap 
 (* End of temporary linking *)
 
@@ -915,11 +917,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	   
 	   Intmap.add i ((k,Mult(coef,expr))::old) prod 
 	 in 
-	 
 	 let _ = dump_line 882 in 
-		  
-
-
 	 let mainprod = 
 	   List.fold_left  
 	     (fun (mainprod,bool) x -> 
@@ -940,6 +938,20 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		       i+1,IntMap.add i cla.rate map)
 		     (1,IntMap.empty) x) in
 		 
+		 let _ = 
+		   if debug
+		   then 
+		     let _ = print_string "ACTIVITY\n" in 
+		     let _ = 
+		       IntMap.iter
+			 (fun i rate -> 
+			   pprint_int print_debug i ;
+			   pprint_string print_debug " ";
+			   (match rate with None -> () | Some rate -> print_expr print_debug true rate);
+			   pprint_newline print_debug)
+			 rate_map in
+		     () in 
+			 
 		 let consume_list,product_list,sl_list  = 
 		   snd (
 		   List.fold_left 
@@ -1268,9 +1280,13 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 							  begin
 							    match (ode_handler.b_of_var v,bool) with 
 							      (AL((d,e,f),(g,h)),true) when d=a && e=a' && f=b' -> 
-								let target_id = 
-								  get_neighbour t (a,b') g in
-								Some(target_id,g,h)
+								if keep_this_link (e,f) (g,h) 
+								then 
+								  let target_id = 
+								    get_neighbour t (a,b') g in
+								  Some((Some target_id),g,h)
+								else
+								  Some(None,g,h)
 							    | _ -> aux2 tail
 							  end
 						      |	[] -> None
@@ -1289,16 +1305,19 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					  if keep_this_link (a,b') (target_type,target_site)
 					  then
 					    begin
-					      ((AL((target_id,target_id,target_site),(a,b')),false))::
-					      (AL((a,a,b'),(target_type,target_site)),false)::
-					      (B(target_id,target_type,target_site),false)::
-					      context_update
-						,res,target_id::solid_half
+					      match target_id with 
+						None -> error 1297
+					      |	Some target_id -> 
+						  ((AL((target_id,target_type,target_site),(a',b')),false))::
+						  (AL((a,a',b'),(target_type,target_site)),false)::
+						  (B(target_id,target_type,target_site),false)::
+						  context_update
+						    ,res,target_id::solid_half
 					    end
 					  else
-					    ((AL((a,a,b'),(target_type,target_site)),false)::
+					    ((AL((a,a',b'),(target_type,target_site)),false)::
 					     context_update),
-					    (target_type,target_site,a,b')::res,solid_half
+					    (target_type,target_site,a',b')::res,solid_half
 				      end
 				    else
 				      context_update,res,solid_half)
@@ -1759,8 +1778,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					      (fun x -> StringSet.add (specie_of_id x)) StringSet.empty  x) 
 					   solid_half)*))::p_list),
 				      (List.fold_left 
-					 (fun l (a1,a2,a3,a4) -> 
-					   (consumed_fragment,[i,Mult(Var a,kyn_mod)],(a1,a2,a3,a4))::l)
+					 (fun l (target_type,target_site,
+						 origin_type,origin_site) -> 
+					   (consumed_fragment,[i,Mult(Var a,kyn_mod)],(target_type,target_site,origin_type,origin_site))::l)
 					 sl_list res))
 				    (c_list,p_list,sl_list)
 				    consumed_species_list in
@@ -1777,26 +1797,23 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			    
 			(1,([],[],[])) x) in  
     
-		    let new_binding,removed_binding = 
+		    let new_binding = 
 		      List.fold_left
-			(fun (n_b,r_b) (b,bool) -> 
+			(fun n_b (b,bool) -> 
 			  match b with 
 			    L((a,a',c),(b,b',c')) 
 			    when keep_this_link (a',c) (b',c') 
 			    -> 
 			      if bool 
 			      then 
-				(a,a',c,b,b',c')::n_b,r_b
+				(a,a',c,b,b',c')::n_b
 			      else
-				n_b,
-				((a,a')::r_b)
-			  | _ -> n_b,r_b)
-			([],[]) control.Pb_sig.context_update 
+				n_b
+			  | _ -> n_b
+				)
+			[] 
+			control.Pb_sig.context_update 
 		    in 
-		    let removed_binding = 
-		      List.fold_left 
-			(fun r_b (a,a',b) -> (a,a')::r_b)
-			removed_binding control.Pb_sig.uncontext_update in
 
 
 		    let p_list = 
@@ -1824,7 +1841,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				      FragmentMap.find a_frag hash 
 				    with
 				      Not_found -> 
-				    empty_hash 
+					empty_hash 
 				  in
 				  let (old_hash',bool) = 
 				    check_compatibility 
@@ -1885,121 +1902,121 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				     (merge ac bc) 
 				     (agent_id,site)
 				     (agent_id',site'),
-				    ak1,
-				    ak2@bk2(*,
-				    StringSet.union aag bag*))::p_list))
+				   ak1,
+				   ak2@bk2
+				   )::p_list))
 				 p_list b_cand))
 				other a_cand)
 			p_list 
 			new_binding in 
 		    let sl_list = 
 		      List.filter  
-			(fun 
-			    ((a',l(*[i,Mult(Var a,kyn_mod)]*),(a1,a2,a3,a4)))
-			  -> 
-			    match l with [i,Mult(Var a,kyn_mod)] -> 
-			      let rec aux expr = 
-				match expr with
-				  Plus(expr1,expr2) | Mult(expr1,expr2) -> 
-				    aux expr1 or aux expr2 
-				|	Var x when x=a -> true
-				|	_ -> false 
+			(fun (_,l,_) -> 
+			  match l with [i,Mult(Var a,kyn_mod)] -> 
+			    let rec aux expr = 
+			      match expr with
+				Plus(expr1,expr2) | Mult(expr1,expr2) -> 
+				  aux expr1 or aux expr2 
+			      |	Var x when x=a -> true
+			      |	_ -> false 
 			      in
-			      aux 
-				(try 
-				  (match 
-				    IntMap.find i rate_map
-				  with 
-				    None -> error 1979 
-				  | Some a -> a)
+			    aux 
+			      (try 
+				(match 
+				  IntMap.find i rate_map
+				with 
+				  None -> error 1979 
+				| Some a -> a)
 				with Not_found -> 
 				  error 1982 )
-			    |  _ -> error 1983 )
+			  |  _ -> error 1983 )
 			sl_list in 
+		    let _ = 
+		      if debug
+		      then 
+			print_string "Dealing with half bond breaking\n "
+		    in
 		    let prod = 
 		      List.fold_left
-			(fun prod ((a',l(* [i,Mult(Var a,kyn_mod)]*),(a1,a2,a3,a4))) -> 
+			(fun prod ((a',l,(target_type,target_site,origin_type,origin_site))) -> 
 			  match l with 
 			    [i,Mult(Var a,kyn_mod)] -> 
 			      begin 
+				let rp_target,rp_origin = 
+				  build_rp_bond_from_half_bond 
+				    ((target_type,target_site,
+				      origin_type,origin_site)) in 
+				
+				let d = get_denum_handling_compatibility (target_type,target_site,origin_type,origin_site) in 
+				let d = 
+				  List.map 
+				    (fun x -> release_bond x rp_target rp_origin)
+				    d in 
+				let expr = IntMap.add i (Some (Mult(Var a,kyn_mod))) rate_map in 
+				let expr = 
+				  IntMap.fold 
+				    (fun _ e sol -> 
+				      match e with None -> error 1996
+				      | Some e -> Mult(sol,e))
+				    expr (Const 1) in
+				let expr_denum = simplify_expr (expr_of_denum expr_handler d) in 
 				let _ = 
 				  if debug then 
-				    begin 
-				      print_string a1;
-				      print_string " ";
-				      print_string a2;
-				      print_string " ";
-				      print_string a3;
-				      print_string " ";
-				      print_string a4;
-				      print_newline ();
-				    end in 
-			       let d = get_denum_handling_compatibility (a1,a2,a3,a4) in 
-			      let expr = IntMap.add i (Some (Mult(Var a,kyn_mod))) rate_map in 
-			      let expr = 
-				IntMap.fold 
-				  (fun _ e sol -> 
-				    match e with None -> error 1996
-				    | Some e -> Mult(sol,e))
-				  expr (Const 1) in
-			      let _ = 
-				if debug then 
-				  let _ = pprint_string print_debug a1 in
-				  let _ = pprint_string print_debug a2 in
-				  let _ = pprint_string print_debug a3 in
-				  let _ = pprint_string print_debug a4 in
-			      let _ = pprint_newline print_debug  in 
-			      let _ = print_expr print_debug true  (simplify_expr (expr_of_denum expr_handler d)) in
-			      () in 
-			      let tp_list = 
-				try StringMap.find a1 annotated_contact_map.subviews 
-				with 
-				  Not_found -> 
-				    error 2467 
-			      in
-			      let tp_list = 
-				try 
-				  List.fold_left
-				    (fun list skel -> 
-				      let skel = 
-					StringSet.fold
-					  (fun a b -> a::b)
-					  skel.kept_sites  
-					  [] in
-				(StringListMap.find (List.rev skel) 
-				   (try StringMap.find a1 agent_to_int_to_nlist
-				   with Not_found -> 
-				     error 2481 )
-				   
-				   )@list)
-				    [] tp_list 
-				with Not_found -> 
-				  error 2486 
-			      in 
-			      let tp_list = 
-				List.filter
-				  (fun tp_i -> 
-				    let a = valuation_of_view (view_of_tp_i tp_i) in 
-				    let rec check_compatibility  l = 
-				      match l with 
-					(t,bool)::_ when 
-					  (match ode_handler.b_of_var t with 
-					    AL((x,_,y),(z,t)) -> x=a1 && y=a2 
-					        && z= a3 & t=a4 && bool
-					  |  _ -> false) -> true
-				      | _::q -> check_compatibility q 
-				      |  _ -> false in
-				    check_compatibility a)
-				  tp_list in
-		      	      List.fold_left
-				(fun prod tp_i -> 
-				  let blist = valuation_of_view (view_of_tp_i tp_i) in 
-				  let interface = 
-				    List.fold_left 
-				      (fun list (b,bool)
+				    let _ = print_string target_type in
+				    let _ = print_string target_site in
+				    let _ = print_string origin_type in
+				    let _ = print_string origin_site in
+				    let _ = print_newline () in 
+				    let _ = print_expr print_debug true expr_denum in
+				    () in 
+				let tp_list = 
+				  try StringMap.find target_type annotated_contact_map.subviews 
+				  with 
+				    Not_found -> 
+				      error 2467 
+				in
+				let tp_list = 
+				  try 
+				    List.fold_left
+				      (fun list skel -> 
+					let skel = 
+					  StringSet.fold
+					    (fun a b -> a::b)
+					    skel.kept_sites  
+					    [] in
+					(StringListMap.find (List.rev skel) 
+					   (try StringMap.find target_type  agent_to_int_to_nlist
+					   with Not_found -> 
+					     error 2481 )
+					   
+					   )@list)
+				      [] tp_list 
+				  with Not_found -> 
+				    error 2486 
+				in 
+				let tp_list = 
+				  List.filter
+				    (fun tp_i -> 
+				      let a = valuation_of_view (view_of_tp_i tp_i) in 
+				      let rec check_compatibility  l = 
+					match l with 
+					  (t,bool)::_ when 
+					    (match ode_handler.b_of_var t with 
+					      AL((x,_,y),(z,t)) -> x=target_type && y=target_site && z= origin_type & t=origin_site && bool
+					    |  _ -> false) -> true
+					| _::q -> check_compatibility q 
+					|  _ -> false in
+				      check_compatibility a)
+				    tp_list in
+		      		List.fold_left
+				  (fun prod tp_i -> 
+				    let blist = valuation_of_view (view_of_tp_i tp_i) in 
+				    let interface = 
+				      List.fold_left 
+					(fun list (b,bool)
 					-> 
 					  match ode_handler.b_of_var b,bool with
-					    AL((_,a,s),(a',s')),true -> 
+ 					    AL((_,a,s),(a',s')),true -> 
 					      if keep_this_link (a,s) (a',s') 
 					      then 
 						((a,s),(a',s'))::list
@@ -2008,7 +2025,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					  | _ -> list)
 				      [] blist in
 				  let extended_list = 
-        			    let rec vide l sol =
+        		 	    let rec vide l sol =
 				      match l with [] -> sol
 				      | (extension,pending_bonds)::q -> 
 					  begin
@@ -2051,7 +2068,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				    vide [[],
 					   List.map 
 					     (fun ((agent_type,site),(agent_type',site'))
-						 -> ((agent_type',[]),((agent_type,site),(agent_type',site'))))
+						 -> ((agent_type,[]),((agent_type,site),(agent_type',site'))))
 					     interface] [] in
 				  let c = tp_i in 
 				  let p = 
@@ -2059,31 +2076,39 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				      (fun (b,bool) -> 
 					let x = ode_handler.b_of_var b  in 
 					match ode_handler.b_of_var b with 
-					  AL((_,a,s),(a',s')) when (a=a1 && s=a2 && a'=a3 && s'=a4) (*or (a=a3 && s=a4 && a'=a1 && s'=a2)*) -> x,false
-					| B(_,a,s) when (a=a1 && s = a2) (*or (a=a3 && s=a4)*) -> x,false
+					  AL((_,a,s),(a',s')) when (a=target_type && s=target_site && a'=origin_type && s'=origin_site)  -> x,false
+					| B(_,a,s) when (a=target_type && s = target_site)  -> x,false
 					      
 					| _  -> x,bool) 
 				      blist  in
 				  let p = List.sort compare p in 
 				  let p = 
 				    try 
-				      StringBListMap.find (a1,p) views_data_structures.blist_to_template 
+				      StringBListMap.find (target_type,p) views_data_structures.blist_to_template 
 				    with Not_found -> error 1898 
 				  in
-				  
 				  List.fold_left 
 				    (fun prod context -> 
 				      let conskey = 
 					hash_subspecies 
-					  (build_species agent_of_tp_i
-					    (StringMap.add (agent_of_tp_i c) c StringMap.empty)
-					     context) in 
+					  (release_bond 
+					     (build_species agent_of_tp_i
+						(StringMap.add (agent_of_tp_i c) c StringMap.empty)
+						context)
+					     rp_target
+					     rp_origin
+					     )
+					      in 
 				      let prodkey = 
 					hash_subspecies 
-					  (build_species agent_of_tp_i  
-					     (StringMap.add (agent_of_tp_i p) p StringMap.empty)
-					     context) in
-				      let expr = Mult(Div(Var conskey,expr_of_denum expr_handler d),expr) in 
+					  (release_bond 
+					     (build_species agent_of_tp_i  
+						(StringMap.add (agent_of_tp_i p) p StringMap.empty)
+						context)
+					     rp_target
+					     rp_origin)
+				      in
+				      let expr = Mult(Div(Var conskey,expr_denum),expr) in 
 				      let _ = 
 					if debug then 
 					  begin

@@ -17,6 +17,8 @@ let map_debug = false
 let complete_debug = false
 let split_debug = false
 let apply_blist_debug = false
+let release_debug = false
+let get_denum_debug = false
 
 let error i s = 
   unsafe_frozen None (Some "fragments.ml") s (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
@@ -120,26 +122,7 @@ let iter_bonds f species =
     species.bonds_map 
 
 (** pretty print*)  
-let print_path p = 
-  let _ = 
-    List.fold_left 
-      (fun bool ((a,s),(a',s')) -> 
-	let _ = if bool then print_string "/" in
-	let _ = print_string a in
-	let _ = print_string "." in
-	let _ = print_string s in
-	let _ = print_string "-" in
-	let _ = print_string s' in
-	let _ = print_string "." in
-	let _ = print_string a' in true)
-      false p in () 
-    
-let print_rpath p = 
-  print_path p.path;
-  (match p.path with 
-    [] -> ()
-  | _ ->   print_string ".");
-  print_string p.root
+
 
 let print_species sp = 
   let _ = print_string "SPECIES: \n" in 
@@ -198,6 +181,21 @@ let add_bond_to_subspecies subspecies (rp,s) (rp',s') =
   with bonds_map = bonds_map} 
 
 let release_bond_from_subspecies subspecies (rp,s) (rp',s') = 
+  let _ = 
+    if release_debug 
+    then 
+      begin
+	print_string "RELEASE BOND: \n";
+	print_rpath rp;
+	print_string "\n";
+	print_string s;
+	print_string "\n";
+	print_rpath rp';
+	print_string "\n";
+	print_string s';
+	print_string "\n";
+	print_species subspecies 
+      end in
    let bonds_map = 
     let update a b map = 
       let oldmap = 
@@ -216,7 +214,15 @@ let release_bond_from_subspecies subspecies (rp,s) (rp',s') =
     in
     update rp s 
       (update rp' s'  subspecies.bonds_map) in
-   {subspecies with bonds_map = bonds_map} 
+   let rep =  {subspecies with bonds_map = bonds_map} in
+   let _ = 
+     if release_debug 
+     then 
+       begin
+	 print_string "RELEASE BOND RESULT: \n";
+	 print_species rep
+       end in
+   rep
 
 let fetch_partner subspecies (rp,s) = 
   try 
@@ -229,6 +235,7 @@ let fetch_partner subspecies (rp,s) =
   with 
     Not_found -> None 
       
+
 (** to add a view to a subspecies *)
 let add_view_to_subspecies subspecies rp view = 
   let subspecies = 
@@ -627,7 +634,26 @@ let get_denum bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) =
 	in
 	(Hashtbl.add hash x rep;
 	 rep)
-  in f 
+  in 
+  let f x = 
+    let rep = f x in
+    let _ = 
+      if get_denum_debug 
+      then 
+	let _ = print_string "GET_DENUM\n" in 
+	let (a,b,c,d) = x in
+	let _ = print_string a in
+	let _ = print_string "." in
+	let _ = print_string b in
+	let _ = print_string "|" in
+	let _ = print_string c in
+	let _ = print_string "." in
+	let _ = print_string d in
+	let _ = print_newline () in 
+	let _ = List.iter (fun x -> print_string "SPECIES:";print_species x;print_newline ();print_string "-----\n") rep 
+	in () 
+    in rep
+  in f
 
 
 
