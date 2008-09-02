@@ -313,6 +313,26 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
         
   let _ = print_log "COMPUTE ANNOTATED CONTACT MAP" in
 
+  (****************************)
+  (* WE FETCH THE CONTACT MAP *)
+  (****************************)
+
+  let contact =
+    match pb.Pb_sig.contact_map 
+    with 
+      None -> error 319
+    | Some a -> 
+	begin 
+	  (fun x -> 
+	    try 
+	      String2Map.find x a.Pb_sig.link_of_site
+	    with
+	      Not_found -> 
+		[])
+	end
+  in 
+  
+
   (*******************************************************************)
   (* WE COMPUTE THE ANNOTATED CONTACT MAP FROM THE SIMPLIFIED SYSTEM *)
   (*******************************************************************)
@@ -320,9 +340,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
   let pre_annotated_contact_map = 
     match compression_mode 
       with 
-	Flat -> upgrade (compute_annotated_contact_map_in_flat_mode system cpb ) cpb
-      |	Compressed -> compute_annotated_contact_map_in_compression_mode system cpb 
-      |	Approximated -> upgrade(compute_annotated_contact_map_in_approximated_mode system cpb) cpb
+	Flat -> upgrade (compute_annotated_contact_map_in_flat_mode system cpb contact) cpb
+      |	Compressed -> compute_annotated_contact_map_in_compression_mode system cpb contact 
+      |	Approximated -> upgrade(compute_annotated_contact_map_in_approximated_mode system cpb contact) cpb
     in 
   
 

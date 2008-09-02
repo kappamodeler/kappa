@@ -96,7 +96,7 @@ let compute_annotated_contact_map_init cpb  =
     cpb.Pb_sig.cpb_interface 
   
   
-let compute_annotated_contact_map_in_approximated_mode system cpb  =
+let compute_annotated_contact_map_in_approximated_mode system cpb contact_map  =
   let local_map = compute_annotated_contact_map_init cpb in 
   List.fold_left  
     (fun (sol,passing_sites) rs ->
@@ -222,7 +222,7 @@ let trivial_rule rs =
 	  end
       |	_ -> false 
        
-let compute_annotated_contact_map_in_compression_mode system cpb =
+let compute_annotated_contact_map_in_compression_mode system cpb contact_map =
   let local_map = compute_annotated_contact_map_init cpb in
   let fadd ag x y map = 
     let old1,old2 = 
@@ -457,8 +457,15 @@ let compute_annotated_contact_map_in_compression_mode system cpb =
 	   
 	     let solid_edges = 
 	       List.fold_left 
-		 (fun solid_edges (a,b,c) -> solid_edges)
-		 solid_edges rs.Pb_sig.control.Pb_sig.uncontext_update 
+		 (fun solid_edges (a,b,c) -> 
+		   List.fold_left 
+                     (fun solid_edges (_,d,e) -> 
+		       String22Set.add ((b,c),(d,e))
+			 (String22Set.add ((d,e),(b,c)) solid_edges))
+		     solid_edges 
+		     (contact_map (b,c)))
+		 solid_edges 
+		 rs.Pb_sig.control.Pb_sig.uncontext_update 
 	     in 
 	     solid_edges)
 	  
@@ -467,31 +474,31 @@ let compute_annotated_contact_map_in_compression_mode system cpb =
       (local_map,solid_edges) 
 
 
-let compute_annotated_contact_map_in_flat_mode system cpb  = 
+let compute_annotated_contact_map_in_flat_mode system cpb contact_map = 
   let passing_sites = 
+    List.fold_left 
+      (fun sol (a,b,c) ->
 	List.fold_left 
-	  (fun sol (a,b,c) ->
-	    List.fold_left 
-	      (fun sol x -> String2Set.add (a,x) sol)
-	      sol c)
-	  String2Set.empty
-	  cpb.cpb_interface in 
-      let local_views = 
-	List.fold_left 
-	  (fun sol (a,b,c) -> 
-	    let site_set = 
-	      List.fold_left
-		(fun sol x -> StringSet.add x sol)
-		(List.fold_left
-		   (fun sol x -> StringSet.add x sol)
-		   StringSet.empty 
-		   c)
-		b
-	    in 
-	    StringMap.add a [{kept_sites=site_set}] sol)
-	  StringMap.empty 
-	  cpb.cpb_interface in
-      (local_views,passing_sites) 
+	  (fun sol x -> String2Set.add (a,x) sol)
+	  sol c)
+      String2Set.empty
+      cpb.cpb_interface in 
+  let local_views = 
+    List.fold_left 
+      (fun sol (a,b,c) -> 
+	let site_set = 
+	  List.fold_left
+	    (fun sol x -> StringSet.add x sol)
+	    (List.fold_left
+	       (fun sol x -> StringSet.add x sol)
+	       StringSet.empty 
+	       c)
+	    b
+	in 
+	StringMap.add a [{kept_sites=site_set}] sol)
+      StringMap.empty 
+      cpb.cpb_interface in
+  (local_views,passing_sites) 
 
 let upgrade (x,y) cpb = 
   (x,
