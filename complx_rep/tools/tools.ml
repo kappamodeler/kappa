@@ -14,29 +14,6 @@ let print_newline () = if true (*!Config_complx.trace*) then print_newline () el
 let trace_print s = if !Config_complx.trace then (print_string s;print_newline ()) 
 let trace_newline () = if !Config_complx.trace then print_newline () else ()
 
-let set a b = 
-  match a with None -> ()
-  | Some a -> b a 
-
-let warn_message warn module_n  function_n k  = 
-  (*let _ = set "Complx" set_application *)
-  let _ = set warn set_message in 
-  let _ = set function_n set_function_name in
-  let _ = set module_n set_file_name in
-  let _ = set k set_key in
-  ()
-
-let unsafe warn module_name function_name key x  = 
-   warn_message warn module_name function_name key ;
-   if !Config_complx.unsafe_mode then x else raise Exit 
-
-let frozen_unsafe warn module_name function_name key x = 
-  warn_message warn module_name function_name key ;
-  if !Config_complx.unsafe_mode then x () else raise Exit 
-
-let frozen_exit () = raise Exit 
-    
-let unsafe_frozen = frozen_unsafe  (*WTF!!*)
 
 
 let list_fold f a b = List.fold_left (fun a b -> f b a) b a

@@ -12,6 +12,7 @@ open Var
 open Pb_sig
 open Data_structures
 open Abstract_expr_sig
+open Error_handler 
 
 (** Choice of implementation for hashtables *)
 module H = Hash.HInit

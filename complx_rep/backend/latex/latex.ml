@@ -1,4 +1,15 @@
 open Data_structures 
+open Pb_sig
+open Error_handler 
+
+let error i j = 
+  unsafe_frozen 
+    (Some ("line "^(string_of_int i)))
+    None
+    None
+    None 
+    (fun () -> raise Exit)
+
 let init_sep = "\\firstsep\n"
 let final_sep = "\\finalsep\n"
 let sep = "\\sep\n"
@@ -138,3 +149,102 @@ let store_string,dump_dictionary  =
 let string_of_agent_name x = "\\"^(store_string ("Agents",x,"agent "^x,("\\agent{","}")))
 let string_of_site_name x = "\\"^(store_string ("Sites",x,"site  "^x,("\\site{","}")))
 
+
+let dump_rs_latex chan rs (var_of_b,b_of_var,varset_add,varset_empty,fold_vars,build_kleenean_rule_system,print_kleenean_system)  =
+  let print_string = 
+    match chan with None -> print_string 
+    | Some a -> (fun x -> Printf.fprintf a "%s" x) in
+  let print_newline  = 
+    match chan with None -> print_newline 
+    | Some a -> (fun x -> Printf.fprintf a "\n") in 
+  let rs = 
+    List.rev_map 
+      (fun (a,a',b) -> 
+	(a,
+	 a',
+	 List.rev_map 
+	   (fun (a,b) -> var_of_b a,b) 
+	   b)
+	  ) 
+      rs in
+  let vars = 
+    List.fold_left 
+      (fun sol (_,_,b) -> 
+	List.fold_left 
+	  (fun sol (a,_) -> varset_add a sol)
+	  sol b)
+      varset_empty rs in
+  let s = build_kleenean_rule_system rs vars in 
+  let sigma =
+    let map = 
+      (fold_vars
+	 (fun v map ->
+	   match b_of_var v with H(a',a) -> StringMap.add a' a map
+	   | _ -> map)
+	 vars
+	 StringMap.empty) in
+    (fun x -> 
+      try 
+	StringMap.find x map
+      with
+      Not_found -> x) in 
+
+  let s = 
+    print_kleenean_system 
+      (fun x->true) 
+      (fun x -> 
+	(match x.r_simplx.Rule.flag 
+	with None -> x.r_id 
+	| Some a -> a))
+      (fun x -> 3) (IntSet.empty) 
+      s (Some "()") (fun x->x) (fun x->x) true None in 
+
+  let _ = 
+    List.iter 
+      (fun (a,b) -> 
+	  match a with 
+	    [r] -> let rid = r.Pb_sig.r_id in 
+	           let old = name_of_rule r in 
+		   let flag = rid in 
+		   let kynetic = kynetic_of_rule r in
+		   if r.Pb_sig.r_clone  then () else 
+		   let _ = print_string "'" in
+		   let _ = print_string flag in
+		   let _ = print_string "' " in
+		   let _ = List.iter print_string (List.rev b) in
+		   let _ = print_string " @ " in
+		   let _ = print_string (Printf.sprintf  "%f" kynetic) in
+		   let _ = print_newline () in 
+		   ()
+	  | _ -> error 947 None ) s
+  in 
+  () 
+
+
+let dump file pb  k handler = 
+  let chan = 
+    if file = "" then None
+    else Some (open_out file) 
+  in
+  let _ = 
+    try 
+      begin 
+	match pb.Pb_sig.boolean_encoding with 
+	  Some rs -> 
+            let system = rs.system in
+	    List.iter 
+	      (fun rs -> 
+		let inj = rs.rules in 
+		List.iter 
+		  (fun inj -> 
+		    dump_rs_latex  chan  
+		      [(inj.labels,rs.control,inj.injective_guard)] handler )
+		  inj)
+	      (List.rev system)
+	| _ -> raise Not_found 
+      end
+    with 
+      Not_found -> () 
+  in
+  let _ = match chan with None -> () | Some a -> close_out a in 
+	()

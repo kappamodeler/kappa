@@ -3,6 +3,7 @@
 open Data_structures 
 open Pb_sig 
 open Tools 
+open Error_handler 
 
 let error i y = 
   unsafe_frozen 

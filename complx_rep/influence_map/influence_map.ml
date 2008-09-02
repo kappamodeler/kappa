@@ -7,7 +7,7 @@
 open Tools
 open Data_structures 
 open Pb_sig
-
+open Error_handler 
 
 type causality_map = string*string 
 

@@ -10,7 +10,7 @@ open Tools
 open Tools2 
 open Neighborhood 
 open Contact_map 
-
+open Error_handler 
 
 let error (*i*) x (*t*) y = 
     unsafe

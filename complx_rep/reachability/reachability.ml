@@ -11,6 +11,7 @@ open Data_structures
 open Abstract_expr_sig
 open Pb_sig
 open Contact_map
+open Error_handler 
 
 let smart_lens = true
 

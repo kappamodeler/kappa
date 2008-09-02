@@ -7,7 +7,7 @@
 open Pb_sig 
 open Data_structures 
 open Tools 
-
+open Error_handler 
 
 let error (*i*) x (*t*) y = 
     unsafe

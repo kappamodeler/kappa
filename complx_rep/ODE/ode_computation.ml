@@ -15,6 +15,7 @@ open Fragments
 open Arithmetics 
 open Ode_print 
 open Views 
+open Error_handler 
 
 let explicit = false 
 let debug = false

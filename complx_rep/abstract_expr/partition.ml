@@ -13,6 +13,7 @@ open Pb_sig
 open Data_structures
 open Hash 
 open Abstract_expr_sig
+open Error_handler 
 
 let error i x t y = 
     unsafe

@@ -1,6 +1,7 @@
 open Data_structures 
 open Pb_sig 
 open Tools 
+open Error_handler 
 
 let error i x t y = 
     unsafe

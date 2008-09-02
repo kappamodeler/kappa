@@ -113,42 +113,42 @@ TKFILE=
 
 OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(COMPLXREP)/tools/exceptions.cmo \
-	./$(COMPLXREP)/tools/error_handler.cmo \
 	./$(COMPLXREP)/tools/memory_usage.cmo \
 	./$(COMPLXREP)/lib/$(KEY)/key.cmo \
 	./$(SIMPLXREP)/src/tools/float_pretty_printing.cmo \
 	./$(SIMPLXREP)/src/tools/error.cmo \
 	./$(SIMPLXREP)/src/html_config/config.cmo \
+	./$(COMPLXREP)/tools/tools2.cmo \
 	./$(COMPLXREP)/tools/map2.cmo \
 	./$(COMPLXREP)/tools/map_random.cmo \
 	./$(COMPLXREP)/tools/map_with_sharing.cmo \
-	./$(COMPLXREP)/tools/tools2.cmo \
 	./$(COMPLXREP)/tools/unbounded_array.cmo \
-	./$(SIMPLXREP)/src/data_structures/coord.cmo \
-	./$(SIMPLXREP)/src/data_structures/map_ext.cmo \
+	./$(COMPLXREP)/backend/parse_comment/comment_sig.cmo \
+	./$(COMPLXREP)/frontend/pb_sig.cmo \
+	./$(COMPLXREP)/data_structures/data_structures.cmo \
+	./$(COMPLXREP)/lib/superarg.cmo \
+	./$(COMPLXREP)/lib/$(TKREP)/superargTk.cmo \
 	./$(COMPLXREP)/data_structures/big_array.cmo \
 	./$(SIMPLXREP)/src/data_structures/array_ext.cmo\
 	./$(SIMPLXREP)/src/data_structures/random_tree.cmo \
 	./$(SIMPLXREP)/src/tools/stringlist.cmo \
-	./$(SIMPLXREP)/src/tools/mods2.cmo \
-        ./$(SIMPLXREP)/src/kappa/agent.cmo \
-	./$(SIMPLXREP)/src/kappa/solution.cmo \
+	./$(SIMPLXREP)/src/kappa/agent.cmo \
+	./$(SIMPLXREP)/src/data_structures/coord.cmo \
+	./$(SIMPLXREP)/src/data_structures/map_ext.cmo \
 	./$(SIMPLXREP)/src/data_structures/longString.cmo \
-	./$(SIMPLXREP)/src/kappa/species.cmo \
 	./$(SIMPLXREP)/src/data_structures/val_map.cmo \
+	./$(SIMPLXREP)/src/tools/mods2.cmo \
+	./$(SIMPLXREP)/src/kappa/solution.cmo \
+	./$(SIMPLXREP)/src/kappa/species.cmo \
 	./$(SIMPLXREP)/src/data_structures/implementation_choices.cmo \
 	./$(SIMPLXREP)/src/kappa/rule.cmo \
 	./$(SIMPLXREP)/src/kappa/experiment.cmo \
 	./$(SIMPLXREP)/src/main/data.cmo \
+	./$(COMPLXREP)/config/config_complx.cmo \
+	./$(COMPLXREP)/tools/error_handler.cmo \
 	./$(SIMPLXREP)/src/stories/network.cmo \
 	./$(SIMPLXREP)/src/stories/story_compressor.cmo \
-	./$(COMPLXREP)/backend/parse_comment/comment_sig.cmo \
-	./$(COMPLXREP)/frontend/pb_sig.cmo \
-	./$(COMPLXREP)/data_structures/data_structures.cmo \
 	./$(COMPLXREP)/backend/latex/latex.cmo \
-	./$(COMPLXREP)/lib/superarg.cmo \
-	./$(COMPLXREP)/lib/$(TKREP)/superargTk.cmo \
-	./$(COMPLXREP)/config/config_complx.cmo \
 	./$(COMPLXREP)/tools/tools.cmo \
 	./$(SIMPLXREP)/src/stories/iso.cmo \
 	./$(COMPLXREP)/share/share.cmo \

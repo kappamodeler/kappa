@@ -1,7 +1,7 @@
 open Tools 
 open Data_structures
 open Pb_sig
-
+open Error_handler 
 
 
 let error i s = 

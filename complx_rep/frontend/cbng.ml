@@ -9,6 +9,7 @@ open Data_structures
 open Tools 
 open Config_complx 
 open Cbng_sig
+open Error_handler 
 
 
 let error (*i*) x (*t*) y = 

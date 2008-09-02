@@ -7,6 +7,7 @@ open Views
 open Pb_sig
 open Rooted_path 
 open Fragments_sig
+open Error_handler 
 
 (** Set this boolean to true to dump more debugging information *)
 let trace = false

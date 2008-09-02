@@ -2,6 +2,7 @@ open Tools
 open Tools2
 open Data_structures
 open Pb_sig 
+open Error_handler 
 
 type algo = Exploration | Warshall 
 

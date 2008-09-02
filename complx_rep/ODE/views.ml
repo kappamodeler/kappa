@@ -9,6 +9,7 @@ open Tools
 open Annotated_contact_map 
 open Ode_print_sig 
 open Ode_print 
+open Error_handler 
 
 let explicit = false 
 let debug = false
