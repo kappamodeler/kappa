@@ -173,26 +173,33 @@ let trivial_rule rs =
   let context = control.Pb_sig.context_update in 
   let uncontext = control.Pb_sig.uncontext_update in 
   match context,uncontext with 
-	[],[a,b,c] -> 
-	  begin
+    _,[a,b,c] -> 
+      begin
+	(List.for_all 
+	  (fun rule -> 
 	    List.for_all 
-	      (fun rule -> 
-		List.for_all 
-		  (fun (bb,bool) -> 
-		    match bb,bool  with 
-		      B(x,y,z),true when x=a && y=b && z=c -> true 
-		    | H(_),_ -> true 
-		    | _ -> false
-		    )
-		  rule.Pb_sig.injective_guard
-		)
-	      rs.Pb_sig.rules
-	  end
-      |	_,[] ->
-	  begin
-	  let rec aux context rep = 
-	    match context with 
-	      (AL(_),_)::q | (B(_),_)::q-> aux q rep
+	      (fun (bb,bool) -> 
+		match bb,bool  with 
+		  B(x,y,z),true when x=a && y=b && z=c -> true 
+		| H(_),_ -> true 
+		| _ -> false
+		      )
+	      rule.Pb_sig.injective_guard
+	      )
+	   rs.Pb_sig.rules )
+	  && 
+	(List.for_all 
+	   (fun (bb,bool) -> 
+	     match (bb,bool) with 
+	       B(x,y,z),false when x=a && y=b && z=c -> true 
+	     | _ -> false)
+	   context)
+      end
+  | _,[] ->
+      begin
+	let rec aux context rep = 
+	  match context with 
+	    (AL(_),_)::q | (B(_),_)::q-> aux q rep
 	    | (L((a,b,c),(d,e,f)),true)::q  -> 
 		begin
 		  match rep with 
@@ -454,22 +461,22 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map =
 		      String22Set.add ((a,c),(d,f)) 
 			(String22Set.add ((d,f),(a,c)) solid_edges))
 		  solid_edges passive in
-	   
-	     let solid_edges = 
-	       List.fold_left 
-		 (fun solid_edges (a,b,c) -> 
-		   List.fold_left 
-                     (fun solid_edges (_,d,e) -> 
-		       String22Set.add ((b,c),(d,e))
-			 (String22Set.add ((d,e),(b,c)) solid_edges))
-		     solid_edges 
-		     (contact_map (b,c)))
-		 solid_edges 
-		 rs.Pb_sig.control.Pb_sig.uncontext_update 
-	     in 
-	     solid_edges)
+	      
+	      let solid_edges = 
+		List.fold_left 
+		  (fun solid_edges (a,b,c) -> 
+		    List.fold_left 
+                      (fun solid_edges (_,d,e) -> 
+			String22Set.add ((b,c),(d,e))
+			  (String22Set.add ((d,e),(b,c)) solid_edges))
+		      solid_edges 
+		      (contact_map (b,c)))
+		  solid_edges 
+		  rs.Pb_sig.control.Pb_sig.uncontext_update 
+	      in 
+	      solid_edges)
 	  
-	solid_edges system 
+	  solid_edges system 
       in 
       (local_map,solid_edges) 
 
