@@ -227,7 +227,7 @@ module Part =
 		  ) b) b'}
 	     
 	   
-       let print ae f g h pretty_bool log = 
+       let print handler ae f g h pretty_bool log = 
 	 let cpb = 
 	   match g.intermediate_encoding with 
 	     None -> error "line 232" "Intermediar encoding is missing" "print" (raise Exit)
@@ -242,7 +242,7 @@ module Part =
 	       (print_option empty_prefix log (P.print a) ;
 		let rep = 
 		  try (let rep = 
-		    AE.print b f 
+		    AE.print handler b f 
 		      (abstract (P.part) a marks g) 
 		      h  pretty_bool log  in 
 		       let _ = print_option empty_prefix log "\n\n" in rep) with _ -> [] 

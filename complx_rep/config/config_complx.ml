@@ -142,6 +142,8 @@ let build_relationships_among_species = ref false
 let empty_interface = ref "(Any)" (*to be printed when we have no information at all about the sites of an agent *)
 let skip_a_specie   = ref ""      (*to be printed when an agent can be fully abstracted *)
 
+let output_latex_sty = ref ""
+let output_ODE_obs_latex = ref ""
 let output_ODE_covering = ref ""
 let output_ODE_contact = ref ""
 let output_ODE_mathematica = ref ""
@@ -331,6 +333,8 @@ let options = List.rev
 (*2_Output*)
 
 									"--output-scheme",MultiExt [
+"--output-latex-sty","_plx.sty";
+"--output-ODE-obs-latex","_plx_ODE_obs.tex";
 "--output-ODE-contact","_plx_ODE_contact.dot";
 "--output-ODE-mathematica","_plx_ODE_system.nb";
 "--output-ODE-matlab","_plx_ODE_system.m";
@@ -418,7 +422,14 @@ let options = List.rev
   String output_ODE_matlab,
   "write the ODE system in a matlab file",
   ["2_Output'";"ODE"],Normal;
-
+"--output-ODE-obs-latex",
+  String output_ODE_obs_latex,
+  "write the observable in latex mode",
+  ["2_Output'";"ODE";"LATEX"],Normal;
+"--output-latex-sty",
+  String output_latex_sty,
+  "write the style file for a model",
+  ["2_Output'";"LATEX"],Normal;
 "--output-ODE-alphabet",
   String output_ODE_alphabet,
   "write the ODE alphabet",

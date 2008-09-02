@@ -335,7 +335,7 @@ module Iterateur=
       let print_sb sb pb (log:out_channel option) = 
 	StringMap.fold  (fun a b sol -> 
 	  print_option empty_prefix log ("\n AGENT "^a^"\n\n");
-	  let rep = AE.print b a pb tuple_known  (Some "()") log in 
+	  let rep = AE.print string_txt b a pb tuple_known  (Some "()") log in 
 	  (a,rep)::sol
 	    ) sb []
 	  
@@ -540,7 +540,7 @@ module Iterateur=
 	     (fun k ae sol -> 
 	       let _ = print "AGENT: " in 
 	       let _ = print (k^"\n\n") in 
-	       let rep = AE.print_reachable_states (AE.reachable_states_of_abstract_expr  ae)  (fun k -> k) pb (None)  output in
+	       let rep = AE.print_reachable_states string_txt (AE.reachable_states_of_abstract_expr  ae)  (fun k -> k) pb (None)  output in
 	       let _ = print "\n" in 
 	       (k,rep)::sol)
 	     rep [] in 

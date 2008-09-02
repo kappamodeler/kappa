@@ -100,11 +100,11 @@ sig
   val reachable_states_of_abstract_expr: abstract_expr -> reachable_states
   val summarize_abstract_expr: abstract_expr -> (string*reachable_states) list
   val reachable_states_of_valuation_list: K.E.boolean_valuation list -> K.E.V.varset -> reachable_states
-  val print_reachable_states: reachable_states -> (string ->string)  -> reachable_states  pb -> string option ->   out_channel option -> string list list
-  val print_reachable_states2: reachable_states -> (string ->string)  -> reachable_states  pb -> string option -> (((string * string) * (string*string)),int) Hashtbl.t * int ref ->   out_channel option -> string list list
+  val print_reachable_states: string_handler -> reachable_states -> (string ->string)  -> reachable_states  pb -> string option ->   out_channel option -> string list list
+  val print_reachable_states2: string_handler -> reachable_states -> (string ->string)  -> reachable_states  pb -> string option -> (((string * string) * (string*string)),int) Hashtbl.t * int ref * ((string*string) -> (string*string) -> bool)->   out_channel option -> string list list
 
   val var_of_expr: abstract_expr -> K.E.V.varset
-  val print: abstract_expr ->  string   -> reachable_states pb  ->  pretty_fun ->  string option  ->  out_channel option  -> (string list * string  list list ) list
+  val print: string_handler -> abstract_expr ->  string   -> reachable_states pb  ->  pretty_fun ->  string option  ->  out_channel option  -> (string list * string  list list ) list
   val print_bdd: abstract_expr -> unit
   val fnd_of_bdd: abstract_expr -> (K.E.V.var*bool) list list 
   val expr_of_abstract_expr: abstract_expr -> K.E.expr

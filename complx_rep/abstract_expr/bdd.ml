@@ -628,13 +628,13 @@ module BddBool =
 	       (k,map,h) in 
 	     new_sol::sol) fnd [])
 
-      let print_export_ae exp print_any log = 
+      let print_export_ae string_handler exp print_any log = 
 	[[],
 	List.fold_left 
 	  (fun sol (k,(bool,map),h) -> 
 	    if (not bool) then sol
 	    else 
-	      let a,b,c = print_pretty k (fun _ -> true) 
+	      let a,b,c = print_pretty string_handler k (fun _ -> true) 
 			    ((StringMap.add k map StringMap.empty),1) 
 			    h 
 		  print_any "" (fun x -> x) (fun x -> x) None log 
@@ -645,9 +645,9 @@ module BddBool =
 	      ((List.rev b)::sol)) []
 	  exp]
 	  
-      let print a (k:string) pb h  print_any log = print_export_ae (export_ae a k pb h) print_any  log
+      let print string_handler a (k:string) pb h  print_any log = print_export_ae string_handler (export_ae a k pb h) print_any  log
 	  
-      let export_reachable_states access specie_of_id  pb = 
+      let export_reachable_states access specie_of_id pb = 
 	(if (not (sanity_check access)) then (print_string "EXPORT";raise Exit));
 	let map = pb.pretty_map in 
 
@@ -737,79 +737,94 @@ module BddBool =
 	  list_fold 
             (fun fnd l ->
 	       let newsol = 
-		 (list_fold (fun (var,bool) (hb,(sol,n)) ->
-			       let b = K.E.V.b_of_var var in
-				 try (match b with
-					  Connected _ | Forb _ | Dis _ -> hb,(sol,n)
-             				| H (a,_) -> 
-					    if bool then hb,(sol,n)
-					    else StringSet.add a hb,(sol,n)
-					| B(a,_,b) -> hb,
-				      let spec = try (StringMap.find a sol) 
-				      with Not_found -> (StringMap.find (specie_of_id a) map) in
-					StringMap.add 
-					  a
-					  (StringMap.add b {(StringMap.find b spec) with is_bound = Init bool} spec) sol,n 
-					| L((a,_,a'),(b,_,b')) -> hb,
-				      let f a a' b b' sol = 
-					let spec = 
-					  try (StringMap.find a sol) 
-					  with Not_found -> (StringMap.find (specie_of_id a) map) in
-					  StringMap.add 
-			a
-					    (StringMap.add a' 
-					       (let tuple = StringMap.find a' spec in
-						  if bool then 
-						    {tuple with link = Init (bound_of_number n)} 
-						  else
-						    match tuple.impossible_links with 
-							Init t -> {tuple with impossible_links = Init ((b,b')::t)}
-						      | _ -> {tuple with impossible_links = Init [b,b']}
-					       ) spec)
-					    sol in 
-				      let sol = f a a' b b' (f b b' a a' sol) in 
-					sol,(if bool then (n+1) else n)
-					|  M((a,_,a'),c) -> hb,
-				      let spec = try (StringMap.find a sol)
-				      with Not_found -> (StringMap.find (specie_of_id a) map) in 
-					StringMap.add 
-					  a 
-					  (StringMap.add a'
-					     (let tuple = StringMap.find a' spec in 
-						if bool
+		 (list_fold 
+		    (fun (var,bool) (hb,(sol,n)) ->
+		      let b = K.E.V.b_of_var var in
+		      try 
+			(match b with
+			  Connected _ | Forb _ | Dis _ -> hb,(sol,n)
+             		| H (a,_) -> 
+			    if bool then hb,(sol,n)
+			    else StringSet.add a hb,(sol,n)
+			| B(a,_,b) -> hb,
+			    let spec = 
+			      try (StringMap.find a sol) 
+			      with Not_found -> 
+				(StringMap.find (specie_of_id a) map) in
+			    StringMap.add 
+			      a
+			      (StringMap.add b 
+				 {(StringMap.find b spec) 
+				 with is_bound = Init bool} 
+				 spec) 
+			      sol,n 
+			| L((a,_,a'),(b,_,b')) -> hb,
+			    let f a a' b b' sol = 
+			      let spec = 
+				try (StringMap.find a sol) 
+				with Not_found -> (StringMap.find (specie_of_id a) map) in
+			      StringMap.add 
+				a
+				(StringMap.add a' 
+				   (let tuple = StringMap.find a' spec in
+				   if bool then 
+				     {tuple with link = Init (bound_of_number n)} 
+				   else
+				     match tuple.impossible_links with 
+				       Init t -> {tuple with impossible_links = Init ((b,b')::t)}
+				     | _ -> {tuple with impossible_links = Init [b,b']}
+					   ) spec)
+				sol in 
+			    let sol = f a a' b b' (f b b' a a' sol) in 
+			    sol,(if bool then (n+1) else n)
+			|  M((a,_,a'),c) -> hb,
+			    let spec = 
+			      try (StringMap.find a sol)
+			      with Not_found -> (StringMap.find (specie_of_id a) map) in 
+			    StringMap.add 
+			      a 
+			      (StringMap.add a'
+				 (let tuple = StringMap.find a' spec in 
+				 if bool
 						then 
-						  {tuple with mark = Init(c)}
-						    
-						else 
-						  {tuple with impossible_marks = 
-						      match tuple.impossible_marks with 
-							  Init(t) -> Init (c::t)
-							| _ -> Init [c]})
-					     spec) sol,n
-					    
-					|  AL((a,_,a'),(b,b')) -> hb,
-				      let spec = try (StringMap.find a sol) 
-				      with Not_found -> (StringMap.find (specie_of_id a) map) in
-					StringMap.add 
+				   {tuple with mark = Init(c)}
+				     
+				 else 
+				   {tuple with impossible_marks = 
+				     match tuple.impossible_marks with 
+				       Init(t) -> Init (c::t)
+				     | _ -> Init [c]})
+				 spec) sol,n
+			      
+			|  AL((a,_,a'),(b,b')) -> hb,
+			    let spec = 
+			      try (StringMap.find a sol) 
+			      with Not_found -> (StringMap.find (specie_of_id a) map) in
+			    StringMap.add 
 					  a
-					  (StringMap.add a' 
-					     (let tuple = StringMap.find a' spec in
-						if bool 
-						then {tuple with link = Init(b,b')}
-						else 
-						  match tuple.impossible_links  with 
-						      Init (t) -> {tuple with impossible_links = Init ((b,b')::t)}
+			      (StringMap.add a' 
+				 (let tuple = StringMap.find a' spec in
+				 if bool 
+				 then {tuple with link = Init(b,b')}
+				 else 
+				   match tuple.impossible_links  with 
+				     Init (t) -> {tuple with impossible_links = Init ((b,b')::t)}
 						    | Any -> {tuple with impossible_links = Init [b,b']}
 						    | _ -> tuple)
-					     spec) 
-					  sol,n) 
-				 with Not_found -> error "line 817"  ("NotFOUND:"^(string_of_b b)) "Export_reachable_states2" (hb,(sol,n)))
+				 spec) 
+			      sol,n) 
+		      with Not_found -> 
+			begin 
+			  print_string "Not found ";
+			  print_string (string_of_b b);
+			  error "line 817"  ("NotFOUND:"^(string_of_b b)) "Export_reachable_states2" (hb,(sol,n))
+			end)
 		    
 		    fnd (StringSet.empty,(StringMap.empty,1))) in 
-	    (newsol::l))
+	       (newsol::l))
 	  fnd []
 	  
-      let print_export_reachable_states exp print_any log  = 
+      let print_export_reachable_states string_handler exp print_any log  = 
 	List.fold_left 
 	  (fun sol (s,map) -> 
             let _,string,_ = 
@@ -817,7 +832,7 @@ module BddBool =
 		if StringSet.mem a s then (bool,l,n)  
 		else 
 		  let a,b,c = 
-		    print_pretty 
+		    print_pretty string_handler 
 		      a (fun _ -> true)
 		      map 
 		    tuple_known
@@ -833,7 +848,7 @@ module BddBool =
 	    if rep = [] then sol else rep::sol)
 	  [] exp
 
-   let print_export_reachable_states2 exp print_any hash log  = 
+   let print_export_reachable_states2 string_handler exp print_any hash log  = 
      snd (List.fold_left 
 	       (fun (bool1,sol) (s,map) -> 
 	 	let _ = 
@@ -847,6 +862,7 @@ module BddBool =
 		       
 		       let a,b,c = 
 			 print_pretty 
+			   string_handler 
 			   a (fun _ -> true)
 			   map 
 			   tuple_data
@@ -867,11 +883,11 @@ module BddBool =
 	    else true,(rep::sol))
 	       (false,[]) exp)
 
-      let print_reachable_states (access:reachable_states) specie_of_id  pb b  = 
-	print_export_reachable_states (export_reachable_states access specie_of_id  pb) b 
+      let print_reachable_states string_handler (access:reachable_states) specie_of_id  pb b  = 
+	print_export_reachable_states string_handler (export_reachable_states access specie_of_id  pb) b 
 	  
-      let print_reachable_states2 (access:reachable_states) specie_of_id  pb b  = 
-	print_export_reachable_states2 (export_reachable_states2 access specie_of_id  pb) b
+      let print_reachable_states2 string_handler (access:reachable_states) specie_of_id  pb b  = 
+	print_export_reachable_states2 string_handler (export_reachable_states2 access specie_of_id  pb) b
       let abstract_system mode  s access vars dep messages = 
 	let g = match mode with Isolated -> bdd_false  | _ -> guard s in 
 	K.E.V.fold_vars 

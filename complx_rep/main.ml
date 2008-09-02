@@ -160,7 +160,7 @@ let main ()  =
   
   let _,log = 
     if !Config_complx.do_ODE then 
-      methods.template (!Config_complx.output_ODE_contact) (!Config_complx.output_ODE_covering) "" (!Config_complx.output_ODE_matlab)  (!Config_complx.output_ODE_mathematica) "" (!Config_complx.output_ODE_alphabet) (!Config_complx.output_ODE_obs)   prefix pb log 
+      methods.template (!Config_complx.output_ODE_contact) (!Config_complx.output_ODE_covering) "" (!Config_complx.output_ODE_matlab)  (!Config_complx.output_ODE_mathematica) "" (!Config_complx.output_ODE_alphabet) (!Config_complx.output_ODE_obs) (!Config_complx.output_ODE_obs_latex)  prefix pb log 
     else 
       None,log in 
   let _,_,log = 
@@ -217,11 +217,14 @@ let main ()  =
     then methods.marshallize (!Config_complx.output_marshalling) prefix pb log 
     else pb,log in 
  
-   
+   let _ = 
+     methods.dump_latex_dictionary (!Config_complx.output_latex_sty) prefix pb log 
+   in 
   let pb,log  = 
     if !Config_complx.do_XML_session
     then methods.dump_session  (!Config_complx.output_xml) prefix pb  log 
     else pb,log in 
+  
   let pb,log  = 
     if !Config_complx.do_HTML_session
     then 

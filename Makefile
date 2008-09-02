@@ -47,6 +47,7 @@ TKINCLUDES? =
 
 OCAMLINCLUDES= -I $(COMPLXREP)/lib/$(TKREP) \
 		-I $(COMPLXREP)/lib/$(KEY) \
+		-I $(COMPLXREP)/backend/latex \
 		-I $(COMPLXREP)/automatically_generated/ \
 		-I $(COMPLXREP)/backend \
 	        -I $(COMPLXREP)/config \
@@ -144,6 +145,7 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(COMPLXREP)/backend/parse_comment/comment_sig.cmo \
 	./$(COMPLXREP)/frontend/pb_sig.cmo \
 	./$(COMPLXREP)/data_structures/data_structures.cmo \
+	./$(COMPLXREP)/backend/latex/latex.cmo \
 	./$(COMPLXREP)/lib/superarg.cmo \
 	./$(COMPLXREP)/lib/$(TKREP)/superargTk.cmo \
 	./$(COMPLXREP)/config/config_complx.cmo \
@@ -377,5 +379,4 @@ help:
 	echo make commit: update config file with the svn number before doing a commit 
 	echo make clean: clean compiled files;\
 	echo make clean_data: clean analysis results;\
-	echo make clean_all: clean all
-	
+	echo make clean_all: clean all	

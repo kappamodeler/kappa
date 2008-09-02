@@ -521,12 +521,19 @@ and print_atom print  bool x =
 	  print.print_newline () 
     in 
      let _ = 
-      match print.kappa  with 
-	None -> ()
-      |	Some print -> 
-	  print.print_string "%obs:";
-	  print_sb expr pb print.chan;
-	  print.print_newline () 
-    in 
+       match print.kappa  with 
+	 None -> ()
+       |	Some print -> 
+	   print.print_string "%obs:";
+	   print_sb expr pb print.chan;
+	   print.print_newline () 
+     in 
+     let _ = 
+       match print.latex  with 
+	 None -> ()
+       | Some print -> 
+	   print_sb expr pb print.chan;
+     in 
+     
      ( ) 
 

@@ -138,10 +138,10 @@ let print_log s =
 
 
 
-let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matlab file_ODE_mathematica file_ODE_txt  file_alphabet file_obs ode_handler output_mode prefix log pb pb_boolean_encoding subviews  compression_mode (l,m) = 
+let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matlab file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex ode_handler output_mode prefix log pb pb_boolean_encoding subviews  compression_mode (l,m) = 
   
 
-  let good_mode a b = b=MATHEMATICA or b=MATLAB in 
+  let good_mode a b = b=MATHEMATICA or b=MATLAB or b=LATEX in 
   let f mode file = 
     if good_mode output_mode mode
     then
@@ -162,9 +162,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
  
   let print_matlab = f MATLAB file_ODE_matlab in
   let print_latex = f LATEX file_ODE_latex in
+  let print_latex_obs = f LATEX file_obs_latex in 
   let print_mathematica = f MATHEMATICA file_ODE_mathematica in 
   let print_txt = f MATHEMATICA file_alphabet  in 
   let print_kappa = f MATHEMATICA file_obs in 
+
   
   let prefix_output_file = 
     let a,_ = compute_prefix file_ODE_matlab in 
@@ -182,7 +184,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
      txt = None ;
      kappa = None ;
      mathematica = print_mathematica;
-     latex = print_latex ;
+     latex = None;
      matlab = print_matlab}
   in
 
@@ -213,6 +215,16 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
       txt = print_txt  ;
       matlab = None} in 
      
+  let print_obs_latex = 
+    { dump = None;
+      kappa = None; 
+      mathematica = None;
+      latex = print_latex_obs;
+      txt = None;
+      matlab = None}
+  in
+ 
+ 
   let _ = pprint_ODE_head print_ODE in 
 
   let is_access = 
@@ -504,10 +516,25 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		      in
 		  expr)::list)) (!map) [] in
 	  let l = List.sort (fun (a,b) (c,d) -> compare a c) l in
-	  let _ = List.iter 
-	      (fun (n,expr) -> 
-		let _ = pprint_obs print (print_sb ode_handler)   n expr pb in () )
-	      l 
+	  let _ = pprint_string print_obs_latex (Latex.init_sep) in
+	  let bool = 
+	    List.fold_left
+	      (fun bool (n,expr) -> 
+		let _ = pprint_obs print (print_sb ode_handler) n expr pb in 
+		let _ = 
+		  if bool 
+		  then pprint_string print_obs_latex (Latex.sep) in 
+		let _ = 
+		  pprint_obs 
+		    print_obs_latex 
+		    (print_sb_latex 
+		       (fun x y -> keep_this_link x y annotated_contact_map)
+		       ode_handler) 
+		    n expr pb in  true )
+	      false  l 
+	  in 
+	  let _ = if bool then pprint_string print_obs_latex Latex.final_sep 
+	      
       in
 	  () in dump 
       in
@@ -967,7 +994,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			 (fun i rate -> 
 			   pprint_int print_debug i ;
 			   pprint_string print_debug " ";
-			   (match rate with None -> () | Some rate -> print_expr print_debug true rate);
+			   (match rate with None -> () 
+			   | Some rate -> print_expr print_debug true rate);
 			   pprint_newline print_debug)
 			 rate_map in
 		     () in 
@@ -2467,7 +2495,7 @@ init
       List.fold_left
 	(fun set x -> channel_set x set)
 	CSet.empty
-	[print_ODE;print_obs;print_debug] in 
+	[print_ODE;print_obs;print_debug;print_obs_latex] in 
     let chanset = 
       CSet.remove stdout chanset in 
     let _ = CSet.iter  close_out chanset in

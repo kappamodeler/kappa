@@ -75,7 +75,7 @@ module Compressor =
       let parse mode pb  messages (clock,counter) is_access = 
 	let print_expr expr = 
 	  try 
-	    A.print_reachable_states expr (fun x->x) pb (Some "()") (Some stdout)  with _ -> []  in 
+	    A.print_reachable_states string_txt expr (fun x->x) pb (Some "()") (Some stdout)  with _ -> []  in 
 	let cpb = 
 	  match mode with 
 	    Full -> 
@@ -625,10 +625,12 @@ module Compressor =
 			 begin
 			   print_string "REACHABLE STATES:";
 			   print_newline ();
-			   let _ = A.print_reachable_states  access 
-			     sp_of_id 
-			     pb 
-			     (Some "()") (Some stdout) in 
+			   let _ = A.print_reachable_states  
+			       string_txt 
+			       access 
+			       sp_of_id 
+			       pb 
+			       (Some "()") (Some stdout) in 
 			   print_newline () 
 			 end);
 		       let int_of_id = 

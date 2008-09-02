@@ -29,6 +29,7 @@ type ('bdd,'var,'sb,'expr,'pb,'export,'restore) ode_handler =
      b_of_var:'var->Pb_sig.b;
      var_of_b:Pb_sig.b->'var;
      print_sb:'sb;
+       print_sb_latex:((string*string)-> (string*string) -> bool) ->'sb;
      fnd_of_bdd:'bdd -> ('var*bool) list list ;
      conj:'bdd->'bdd->'bdd; 
      atom_pos:'var->'bdd;
@@ -38,7 +39,9 @@ type ('bdd,'var,'sb,'expr,'pb,'export,'restore) ode_handler =
 let print_sb ode_handler a b c = 
      List.iter (fun x -> ode_handler.print_sb a b (Some x)) c 
  
-
+let print_sb_latex f ode_handler a b c = 
+  List.iter (fun x -> ode_handler.print_sb_latex f a b (Some x)) c 
+ 
 let print_log s = 
   if log_step then () else (print_string s;print_newline ())
 

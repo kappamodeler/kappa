@@ -181,11 +181,11 @@ module RoughBool =
 		 s)
 	     vars s,messages 
 		
-       let print s f g h p log = K.E.print_expr (expr_of_abstract_expr s);[] 
-       let print_reachable_states access  specie_of_id pb print_any   log = 
-	 let a = print access specie_of_id  pb (fun _ -> true)  print_any log in
+       let print handler s f g h p log = K.E.print_expr (expr_of_abstract_expr s);[] 
+       let print_reachable_states handler  access  specie_of_id pb print_any   log = 
+	 let a = print handler access specie_of_id  pb (fun _ -> true)  print_any log in
 	 List.map snd a 
-       let print_reachable_states2 a b c d e = print_reachable_states a b c d  
+       let print_reachable_states2 handler a b c d e = print_reachable_states handler a b c d  
        let f x = true 
        let all_false l = 
 	 list_fold (fun b sol ->

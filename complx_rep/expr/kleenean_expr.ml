@@ -291,6 +291,7 @@ module Kleenean_expr =
 		      (k,bool,n,olds,compt,map) -> 
 			let b,string,n = 
 			  print_pretty 
+			    string_txt 
 			    a 
 			    (fun x -> StringSet.mem x b1  &&
 				(not (List.exists (fun x' -> x=x')
@@ -320,6 +321,7 @@ module Kleenean_expr =
 		      (k,bool,n,olds,compt,map) -> 
 			let b,string,n = 
 			  print_pretty 
+			    string_txt 
 			    a 
 			    (fun x -> StringSet.mem x b1  &&
 				((List.exists (fun x' -> x=x')
@@ -371,6 +373,7 @@ module Kleenean_expr =
 		  (fun (a,b) (k,bool,n,olds) ->
 		    let b,string,n = 
 		      print_pretty 
+			string_txt 
 			a 
 			(fun x -> StringSet.mem x c' &&
 			  not ((List.exists (fun x' -> x=x')
@@ -393,7 +396,7 @@ module Kleenean_expr =
 		list_fold
 		  (fun (a,b) (k,bool,n,olds) ->
 		    let b,string,n = 
-		      print_pretty a (fun x -> StringSet.mem x c' &&
+		      print_pretty string_txt a (fun x -> StringSet.mem x c' &&
 		      List.exists (fun x' -> x=x') c.add)
 			(pretty',n) tuple_data print_any 
 			(if bool 

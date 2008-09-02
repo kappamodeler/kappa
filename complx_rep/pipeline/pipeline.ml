@@ -98,7 +98,7 @@ type 'a pipeline = {
     dump_html_output: file_name -> 'a step;
     save_options: 'a step ;
     good_vertice: file_name -> prefix -> output_channel -> StringSet.t option * output_channel ;
-    template: file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> 'a step ;
+    template: file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> 'a step ;
     dump_potential_cycles: precision -> 'a step;
     refine_system_to_avoid_polymers: 
 	file_name -> simplx_encoding option -> Avoid_polymere.mode -> int option -> float  -> ('a,('a rule_class list)) step_with_output; 
@@ -111,7 +111,8 @@ compute_refinement_relation_dag: 'a step;
     compute_refinement_relation_closure: 'a step;
     dump_maximal_refinement_relation: file_name -> file_name -> 'a step;
     dump_dag_refinement_relation:file_name -> file_name -> 'a step;
-    count_automorphisms:'a step} 
+    count_automorphisms:'a step;
+    dump_latex_dictionary:file_name -> 'a step} 
 
 
       
@@ -1183,7 +1184,7 @@ module Pipeline =
 	       rep,(Some pb),(l,m))
 	   
        and template = 
-	 (fun file0 file1 file2 file3 file4 file5 file6 file7 prefix pb (l,m) ->
+	 (fun file0 file1 file2 file3 file4 file5 file6 file7 file8 prefix pb (l,m) ->
 	   let prefix' = add_suffix prefix "template" in 
 	   let _ = print_option prefix' (Some stderr) "Starting ODE generation" in
 	   
@@ -1196,11 +1197,12 @@ module Pipeline =
 		   let _ = if bool then print_option empty_prefix  log "," in
 		   let _ = 
 		     A.print_reachable_states2 
+		       string_txt 
 		       (A.reachable_states_of_abstract_expr b)  
 		       (fun x -> x) 
 		       pb 
 		       (Some "()")
-		       (hash,nlink)
+		       (hash,nlink,(fun _ _ -> true))
 		       log in 
 		   true
 		     )
@@ -1214,13 +1216,41 @@ module Pipeline =
 		 hash 
 	     in () 
 	   in  
+	   let print_sb_latex x sb pb (log:out_channel option) = 
+	     let hash = Hashtbl.create 13  in
+	     let nlink = ref 0 in
+	     let _ = 
+	       StringMap.fold 
+		 (fun a b  bool ->
+		   let _ = if bool then print_option empty_prefix  log Latex.agent_sep  in
+		   let _ = 
+		     A.print_reachable_states2 
+		       string_latex
+		       (A.reachable_states_of_abstract_expr b)  
+		       (fun x -> x) (*Latex.string_of_agent_name x)*) 
+		       pb 
+		       (Some "()")
+		       (hash,nlink,x)
+		       log in 
+		   true
+		     )
+		 sb false in
+	     let _ = 
+	       Hashtbl.iter 
+		 (fun ((a,x),(a',x')) n -> 
+		   let s = Latex.agent_sep^(Latex.string_of_agent_name a')^"{"^(Latex.string_of_site_name x')^"{}{"^(string_of_int n)^"}}" in 
+		   let _ = print_option empty_prefix  log s in 
+		   ())
+		 hash 
+	     in () 
+	   in  
 	   let rep = pb in 
 	   match rep  with None -> (rep,(l,m))
 	   | Some rep' -> 
 	       if not (is_views rep)
 	       then (
 		     let pb,log = reachability_analysis prefix' rep  (l,m) in
-	             template file0 file1 file2 file3 file4 file5 file6 file7 prefix pb (l,m))
+	             template file0 file1 file2 file3 file4 file5 file6 file7 file8 prefix pb (l,m))
 	       else (
 		 match pb with 
 		   None -> pb,(l,m) 
@@ -1238,12 +1268,14 @@ module Pipeline =
 			     file5
 			     file6 
 			     file7 
+			     file8
 			      {project=A.project;
 			      export_ae = A.export_ae;
 			      restore = A.restore_subviews;
 			      b_of_var = A.K.E.V.b_of_var ;
 			      var_of_b = A.K.E.V.var_of_b ;
-			      print_sb = print_sb;
+				print_sb = print_sb;
+				print_sb_latex = print_sb_latex;
 			      fnd_of_bdd = A.fnd_of_bdd;
 			      conj = A.conj ;
 			      atom_pos = A.atom_pos ;
@@ -1622,6 +1654,9 @@ module Pipeline =
 	   ((fun a -> a.refinement_relation_dag),
 	    compute_refinement_relation_dag,
 	    "dump_dag_refinement_relation") x
+       and dump_latex_dictionary x prefix pb log = 
+	 let _ = Latex.dump_dictionary x in
+	 pb,log 
        and print_error prefix = 
 	 match !Error_handler.error_list 
 	 with 
@@ -1685,7 +1720,7 @@ module Pipeline =
 	 try good_vertice a b c 
 	 with 
 	   Exception _ -> None,c);
-       template = (fun a b c d e f g h  -> handle_errors_step (Some "Complx") (Some "template") (template a b c d e f g h  ));
+       template = (fun a b c d e f g h i -> handle_errors_step (Some "Complx") (Some "template") (template a b c d e f g h i  ));
        find_potential_cycles = (fun a -> handle_errors_step (Some "Complx") (Some "find_potential_cycles") (find_potential_cycles a));
        dump_potential_cycles = (fun a -> handle_errors_step (Some "Complx") (Some "dump_potential_cycles") (dump_potential_cycles a)) ;
        find_connected_components = (fun a -> handle_errors_step (Some "Complx") (Some "find_connected_components") (find_connected_components a));
@@ -1704,6 +1739,9 @@ module Pipeline =
        
        dump_maximal_refinement_relation = 
        (fun file file2 -> handle_errors_step (Some "Complx") (Some "output_maximal_refinement_relation") (dump_maximal_refinement_relation file file2)) ;
+       
+       dump_latex_dictionary = 
+       (fun file -> handle_errors_step (Some "Complx") (Some "latex dictionary") (dump_latex_dictionary file));
        
        dump_dag_refinement_relation = 
        (fun file file2 -> handle_errors_step (Some "Complx") (Some "output_dag_refinement_relation") (dump_dag_refinement_relation file file2)) ;

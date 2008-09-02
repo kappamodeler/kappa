@@ -56,7 +56,75 @@ let s2 (x,_) = x+1
 let sif (x,b) = if b then s x else x
 
 
-let print_pretty a which_ag (pretty_map,n) tuple_f print_any pref sigma sigma2 hash log =
+type string_handler = 
+    {
+    string_of_agent: string -> string;
+      string_of_site: string -> string;
+	agent_separator: unit -> string;
+	  site_separator: unit -> string;
+	    mark_of: string -> string;
+	      not_mark: string->string;
+		mark_unknown:unit -> string;
+		  unmark:unit -> string;
+		    marked_or_not:unit->string;
+		      mark_abstracted:unit->string;
+			open_interface:string;
+			close_interface:string;
+			bound_to_known: (string*string) -> string;
+			  bound_to_unknown: int -> string;
+			    bound_abstracted: unit -> string;
+			      bound: string -> string ;
+				bound_not_site: string list  -> string;
+				  free: string;
+				  bound_or_not: unit -> string
+  }
+
+let string_txt = 
+  {string_of_agent=(fun x -> x);
+    string_of_site = (fun x->x);
+    site_separator = (fun () -> !Config_complx.site_separator);
+    agent_separator = (fun () -> !Config_complx.solution_separator);
+    mark_of = (fun x -> mark_of x);
+    not_mark= (fun _ -> "");
+    mark_unknown = (fun _ -> !Config_complx.mark_unknown);
+    unmark = (fun _ -> "");
+    marked_or_not = (fun _ -> "");
+    mark_abstracted = (fun _ -> !Config_complx.mark_abstracted);
+    open_interface = "(";
+    close_interface = ")";
+    bound_to_known = (fun x -> Config_complx.bound_of_known  x);
+    bound_to_unknown = (fun x -> Config_complx.bound_to_unknown x);
+    bound_abstracted = (fun x -> !Config_complx.bound_abstracted);
+    bound = (fun x -> !Config_complx.bound_symbol^x);
+    bound_not_site = (fun l -> Config_complx.bound_to_unknown ());
+    bound_or_not = (fun x -> !Config_complx.bound_or_not);
+    free = ""
+    
+   }
+    
+let string_latex = 
+  {string_of_agent = Latex.string_of_agent_name;
+    string_of_site = Latex.string_of_site_name;
+    site_separator = (fun () -> Latex.site_sep);
+    agent_separator = (fun () -> Latex.agent_sep);
+    mark_of = (fun x -> "{"^x^"}");
+    not_mark = (fun _ -> "{}");
+    mark_unknown = (fun _ -> "{"^(Latex.mark_unknown)^"}");
+    unmark = (fun _ -> "{}");
+    marked_or_not = (fun _ -> "{}");
+    mark_abstracted = (fun _ -> "{}");
+    open_interface = "{";
+    close_interface = "}";
+    bound_to_known = (fun x -> "{\\btype{"^(fst x)^"}{"^(snd x)^"}}");
+    bound_to_unknown = (fun x -> "{\bound{"^(string_of_int x)^"}}");
+    bound_abstracted = (fun x -> "{?}");
+    bound = (fun x -> "{"^x^"}");
+    bound_not_site = (fun x -> "{?}");
+    bound_or_not = (fun _ -> "{?}");
+  free="{}"}
+
+
+let print_pretty string_handler a which_ag (pretty_map,n) tuple_f print_any pref sigma sigma2 hash log =
   let sol = ref [] in 
   let print_string1 s = 
     match log with None -> ()
@@ -66,8 +134,8 @@ let print_pretty a which_ag (pretty_map,n) tuple_f print_any pref sigma sigma2 h
     (print_string2 s;
      print_string1 s) in 
   let print_name a = 
-    print_string1 (sigma a);
-    print_string2 (sigma2 a) in
+    print_string1 (string_handler.string_of_agent (sigma a));
+    print_string2 (string_handler.string_of_agent (sigma2 a)) in
   if which_ag a
   then 
     let l = StringMap.fold 
@@ -75,7 +143,8 @@ let print_pretty a which_ag (pretty_map,n) tuple_f print_any pref sigma sigma2 h
 	(StringMap.find a pretty_map) 
 	[]
     in 
-    let bool = list_fold 
+    let bool = 
+      list_fold 
 	(fun (x,tuple) (bool,(n:int)) -> 
 	  let port = (a,x) in 
 	  if (not (interesting tuple tuple_f))
@@ -83,72 +152,112 @@ let print_pretty a which_ag (pretty_map,n) tuple_f print_any pref sigma sigma2 h
 	  else 
 	    begin
 	      
-	      (if (not bool) then (print_string  (!Config_complx.site_separator))
-	      else (print_string pref;print_name a;print_string "("));
-	      print_string x;
+	      (if (not bool) 
+	      then (print_string  (string_handler.site_separator ());
+                    print_string (string_handler.string_of_site x))
+	      else 
+		(print_string pref;
+		 print_name a;
+		 print_string string_handler.open_interface;
+		 print_string (string_handler.string_of_site x)));
 	      let _ = 
 		if h tuple_f.f_mark tuple.mark 
 		then
-		  print_pretty_token print_string tuple.mark (fun x -> print_string (mark_of x)) n  
-		  (!Config_complx.mark_unknown) 
+		  print_pretty_token 
+		    print_string 
+		    tuple.mark 
+		    (fun x -> print_string (string_handler.mark_of x)) n  
+		    (!Config_complx.mark_unknown) 
 		    (!Config_complx.mark_abstracted) i2 i i 
 		else if h tuple_f.f_impossible_marks tuple.impossible_marks && tuple.is_marked = Init true  
 		then 
-		  print_pretty_token print_string tuple.impossible_marks (List.iter (fun a -> print_string (not_mark a))) n "BAD" "BAD" i2 i i 
+		  print_pretty_token 
+		    print_string 
+		    tuple.impossible_marks 
+		    (List.iter (fun a -> print_string (string_handler.not_mark a))) 
+		    n 
+		    "BAD" 
+		    "BAD" 
+		    i2 
+		    i 
+		    i 
 		else if h tuple_f.f_is_marked tuple.is_marked
 		then
-		print_pretty_token print_string tuple.is_marked (fun x -> print_string (if x then (!Config_complx.mark_unknown)  else (!Config_complx.unmark))) n (!Config_complx.marked_or_not) (!Config_complx.mark_abstracted)  i2 i i 
-		else n in 
+		print_pretty_token 
+		    print_string 
+		    tuple.is_marked 
+		    (fun x -> print_string (if x then (string_handler.mark_unknown ())  else (string_handler.unmark ()))) 
+		    n 
+		    (string_handler.marked_or_not ()) 
+		    (string_handler.mark_abstracted ())
+		      i2 i i 
+		else (print_string (string_handler.not_mark "");n) in 
 	      (if h tuple_f.f_link tuple.link 
               then 
 	        false,match tuple.link with 
-		    Init port2 -> 
-		      			begin
-
-			  match hash with None -> 
-			    print_pretty_token 
-			      print_string 
-			      tuple.link 
-			       (fun x -> print_string (bound_of_known x)) 
-			      n  
-			      (bound_to_unknown n)  
-			      (!Config_complx.bound_abstracted) 
-			      i2
-			      i 
-			      s
-			  | Some(hash,nlink) -> 
+		  Init port2 -> 
+		    begin
+		      match hash 
+		      with None -> 
+			print_pretty_token 
+			  print_string 
+			  tuple.link 
+			  (fun x -> 
+			    print_string 
+			      (string_handler.bound_to_known x)) 
+			  n  
+			  (string_handler.bound_to_unknown n)  
+			  (string_handler.bound_abstracted ()) 
+			  i2
+			  i 
+			  s
+		      | Some(hash,nlink,keep_link) -> 
+			  begin 
+			    if keep_link port port2 then 
 			      print_pretty_token 
-			      print_string 
-			      (Init begin
-				try 
-				  let k  = 
-				    Hashtbl.find hash (port2,port) in
-				  let _ = 
-				    Hashtbl.remove hash (port2,port) in
-				  k 
-				with
-				  Not_found -> 
+				print_string 
+				(Init begin
+				  try 
+				    let k  = 
+				  Hashtbl.find hash (port2,port) in
+				    let _ = 
+				      Hashtbl.remove hash (port2,port) in
+				    k 
+				  with
+				    Not_found -> 
 				    (nlink:=(!nlink)+1;
 				     Hashtbl.add hash (port,port2) (!nlink) ;
 				     (!nlink))
-			      end)
-				(fun x -> print_string ("!"^string_of_int x))
-			      (n)   
-			      (bound_to_unknown (n))
-			      (!Config_complx.bound_abstracted) 
-			      i2 
-			      i 
-			      s
+				end)
+				(fun x -> print_string (string_handler.bound (string_of_int x)))
+				(n)   
+				(string_handler.bound_to_unknown n)
+				(string_handler.bound_abstracted ()) 
+				i2 
+				i 
+				s
+			    else
+			      print_pretty_token 
+				print_string 
+				tuple.link
+				(fun x -> print_string (string_handler.bound_to_known x))
+				(n)   
+				(string_handler.bound_to_known port2)
+				(string_handler.bound_abstracted ()) 
+				i2 
+				i 
+				s
 			      
+			  end
 			end
 		| _ -> 
 		     print_pretty_token 
 			      print_string 
 			      tuple.link 
-			      (fun x -> print_string (bound_of_known x)) 
+			      (fun x -> print_string (string_handler.bound_to_known x)) 
 			      n  
-			      (bound_to_unknown n)  
-			      (!Config_complx.bound_abstracted) 
+			      (string_handler.bound_to_unknown n)  
+			      (string_handler.bound_abstracted ()) 
 			      i2 
 			      i 
 			      s
@@ -156,16 +265,39 @@ let print_pretty a which_ag (pretty_map,n) tuple_f print_any pref sigma sigma2 h
 
 	      else if h tuple_f.f_impossible_links tuple.impossible_links && tuple.is_bound = Init true 
 	      then 
-		(false,print_pretty_token print_string tuple.impossible_links  (List.iter (fun a -> print_string (bound_not_site a))) n "BAD" "BAD" i2 i i)
+		(false,
+		 print_pretty_token 
+		   print_string 
+		   tuple.impossible_links  
+		   (fun x -> 
+		     string_handler.bound_not_site 
+		       (List.map  
+			  (fun a -> 
+			    (bound_not_site a))
+		       x))
+			 n
+			 
+		      "BAD" "BAD" i2 i i)
 	      else  if h tuple_f.f_is_bound tuple.is_bound 
-	      then (false,print_pretty_token print_string tuple.is_bound (fun x -> print_string (if x then bound_to_unknown  n else (!Config_complx.free))) n  (!Config_complx.bound_or_not) (!Config_complx.bound_abstracted)  sif i i)  
+	      then 
+		(false,
+		 print_pretty_token 
+		   print_string 
+		   tuple.is_bound 
+		   (fun x -> 
+		     print_string 
+		       (if x then string_handler.bound_to_unknown  n 
+		       else string_handler.free)) 
+		   n  
+		   (string_handler.bound_or_not ())
+		   (string_handler.bound_abstracted ()) sif i i)
 	      else (*(false,n)*)
 		(false,print_pretty_token print_string tuple.is_bound 
-		  (fun x -> print_string 
-		     (if x then "?"  else (""))) 
+		   (fun x -> print_string 
+		       (if x then (string_handler.bound_or_not ())  else (string_handler.free)))
 		  n 
-		  (!Config_complx.bound_or_not) 
-		  (!Config_complx.bound_abstracted)  
+		  (string_handler.bound_or_not ()) 
+		  (string_handler.bound_abstracted ())  
 		  i2 i i) 
 )
 	    end)
@@ -178,7 +310,7 @@ let print_pretty a which_ag (pretty_map,n) tuple_f print_any pref sigma sigma2 h
       |	None -> 
 	  (if (!Config_complx.skip_a_specie) = "" then (();false,!sol,snd bool)
 	  else (print_string (!Config_complx.skip_a_specie);true,!sol,snd bool)))
-    else (print_string ")";true,!sol,snd bool)
+    else (print_string string_handler.close_interface;true,!sol,snd bool)
   else false,!sol,n
 
 let remove l =
