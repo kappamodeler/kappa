@@ -644,6 +644,7 @@ module Compressor =
 			   try ( List.iter (fun a -> 
 			     let _ = 
 			       A.K.print_kleenean_system  
+				 string_txt
 				 (fun x -> true)  
 				 name_of_rule 
 				 int_of_id 
@@ -666,6 +667,7 @@ module Compressor =
 			       (fun a -> (
 				 let s = 
 				   A.K.print_kleenean_system 
+				     string_txt
 				     is_access 
 				     name_of_rule 
 				     int_of_id 

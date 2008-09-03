@@ -163,6 +163,9 @@ let main ()  =
       methods.template (!Config_complx.output_ODE_contact) (!Config_complx.output_ODE_covering) "" (!Config_complx.output_ODE_matlab)  (!Config_complx.output_ODE_mathematica) "" (!Config_complx.output_ODE_alphabet) (!Config_complx.output_ODE_obs) (!Config_complx.output_ODE_obs_latex)  prefix pb log 
     else 
       None,log in 
+  let pb,log = 
+    methods.dump_latex_rule_system (!Config_complx.output_latex_rule_system) 
+      prefix pb log in 
   let _,_,log = 
     if !Config_complx.force_cycle or !Config_complx.only_detect_cycles then 
       let subsystem,(l,m) = 
@@ -232,6 +235,7 @@ let main ()  =
       methods.dump_html_output (!Config_complx.output_html) prefix pb log) 
     else pb,log in 
 
+ 
   let _ = if do_something () then 
     let _  = methods.print_channel prefix log in  
     let _ = methods.print_errors prefix in 

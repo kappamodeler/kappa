@@ -142,6 +142,7 @@ let build_relationships_among_species = ref false
 let empty_interface = ref "(Any)" (*to be printed when we have no information at all about the sites of an agent *)
 let skip_a_specie   = ref ""      (*to be printed when an agent can be fully abstracted *)
 
+let output_latex_rule_system = ref ""
 let output_latex_sty = ref ""
 let output_ODE_obs_latex = ref ""
 let output_ODE_covering = ref ""
@@ -333,6 +334,7 @@ let options = List.rev
 (*2_Output*)
 
 									"--output-scheme",MultiExt [
+"--output-latex-rule-system","_plx.tex";
 "--output-latex-sty","_plx.sty";
 "--output-ODE-obs-latex","_plx_ODE_obs.tex";
 "--output-ODE-contact","_plx_ODE_contact.dot";
@@ -461,6 +463,9 @@ let options = List.rev
 "--output_maximal_ref_jpg",String output_maximal_ref_jpg,
 "dump the maximal refinement relation in a jpg file",
 ["2_Output'";"Refinement detection"],Normal;
+"--output-latex-rule-system",String output_latex_rule_system,
+"dump the rules in latex format",
+["2_Output'";"Latex"],Normal;
 "--output-xml",String output_xml,
     "write an xml file",["2_Output'";"XML"],Normal;
 "--output-html",String output_html,

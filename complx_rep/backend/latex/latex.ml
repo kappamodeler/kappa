@@ -2,6 +2,7 @@ open Data_structures
 open Pb_sig
 open Error_handler 
 
+
 let error i j = 
   unsafe_frozen 
     (Some ("line "^(string_of_int i)))
@@ -150,7 +151,7 @@ let string_of_agent_name x = "\\"^(store_string ("Agents",x,"agent "^x,("\\agent
 let string_of_site_name x = "\\"^(store_string ("Sites",x,"site  "^x,("\\site{","}")))
 
 
-let dump_rs_latex chan rs (var_of_b,b_of_var,varset_add,varset_empty,fold_vars,build_kleenean_rule_system,print_kleenean_system)  =
+let dump_rs_latex chan rs bool (var_of_b,b_of_var,varset_add,varset_empty,fold_vars,build_kleenean_rule_system,print_kleenean_system)  =
   let print_string = 
     match chan with None -> print_string 
     | Some a -> (fun x -> Printf.fprintf a "%s" x) in
@@ -196,32 +197,41 @@ let dump_rs_latex chan rs (var_of_b,b_of_var,varset_add,varset_empty,fold_vars,b
 	(match x.r_simplx.Rule.flag 
 	with None -> x.r_id 
 	| Some a -> a))
-      (fun x -> 3) (IntSet.empty) 
-      s (Some "()") (fun x->x) (fun x->x) true None in 
+      (fun x -> 3) 
+      (IntSet.empty) 
+      s (Some "()") sigma sigma  true None in 
 
-  let _ = 
-    List.iter 
-      (fun (a,b) -> 
+  let bool = 
+    List.fold_left
+      (fun bool (a,b)  -> 
 	  match a with 
-	    [r] -> let rid = r.Pb_sig.r_id in 
-	           let old = name_of_rule r in 
-		   let flag = rid in 
-		   let kynetic = kynetic_of_rule r in
-		   if r.Pb_sig.r_clone  then () else 
-		   let _ = print_string "'" in
-		   let _ = print_string flag in
-		   let _ = print_string "' " in
-		   let _ = List.iter print_string (List.rev b) in
-		   let _ = print_string " @ " in
-		   let _ = print_string (Printf.sprintf  "%f" kynetic) in
-		   let _ = print_newline () in 
-		   ()
-	  | _ -> error 947 None ) s
+	    [r] -> 
+	      let rid = r.Pb_sig.r_id in 
+	      let old = name_of_rule r in 
+	      let flag = rid in 
+	      let kynetic = kynetic_of_rule r in
+	      if r.Pb_sig.r_clone  then bool 
+	      else 
+		  let _ = 
+		    if bool then print_string sep 
+		    else print_string init_sep in 
+		  let _ = List.iter print_string (List.rev b) in
+		  let _ = 
+		    if kynetic = 1. then ()
+		    else 
+		      let _ = print_string " @" in
+		      let _ = print_string (Printf.sprintf  "%s" (string_of_float kynetic)) in () in 
+		  
+		  true
+	  | _ -> 
+	      let _ = error 947 None 
+	      in true 
+	      ) bool s
   in 
-  () 
+  bool 
 
 
-let dump file pb  k handler = 
+let dump file pb  handler = 
   let chan = 
     if file = "" then None
     else Some (open_out file) 
@@ -232,19 +242,19 @@ let dump file pb  k handler =
 	match pb.Pb_sig.boolean_encoding with 
 	  Some rs -> 
             let system = rs.system in
-	    List.iter 
-	      (fun rs -> 
+	    List.fold_left  
+	      (fun bool rs -> 
 		let inj = rs.rules in 
-		List.iter 
-		  (fun inj -> 
+		List.fold_left
+		  (fun bool inj -> 
 		    dump_rs_latex  chan  
-		      [(inj.labels,rs.control,inj.injective_guard)] handler )
-		  inj)
-	      (List.rev system)
+		      [(inj.labels,rs.control,inj.injective_guard)] bool handler )
+		  bool inj)
+	      false (List.rev system)
 	| _ -> raise Not_found 
       end
     with 
-      Not_found -> () 
+      Not_found -> true 
   in
   let _ = match chan with None -> () | Some a -> close_out a in 
 	()

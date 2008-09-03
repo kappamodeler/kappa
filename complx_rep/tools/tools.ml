@@ -32,9 +32,12 @@ let s x = x+1
 let s2 (x,_) = x+1
 let sif (x,b) = if b then s x else x
 
+type string_mode = LATEX | TXT 
 
 type string_handler = 
     {
+    mode:string_mode ;
+    uni_rule:string;
     string_of_agent: string -> string;
       string_of_site: string -> string;
 	agent_separator: unit -> string;
@@ -57,7 +60,9 @@ type string_handler =
   }
 
 let string_txt = 
-  {string_of_agent=(fun x -> x);
+  {mode=TXT;
+    uni_rule = "->";
+    string_of_agent=(fun x -> x);
     string_of_site = (fun x->x);
     site_separator = (fun () -> !Config_complx.site_separator);
     agent_separator = (fun () -> !Config_complx.solution_separator);
@@ -79,8 +84,11 @@ let string_txt =
     
    }
     
+
 let string_latex = 
-  {string_of_agent = Latex.string_of_agent_name;
+  {mode=LATEX;
+    uni_rule = "\\unirule";
+  string_of_agent = Latex.string_of_agent_name;
     string_of_site = Latex.string_of_site_name;
     site_separator = (fun () -> Latex.site_sep);
     agent_separator = (fun () -> Latex.agent_sep);
@@ -92,8 +100,11 @@ let string_latex =
     mark_abstracted = (fun _ -> "{}");
     open_interface = "{";
     close_interface = "}";
-    bound_to_known = (fun x -> "{\\btype{"^(fst x)^"}{"^(snd x)^"}}");
-    bound_to_unknown = (fun x -> "{\bound{"^(string_of_int x)^"}}");
+    bound_to_known = (fun x -> 
+      match snd x with 
+	"" -> "{"^(fst x)^"}"
+      |	_ -> "{\\btype{"^(Latex.string_of_agent_name (fst x))^"}{"^(Latex.string_of_site_name (snd x))^"}}");
+    bound_to_unknown = (fun x -> "{\\bound{"^(string_of_int x)^"}}");
     bound_abstracted = (fun x -> "{?}");
     bound = (fun x -> "{"^x^"}");
     bound_not_site = (fun x -> "{?}");

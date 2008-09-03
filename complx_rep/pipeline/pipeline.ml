@@ -112,7 +112,8 @@ compute_refinement_relation_dag: 'a step;
     dump_maximal_refinement_relation: file_name -> file_name -> 'a step;
     dump_dag_refinement_relation:file_name -> file_name -> 'a step;
     count_automorphisms:'a step;
-    dump_latex_dictionary:file_name -> 'a step} 
+    dump_latex_dictionary:file_name -> 'a step;
+    dump_latex_rule_system:file_name -> 'a step} 
 
 
       
@@ -1670,6 +1671,23 @@ module Pipeline =
 		    print_newline ())
 		 list 
 	     in ()
+       and
+	   dump_latex_rule_system file prefix pb log = 
+	 match pb with 
+	   None -> pb,log
+	 | Some a -> 
+	     let pb',log,_ = get_boolean_encoding None prefix a log in 
+	     begin
+	       let _ = Latex.dump file pb'
+		     (A.K.E.V.var_of_b,
+		      A.K.E.V.b_of_var,
+		      A.K.E.V.varset_add,
+		      A.K.E.V.varset_empty,
+		      A.K.E.V.fold_vars,
+		      A.K.build_kleenean_rule_system,
+		      A.K.print_kleenean_system string_latex) in 
+		 (Some pb'),log
+	     end
        in
        {
        
@@ -1754,7 +1772,9 @@ module Pipeline =
 
        export_refinement_relation_maximal_and_automorphism_number = 
               handle_errors_def (Some "Complx") (Some "compute_both_refinement_relation_and_automorphism_numbers")  export_refinement_relation_and_automorphisms  None ;
-       print_errors = print_error 
+       print_errors = print_error ;
+       dump_latex_rule_system = 
+       (fun file -> handle_errors_step (Some "Complx") (Some "dump_latex_rule_system") (dump_latex_rule_system file))
      } 
 	 
 	 

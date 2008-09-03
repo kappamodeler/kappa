@@ -925,7 +925,9 @@ let dump_rs chan rs =
       Not_found -> x) in 
 
   let s = 
-    A.K.print_kleenean_system (fun x->true) 
+    A.K.print_kleenean_system 
+      string_txt
+      (fun x->true) 
       (fun x -> 
 	(match x.r_simplx.Rule.flag 
 	with None -> x.r_id 

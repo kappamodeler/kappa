@@ -35,7 +35,7 @@ module type Kleenean_Expr =
     val extract_kleenean_rule_system: kleenean_rule_system -> kleenean_rule_system  
     val list_of_kleenean_valuation: kleenean_valuation -> (E.V.var * bool) list 
     val abstract:  kleenean_valuation -> E.V.var -> kleenean_valuation
-    val print_kleenean_system:  (rule_id -> bool) -> (rule_id  -> string) -> (string -> int) -> (IntSet.t) -> kleenean_rule_system -> string option -> (string->string) -> (string -> string) -> bool  ->  out_channel option -> (rule_id list * string list) list
+    val print_kleenean_system:  string_handler -> (rule_id -> bool) -> (rule_id  -> string) -> (string -> int) -> (IntSet.t) -> kleenean_rule_system -> string option -> (string->string) -> (string -> string) -> bool  ->  out_channel option -> (rule_id list * string list) list
     val empty_kleenean_rule_system: kleenean_rule_system 
   end
       
@@ -138,8 +138,10 @@ module Kleenean_expr =
 		E.V.varmap_add (E.V.var_of_b b) (if bool then TRUE else FALSE) e else e)
 	    b.context_update  e
 	    
-        let print_kleenean_system  is_access (f:'a -> string)  g set  ss print_any sigma sigma2 ret log = 
+        let print_kleenean_system handler is_access (f:'a -> string)  g set  ss print_any sigma sigma2 ret log = 
 	  
+	  let print_option = 
+	    if handler.mode = TXT then print_option else (fun x y z -> ()) in 
 	  let g x = try (g x) with Not_found -> (print_string "WARN g";-1) in 
 	  if ss = empty_kleenean_rule_system or 
 	    List.for_all (fun (r,c,e) -> 
@@ -186,12 +188,13 @@ module Kleenean_expr =
 		    let id,real_id,b = 
 		      list_fold 
 			(fun rid  (l,l2,bool)  -> 
-			  if false (*rid.r_clone*) then l,l2,bool 
+			  if false (*rid.r_clone*) 
+			  then l,l2,bool 
 			  else 
 			    begin
 			      (if bool then 
 				print_option empty_prefix log  ",");
-		    	    print_option empty_prefix log ("'"^(f rid)^"'");
+		    	      print_option empty_prefix log ("'"^(f rid)^"'");
 			      (f rid)::l,rid::l2,true
 			    end )
 			r ([],[],false) in 
@@ -215,7 +218,8 @@ module Kleenean_expr =
 			  let old_sp = try (StringMap.find a sol) with Not_found -> 
 			StringMap.empty in 
 			  let tuple = 
-			    try (StringMap.find b old_sp) with Not_found -> 
+			    try (StringMap.find b old_sp) 
+			    with Not_found -> 
 			      def_init in 
 			  let tuple' = {tuple with link = Init (bound_of_number n)} in 
 			  let new_sp = StringMap.add b tuple' old_sp in 
@@ -250,9 +254,9 @@ module Kleenean_expr =
 		      let new_sp = StringMap.add b tuple' old_sp in 
 		      StringMap.add a new_sp sol,n
 		in 
-		let fadd_here a bool (sol,(sol',n),cons,cons') = 
+		let fadd_here a a' bool (sol,(sol',n),cons,cons') = 
 		  if (bool=TRUE) then 
-		    (StringSet.add a sol,(
+		    (StringMap.add a a' sol,(
 		     let old_sp = 
 		       try (StringMap.find a sol') 
 		       with Not_found -> 
@@ -262,7 +266,7 @@ module Kleenean_expr =
 		let fadd a bool (hb,sol,cons,cons') = 
 		  match E.V.b_of_var a with 
 		    B(a,_,b) -> hb,fadd_bound (a,b) bool sol,cons,cons'
-		  | H (a,_) -> (fadd_here a bool (hb,sol,cons,cons'))
+		  | H (a,a') -> (fadd_here a a' bool (hb,sol,cons,cons'))
 		  | L(a,b) -> hb,fadd_link a b bool sol,cons,cons'
 		  | M((a,_,b),s) -> hb,fadd_sign (a,b) s bool sol,cons,cons'
 		  | Dis(a,b) -> hb,sol,((a,b)::cons),cons'
@@ -272,165 +276,189 @@ module Kleenean_expr =
 		  E.V.varmap_fold
 		    fadd
 		    e 
-		    (StringSet.empty,
+		    (StringMap.empty,
 		     (StringMap.empty,1),
 		     [],[]) in
 		let b',(pretty',n'),cons',consb' = 
 		  E.V.varmap_fold 
 	            fadd 
 		    (apply_context_control c e)
-		    (StringSet.empty,(StringMap.empty,1),[],[]) in 
+		    (StringMap.empty,(StringMap.empty,1),[],[]) in 
 		let c',(pretty'',n''),cons'',consb'' = b',(pretty',n'),cons',consb' in 
-	      let l =
-		StringMap.fold
-		  (fun a b sol -> (a,b)::sol) pretty [] in 
-     	      let l = List.sort (fun (a,b) (c,d) -> compare (g a) (g c)) l in 
-	      let _,b,n,s,compt,map = 
-		list_fold 
-		  (fun (a,b) 
-		      (k,bool,n,olds,compt,map) -> 
-			let b,string,n = 
-			  print_pretty 
-			    string_txt 
-			    a 
-			    (fun x -> StringSet.mem x b1  &&
+		let l =
+		  StringMap.fold
+		    (fun a b sol -> (a,b)::sol) pretty [] in 
+     		let l = List.sort (fun (a,b) (c,d) -> compare (g a) (g c)) l in 
+		let _,b,n,s,compt,map = 
+		  list_fold 
+		    (fun (a,b) 
+			(k,bool,n,olds,compt,map) -> 
+			  let b,string,n = 
+			    print_pretty 
+			      handler  
+			      a 
+			      (fun x -> 
+				(try 
+				  let _ = StringMap.find x b1 in true
+				with Not_found -> false )
+			      &&
 				(not (List.exists (fun x' -> x=x')
-				  c.remove)))
-			    (pretty,n) tuple_data print_any
-			    (if bool then 
-			      (if (IntSet.mem (g k) set) then 
-				(!Config_complx.solution_complex) 
-			      else !Config_complx.solution_separator)
-			    else "") 
-			    sigma sigma2 
-			    None log
-			in a,b or bool,
-			n,
-			List.fold_left (fun s a -> a::s) olds (List.rev string),
-			(if b then compt+1 else compt) ,
-			if b then StringMap.add a compt map else map)
-		  l ("",false,n,[],1,StringMap.empty)  in
-	     
-	      let s = 
-		if b && c.remove <> [] 
-		then (print_option empty_prefix log  (!Config_complx.solution_separator);
-		      (!Config_complx.solution_separator)::s) else s in           
-	      let _,b,n,s,compt,map = 
-		list_fold 
-		  (fun (a,b) 
-		      (k,bool,n,olds,compt,map) -> 
-			let b,string,n = 
-			  print_pretty 
-			    string_txt 
-			    a 
-			    (fun x -> StringSet.mem x b1  &&
+					c.remove)))
+			      (pretty,n) 
+		              tuple_data print_any
+			      (if bool then 
+				(if (IntSet.mem (g k) set) 
+				then 
+				  (!Config_complx.solution_complex) 
+				else handler.agent_separator ())
+			      else "") 
+			      sigma sigma2 
+			      None log
+			  in a,b or bool,
+			  n,
+			  List.fold_left (fun s a -> a::s) olds (List.rev string),
+			  (if b then compt+1 else compt) ,
+			  if b then StringMap.add a compt map else map)
+		    l ("",false,n,[],1,StringMap.empty)  in
+		
+		let s = 
+		  if b && c.remove <> [] 
+		  then (print_option empty_prefix log  (handler.agent_separator ());
+		      ( handler.agent_separator ())::s) else s in           
+		let _,b,n,s,compt,map = 
+		  list_fold 
+		    (fun (a,b) 
+			(k,bool,n,olds,compt,map) -> 
+			  let b,string,n = 
+			    print_pretty 
+			      string_txt 
+			      a 
+			      (fun x -> 
+				(try 
+				  let _ = StringMap.find x b1 in true
+				with Not_found -> false)&&
 				((List.exists (fun x' -> x=x')
-				  c.remove)))
-			    (pretty,n) tuple_data print_any
-			    (if bool then 
-			      (if (IntSet.mem (g k) set)
-  then 
-				(!Config_complx.solution_complex) 
-			      else !Config_complx.solution_separator)
-			    else "") 
-			    sigma sigma2 
-			    None log
-			in a,b or bool,
-			n,
-			List.fold_left (fun s a -> a::s) olds (List.rev string),
-			(if b then compt+1 else compt),
-			if b then StringMap.add a compt map else map)
-		  l ("",false,n,s,compt,map)  in
-	       let s = 
-		if cons = [] && consb = [] then s else 
-		(let _ = print_option empty_prefix log "}" in
-		"}")::
-		(fst (List.fold_left 
-			(fun (string,bool) ((a,_),l) -> 
-			  List.fold_left
-			    (fun (string,bool) l -> 
-			      let s = (if bool then "," else "")^"$"^(string_of_int (try StringMap.find a map with Not_found -> 0))^"//"^l in 
-			      let _ = print_option empty_prefix log s in 
-			      s::string,true)
-			(string,bool) l)
-			(List.fold_left 
-			   (fun (string,bool) ((a,_),(b,_)) 
-			     -> (
-			       let s = (if bool then "," else "")^"$"^(string_of_int (try StringMap.find a map with Not_found -> 0))
-				 ^"<>$"^(string_of_int (try StringMap.find b map with Not_found -> 0))^(if bool then "," else "") in
-			       let _ = print_option empty_prefix log s in
-			       s::string,true))
-			   (let _ = print_option empty_prefix log " {" in " {"::s,false) 
-			   cons)
-			consb))
-	      in 
-	      let _ = print_option empty_prefix log " -> "  in
-	      let l = 
-		StringMap.fold (fun a b sol -> (a,b)::sol) pretty' [] in 
-	      let l = List.sort (fun (a,b) (c,d) -> compare (g a) (g c)) l in 
-	      let k,b,n',string  = 
-		list_fold
-		  (fun (a,b) (k,bool,n,olds) ->
-		    let b,string,n = 
-		      print_pretty 
-			string_txt 
-			a 
-			(fun x -> StringSet.mem x c' &&
-			  not ((List.exists (fun x' -> x=x')
-				  c.remove) or List.exists (fun x' -> x=x') c.add)  )
-			(pretty',n) 
-			tuple_data 
-			print_any 
-			(if bool then 
-			  (if (IntSet.mem (g k) set) then 
-			    (!Config_complx.solution_complex) 
-			  else !Config_complx.solution_separator)  else "") 
-			sigma sigma2 None log in
-		    a,b or bool,n,List.fold_left (fun s a -> a::s) olds (List.rev string)) l ("",false,n'," -> "::s) in 
-	      let string = 
-		if b && c.add <> [] 
-		then (print_option empty_prefix log  (!Config_complx.solution_separator);
-		      (!Config_complx.solution_separator)::string) else string in     
-	      
-	      let k,b,n,string = 
-		list_fold
-		  (fun (a,b) (k,bool,n,olds) ->
-		    let b,string,n = 
-		      print_pretty string_txt a (fun x -> StringSet.mem x c' &&
-		      List.exists (fun x' -> x=x') c.add)
-			(pretty',n) tuple_data print_any 
-			(if bool 
-			then 
-			  (if (IntSet.mem (g k) set) then 
-			    (!Config_complx.solution_complex) 
-			  else !Config_complx.solution_separator)  
-			else "") 
-			sigma sigma2 None log in 
-		    a,b or bool,n,List.fold_left (fun s a -> a::s) olds (List.rev string)) l ("",false,n',string) in 
-	     
-			    
-			     
-	let f x = () in 
-	let _ = f k in 
-	let _ = f b in 
-	let _ = f n in 
-	let _ = f n'' in
-	let _ = f pretty'' in 
-	let _ = f c' in 
-	let _ = if ret then print_option empty_prefix log  "\n" else () in 
-	((let l = 
-	  List.sort compare real_id in
-	let vide l = 
-	  let rec aux residue last rep = 
-	    match residue with 
-	      t::q when t=last -> aux q last rep
-	    | t::q -> aux q t (t::rep)
-	    | [] -> List.rev rep
-	  in match l with 
-	    t::q -> aux q t [t] 
-	  | [] -> [] in
-	vide real_id,string)::sol))
-	      [] ss
+				    c.remove)))
+			      (pretty,n) tuple_data print_any
+			      (if bool then 
+				(if (IntSet.mem (g k) set)
+				then 
+				  (!Config_complx.solution_complex) 
+				else handler.agent_separator ())
+			      else "") 
+			      sigma sigma2 
+			      None log
+			  in a,b or bool,
+			  n,
+			  List.fold_left (fun s a -> a::s) olds (List.rev string),
+			  (if b then compt+1 else compt),
+			  if b then StringMap.add a compt map else map)
+		    l ("",false,n,s,compt,map)  in
+		let s = 
+		  if cons = [] && consb = [] then s else 
+		  (let _ = print_option empty_prefix log "}" in
+		  "}")::
+		  (fst (List.fold_left 
+			  (fun (string,bool) ((a,_),l) -> 
+			    List.fold_left
+			      (fun (string,bool) l -> 
+				let s = (if bool then "," else "")^"$"^(string_of_int (try StringMap.find a map with Not_found -> 0))^"//"^l in 
+				let _ = print_option empty_prefix log s in 
+				s::string,true)
+			      (string,bool) l)
+			  (List.fold_left 
+			     (fun (string,bool) ((a,_),(b,_)) 
+			       -> (
+				 let s = (if bool then "," else "")^"$"^(string_of_int (try StringMap.find a map with Not_found -> 0))
+				   ^"<>$"^(string_of_int (try StringMap.find b map with Not_found -> 0))^(if bool then "," else "") in
+				 let _ = print_option empty_prefix log s in
+				 s::string,true))
+			     (let _ = print_option empty_prefix log " {" in " {"::s,false) 
+			     cons)
+			  consb))
+		in 
+		let _ = print_option empty_prefix log handler.uni_rule  in
+		let l = 
+		  StringMap.fold (fun a b sol -> (a,b)::sol) pretty' [] in 
+		let l = List.sort (fun (a,b) (c,d) -> compare (g a) (g c)) l in 
+		let k,b,n',string  = 
+		  list_fold
+		    (fun (a,b) (k,bool,n,olds) ->
+		      let b,string,n = 
+			print_pretty 
+			  handler
+			  a 
+			  (fun x -> 
+			    (try 
+			      let _ = StringMap.find x c' in true
+			    with Not_found -> false) &&
+			    not ((List.exists (fun x' -> x=x')
+				    c.remove) or List.exists (fun x' -> x=x') c.add)  )
+			  (pretty',n) 
+			  tuple_data 
+			  print_any 
+			  (if bool then 
+			    (if (IntSet.mem (g k) set) then 
+			      (!Config_complx.solution_complex) 
+			    else handler.agent_separator ())  else "") 
+			  sigma sigma2 None log in
+		      a,b or bool,
+		      n,
+		      List.fold_left 
+			(fun s a -> a::s) 
+			olds 
+			(List.rev string)) 
+		    l ("",false,n',(handler.uni_rule::s)) 
+		in 
+		let string = 
+		  if b && c.add <> [] 
+		  then (print_option empty_prefix log  (!Config_complx.solution_separator);
+			(handler.agent_separator ())::string) else string in     
+		
+		let k,b,n,string = 
+		  list_fold
+		    (fun (a,b) (k,bool,n,olds) ->
+		      let b,string,n = 
+			print_pretty handler  
+			  a 
+			  (fun x -> 
+			    (try 
+			      let _ = StringMap.find x c' in true 
+			    with Not_found -> false) &&
+			  List.exists (fun x' -> x=x') c.add)
+			  (pretty',n) tuple_data print_any 
+			  (if bool 
+			  then 
+			    (if (IntSet.mem (g k) set) then 
+			      (!Config_complx.solution_complex) 
+			    else handler.agent_separator ())
+			  else "") 
+			  sigma sigma2 None log in 
+		      a,b or bool,n,List.fold_left (fun s a -> a::s) olds (List.rev string)) l ("",false,n',string) in 
+		
+		
+		
+		let f x = () in 
+		let _ = f k in 
+		let _ = f b in 
+		let _ = f n in 
+		let _ = f n'' in
+		let _ = f pretty'' in 
+		let _ = f c' in 
+		let _ = if ret then print_option empty_prefix log  "\n"  else () in 
+		((let l = 
+		  List.sort compare real_id in
+		let vide l = 
+		  let rec aux residue last rep = 
+		    match residue with 
+		      t::q when t=last -> aux q last rep
+		    | t::q -> aux q t (t::rep)
+		    | [] -> List.rev rep
+		  in match l with 
+		    t::q -> aux q t [t] 
+		  | [] -> [] in
+		vide real_id,string)::sol))
+		    [] ss
 
 	    
 	    end:Kleenean_Expr)))
