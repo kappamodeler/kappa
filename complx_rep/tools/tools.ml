@@ -19,12 +19,13 @@ let trace_newline () = if !Config_complx.trace then print_newline () else ()
 let list_fold f a b = List.fold_left (fun a b -> f b a) b a
 let list_map f l = List.rev_map f (List.rev l)
 
-let print_pretty_token print_string a print n any abstracted finit fany fabs  = 
-  match a with Any -> (print_string any;fany n) 
+let print_pretty_token print_string a print n any abstracted finit fany fabs  
+    = 
+  match a with 
+    Not_initialized | Any -> (print_string any;fany n) 
   | Abstracted -> (print_string abstracted;fabs n) 
   | Init s -> (print s;finit (n,s))
   | Buggy -> (print_string "BUGGY";n)
-  | _ -> (print_string "";n)
 
 let i x = x
 let i2 (x,_) = x
@@ -105,11 +106,11 @@ let string_latex =
 	"" -> "{"^(fst x)^"}"
       |	_ -> "{\\btype{"^(Latex.string_of_agent_name (fst x))^"}{"^(Latex.string_of_site_name (snd x))^"}}");
     bound_to_unknown = (fun x -> "{\\bound{"^(string_of_int x)^"}}");
-    bound_abstracted = (fun x -> "{?}");
+    bound_abstracted = (fun x -> "{\\boundornot}");
     bound = (fun x -> "{"^x^"}");
-    bound_not_site = (fun x -> "{?}");
-    bound_or_not = (fun _ -> "{?}");
-  free="{}"}
+    bound_not_site = (fun x -> "{\\boundornot}");
+    bound_or_not = (fun _ -> "{\\boundornot}");
+    free="{}"}
 
 
 let print_pretty string_handler a which_ag (pretty_map,n) tuple_f print_any pref sigma sigma2 hash log =
@@ -182,7 +183,8 @@ let print_pretty string_handler a which_ag (pretty_map,n) tuple_f print_any pref
 		else (print_string (string_handler.not_mark "");n) in 
 	      (if h tuple_f.f_link tuple.link 
               then 
-	        false,match tuple.link with 
+	        false,
+		match tuple.link with 
 		  Init port2 -> 
 		    begin
 		      match hash 
@@ -239,21 +241,21 @@ let print_pretty string_handler a which_ag (pretty_map,n) tuple_f print_any pref
 			  end
 			end
 		| _ -> 
-		     print_pretty_token 
-			      print_string 
-			      tuple.link 
-			      (fun x -> print_string (string_handler.bound_to_known x)) 
-			      n  
-			      (string_handler.bound_to_unknown n)  
-			      (string_handler.bound_abstracted ()) 
-			      i2 
-			      i 
-			      s
-
+		    print_pretty_token 
+		      print_string 
+		      tuple.link 
+		      (fun x -> print_string (string_handler.bound_to_known x)) 
+		      n  
+		      (string_handler.bound_to_unknown n)  
+		      (string_handler.bound_abstracted ()) 
+		      i2 
+		      i 
+		      s
+		      
 
 	      else if h tuple_f.f_impossible_links tuple.impossible_links && tuple.is_bound = Init true 
 	      then 
-		(false,
+	       (false,
 		 print_pretty_token 
 		   print_string 
 		   tuple.impossible_links  
@@ -268,7 +270,7 @@ let print_pretty string_handler a which_ag (pretty_map,n) tuple_f print_any pref
 		      "BAD" "BAD" i2 i i)
 	      else  if h tuple_f.f_is_bound tuple.is_bound 
 	      then 
-		(false,
+                 (false,
 		 print_pretty_token 
 		   print_string 
 		   tuple.is_bound 
@@ -280,13 +282,17 @@ let print_pretty string_handler a which_ag (pretty_map,n) tuple_f print_any pref
 		   (string_handler.bound_or_not ())
 		   (string_handler.bound_abstracted ()) sif i i)
 	      else (*(false,n)*)
-		(false,print_pretty_token print_string tuple.is_bound 
+		(false,
+		 print_pretty_token 
+		   print_string 
+		   tuple.is_bound 
 		   (fun x -> print_string 
-		       (if x then (string_handler.bound_or_not ())  else (string_handler.free)))
-		  n 
-		  (string_handler.bound_or_not ()) 
-		  (string_handler.bound_abstracted ())  
-		  i2 i i) 
+		       (if x then (string_handler.bound_or_not ())  
+		       else (string_handler.free)))
+		   n 
+		   (string_handler.bound_or_not ()) 
+		   (string_handler.bound_abstracted ())  
+		   i2 i i) 
 )
 	    end)
 	l (true,n) in 
