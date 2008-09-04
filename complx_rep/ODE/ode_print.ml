@@ -345,45 +345,45 @@ let channel_set print set =
     (all_fields print)
 
 
-let rec print_expr print bool  x = 
+let rec print_expr print bool bool2  x = 
    match x with
      Constf f -> pprint_float print f
    | Letter s -> pprint_string print  s 
    | Const i ->  pprint_int print i 
-   | Vari (v,r) -> (print_intermediar_var print r (string_of_int v);(if bool then pprint_ty print else pprint_zero print)) 
+   | Vari (v,r) -> (print_intermediar_var print r (string_of_int v);(if bool then pprint_ty print else if bool2 then pprint_zero print else ())) 
    | Vark i ->   pprint_var print "k" i 
-   | Var i ->  (pprint_var print "y" (string_of_int i);(if bool then pprint_t print else pprint_zero print))
-   | Shortcut (s,a) -> (print_intermediar_var print s a;(if bool then pprint_t print else pprint_zero print )) 
+   | Var i ->  (pprint_var print "y" (string_of_int i);(if bool then pprint_t print else if bool2 then pprint_zero print else ()))
+   | Shortcut (s,a) -> (print_intermediar_var print s a;(if bool then pprint_t print else if bool2 then pprint_zero print else ())) 
    | Div (a,b) -> 
       begin
-	print_atom print bool  a;
+	print_atom print bool  bool2 a;
 	pprint_string print  "/";
-	print_atom print bool  b
+	print_atom print bool bool2  b
       end
   | Mult (a,b) -> 
       begin
-	print_atom print bool a;
+	print_atom print bool bool2  a;
         pprint_string print "*";
-	print_atom print bool b
+	print_atom print bool bool2 b
       end 
   | Plus (a,b) -> 
       begin
 	(match a with 
 	   Plus _ -> print_expr 
-	|  _ -> print_atom ) print bool a;
+	|  _ -> print_atom ) print bool bool2 a;
 	pprint_string print "+";
 	(match b with 
 	  Plus _ -> print_expr 
-	|  _ -> print_atom)  print  bool  b
+	|  _ -> print_atom)  print  bool bool2  b
       end
   | Eps -> pprint_string print "e"
-and print_atom print  bool x = 
+and print_atom print  bool bool2 x = 
   if is_atomic x 
-  then print_expr print  bool  x 
+  then print_expr print  bool  bool2 x 
   else 
     begin
       pprint_string print  "(";
-      print_expr print bool x;
+      print_expr print bool bool2 x;
       pprint_string print  ")"
     end
 
@@ -407,7 +407,7 @@ and print_atom print  bool x =
 		  if bool then pprint_string print_ODE "+"
 		  else 
 		    () in
-		print_expr print_ODE true (simplify_expr (Mult(Const a,b)));
+		print_expr print_ODE true false (simplify_expr (Mult(Const a,b)));
 			  true) 
 	      false b in 
 	  true)
@@ -422,7 +422,7 @@ and print_atom print  bool x =
 	  let _ = if k=0 then (print_string "BUG";Printf.fprintf stdout "BUG\n") in 
 	   
 	  let _ = pprint_equal print_ODE in
-	  let _ = print_expr print_ODE true  (simplify_expr b) in
+	  let _ = print_expr print_ODE true false  (simplify_expr b) in
 	  let _ = 
 	    try let _ = Arraymap.find  k prod in ()  
 	    with Not_found -> 
@@ -430,7 +430,7 @@ and print_atom print  bool x =
 	      let _ = pprint_newline print_ODE in 
 	      let _ = pprint_derivate print_ODE k in
 	      let _ = pprint_equal print_ODE in 
-	      let _ = print_expr print_ODE true (Const 0) in () in  
+	      let _ = print_expr print_ODE true false  (Const 0) in () in  
 	  true)
 	init bool  in 
     let _ = pprint_ODE_middle1 print_ODE in
@@ -439,7 +439,7 @@ and print_atom print  bool x =
 	(fun bool c -> 
 	  let _ = if bool then pprint_eq_separator print_ODE in
 	  let _ = pprint_newline print_ODE in 
-	  let _ = print_expr print_ODE true  (simplify_expr c) in
+	  let _ = print_expr print_ODE false false   (simplify_expr c) in
 	  true)
 	false 
 	obs in
@@ -449,7 +449,7 @@ and print_atom print  bool x =
 	(fun bool c -> 
 	  let _ = if bool then pprint_eq_separator print_ODE in 
 	  let _ = pprint_newline print_ODE  in 
-	  let _ = print_expr print_ODE true  (simplify_expr c) in
+	  let _ = print_expr print_ODE true false  (simplify_expr c) in
 	  true)
 	false 
 	obs in  
@@ -466,7 +466,7 @@ and print_atom print  bool x =
 	  let _ = if k=0 then (print_string "BUG";Printf.fprintf stdout "BUG\n") in 
 	   
 	  let _ = pprint_equal print_ODE in
-	  let _ = print_expr print_ODE true  (simplify_expr b) in
+	  let _ = print_expr print_ODE true true  (simplify_expr b) in
 	  let _ = 
 	    try let _ = Arraymap.find k prod in ()  
 	    with Not_found -> 
@@ -474,12 +474,12 @@ and print_atom print  bool x =
 	      let _ = pprint_newline print_ODE in 
 	      let _ = pprint_derivate print_ODE k in
 	      let _ = pprint_equal print_ODE in 
-	      let _ = print_expr print_ODE true  (Const 0) in () in  
+	      let _ = print_expr print_ODE true true  (Const 0) in () in  
 	  true)
 	init false  in
     let _ = pprint_string print_ODE "]\n" in 
     let _ = pprint_ODE_head' print_ODE in 
-     let _   = 
+    let _   = 
       Arraymap.fold
 	(fun k b bool ->
 	  let _ = if bool then pprint_eq_separator print_ODE in 
@@ -491,7 +491,7 @@ and print_atom print  bool x =
 		  if bool then pprint_string print_ODE "+"
 		  else 
 		    () in
-		print_expr print_ODE true  (simplify_expr (Mult(Const a,b)));
+		print_expr print_ODE true true  (simplify_expr (Mult(Const a,b)));
 			  true) 
 	      false b in 
 	  true)

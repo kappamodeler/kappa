@@ -650,7 +650,15 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
     (* Whether a link is solid, or not *)
     let keep_this_link a b = keep_this_link a b annotated_contact_map in
 
-    (* This function provides the list of extension of a subspecies according to the annotated contact map *)
+   
+    let complete_subspecies_handling_compatibility = 
+       complete_subspecies 
+	(pending_edges,
+	 view_of_tp_i,
+	 keep_this_link,
+	 get_denum_handling_compatibility) in 
+
+ (* This function provides the list of extension of a subspecies according to the annotated contact map *)
     let complete_subspecies = 
       complete_subspecies 
 	(pending_edges,
@@ -658,6 +666,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	 keep_this_link,
 	 get_denum) in 
 
+   
     let _ = print_log "COMPUTE ACTIVITY" in 
 
     let get_fragment_extension x = 
@@ -912,7 +921,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			       (fun subclas -> 
 				   {subclas 
 				   with fragment_extension  = 
-				     Some (complete_subspecies subclas.subspecies)}) list) 
+				     Some (complete_subspecies_handling_compatibility  subclas.subspecies)}) list) 
 			   (aux [None,[root],[],StringSet.empty,empty_species,[],[]] []) in
 				 {cla with subclass = Some rep}) x))
 
@@ -996,7 +1005,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			   pprint_int print_debug i ;
 			   pprint_string print_debug " ";
 			   (match rate with None -> () 
-			   | Some rate -> print_expr print_debug true rate);
+			   | Some rate -> print_expr print_debug true true rate);
 			   pprint_newline print_debug)
 			 rate_map in
 		     () in 
@@ -1245,7 +1254,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 						      let b = l.subspecies in 
 						      let d = get_denum_handling_compatibility (a,s,a',s')  in
 						      (
-						      if List.length d = 1 && List.hd d = List.hd (complete_subspecies b)  
+						      if List.length d = 1 && List.hd d = List.hd (complete_subspecies_handling_compatibility  b)  
 						      then 
 							expr 
 						      else
@@ -1255,7 +1264,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 							     (
 							   List.fold_left 
 							     (fun expr d -> 
-							       Plus(expr,Var (hash_subspecies d))) (Const 0)  (complete_subspecies b),
+							       Plus(expr,Var (hash_subspecies d))) (Const 0)  (complete_subspecies_handling_compatibility  b),
 							   expr_of_denum expr_handler d))),
 						      String4Set.add ((a,s),(a',s')) black)
 						((Const 1),String4Set.empty)
@@ -2016,7 +2025,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				    let _ = print_string origin_type in
 				    let _ = print_string origin_site in
 				    let _ = print_newline () in 
-				    let _ = print_expr print_debug true expr_denum in
+				    let _ = print_expr print_debug true true expr_denum in
 				    () in 
 				let tp_list = 
 				  try StringMap.find target_type annotated_contact_map.subviews 
@@ -2164,11 +2173,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					    let _ = pprint_int print_ODE conskey in
 					    let _ = pprint_string print_ODE ":" in
 					    let _ = pprint_int print_ODE (-1) in
-					    let _ = print_expr print_ODE  true (simplify_expr expr) in
+					    let _ = print_expr print_ODE  true true (simplify_expr expr) in
 					    let _ = pprint_int print_ODE prodkey in
 					    let _ = pprint_string print_ODE ":" in
 					    let _ = pprint_int print_ODE  (1) in
-					    let _ = print_expr print_ODE  true   (simplify_expr expr) in
+					    let _ = print_expr print_ODE  true true   (simplify_expr expr) in
 					    let _ = pprint_newline print_ODE  in 
 					    () 
 					      
@@ -2206,7 +2215,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				let _ = pprint_string print_debug ":" in
 				let _ = pprint_int print_debug k1 in
 				let _ = pprint_string print_debug ";" in
-				let _ = print_expr print_debug true   (simplify_expr expr) in
+				let _ = print_expr print_debug true true   (simplify_expr expr) in
 				let _ = pprint_newline print_debug  in () in 
 			      fadd (hash_fragment c)  k1 kyn_factor expr prod)
 			    prod 
@@ -2233,7 +2242,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				  let _ = pprint_string print_debug ":" in
 				  let _ = pprint_int print_debug k1 in
 				  let _ = pprint_string print_debug ";" in 
-				  let _ = print_expr print_debug  true  (simplify_expr expr) in
+				  let _ = print_expr print_debug  true  true (simplify_expr expr) in
 				  let _ = pprint_newline print_debug  in () in 
 			      fadd  
 				(hash_subspecies c)
@@ -2274,7 +2283,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				    else 
 				      () 
 				  in
-				  print_expr print_ODE true (simplify_expr (Mult(Const a,b)));
+				  print_expr print_ODE true true (simplify_expr (Mult(Const a,b)));
 				  true)
 				false l in
 			    let _ = pprint_commandsep print_ODE in 

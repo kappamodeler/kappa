@@ -180,8 +180,20 @@ let get_denum bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) =
 	 rep)
   in f 
 
+
     let is_empty_fragment x = x=[]
     let is_empty_species = StringMap.is_empty
+
+  let unify a b= 
+    try
+      Some 
+	(
+      StringMap.map2
+	(fun _ a -> a)
+	(fun _ a -> a)
+	(fun _ a b -> if a=b then a else raise Exit) a b 
+	)
+    with Not_found -> None 
 
   let complete_subspecies  (pending_edges,view_of_tp_i,keep_this_link,get_denum) (tp:subspecies) = 
     (** This function takes a subfragment and build the list of the fragments that contains it *)
@@ -220,9 +232,9 @@ let get_denum bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) =
 	      (List.fold_left 
 		 (fun liste elt_t -> 
 		   List.fold_left  
-		     (fun sol b -> 
+		     (fun liste b -> 
 		       (match 
-			 (StringMap.unify elt_t (b:'a StringMap.t))
+			 (unify elt_t (b:'a StringMap.t))
 		       with Some a -> a 
 		       | None -> error 222 None)::liste)
 		     liste sol)
