@@ -16,7 +16,7 @@ let stdprint =
     
 
 
-let all_fields x  = [x.dump;x.matlab;x.mathematica;x.latex]
+let all_fields x  = [x.dump;x.matlab;x.mathematica;x.latex;x.data]
       
 module CSet = Set.Make (struct type t = out_channel let compare = compare end)
 
@@ -236,7 +236,7 @@ let pprint_commandsep print =
 
 
 let pprint_ODE_head print = 
-  let _ = pprint_string print "global e \n" in
+  let _ = pprint_string print "global e; \n" in
   let _ = pprint_string print "e " in 
   let _ = pprint_assign print in 
   let _ = pprint_float print (!Config_complx.ode_ulp) in
@@ -304,7 +304,7 @@ let pprint_ODE_middle2 print =
 let pprint_ODE_foot print = 
   match print.mathematica with 
     None -> ()
-  | Some a -> a.print_string "}/.s],{t,tinit,tend},PlotRange->All]" 
+  | Some a -> a.print_string "}/.s],{t,tinit,tend},PlotRange->All]\n" 
 
   
 let print_comment print s = 
@@ -389,7 +389,7 @@ and print_atom print  bool bool2 x =
 
 
 
- let dump_prod (prod,bool) init obs print_ODE_mathematica print_ODE_matlab   = 
+ let dump_prod (prod,bool) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab output_data   = 
     let print_ODE = print_ODE_mathematica in 
     let _ = pprint_ODE_head' print_ODE in
     
@@ -454,7 +454,37 @@ and print_atom print  bool bool2 x =
 	false 
 	obs in  
     let _ = pprint_ODE_foot print_ODE in 
-    
+    let _ = 
+     match step 
+     with None -> ()
+     | Some a -> 
+	 let _ = pprint_string print_ODE "A:={" in 
+	 let rec aux (k:float) = 
+	   if k>final then ()
+           else 
+	     let _ = if k>init_t then pprint_string print_ODE "," in 
+	     let t = Float_pretty_printing.string_of_float k in 
+	     let _ = pprint_string print_ODE "{" in
+	     let _ = pprint_string print_ODE t in 
+	     let _ = 
+	       List.iter 
+		 (fun c -> 
+		   let _ = pprint_string print_ODE "," in 
+		   let _ = print_expr print_ODE false false   (simplify_expr c) in
+		   let _ = pprint_string print_ODE "[" in 
+		   let _ = pprint_string print_ODE t in 
+		   let _ = pprint_string print_ODE "]" in 
+		   ())
+		 obs in
+	     let _ = pprint_string print_ODE "}" in
+	     aux (k+.a) in 
+	 let _ = aux (min final init_t) in 
+	 let _ = pprint_string print_ODE "}/.s;\n" in 
+	 let _ = pprint_string print_ODE "Export[\"" in 
+	 let _ = pprint_string print_ODE output_data in 
+	 let _ = pprint_string print_ODE "\",A,\"Table\"]\n" in 
+	 ( )
+    in 
     let print_ODE = print_ODE_matlab in 
     let _ = pprint_ODE_middle0 print_ODE in 
     
@@ -534,6 +564,16 @@ and print_atom print  bool bool2 x =
        | Some print -> 
 	   print_sb expr pb print.chan;
      in 
-     
+     let _ = 
+       match print.data with 
+	 None -> ()
+       | Some print -> 
+	   begin 
+	     print.print_string "[";
+	     print_sb expr pb print.chan;
+	     print.print_string "]";
+	     print.print_string " " 
+	   end
+     in 
      ( ) 
 

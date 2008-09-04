@@ -80,7 +80,7 @@ let inhibition = ref false
 (* Data structures *)
     (* hash *)
 
-
+let ode_points = ref 0 
 let ode_init_time = ref 0.
 let ode_final_time = ref 1.
 let ode_ulp = ref 0.00001
@@ -144,6 +144,8 @@ let skip_a_specie   = ref ""      (*to be printed when an agent can be fully abs
 
 let output_latex_rule_system = ref ""
 let output_latex_sty = ref ""
+let output_ODE_obs_head = ref ""
+let output_ODE_data = ref ""
 let output_ODE_obs_latex = ref ""
 let output_ODE_covering = ref ""
 let output_ODE_contact = ref ""
@@ -343,6 +345,8 @@ let options = List.rev
 "--output-ODE-alphabet","_plx_ODE_alphabet";
 "--output-ODE-covering","_plx_ODE_covering";
 "--output-ODE-obs","_plx_ODE_obs";
+"--output-ODE-obs-head","_plx_head.data";
+"--output-ODE-data","_plx_foot.data";
 "--output-marshalling","_plx.marshalling";
 "--output-influence-map-txt","_plx_influence_map.txt";
 "--output-influence-map-dot","_plx_influence_map.txt";
@@ -444,6 +448,14 @@ let options = List.rev
   String output_ODE_obs,
   "write the set of obervables tracked in the ODE",
   ["2_Output'";"ODE"],Normal;
+"--output-ODE-obs-head",
+  String output_ODE_obs_head,
+  "write the preamble of the data file",
+  ["2_Output'";"ODE"],Normal;
+"--output-ODE-data",
+  String output_ODE_data,
+  "add the generation of the data file in the mathematica output",
+  ["2_Output'";"ODE"],Normal;
 "--output-pack-constraints",
  String output_pack_value_file,
  "dump contraints among sites in a file",["2_Output'";"Reachability analysis"],Normal;
@@ -528,6 +540,7 @@ let options = List.rev
   "--final-time",Float ode_final_time,"final time for ODE integration",["ODE"],Normal;
   "--epsilon-value",Float ode_ulp,"smallest number>0",["ODE"],Normal;
   "--flat-ode",Bool flat_ode,"Compute the ODE for the flat system",["ODE"],Normal;
+  "--plots",Int ode_points,"number of plots in the data file",["ODE"],Normal;
 
 (*Packing*)
   "--auto-packs",Bool auto_packs, "use automatic packing",["Reachability analysis"],Normal;

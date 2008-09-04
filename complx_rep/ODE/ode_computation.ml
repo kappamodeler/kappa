@@ -139,10 +139,10 @@ let print_log s =
 
 
 
-let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matlab file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex ode_handler output_mode prefix log pb pb_boolean_encoding subviews  compression_mode (l,m) = 
+let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matlab file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  compression_mode (l,m) = 
   
 
-  let good_mode a b = b=MATHEMATICA or b=MATLAB or b=LATEX in 
+  let good_mode a b = b=MATHEMATICA or b=MATLAB or b=LATEX or b=DATA in 
   let f mode file = 
     if good_mode output_mode mode
     then
@@ -161,6 +161,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
     else None in
   let set_print = f in 
  
+  let print_data = f DATA file_obs_data_head in 
   let print_matlab = f MATLAB file_ODE_matlab in
   let print_latex = f LATEX file_ODE_latex in
   let print_latex_obs = f LATEX file_obs_latex in 
@@ -168,7 +169,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
   let print_txt = f MATHEMATICA file_alphabet  in 
   let print_kappa = f MATHEMATICA file_obs in 
 
-  
+  let _ = (match print_data with None -> () | Some a -> 
+    (a.print_string "#t ")) in 
   let prefix_output_file = 
     let a,_ = compute_prefix file_ODE_matlab in 
     List.fold_left
@@ -183,6 +185,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
   let print_ODE = 
     {dump = None ;
      txt = None ;
+     data = None; 
      kappa = None ;
      mathematica = print_mathematica;
      latex = None;
@@ -195,14 +198,25 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
   let print_ODE_matlab = 
     {dump = None;
       txt = None;
+      data = None;
       kappa = None;
       mathematica = None;
       latex = None;
       matlab = print_matlab} in
 
+  let print_only_data = 
+    {dump = None;
+      txt = None;
+      data = print_data;
+      kappa = None;
+      mathematica = None;
+      latex = None;
+      matlab= None} in 
+
   let print_debug = 
     {dump = Some stdprint ;
      txt=None;
+      data = None;
      kappa=None;
       mathematica=None;
       latex = None;
@@ -210,14 +224,16 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
   in
   let print_obs = 
     { dump = None ;
+      data = print_data;
       kappa = print_kappa ;
       mathematica = None;
       latex = None;
       txt = print_txt  ;
-      matlab = None} in 
-     
+      matlab = None} 
+  in 
   let print_obs_latex = 
     { dump = None;
+      data=None;
       kappa = None; 
       mathematica = None;
       latex = print_latex_obs;
@@ -521,7 +537,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	  let bool = 
 	    List.fold_left
 	      (fun bool (n,expr) -> 
-		let _ = pprint_obs print (print_sb ode_handler) n expr pb in 
+		let _ = pprint_obs {print with data = None} (print_sb ode_handler) n expr pb in 
 		let _ = 
 		  if bool 
 		  then pprint_string print_obs_latex (Latex.sep) in 
@@ -534,8 +550,15 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		    n expr pb in  true )
 	      false  l 
 	  in 
-	  let _ = if bool then pprint_string print_obs_latex Latex.final_sep 
-	      
+	  let _ = if bool then pprint_string print_obs_latex Latex.final_sep in 
+	  let _ =
+	    List.fold_left
+	      (fun bool (n,expr) -> 
+		let _ = pprint_obs print_only_data (print_sb ode_handler) n expr pb in 
+		true)
+	      false  
+	      (List.rev l) 
+	    
       in
 	  () in dump 
       in
@@ -2498,9 +2521,26 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 init 
 
 	[] in 
-    let _ = dump_prod (merge_prod,bool) init obs print_ODE_mathematica print_ODE_matlab  in 
-  
-    
+    let _ = 
+      dump_prod 
+	(merge_prod,bool) 
+	init 
+	obs
+	(let i,f = !Config_complx.ode_init_time,!Config_complx.ode_final_time in 
+	let a = !Config_complx.ode_points in 
+	i,f,
+	if a = 0 
+	then None 
+	else 
+	  let rep = ((f-.i)/.(float_of_int a)) in
+	  if rep > 0.
+	  then Some rep else None)
+	print_ODE_mathematica 
+	print_ODE_matlab 
+	file_data_foot  
+    in 
+      let _ = (match print_data with None -> () | Some a -> 
+    (a.print_string "\n ")) in 
     let chanset = 
       List.fold_left
 	(fun set x -> channel_set x set)

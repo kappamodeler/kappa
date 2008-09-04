@@ -1,5 +1,5 @@
 type ouput_mode  = 
-    MATLAB | MATHEMATICA | LATEX | TXT | DUMP 
+    MATLAB | MATHEMATICA | LATEX | TXT | DUMP | DATA
 
 
 type print = 
@@ -14,6 +14,7 @@ type print_desc =
     {dump: print option;
      txt:print option;
      kappa:print option;
+     data:print option;
      matlab: print option;
      mathematica: print option;
      latex: print option}

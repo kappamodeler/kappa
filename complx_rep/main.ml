@@ -159,8 +159,25 @@ let main ()  =
   let pb,log = methods.save_options prefix pb log in 
   
   let _,log = 
+    let _ = print_string "ESSAI" in
+    let _ = print_string (!Config_complx.output_ODE_data) in
+    let _ = print_newline () in 
     if !Config_complx.do_ODE then 
-      methods.template (!Config_complx.output_ODE_contact) (!Config_complx.output_ODE_covering) "" (!Config_complx.output_ODE_matlab)  (!Config_complx.output_ODE_mathematica) "" (!Config_complx.output_ODE_alphabet) (!Config_complx.output_ODE_obs) (!Config_complx.output_ODE_obs_latex)  prefix pb log 
+      methods.template 
+	(!Config_complx.output_ODE_contact) 
+	(!Config_complx.output_ODE_covering) 
+	"" 
+	(!Config_complx.output_ODE_matlab)  
+	(!Config_complx.output_ODE_mathematica) 
+	"" 
+	(!Config_complx.output_ODE_alphabet) 
+	(!Config_complx.output_ODE_obs) 
+	(!Config_complx.output_ODE_obs_latex)  
+	(!Config_complx.output_ODE_obs_head) 
+	(!Config_complx.output_ODE_data) 
+	prefix 
+	pb 
+	log 
     else 
       None,log in 
   let pb,log = 
