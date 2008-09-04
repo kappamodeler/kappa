@@ -363,7 +363,8 @@ let xmlns = "\"http://plectix.synthesisstudios.com/schemas/kappasession\""
 let xmlns_xsi = "\"http://www.w3.org/2001/XMLSchema-instance\""
 
 let finalize xml_file ?xml_content log code = 
-  let _ = if (not !save_sim_data) && (!max_iter>1) then Sys.remove !serialized_sim_data_file else () in
+(*  let _ = if (not !save_sim_data) && (!max_iter>1) then Sys.remove !serialized_sim_data_file else () in *)
+(*JF I have commented the previous line since it was the cause of crashes in story mode when only one iteration was requested. The crash was due to the fact that the temporary files was reloaded later, I do not know why *)
   let _ = if !Mods2.bench_mode then Gc.print_stat stdout else () in 
   let commandLine = 
     let com = String.concat " " (Array.to_list Sys.argv) in
