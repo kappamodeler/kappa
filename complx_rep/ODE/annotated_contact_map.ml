@@ -209,27 +209,27 @@ let trivial_rule rs =
 		end
 	    | _ -> false,None
 	  in 
-	  let b,binding = aux context None in 
-	  if b then 
-	    match binding with 
-	      None -> error 958
-	    | Some ((a,b,c),(d,e,f)) -> 
-		List.for_all 
-		  (fun rule -> 
-		    List.for_all 
-		      (fun (bb,bool) -> 
-			match bb,bool  with 
-			  B(x,y,z),true when (x=a && y=b && z=c) or (x=d && y=e && z=f) -> true 
-			| H(_),_ -> true 
-			| _ -> false
-			      )
-		      rule.Pb_sig.injective_guard
-		      )
-		  rs.Pb_sig.rules
-	  else false
-	  end
-      |	_ -> false 
-       
+	let b,binding = aux context None in 
+	if b then 
+	  match binding with 
+	    None -> error 958
+	  | Some ((a,b,c),(d,e,f)) -> 
+	      List.for_all 
+		(fun rule -> 
+		  List.for_all 
+		    (fun (bb,bool) -> 
+		      match bb,bool  with 
+			B(x,y,z),true when (x=a && y=b && z=c) or (x=d && y=e && z=f) -> true 
+		      | H(_),_ -> true 
+		      | _ -> false
+			    )
+		    rule.Pb_sig.injective_guard
+		    )
+		rs.Pb_sig.rules
+	else false
+      end
+  |	_ -> false 
+	
 let compute_annotated_contact_map_in_compression_mode system cpb contact_map =
   let local_map = compute_annotated_contact_map_init cpb in
   let fadd ag x y map = 
@@ -459,9 +459,20 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map =
 	      let solid_edges = 
 		List.fold_left 
 		  (fun solid_edges ((a,b,c),(d,e,f)) ->
-		      String22Set.add ((a,c),(d,f)) 
-			(String22Set.add ((d,f),(a,c)) solid_edges))
+		    String22Set.add ((b,c),(e,f)) 
+			(String22Set.add ((e,f),(b,c)) solid_edges))
 		  solid_edges passive in
+	      let solid_edges = 
+		List.fold_left 
+		  (fun solid_edges b -> 
+		    match b with 
+		      L((a,b,c),(d,e,f)),false -> 
+			String22Set.add ((b,c),(e,f))
+			  (String22Set.add ((e,f),(b,c)) solid_edges)
+		    | _ -> solid_edges)
+		  solid_edges 
+		  rs.Pb_sig.control.Pb_sig.context_update 
+	      in 
 	      
 	      let solid_edges = 
 		List.fold_left 
