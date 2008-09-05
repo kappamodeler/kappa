@@ -139,7 +139,7 @@ let print_log s =
 
 
 
-let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matlab file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  compression_mode (l,m) = 
+let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matlab file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode (l,m) = 
   
 
   let good_mode a b = b=MATHEMATICA or b=MATLAB or b=LATEX or b=DATA in 
@@ -702,15 +702,22 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
     let activity = 
       List.fold_left  
 	(fun mainprod x -> 
-	  let rule_id = 
-	    try name_of_rule (List.hd (List.hd x.Pb_sig.rules).Pb_sig.labels)
-	    with _  -> "EMPTY" in
-	  let flag = 
-	    ltrim (try (List.hd (List.hd x.Pb_sig.rules).Pb_sig.labels).r_id 
-	    with _ -> "EMPTY") in 
-	  let kyn_factor = 
-	    try Constf( 
-              (List.hd (List.hd x.Pb_sig.rules).Pb_sig.labels).Pb_sig.r_simplx.Rule.kinetics ) with _ -> Constf 1. in 
+	  let rule_id,flag,kyn_factor  =
+	    try 
+	      let label = List.hd (List.hd x.Pb_sig.rules).Pb_sig.labels in 
+	      let rule_id = name_of_rule label in 
+	      let flag = ltrim label.r_id in 
+	      let kyn_factor = 
+		Constf(label.Pb_sig.r_simplx.Rule.kinetics
+			 /. 
+			 begin
+			   (float_of_int (IntMap.find label.Pb_sig.r_simplx.Rule.id  auto))
+			 end)
+	      in 
+	      rule_id,flag,kyn_factor
+	    with 
+	      _ -> "EMPTY","EMPTY",Constf 1.
+	  in 
 	  let _ = if debug then 
 	    let _ = print_string "RULE (604) \n " in
 	    let _ = print_string rule_id in 

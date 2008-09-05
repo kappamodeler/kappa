@@ -1257,8 +1257,27 @@ module Pipeline =
 		   None -> pb,(l,m) 
 		 | Some a -> 
 		     let pb,(l,m),boolean = get_boolean_encoding None prefix' a (l,m) in 
+		     let pb,(l,m),auto = 
+		       match 
+			 pb.automorphisms 
+		       with 
+			 None -> 
+			   let pb2,(l,m)  = count_automorphisms prefix' (Some pb) (l,m) in 
+			   begin 
+			     match pb2 with 
+			       None -> error "line 1268" "cannot count automorphisms" "" (raise Exit)
+			     | Some pb2 -> 
+				 begin
+				   match pb2.automorphisms 
+				   with 
+				     None -> error "line 1273" "Cannot count automorphisms" "" (raise Exit)
+				   | Some a -> pb2,(l,m),a
+				 end
+			   end
+		       | Some a -> pb,(l,m),a in 
 		     (match pb.bdd_sub_views with None -> Some pb,(l,m)
 		     | Some sub ->
+			 
 			 let _  = 
 			   Ode_computation.compute_ode
 			     file0 
@@ -1290,7 +1309,7 @@ module Pipeline =
 			     (Some stdout)
 			     a boolean 
 			     sub
-			    
+			     auto 
 			     (match !Config_complx.flat_ode 
 			     with 
 			       true -> Annotated_contact_map.Flat
