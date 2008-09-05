@@ -1505,14 +1505,14 @@ let rec iter log sim_data p c =
 				 concentrations = IntMap.add t obs_map c.concentrations;
 				 curr_step = c.curr_step + 1 ;
 				 curr_time = curr_time ;
-				 time_map = if !time_mode then c.time_map else IntMap.add t curr_time c.time_map
+				 time_map = (*JF if !time_mode then c.time_map else*) IntMap.add t curr_time c.time_map
 			      } 
 			else
 			  iter log {sim_data with sol = sol'} p 
 			    {c with 
 			       curr_step = c.curr_step + 1 ;
 			       curr_time = curr_time ;
-			       time_map = if !time_mode then c.time_map else IntMap.add t curr_time c.time_map
+			       time_map = (*JF if !time_mode then c.time_map else*) IntMap.add t curr_time c.time_map
 			    } 
 		    end
 		      (*end simulation mode*)

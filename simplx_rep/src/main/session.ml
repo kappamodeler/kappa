@@ -267,8 +267,8 @@ let ls_of_simulation rules obs_ind time_map data_map curr_step curr_time =
   in
   let ls_data = IntMap.fold (fun t map ls -> 
 			       let time = 
-				 if !time_mode then ((float_of_int t) *. !time_sample) 
-				 else IntMap.find t time_map
+				 (*JF if !time_mode then ((float_of_int t) *. !time_sample) 
+				 else*) IntMap.find t time_map
 			       in
 			       let str = 
 				 Printf.sprintf "%s,%s\n" (Float_pretty_printing.string_of_float  time)
@@ -450,8 +450,8 @@ let output_data ?(with_gnuplot=false) data_file rules data_map obs_ind time_map 
     Printf.fprintf d "#t %s\n" (String.concat " " entete) ;
     IntMap.iter (fun t m (*tmap,n*) -> 
 		   let time = 
-		     if !time_mode then string_of_float ((float_of_int t) *. !time_sample) 
-		     else string_of_float (IntMap.find t time_map)
+		     (*if !time_mode then string_of_float ((float_of_int t) *. !time_sample) 
+		     else*) string_of_float (IntMap.find t time_map)
 		   in
 		   let l = IntSet.fold (fun i cont -> 
 					  let v_i = IntMap.find i m in
