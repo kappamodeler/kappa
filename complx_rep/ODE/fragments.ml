@@ -288,8 +288,6 @@ let canonical_fragment_of_subspecies graph  =
 	  match working_list with 
 	    [] -> sol
 	  | (bond,t)::q ->
-	      print_rpath t;
-	      print_newline ();
 	      try 
 		let _ = RPathMap.find t black_list in
 		vide q n black_list sol 
@@ -586,6 +584,15 @@ let get_denum bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) =
 		    (StringMap.find a agent_to_int_to_nlist)
 		with Not_found -> error 1135 None 
 	      in
+	      let _ = 
+		if get_denum_debug 
+		then 
+		  begin 
+		    print_string "TP LIST: \n";
+		    List.iter (fun i -> print_int i;print_newline ()) tp ;
+		    print_newline ()
+		  end
+	      in 
 	      let tp = 
 		List.filter (*filter out the one that are ot compatible*)
                             (* TO DO improve by computing directly the list when compatibility relation is already known *)
@@ -595,13 +602,39 @@ let get_denum bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) =
 		    let agent = agent_of_view view in
 		    try 
 		      (not bool) 
-			or RPathMap.find rpath compatibility = interface 
+			or RPathMap.find rpath' compatibility = interface 
 		    with Not_found -> true )
 		  tp in 
+	      let _ = 
+		if get_denum_debug 
+		then 
+		  begin 
+		    print_string "TP LIST2: \n";
+		    List.iter (fun i -> print_int i;print_newline ()) tp ;
+		    print_newline ();
+		    print_string ag1;
+		    print_string s1;
+		    print_string ag2;
+		    print_string s2;
+		    print_newline () 
+		  end
+	      in 
 	      let q' =
 		List.fold_left
 		  (fun q' n_tp -> 
 		    let view = view_of_tp_i n_tp in 
+		    let _ = 
+		      if get_denum_debug
+		      then 
+			let _ = print_int n_tp  in 
+			let _ = print_newline () in 
+  List.iter 
+			  ((fun (b,bool) -> 
+			    print_b (ode_handler.b_of_var b);
+			    print_string (if bool then "T" else "F");
+			    print_newline ()))
+			  (valuation_of_view view)
+		    in 
 		    if 
 		      let rec aux l = (* check that the view contains a bonds *)                                      (* TODO hash cons the function between bonds and views compatible with this bond *) 
 			match l with [] -> false
@@ -613,11 +646,29 @@ let get_denum bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) =
 			    end
 		      in aux (valuation_of_view view)
 		    then 
+		      let _ = 
+			if get_denum_debug then 
+			  begin 
+			    print_int n_tp;
+			    print_newline ()
+			  end
+		      in 
 		      let b' = 
 			String4Set.fold 
 			  (fun ((ag1,s1),(ag2,s2)) b' -> 
 			    if ag2 = a' && s'=s2  then b'
-			    else ((ag2,s2,ag1,s1),rpath')::b')
+			    else (
+			      let _ = 
+				if get_denum_debug
+				    then 
+				  begin
+				    print_string ag2;
+				    print_string s2;
+				    print_string ag1;
+				    print_string s1;
+				    print_newline ()
+				  end in 
+				    (ag2,s2,ag1,s1),rpath')::b')
 			  (pending_edges view) b 
 		      in
 		      (b',black',
@@ -685,11 +736,11 @@ let complete_subspecies (pending_edges,view_of_tp_i,keep_this_link,get_denum) su
 		      (RPathMap.find rp subspecies.bonds_map) in
 		  true 
 		with 
-		   Not_found -> false 
+		  Not_found -> false 
 	      end
 		&& 
 	      begin (*a solid edge *)
-		 keep_this_link y1 y2 
+		keep_this_link y1 y2 
 	      end
 	    then 
 	      (target,map)
@@ -994,10 +1045,10 @@ let apply_blist_with_species ode_handler data_structure keep_link rule_id  speci
 	 match 
 	   b
 	 with 
-	   M((agent_id,_,_),_) -> 
+	   M((agent_id,_,_),_) when agent_id<> "" -> 
 	     f b (build_empty_path agent_id) modified,
 	     subspecies
-	 | B(agent_id,agent_type,site) | AL((agent_id,agent_type,site),_) -> 
+	 | B(agent_id,agent_type,site) | AL((agent_id,agent_type,site),_) when agent_id <> "" -> 
 	     let rp = build_empty_path agent_id in 
 	     if not bool 
 	     then 
@@ -1035,7 +1086,7 @@ let apply_blist_with_species ode_handler data_structure keep_link rule_id  speci
 	      ((build_empty_path agent_id),site)
 	      ((build_empty_path agent_id'),site')
 	     
-	| _ -> error 943 None)
+	| _ -> modified,subspecies)
       (update,species) 
       blist 
   in 

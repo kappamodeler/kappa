@@ -1187,7 +1187,7 @@ module Pipeline =
        and template = 
 	 (fun file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 prefix pb (l,m) ->
 	   let prefix' = add_suffix prefix "template" in 
-	   let _ = print_option prefix' (Some stderr) "Starting ODE generation" in
+	   let _ = print_option prefix (Some stderr) "Starting ODE generation\n" in
 	   
 	   let print_sb  sb pb (log:out_channel option) = 
 	     let hash = Hashtbl.create 13  in
@@ -1349,11 +1349,13 @@ module Pipeline =
 	   match pb with 
 	     None -> None,(l,m) 
 	   | Some a -> 
-	       let prefix'=add_suffix prefix "count automorphisms in rhs" in
+	       let prefix'=add_suffix prefix "count automorphisms in lhs" in
+	       let _ = print_option prefix (Some stderr) "count automorphism in lhs\n"  in 
+
 	       let a,(l,m),boolean = get_boolean_encoding None prefix' a (l,m) in 
 	       let rep,(l,m) = 
 		 Count_isomorphism.count_isomorphism_in_rule_system  a boolean (l,m) in
-	       let l = chrono prefix "count automorphisms in rhs" l in
+	       let l = chrono prefix "count automorphisms in lhs" l in
 	       Some rep,(l,m) )
        and 
 	   compute_refinement_relation_closure  = 
@@ -1362,6 +1364,7 @@ module Pipeline =
 	     None -> None,(l,m)
 	   | Some a -> 
 	       let prefix' = add_suffix prefix "compute refinement relation closure" in 
+	       let _ = print_option prefix (Some stderr) "compute refinement relation closure\n" in 
 	       let a,(l,m),boolean = get_gathered_boolean_encoding None prefix' a (l,m) in 
 	       
 	       let rep = Refinements.compute_refinement boolean in
@@ -1375,6 +1378,7 @@ module Pipeline =
 	   with None -> None,(l,m)
 	   |  Some a -> 
 	       let prefix' = add_suffix prefix "compute maximal refinement relation" in
+	       let _ = print_option prefix (Some stderr) "compute maximal refinement relation\n" in 
 	       let pb,(l,m),rep =
 		 match 
 		   a.refinement_relation_closure 
@@ -1621,6 +1625,7 @@ module Pipeline =
 	   with None -> None,(l,m)
 	   |  Some a -> 
 	       let prefix' = add_suffix prefix "compute dag-like refinement relation" in
+	       let _ = print_option prefix (Some stderr) "compute dag-like refinement relation\n" in 
 	       let pb,(l,m),rep =
 		 match 
 		   a.refinement_relation_closure 

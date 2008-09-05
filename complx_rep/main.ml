@@ -159,9 +159,6 @@ let main ()  =
   let pb,log = methods.save_options prefix pb log in 
   
   let _,log = 
-    let _ = print_string "ESSAI" in
-    let _ = print_string (!Config_complx.output_ODE_data) in
-    let _ = print_newline () in 
     if !Config_complx.do_ODE then 
       methods.template 
 	(!Config_complx.output_ODE_contact) 

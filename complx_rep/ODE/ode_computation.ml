@@ -38,7 +38,7 @@ let dump_line i =
 module Old_F = Fragment 
 module New_F = New_Fragment
 
-module F = Old_F 
+module F = New_F 
 
 (*type fragment = F.fragment
 type subspecies = F.subspecies *)
@@ -846,6 +846,14 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		     then error 944 
 		     else
 		       let root = StringSet.min_elt roots in
+		       let _ = 
+			 if debug
+			 then 
+			   begin
+			     print_string "ROOT: ";
+			     print_string root;
+			     print_newline ()
+			   end in 
 		       let rec aux l  sol = 
 			 match l with 
 			   [] -> sol
@@ -861,7 +869,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					 aux (((g,[a],b,black,empty_species,[],(init_subclass (guard,prefix,same_class_agent))::other_class))::q) sol 
 				   end
 
-			       | a::b -> 
+			       | (a,from)::b -> 
 				   if StringSet.mem a black  or  not (List.exists (fun x -> match x with H(x,_),b -> (
 				     (x=a && b)) | 
 				     _  -> false) rule.Pb_sig.injective_guard) 
@@ -883,7 +891,17 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					 bmap 
 					 a 
 					 (specie_of_id,agent_to_int_to_nlist,view_of_tp_i,ode_handler)  in 
-				       
+				     let _ = 
+				       if debug
+				       then 
+					 begin 
+					   print_string "COMPATIBLE_VIEWS";
+					   print_string a;
+					   List.iter 
+					     (fun x -> print_int x;print_newline ())
+					     tp_list;
+					   print_newline ()
+					 end in 
 				 
 				    let bound_agent_list_same_class,
 				       bound_agent_list_other_class = 
@@ -908,35 +926,43 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 						       if keep_this_link 
 							   (a2,a3) (a5,a6)  
 						       then 
-							 ((a4::same,other))
+							 
+							 (a4,Some (a1,a3,a4,a6))::same,other
 						       else
-							 (same,(Some (a5,a6,a2,a3),a4)::other))
+							 (same,(Some (a5,a6,a2,a3),(a4,None))::other))
 					       
 					     in 
 					     match b with 
 					       AL((a1,a2,a3),(a5,a6)),true -> f (a1,a2,a3,a5,a6) (same,other)
 					     | L((a1,a2,a3),(a4,a5,a6)),true -> 
 						 let same,other = 
-						   if a1=a then f (a1,a2,a3,a5,a6) (same,other)
+						   if a1=a 
+						   then f (a1,a2,a3,a5,a6) (same,other)
 						   else same,other in
 						 let same,other = 
-						   if a4=a then f (a4,a5,a6,a2,a3) (same,other) 
+						   if a4=a 
+						   then f (a4,a5,a6,a2,a3) (same,other) 
 						   else same,other 
 						 in same,other
 					     | _ -> same,other )
-					 (to_visit_same_class,to_visit_other_class)
+					 (to_visit_same_class,
+					  to_visit_other_class)
 					 restricted_blist in
 				    aux 
 				      (List.fold_left
-					 (fun sol x -> (guard,
-							bound_agent_list_same_class,
-							bound_agent_list_other_class,
-							StringSet.add a black,
-							plug_views_in_subspecies a x prefix,
-							a::same_class_agent,
-							other_class)::sol) 
+					 (fun sol x  -> 
+					   (guard,
+					    bound_agent_list_same_class,
+					    bound_agent_list_other_class,
+					    StringSet.add a black,
+					    (match from with None -> (fun x -> x)
+					    | Some (a,b,c,d) -> 
+						(fun x -> add_bond_to_subspecies x (a,b) (c,d)))
+						  (plug_views_in_subspecies a x prefix) ,
+					    a::same_class_agent,
+					    other_class)::sol) 
 					 q
-					  tp_list) 
+					 tp_list) 
 				       sol
 			     end
 		       in
@@ -952,7 +978,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				   {subclas 
 				   with fragment_extension  = 
 				     Some (complete_subspecies_handling_compatibility  subclas.subspecies)}) list) 
-			   (aux [None,[root],[],StringSet.empty,empty_species,[],[]] []) in
+			   (aux [None,[root,None],[],StringSet.empty,empty_species,[],[]] []) in
 				 {cla with subclass = Some rep}) x))
 
 	      classes in 
@@ -1371,7 +1397,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 								if keep_this_link (e,f) (g,h) 
 								then 
 								  let target_id = 
-								    get_neighbour t (a,b') g in
+								    try get_neighbour t (a,b') g 
+								    with _ -> "" in 
 								  Some((Some target_id),g,h)
 								else
 								  Some(None,g,h)
