@@ -2312,6 +2312,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			in 
 			Intmap.fold 
 			  (fun i l (mainprod,bool) ->
+			    let l = simplify2 l in 
 			    let funname = ((prefix_output_file^(string_of_intermediar_var flag (string_of_int i)))^".m") in 
 			    let matlab =  set_print MATLAB funname in 
 			    let print_ODE = 
@@ -2331,7 +2332,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			    let _ = pprint_vart print_ODE in 
 			    let _ = pprint_assign print_ODE in 
 			   (* let _ = pprint_abstract print_ODE "y" in *)
-			    let _ = 
+			    let _ = print_expr print_ODE true true l in 
+(*
 			      List.fold_left 
 				(fun bool (a,b) ->
 				  let _ = 
@@ -2342,7 +2344,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				  in
 				  print_expr print_ODE true true (simplify_expr (Mult(Const a,b)));
 				  true)
-				false l in
+				false l in*)
 			    let _ = pprint_commandsep print_ODE in 
 			    let _ = pprint_newline print_ODE in
 			    let _ = 

@@ -27,13 +27,12 @@ let equal_zero expr =
 let rec simplify_expr (expr:expr) = 
   match expr with 
    
-      Plus (a,x) when equal_zero a -> simplify_expr x
-    | Plus(x,a) when equal_zero a -> simplify_expr x
-    | Mult(a,x) when equal_un a -> simplify_expr x
-    | Mult(x,a) when equal_un a -> simplify_expr x 
-    | Div(x,a) when equal_un a -> simplify_expr x 
-  | Plus (x,y) -> 
-      Plus(simplify_expr x,simplify_expr y)
+    Plus (a,x) when equal_zero a -> simplify_expr x
+  | Plus(x,a) when equal_zero a -> simplify_expr x
+  | Mult(a,x) when equal_un a -> simplify_expr x
+  | Mult(x,a) when equal_un a -> simplify_expr x 
+  | Div(x,a) when equal_un a -> simplify_expr x 
+  | Plus (x,y) -> Plus(simplify_expr x,simplify_expr y)
   | Mult (x,y) -> 
       let x = simplify_expr x in
       let y = simplify_expr y in
@@ -48,6 +47,82 @@ let rec simplify_expr (expr:expr) =
       else  Div(x,y)
   | Constf a when float_of_int(int_of_float a)=a -> Const (int_of_float a)
   | _ -> expr
+
+module KeyMap = Map2.Make (struct type t = expr*expr*expr*expr let compare = compare end)
+
+let simplify2 expr = 
+  let rec aux expr l = 
+    match expr with 
+      Plus(a,b) -> aux a (aux b l)
+    | _ -> expr::l in 
+  let liste_termes = List.map (fun (a,b) -> simplify_expr (Mult(Const a,b))) expr in 
+  let fadd key x map = 
+    let old = 
+      try 
+	KeyMap.find key map 
+      with 
+	Not_found -> [] in 
+    KeyMap.add key (x::old) map in 
+  let rec split input output1 output2 =  
+    match input with [] -> output1,output2 
+    | t::q -> 
+	begin
+	  match t with 
+	    Mult(a,Mult(Mult(Div(b,d),c),e)) -> 
+	      split 
+		q 
+		output1 
+		(fadd  (a,b,d,e) c output2)
+	  | Mult(Mult(Div(b,d),c),e) -> 
+	      split 
+		q 
+		output1 
+		(fadd 
+		   (Const 1,b,d,e) 
+		   c 
+		   output2
+		   )
+	  | Mult(Div(b,d),c) -> 
+	      split 
+		q 
+		output1 
+		(fadd 
+		   (Const 1,b,d,Const 1) 
+		   c 
+		   output2
+		   )
+	  | _ -> 
+	      split 
+		q 
+		(t::output1) 
+		output2
+	end
+  in 
+  let output1,output2 = split liste_termes [] KeyMap.empty in 
+  let output2 = 
+    KeyMap.mapi
+      (fun (a,b,d,e) c ->  
+	if 
+	  (List.sort compare (Eps::c)) = 
+	  (List.sort compare (aux d [])) 
+	then 
+	  Mult(a,(Mult(b,e)))
+	else
+	  Mult(a,(Mult(Mult(Div(b,d),List.fold_left (fun a b -> Plus(a,b)) (Const 0) c),e)))
+	    ) output2 in
+  let expr = 
+    List.fold_left 
+      (fun a b -> Plus(a,b))
+      (KeyMap.fold 
+	 (fun _ b c -> Plus(b,c))
+	 output2
+	 (Const 0)
+	 )
+      output1 in 
+  simplify_expr expr 
+
+(*let simplify_expr = simplify2 *)
+      
 
 let is_atomic expr = 
   match expr with 

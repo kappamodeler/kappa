@@ -232,6 +232,19 @@ let trivial_rule rs =
 	
 let compute_annotated_contact_map_in_compression_mode system cpb contact_map =
   let local_map = compute_annotated_contact_map_init cpb in
+  let site_map = 
+    List.fold_left 
+      (fun map (a,b,c) -> 
+	let set = 
+	  List.fold_left 
+	    (fun set b -> StringSet.add b set)
+	    (List.fold_left 
+	       (fun set c -> StringSet.add c set)
+	       StringSet.empty 
+	       c)
+	    b in
+	StringMap.add a set map) 
+      StringMap.empty cpb.cpb_interface in 
   let fadd ag x y map = 
     let old1,old2 = 
       try StringMap.find ag map 
@@ -320,7 +333,7 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map =
 		      | M((a,a',b),c),_ -> fadd (a,a') b sol
 		      | _ -> error 964 )
 		    String2Map.empty  rule.Pb_sig.injective_guard in
-		let relation = 
+	     (*  	let relation = 
 		  String2Set.fold
 		    (fun (a,a') relation -> 
 		      let tested = 
@@ -337,8 +350,25 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map =
 				  (fadd a' site' site relation))
 			    tested relation)
 			tested relation)
-		    destroyed_agent relation in 
+		    destroyed_agent relation in *)
 		let relation = 
+		  String2Set.fold 
+		    (fun (a,a') relation -> 
+		      let set = 
+			try StringMap.find a' site_map 
+			with 
+			  Not_found -> StringSet.empty 
+		      in 
+		      if StringSet.is_empty set then relation
+		      else
+			let min = StringSet.min_elt set in 
+			StringSet.fold 
+			  (fun x relation -> 
+			    fadd a' min x 
+			      (fadd a' x min relation))
+			  set relation)
+		    destroyed_agent relation in 
+		  let relation = 
 		  String2Map.fold2
 		    (fun _ _ x -> x)
 		    (fun _ _ x -> x)
