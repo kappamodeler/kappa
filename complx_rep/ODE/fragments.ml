@@ -542,7 +542,7 @@ let get_denum bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) =
 	    = 
 	  match current with 
 	    [] -> sol (*computation is over *)
-	  | ([],_,subspecies)::q -> (*a subspecies is now complete *)
+	  | ([],subspecies)::q -> (*a subspecies is now complete *)
 	      let compatibility' = (* here we update compatibility map *)
 		if not bool then compatibility 
 		else 
@@ -564,7 +564,8 @@ let get_denum bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) =
 		    compatibility 
 	      in 
 	      aux q compatibility' (subspecies::sol) 
-	  | (((a,s,a',s'),rpath)::b,black,subspecies)::q ->(* a species to be extend *)
+	  | (((a,s,a',s'),black,rpath)::b,subspecies)::q ->
+             (* a species to be extend *)
 	      let _ = 
 		if StringSet.mem a black 
 		then 
@@ -668,10 +669,10 @@ let get_denum bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) =
 				    print_string s1;
 				    print_newline ()
 				  end in 
-				    (ag2,s2,ag1,s1),rpath')::b')
+				    (ag2,s2,ag1,s1),black',rpath')::b')
 			  (pending_edges view) b 
 		      in
-		      (b',black',
+		      (b',
 		       add_bond_to_subspecies 
 			 (add_view_to_subspecies subspecies rpath' n_tp)
 			 (rpath',s) (rpath,s'))::q'
@@ -680,7 +681,7 @@ let get_denum bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) =
 	      aux q' compatibility sol in
 	let rep = 
 	  aux 
-	    [[x,empty_rpath],StringSet.empty,empty_species] 
+	    [[x,StringSet.empty,empty_rpath],empty_species] 
 	    RPathMap.empty 
 	    [] 
 	in

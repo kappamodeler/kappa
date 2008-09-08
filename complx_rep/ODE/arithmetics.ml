@@ -73,6 +73,10 @@ let simplify2 expr =
 		q 
 		output1 
 		(fadd  (a,b,d,e) c output2)
+	  | Mult(a,Mult(Div(b,d),c)) -> 
+	      split q 
+		output1
+		(fadd (a,b,d,Const 1) c output2)
 	  | Mult(Mult(Div(b,d),c),e) -> 
 	      split 
 		q 
