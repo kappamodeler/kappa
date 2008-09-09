@@ -1685,20 +1685,12 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				  (* List of tp_i list extention of the connected component *)
 				  let rec vide l sol = 
 				    match l with [] -> sol 
-				    | (subspecies,extension,pending_bonds)::q -> 
+				    | (subspecies,pending_bonds)::q -> 
 					begin
 					  match pending_bonds with 
-					    [] -> vide q ((subspecies,extension)::sol) 
+					    [] -> vide q (subspecies::sol) 
 					  | ((agent_root,agent_path),((agent_type,site),(agent_type',site')))::q2 -> 
-					      let tp_list = (* first compute the list of views that can be plugged *)
-						try 
-						  String4Map.find 
-						    ((agent_type',site'),(agent_type,site))
-						    views_data_structures.link_to_template 
-						with 
-						  Not_found ->
-						    error 1482 
-					      in
+					     
 					      
 					     (*two cases *)
 					      try 
@@ -1711,6 +1703,15 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 							  StringMap.find 
 							    site 
 							    (StringMap.find agent_root graph_agent_site_to_agent)
+							in
+							let tp_list = (* first compute the list of views that can be plugged *)
+							  try 
+							    String4Map.find 
+							      ((agent_type',site'),(agent_type,site))
+							      views_data_structures.link_to_template 
+							  with 
+							    Not_found ->
+							      error 1482 
 							in
 							let liste = 
 							  List.fold_left 
@@ -1727,7 +1728,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 								  q2 
 							      in
 							      (
-							      StringMap.add agent_id' tp_i subspecies,extension,pending_bonds')::liste)
+							      (StringMap.add agent_id' tp_i subspecies)
+								,pending_bonds')::liste)
 							    q tp_list in
 							vide liste sol 
 						      end
@@ -1735,53 +1737,30 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 						      raise Not_found 
 						end
 					      with Not_found -> 
-                                                        (* the target is not whithin the lhs *)
-						(* TO DO to improve use, get_denum *)
-						begin 
-						  let rpath = agent_root,((agent_type',site'),(agent_type,site))::agent_path
-						  in 
-						  let liste = 
-						    List.fold_left 
-						      (fun liste tp_i -> 
-							 let interface =  (* compute the set of sites with a solid bond, except the one it is plugged by *)
-							   String4Set.remove
-							     ((agent_type',site'),(agent_type,site)) 
-							     (pending_edges (view_of_tp_i tp_i))  
-							 in
-							 let pending_bonds' =  (*we update the list of pending bonds*)
-							   String4Set.fold 
-							     (fun a b -> (rpath,a)::b) 
-							     interface 
-							     q2 
-							 in
-							 
-							 (subspecies,(rpath,tp_i)::extension,pending_bonds')::liste)
-						      q tp_list in
-						  vide liste sol 
-						end
+						vide ((subspecies,q2)::q) sol 
 					end
 				  in
 				  vide 
 				    (List.map 
 				       (fun (agent_to_views_id,pending_bonds) -> 
-					 (agent_to_views_id,[],
+					 (agent_to_views_id,
 					  List.map 
 					    (fun 
 					      ((agent_id,agent_type,site),(agent_type',site'))
 					      -> 
 						((agent_id,[]),((agent_type,site),(agent_type',site'))))
 					    pending_bonds))
-				    cut_list)
+				       cut_list)
 				    [] 
 				in
 				
 				let extended_list =
 				  (* restrict the list of tp_i extension to those that are compatible with the left hand side *)
 				  List.filter
-				    (fun (subspecies,extension) -> 
+				    (fun subspecies -> 
 				      List.for_all 
 					(fun (b,bool) ->
-					  match (*ode_handler.b_of_var*) b with 
+					  match b with 
 					    B(agent_id,agent_type,site) 
 					  | M((agent_id,agent_type,site),_)  -> 
 					      (try 
@@ -1812,55 +1791,31 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					blist)
 				    extended_list in 
 				let consumed_species_list = 
-				  List.map 
-				    (fun (core,extension) -> 
-				      let _ =
-					if debug 
-					then 
-					  let _ = pprint_string print_debug "CORE\n" in 
-					  let _ = 
-					    StringMap.iter
-					      (fun agent_id tp_i -> 
-						let _ = pprint_string print_debug agent_id in
-						let _ = pprint_int print_debug tp_i in
-						let _ = pprint_newline print_debug in
-						()) 
-					      core 
-					  in
-					  let _ = pprint_string print_debug "EXT\n" in
-					  let _ = 
-					    List.iter
-					      (fun (a,c) -> 
-(*						let _ = pprint_string print_debug a in*)
-						let _ = pprint_int print_debug c in
-						let _ = pprint_newline print_debug in
-						())
-					      extension in ()
-				      in 
-				      let species = build_species agent_of_tp_i core extension in
-				      let _ =
-					if debug then
-					  print_species species 
-				      in 
-				      let sp = 
-					List.fold_left 
-					  (fun sp ((agent_id,_,site),(agent_id',_,site')) -> 
-					    if is_agent_in_species agent_id sp 
-						&& is_agent_in_species agent_id' sp 
-					    then 
-					    (
-					      add_bond_to_subspecies sp (agent_id,site) (agent_id',site'))
-					    else
-					      sp
-						) 
-					species 
-					  passives  in
-				      let _ = 
-					if debug then
-					  print_species sp
-				      in sp )
-				    extended_list
-				in
+				  (* we extend obtained subspecies by following their solid bonds *)
+				  List.fold_left 
+				    (fun sol core -> 
+				      List.fold_left 
+					(fun sol extension -> extension::sol)
+					sol 
+					(let sp  = (* subspecies without internal bonds *)
+					  build_species agent_of_tp_i core [] in 
+					let sp =  (* we add internal bonds *)
+					  List.fold_left 
+					    (fun sp ((agent_id,_,site),(agent_id',_,site')) -> 
+					      if is_agent_in_species agent_id sp 
+						  && is_agent_in_species agent_id' sp  (* if internal *)
+					      then 
+						(add_bond_to_subspecies sp (agent_id,site) (agent_id',site'))
+					      else
+						sp
+						  ) 
+					    sp
+					    passives  in    
+					complete_subspecies sp))
+				    [] 
+				    extended_list in 
+					
+	
 				       
 				let consume_list,product_list,semi_list  =
 				  List.fold_left 
