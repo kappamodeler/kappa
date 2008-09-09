@@ -229,7 +229,48 @@ let trivial_rule rs =
 	else false
       end
   |	_ -> false 
+
+type tr = Half of string*string | Unbind of string*string*string*string 
 	
+
+let which_trivial_rule rs = 
+  let control = rs.Pb_sig.control in 
+  let context = control.Pb_sig.context_update in 
+  let uncontext = control.Pb_sig.uncontext_update in 
+  match context,uncontext with 
+    _,[a,b,c] -> Half(b,c)
+  | _,[] ->
+      begin
+	let rec aux context rep = 
+	  match context with 
+	    (AL(_),_)::q | (B(_),_)::q-> aux q rep
+	    | (L((a,b,c),(d,e,f)),true)::q  -> 
+		begin
+		  match rep with 
+		    None -> Some (Unbind(b,c,e,f))
+		  | Some _ -> None
+		end
+	    | _ -> None
+	  in 
+	(match aux context None  
+	with None -> error 256
+	| Some a -> a )
+      end
+  |	_ -> error 259 
+
+let trivial_rule2 (contact,keep_this_link) rule = 
+  trivial_rule rule
+    && 
+  begin 
+    match which_trivial_rule rule
+    with 
+      Half(a,b) -> 
+	List.for_all 
+	  (fun (_,c,d) -> not (keep_this_link (a,b) (c,d)))
+	  (contact (a,b))
+    | Unbind(a,b,c,d) -> not (keep_this_link (a,b) (c,d))
+  end
+    
 let compute_annotated_contact_map_in_compression_mode system cpb contact_map =
   let local_map = compute_annotated_contact_map_init cpb in
   let site_map = 

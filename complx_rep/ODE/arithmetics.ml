@@ -50,7 +50,7 @@ let rec simplify_expr (expr:expr) =
 
 module KeyMap = Map2.Make (struct type t = expr*expr*expr*expr let compare = compare end)
 
-let simplify2 expr = 
+(*let simplify2 expr = 
   let rec aux expr l = 
     match expr with 
       Plus(a,b) -> aux a (aux b l)
@@ -124,7 +124,7 @@ let simplify2 expr =
 	 )
       output1 in 
   simplify_expr expr 
-
+*)
 (*let simplify_expr = simplify2 *)
       
 

@@ -44,7 +44,11 @@ let add_contact with_dots (a1,s1) (a2,s2) cm =
     let fadd k1 (k2,s2) acc = 
       let old = try String2Map.find k1 acc with Not_found -> [] in
       String2Map.add k1 ((k2,k2,s2)::old) acc in 
-    fadd k1 k2 (fadd k2 k1 acc) in 
+    if k1=k2 then 
+      fadd k1 k2 acc 
+    else
+      fadd k1 k2 (fadd k2 k1 acc) 
+   in 
   let k = oriente (a1,s1) (a2,s2) in 
   let (k1,k2),(k3,k4)=k in
   if String22Set.mem k cm.relation_set 
@@ -54,13 +58,16 @@ let add_contact with_dots (a1,s1) (a2,s2) cm =
       relation_list = k::(cm.relation_list);
       possible_linksb = (L((k1,k1,k2),(k3,k3,k4)))::cm.possible_linksb;
       link_of_site = fadd_contact  (a1,s1) (a2,s2) cm.link_of_site;
-      access = if with_dots then 
-      let set1 = String2Set.add (a1,s1) (try String2Map.find (a1,s1) cm.access with Not_found -> String2Set.empty) in 
-      let set2 = String2Set.add (a2,s2) (try String2Map.find (a2,s2) cm.access with Not_found -> String2Set.empty) in 
-      String2Set.fold 
-	(fun k1 acc -> 
-	  String2Set.fold (fun k2 acc -> fadd_access k1 k2 acc) set1 acc)
-	set2 cm.access else cm.access} 
+      access = 
+      if with_dots 
+      then 
+	let set1 = String2Set.add (a1,s1) (try String2Map.find (a1,s1) cm.access with Not_found -> String2Set.empty) in 
+	let set2 = String2Set.add (a2,s2) (try String2Map.find (a2,s2) cm.access with Not_found -> String2Set.empty) in 
+	String2Set.fold 
+	  (fun k1 acc -> 
+	    String2Set.fold (fun k2 acc -> fadd_access k1 k2 acc) set1 acc)
+	  set2 cm.access 
+      else cm.access} 
 
 let are_connected (id1,ig1) (id2,ig2) cm sites_of_ig1 = 
   List.fold_left 
