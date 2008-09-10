@@ -284,12 +284,13 @@ let print_contact_map channel pb   =
 		  StringSet.iter 
 		    (fun site -> 
 		      let _ = print 
-			  "<Site Name=\"%s\" CanChangeState=\"%s\" CanBeBound=\"%s\"/>\n" 
+			  "<Site Name=\"%s\" CanChangeState=\"%s\" CanBeBound=\"%s\">\n" 
 			  site 
 			  (if StringSet.mem site m1 then "true" else "false")
 			  (if StringSet.mem site m2 then "true" else "false")
 		      in 
-		      let _ = iter_sites (a,site)  print_rule in () )
+		      let _ = iter_sites (a,site)  print_rule in 
+		      let _ = print "</Site>\n" in () )
 		    mall in 
 		let _ = print "</Agent>\n" in ()) 
 	      interface in 
@@ -334,12 +335,13 @@ let print_contact_map channel pb   =
 		  StringSet.iter 
 		    (fun site -> 
 		      let _ = print 
-			  "<Site Name=\"%s\" CanChangeState=\"%s\" CanBeBound=\"%s\"/>\n" 
+			  "<Site Name=\"%s\" CanChangeState=\"%s\" CanBeBound=\"%s\">\n" 
 			  site 
 			   (if StringSet.mem site m1 then "true" else "false")
 			  (if StringSet.mem site m2 then "true" else "false")
 		      in 
 		      let _ = iter_sites (a,site)  print_rule in 
+		      let _ = print "</Site>\n" in 
 		      ())
 		    mall in 
 		let _ = print "</Agent>\n" in ()) 
