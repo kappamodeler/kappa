@@ -143,6 +143,8 @@ let build_relationships_among_species = ref false
 let empty_interface = ref "(Any)" (*to be printed when we have no information at all about the sites of an agent *)
 let skip_a_specie   = ref ""      (*to be printed when an agent can be fully abstracted *)
 
+
+let ode_memoization_level = ref 1
 let output_latex_rule_system = ref ""
 let output_latex_sty = ref ""
 let output_ODE_obs_head = ref ""
@@ -545,6 +547,8 @@ let options = List.rev
   "--epsilon-value",Float ode_ulp,"smallest number>0",["ODE"],Normal;
   "--flat-ode",Bool flat_ode,"Compute the ODE for the flat system",["ODE"],Normal;
   "--plots",Int ode_points,"number of plots in the data file",["ODE"],Normal;
+  "--ode-memoization-level",Int ode_memoization_level,
+ "tune the level of memoization \n     0 -- no memoization \n     1 -- few memoization \n     2 -- much memoization",["ODE"],Expert;
 
 (*Packing*)
   "--auto-packs",Bool auto_packs, "use automatic packing",["Reachability analysis"],Normal;

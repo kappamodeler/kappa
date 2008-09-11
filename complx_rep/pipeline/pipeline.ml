@@ -1278,7 +1278,7 @@ module Pipeline =
 		     (match pb.bdd_sub_views with None -> Some pb,(l,m)
 		     | Some sub ->
 			 
-			 let _  = 
+			 let _,(l,m)  = 
 			   Ode_computation.compute_ode
 			     file0 
 			     file1 

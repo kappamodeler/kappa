@@ -88,7 +88,7 @@ let concat a b = if b = [] then a else a@b
 (**If the boolean is true then this function associates a maximal list of compatible fragments to a bond 
 If the boolean is false then this function associated a maximal list of fragments to a bond 
 This function is hash consed *)
-let get_denum bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) = 
+let get_denum (agent_to_int_to_nlist,view_of_tp_i,ode_handler) bool = 
   let hash = Hashtbl.create 21 in
   let f x = 
     try 
@@ -180,6 +180,9 @@ let get_denum bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) =
 	 rep)
   in f 
 
+    let get_denum= 
+      (fun x -> get_denum x,get_denum x,get_denum x)
+	
 
     let is_empty_fragment x = x=[]
     let is_empty_species = StringMap.is_empty

@@ -525,7 +525,7 @@ let merge sp1 sp2 =
       
 
 
-let get_denum_without_recursive_memoisation bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) = 
+let get_denum_without_recursive_memoisation (agent_to_int_to_nlist,view_of_tp_i,ode_handler) bool = 
   (** If the boolean is true then this function associates a maximal list of compatible fragments to a bond *)
   (** If the boolean is false then this function associated a maximal list of fragments to a bond *)
   (** This function is hash consed *)
@@ -710,20 +710,27 @@ let get_denum_without_recursive_memoisation bool (agent_to_int_to_nlist,view_of_
 
 
 
-let get_denum_with_recursive_memoization bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) = 
+let get_denum_with_recursive_memoization 
+    ((agent_to_int_to_nlist:Views.views_id list StringListMap.t StringMap.t),
+     (view_of_tp_i:(Views.views_id -> 'a Views.views)),
+     (ode_handler:('b,'a,'c,'d,'e,'f,'g) ode_handler)) level bool = 
   (** If the boolean is true then this function associates a maximal list of compatible fragments to a bond *)
   (** If the boolean is false then this function associated a maximal list of fragments to a bond *)
   (** This function is hash consed *)
   let hash = Hashtbl.create 21 in
-  let rec fetch x = 
+  let rec fetch (x:Pb_sig.name_specie*string*string*string) = 
     try Hashtbl.find hash x 
     with 
       Not_found -> 
 	let rep = compute x in 
-	let _ = Hashtbl.add hash x rep in 
+	let _ = 
+	  if level > 0 
+	  then Hashtbl.add hash x rep 
+	in 
 	rep 
   and
       compute (a,s,a',s') = 
+    let fetch = if level = 2 then fetch else compute in 
     let ag1,s1,ag2,s2 = (a,s,a',s') in 
     let _ = 
       if get_denum_debug 
@@ -878,243 +885,14 @@ let get_denum_with_recursive_memoization bool (agent_to_int_to_nlist,view_of_tp_
       []
       tp_list 
   in fetch 
-(*let get_denum_with_recursive_memoization bool (agent_to_int_to_nlist,view_of_tp_i,ode_handler) = 
-  (** If the boolean is true then this function associates a maximal list of compatible fragments to a bond *)
-  (** If the boolean is false then this function associated a maximal list of fragments to a bond *)
-  (** This function is memoized recursively *)
-  let hash = Hashtbl.create 21 in
-  let f x = 
-    try 
-      Hashtbl.find hash x
-    with 
-      Not_found -> 
-	let rec aux 
-	    current (* contains a list of subspecies to expand *)
-	    compatibility (* map each rooted path to an interface *)
-	    sol (* list of already built subspecies *)
-	    = 
-	  match current with 
-	    [] -> sol (*computation is over *)
-	  | ([],subspecies)::q -> (*a subspecies is now complete *)
-	      let compatibility' = (* here we update compatibility map *)
-		if not bool then compatibility 
-		else 
-		  RPathMap.fold 
-		    (fun rpath tp_i comp -> 
-		      let view = view_of_tp_i tp_i in 
-		      let agent = agent_of_view view in 
-		      let interface = interface_of_view view in 
-		      if (* is there a conflict *)
-			try 
-			  RPathMap.find rpath comp <> interface 
-			with 
-			  Not_found -> false 
-		      then 
-			error 536 (Some "Incompatible interfaces in agents")
-		      else
-			RPathMap.add rpath interface comp)
-		    subspecies.subspecies_views 
-		    compatibility 
-	      in 
-	      aux q compatibility' (subspecies::sol) 
-	  | (((a,s,a',s'),black,rpath)::b,subspecies)::q ->
-	      (* a species to be extend *)
-	      let rpath'= 
-		{rpath 
-		with path = ((a,s),(a',s'))::rpath.path} in 
-	      try 
-		let extension = 
-		  Hashtbl.find hash (a,s,a',s') 
-		in 
-		let q' = 
-		  List.fold_left 
-		    (fun liste extension -> 
-		      let shifted_extension = 
-			shift_subspecies 
-			  extension 
-			  (StringMap.add "" rpath StringMap.empty) in 
-		      let ext_subspecies = merge shifted_extension subspecies in 
-		      let rep  = 
-			add_bond_to_subspecies 
-			  ext_subspecies
-			  (rpath',s) 
-			  (rpath,s') in 
-		      let _ = 
-			if get_denum_debug 
-			then 
-			  begin 
-			    print_string "RECOMP\n";
-			    print_string "BASE\n";
-			    print_species subspecies;
-			    print_string "\nEXT\n";
-			    print_species extension;
-			    print_string "\nSHIFTED EXT\n";
-			    print_species shifted_extension;
-			    print_string "\nPATHs\n";
-			    print_rpath rpath;
-			    print_string "\n";
-			    print_string s;
-			    print_string "\n";
-			    print_rpath rpath';
-			    print_string "\n";
-			    print_string s';
-			    print_string "\n";
-			    print_string "\nRESULT\n";
-			    print_species rep  ;
-			    print_string "\n"
-			      
-			  end in 
-		      
-		      (b,rep)::liste)
-		    q
-		    extension 
-		    
-		in 
-		aux q' compatibility sol 
-	      with 
-		Not_found -> 
-		  begin 
-		    let _ = 
-		      if StringSet.mem a black 
-		      then 
-			error 47 (Some "Infinite number of fragments") 
-		    in
-		    let black' = StringSet.add a black in 
-		    let ag1,s1,ag2,s2 = (a,s,a',s') in 
-	        (* a is the new agent, a' belong to the subspecies *)
-		    let tp = (*here is the list of all template piece for agent a containing site s*)
-		      try 
-			StringListMap.find 
-			  [s] 
-			  (StringMap.find a agent_to_int_to_nlist)
-		      with Not_found -> error 1135 None 
-		    in
-		    let _ = 
-		      if get_denum_debug 
-		      then 
-			begin 
-			  print_string "TP LIST: \n";
-			  List.iter (fun i -> print_int i;print_newline ()) tp ;
-			  print_newline ()
-			end
-		    in 
-		    let tp = 
-		      List.filter (*filter out the one that are ot compatible*)
-                            (* TO DO improve by computing directly the list when compatibility relation is already known *)
-			(fun tp -> 
-			  let view = view_of_tp_i tp in 
-			  let interface = interface_of_view view  in 
-			  let agent = agent_of_view view in
-			  try 
-			    (not bool) 
-			      or RPathMap.find rpath' compatibility = interface 
-			  with Not_found -> true )
-			tp in 
-		    let _ = 
-		      if get_denum_debug 
-		      then 
-			begin 
-			  print_string "TP LIST2: \n";
-			  List.iter (fun i -> print_int i;print_newline ()) tp ;
-			  print_newline ();
-			  print_string ag1;
-			  print_string s1;
-			  print_string ag2;
-			  print_string s2;
-			  print_newline () 
-			end
-		    in 
-		    let q' =
-		      List.fold_left
-			(fun q' n_tp -> 
-			  let view = view_of_tp_i n_tp in 
-			  let _ = 
-			    if get_denum_debug
-			    then 
-			      let _ = print_int n_tp  in 
-			      let _ = print_newline () in 
-			      List.iter 
-				((fun (b,bool) -> 
-				  print_b (ode_handler.b_of_var b);
-				  print_string (if bool then "T" else "F");
-				  print_newline ()))
-				(valuation_of_view view)
-			  in 
-			  if 
-			    let rec aux l = (* check that the view contains a bonds *)                                      (* TODO hash cons the function between bonds and views compatible with this bond *) 
-			      match l with [] -> false
-			      | t::q -> 
-				  begin
-				    match ode_handler.b_of_var (fst t),snd(t) with AL((x,y,z),(t,u)),bool 
-				      when x=ag1 && y=ag1 && z=s1 && t=ag2 && u = s2 -> bool
-				    | _ -> aux q
-				  end
-			    in aux (valuation_of_view view)
-			  then 
-			    let _ = 
-			      if get_denum_debug then 
-				begin 
-				  print_int n_tp;
-				  print_newline ()
-				end
-			    in 
-			    let b' = 
-			      String4Set.fold 
-				(fun ((ag1,s1),(ag2,s2)) b' -> 
-				  if ag2 = a' && s'=s2  then b'
-				  else (
-				    let _ = 
-				      if get_denum_debug
-				      then 
-					begin
-					  print_string ag2;
-					  print_string s2;
-					  print_string ag1;
-					  print_string s1;
-					  print_newline ()
-					end in 
-				    (ag2,s2,ag1,s1),black',rpath')::b')
-				(pending_edges view) b 
-			    in
-			    (b',
-			     add_bond_to_subspecies 
-			       (add_view_to_subspecies subspecies rpath' n_tp)
-			       (rpath',s) (rpath,s'))::q'
-			      else q')
-			q tp in
-		    aux q' compatibility sol 
-		  end
-	in
-	let rep = 
-	  aux 
-	    [[x,StringSet.empty,empty_rpath],empty_species] 
-	    RPathMap.empty 
-	    [] 
-	in
-	(Hashtbl.add hash x rep;
-	 rep)
-  in 
-  let f x = 
-    let rep = f x in
-    let _ = 
-      if get_denum_debug 
-      then 
-	let _ = print_string "GET_DENUM\n" in 
-	let (a,b,c,d) = x in
-	let _ = print_string a in
-	let _ = print_string "." in
-	let _ = print_string b in
-	let _ = print_string "|" in
-	let _ = print_string c in
-	let _ = print_string "." in
-	let _ = print_string d in
-	let _ = print_newline () in 
-	let _ = List.iter (fun x -> print_string "SPECIES:";print_species x;print_newline ();print_string "-----\n") rep 
-	in () 
-    in rep
-  in f*)
 
-let get_denum = get_denum_with_recursive_memoization
+
+
+let get_denum 
+    = (fun x  -> 
+      get_denum_with_recursive_memoization x 0 ,
+      get_denum_with_recursive_memoization x 1 ,
+      get_denum_with_recursive_memoization x 2)
 
 
 let complete_subspecies (pending_edges,view_of_tp_i,keep_this_link,get_denum) subspecies = 

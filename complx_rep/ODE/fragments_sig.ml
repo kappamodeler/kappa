@@ -37,10 +37,18 @@ module type Fragments =
       val is_empty_fragment: fragment -> bool
       val is_empty_species: subspecies -> bool 
 
-      (** If the boolean is true then this function associates a maximal list of compatible fragments to a bond If the boolean is false then this function associated a maximal list of fragments to a bond.*)
-      val get_denum: bool -> views_id list Data_structures.StringListMap.t Pb_sig.StringMap.t *
-	  (views_id -> 'b Views.views) * ('a, 'b, 'c, 'd, 'e, 'f, 'g) Views.ode_handler ->
-	    (Pb_sig.name_specie * Pb_sig.name_site * Pb_sig.name_specie * Pb_sig.name_site) (** rooted_path*)  -> subspecies  list
+      (** If the boolean is true then these three functions associates a maximal list of compatible fragments to a bond If the boolean is false then these three functions associated a maximal list of fragments to a bond
+          Each of these three functions use a different amount of memory:
+	      0 -> no memoization
+	      1 -> light memoization
+              2 -> recursive memoization *)
+      val get_denum: 
+	  (views_id list Data_structures.StringListMap.t Pb_sig.StringMap.t * (views_id -> 'b Views.views) * ('a, 'b, 'c, 'd, 'e, 'f, 'g) Views.ode_handler -> 
+	    (
+	    (bool -> (Pb_sig.name_specie * Pb_sig.name_site * Pb_sig.name_specie * Pb_sig.name_site)  -> subspecies  list) *
+	      (bool -> (Pb_sig.name_specie * Pb_sig.name_site * Pb_sig.name_specie * Pb_sig.name_site)  -> subspecies  list) *
+	     (bool -> (Pb_sig.name_specie * Pb_sig.name_site * Pb_sig.name_specie * Pb_sig.name_site)  -> subspecies  list)))
+
 
      (** give the potential extensions for a subspecies *)
      val complete_subspecies: 

@@ -40,8 +40,6 @@ module New_F = New_Fragment
 
 module F = New_F 
 
-(*type fragment = F.fragment
-type subspecies = F.subspecies *)
 let get_denum = F.get_denum 
 let complete_subspecies = F.complete_subspecies 
 let empty_species = F.empty_species 
@@ -142,6 +140,7 @@ let print_log s =
 let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matlab file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode (l,m) = 
   
   let prefix' = "-"^(fst prefix) in 
+
   let good_mode a b = 
     (file_ODE_mathematica<>"" && b=MATHEMATICA) or 
     (file_ODE_matlab<>"" && b=MATLAB) or 
@@ -681,11 +680,23 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
     in 
 
 
+   
+   let level = Config_complx.ode_memoization_level in 
+  
+   let get_denum0,get_denum1,get_denum2 = get_denum (agent_to_int_to_nlist,view_of_tp_i,ode_handler)   in 
+   let get_denum = 
+     match !Config_complx.ode_memoization_level 
+     with 
+       2 -> get_denum2
+     | 1 -> get_denum1
+     | _ -> get_denum0  in 
+
     (* The following function maps a bonds to a maximal class of compatible extensions of it (according the views and the annotated contact map) *)
-    let get_denum_handling_compatibility = get_denum true (agent_to_int_to_nlist,view_of_tp_i,ode_handler) in 
+   let get_denum_handling_compatibility = get_denum true  in 
   
     (* The following function maps a bonds to all compatible extensions (according to the views and the annotated contact map *)
-    let get_denum = get_denum false (agent_to_int_to_nlist,view_of_tp_i,ode_handler) in 
+    let get_denum = get_denum false in
+
 
 
     (* Whether a link is solid, or not *)
@@ -2696,7 +2707,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	then 
 	  begin 
 	    print_string prefix';
-	      print_string "Start translating initial states:\n ";
+	      print_string "Start translating initial states:\n";
+	    print_string prefix';
+	    print_string "  ";
 	    print_int (size ());
 	    print_string " fragments so far";
 	    print_newline ()
