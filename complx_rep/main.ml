@@ -178,8 +178,12 @@ let main ()  =
     else 
       None,log in 
   let pb,log = 
-    methods.dump_latex_rule_system (!Config_complx.output_latex_rule_system) 
-      prefix pb log in 
+    if !Config_complx.do_dump_latex then 
+      methods.dump_latex_rule_system 
+	(!Config_complx.output_latex_rule_system) 
+	prefix pb log 
+    else pb,log 
+  in 
   let _,_,log = 
     if !Config_complx.force_cycle or !Config_complx.only_detect_cycles then 
       let subsystem,(l,m) = 

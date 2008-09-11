@@ -69,6 +69,7 @@ let do_quantitative_compression = ref true
 let do_something () = 
    not (!input_file = [""] or !input_file = [])
    or !input_marshalling <> ""  
+let do_dump_latex = ref true 
 
 let dump_all_complexs = ref true
 let sort_complexes = ref true
@@ -282,6 +283,7 @@ let options = List.rev
 	  "--do-low-res-contact-map";
 	  "--do-high-res-contact-map";
 	  "--do-marshalling";
+	  "--do-LATEX";
 	  "--do-ODE";
 	  "--do-HTML";
 	  "--do-XML";
@@ -299,6 +301,7 @@ let options = List.rev
 	"--no-compute-qualitative-compression";
 	"--no-compute-quantitative-compression";
 	"--no-do-marshalling";
+	"--no-do-LATEX";
 	"--no-do-HTML";
 	"--no-do-XML";
 	"--no-do-ODE";
@@ -315,6 +318,7 @@ let options = List.rev
   "--do-high-res-contact-map", Bool do_high_res_contact_map,"constrauct the high resolution contact map",["0_Actions";"Contact map"],Normal;  
  "--compute-qualitative-compression",Bool do_qualitative_compression,"simplify the rules",["0_Actions";"Compression"],Normal;
   "--compute-quantitative-compression",Bool do_quantitative_compression,"simplify the rules",["0_Actions";"Compression"],Normal;
+  "--do-LATEX",Bool do_dump_latex,"dump the LaTeX style file and the LaTeX document for the list of rules",["0_Actions";"LATEX"],Normal;
   "--do-ODE",Bool do_ODE,"compute the ODE system",["0_Actions";"ODE"],Normal;
   "--do-refine-to-force-cycles",Bool force_cycle,"Refine the system to avoid polymere formation",["0_Actions";"Polymers prevention"],Normal;
   "--do-compute-dag-refinement-relation",Bool do_dag_refinement,"compute the DAG for the refinement relation",["0_Actions";"Refinement detection"],Normal; 
@@ -477,7 +481,7 @@ let options = List.rev
 ["2_Output'";"Refinement detection"],Normal;
 "--output-latex-rule-system",String output_latex_rule_system,
 "dump the rules in latex format",
-["2_Output'";"Latex"],Normal;
+["2_Output'";"LATEX"],Normal;
 "--output-xml",String output_xml,
     "write an xml file",["2_Output'";"XML"],Normal;
 "--output-html",String output_html,
