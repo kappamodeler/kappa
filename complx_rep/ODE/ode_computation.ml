@@ -516,8 +516,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	    then 
 	      begin 
 		print_string prefix';
-		print_string "ODE generation is completed \n";
-		print_string prefix';
 		print_string "  ";
 		print_int (size ());
 		print_string " fragments\n";
@@ -2546,17 +2544,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
   
     let bool = snd activity in 
     let proj_solution solution = 
-      let _ = 
-	  if !Config_complx.trace_rule_iteration 
-	  then 
-	    begin 
-	      print_string prefix';
-	      print_string "Start translating initial states:\n ";
-	      print_int (size ());
-	      print_string " fragments so far";
-	      print_newline ()
-	    end  in 
-
       let specie_map = 
 	Solution.AA.fold 
 	  (fun i a  -> IntMap.add i (Agent.name a))  
@@ -2704,6 +2691,16 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	      map 
 	      (Arraymap.create 0) in 
     let init = 	
+      let _ = 
+	if !Config_complx.trace_rule_iteration 
+	then 
+	  begin 
+	    print_string prefix';
+	      print_string "Start translating initial states:\n ";
+	    print_int (size ());
+	    print_string " fragments so far";
+	    print_newline ()
+	  end  in 
       List.fold_left 
 	(fun sol (a,k) -> 
 	  if k=0 then sol
@@ -2729,6 +2726,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 
 	
     in
+    let l  = chrono (prefix',snd prefix)  "ODE computation" l in 
     let _ = dump views_data_structures.interface_map  in
   
     let obs = 

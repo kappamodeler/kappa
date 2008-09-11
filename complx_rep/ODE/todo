@@ -1,0 +1,10 @@
+Tune the memoization level thanks to command line options
+Check rules where two instances of the same agent occur.
+Correct kynetics for fragments that have automorphisms.
+Deal with bonds in initial solution 
+Deal with agent creation
+Deal with agent suppression
+Compute the jacobian
+Dump directly a C file that integrate the ODE
+Use marchalization to hash cons.
+
