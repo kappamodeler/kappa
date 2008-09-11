@@ -141,8 +141,11 @@ let print_log s =
 
 let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matlab file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode (l,m) = 
   
-
-  let good_mode a b = b=MATHEMATICA or b=MATLAB or b=LATEX or b=DATA in 
+  let prefix' = "-"^(fst prefix) in 
+  let good_mode a b = 
+    (file_ODE_mathematica<>"" && b=MATHEMATICA) or 
+    (file_ODE_matlab<>"" && b=MATLAB) or 
+    b=LATEX or b=DATA in 
   let f mode file = 
     if good_mode output_mode mode
     then
@@ -508,6 +511,21 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	  rep
       in f),
       (let dump fmap  = 
+	let _ = 
+	    if !Config_complx.trace_rule_iteration 
+	    then 
+	      begin 
+		print_string prefix';
+		print_string "ODE generation is completed \n";
+		print_string prefix';
+		print_string "  ";
+		print_int (size ());
+		print_string " fragments\n";
+		print_string prefix' ;
+		print_string "Start dumping fragment definitions";
+		print_newline ()
+	      end  in 
+	  
 	let l = 
 	  FragmentMap.fold
 	    (fun l n list -> 
@@ -739,12 +757,14 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	  let _ = print_comment print_ODE rule_id in 
 	  let _ = pprint_newline print_ODE  in 
 	  let _ = 
-	    if !Config_complx.trace_rule_iteration 
+	    if !Config_complx.trace_rule_iteration && rule_id <> "EMPTY"
 	    then 
 	      begin 
-		print_string "Rule: ";
+		print_string prefix';
+		print_string "Start translating rule: ";
 		print_string rule_id;
 		print_newline ();
+		print_string prefix';
 		print_string "  ";
 		print_int (size ());
 		print_string " fragments so far";
@@ -759,17 +779,18 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	    with 
 	      Not_found -> 
 		y in
-	   if trivial_rule2 (contact,keep_this_link) x
-	   then 
-	     begin
-	       let deal_with (target_type,target_site,origin_type,origin_site) kyn prod = 
-		 let _ = 
-		   if debug
-		   then 
-		     print_string "Dealing with half bond breaking\n "
-		 in
-		 let prod = 
-		   begin 
+	  if rule_id = "EMPTY" then mainprod 
+	  else if trivial_rule2 (contact,keep_this_link) x
+	  then 
+	    begin
+	      let deal_with (target_type,target_site,origin_type,origin_site) kyn prod = 
+		let _ = 
+		  if debug
+		  then 
+		    print_string "Dealing with half bond breaking\n "
+		in
+		let prod = 
+		  begin 
 		     let rp_target,rp_origin = 
 		       build_rp_bond_from_half_bond 
 			 ((target_type,target_site,
@@ -2525,6 +2546,17 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
   
     let bool = snd activity in 
     let proj_solution solution = 
+      let _ = 
+	  if !Config_complx.trace_rule_iteration 
+	  then 
+	    begin 
+	      print_string prefix';
+	      print_string "Start translating initial states:\n ";
+	      print_int (size ());
+	      print_string " fragments so far";
+	      print_newline ()
+	    end  in 
+
       let specie_map = 
 	Solution.AA.fold 
 	  (fun i a  -> IntMap.add i (Agent.name a))  

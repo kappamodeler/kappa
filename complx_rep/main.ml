@@ -164,7 +164,7 @@ let main ()  =
 	(!Config_complx.output_ODE_contact) 
 	(!Config_complx.output_ODE_covering) 
 	"" 
-	(!Config_complx.output_ODE_matlab)  
+	"" (*(!Config_complx.output_ODE_matlab)  *)
 	(!Config_complx.output_ODE_mathematica) 
 	"" 
 	(!Config_complx.output_ODE_alphabet) 
