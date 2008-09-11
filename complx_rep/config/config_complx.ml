@@ -99,6 +99,9 @@ let output_without_polymere = ref ""
 let only_closing_rules = ref false 
 let kinetic_amplifier = ref 1. 
 
+let display_unreachable_rules_in_contact_map = ref false 
+
+
 (* Analysis parameters *)
     (* reachability analysis *)
 
@@ -525,6 +528,9 @@ let options = List.rev
 (*Contact map *)
    "--find-cycles",Bool find_potential_cycles,"to compute all cycles in the contact map",["Contact map"],Normal;
    "--find-connected-components",Bool find_connected_components,"to compute connected components",["Contact map"],Normal;
+
+   "--display-unreachable-rules-in-high-res-contact-map",Bool display_unreachable_rules_in_contact_map,"to display unreachable rules in the drawers attached to agents, sites, and bonds in the high resolution contact map",["Contact map"],Normal;
+
 (*Debug *)
    
    "--trace",Bool trace,"to dump debuging information",["3_Debug"],Expert;

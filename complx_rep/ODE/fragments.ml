@@ -529,7 +529,7 @@ let get_denum_without_recursive_memoisation (agent_to_int_to_nlist,view_of_tp_i,
   (** If the boolean is true then this function associates a maximal list of compatible fragments to a bond *)
   (** If the boolean is false then this function associated a maximal list of fragments to a bond *)
   (** This function is hash consed *)
-  let hash = Hashtbl.create 21 in
+  let hash = Hashtbl.create 20001 in
   let f x = 
     try 
       Hashtbl.find hash x
@@ -717,7 +717,7 @@ let get_denum_with_recursive_memoization
   (** If the boolean is true then this function associates a maximal list of compatible fragments to a bond *)
   (** If the boolean is false then this function associated a maximal list of fragments to a bond *)
   (** This function is hash consed *)
-  let hash = Hashtbl.create 21 in
+  let hash = Hashtbl.create 200001 in
   let rec fetch (x:Pb_sig.name_specie*string*string*string) = 
     try Hashtbl.find hash x 
     with 

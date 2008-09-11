@@ -24,8 +24,8 @@ let error i =
 
 
 let keep_this_link (a,b) (c,d) skeleton = 
-  a<>c 
-    && 
+  (*a<>c 
+    && *)
   (String22Set.mem ((a,b),(c,d))  skeleton.solid_edges 
    or 
    String22Set.mem ((c,d),(a,b)) skeleton.solid_edges)

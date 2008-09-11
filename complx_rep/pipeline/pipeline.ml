@@ -527,13 +527,10 @@ module Pipeline =
 		       (List.map (fun (a,b,c) -> (a,b)))
 		       a.link_of_site,(l,m)
 	       in
-	       Some {rep' with 
+	       (Some {rep' with 
 		      drawers = 
-		      Some (build_drawer
-			(match rep'.unreachable_rules 
-			with None -> (fun x -> true)
-			| Some a -> (fun x -> not (RuleIdSet.mem x a)))
-			cpb.cpb_rules contact)},(l,m)
+		      Some (build_drawer (fun x -> true)
+			cpb.cpb_rules contact)},(l,m))
    
        and find_potential_cycles  res prefix rep (l,m) = 
 	 let prefix' = add_suffix prefix  "find_potential_cycles" in
