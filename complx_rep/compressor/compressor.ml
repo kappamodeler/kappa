@@ -510,7 +510,8 @@ module Compressor =
 		  List.fold_left 
 		    (fun (rs,dead) (lab,control,inj) -> 
 		      if List.for_all 
-			  (fun lab -> not (is_access lab)) lab
+			  (fun lab -> not (is_access lab)) 
+			  lab
 		      then
 			rs,(lab,control,inj)::dead
 		      else
@@ -563,7 +564,7 @@ module Compressor =
 	 print_string "------------\n")
 	 ars 
 
-     let do_it fic fic2 mode pb  messages  =     
+     let do_it fic fic2 mode auto pb  messages  =     
        let solstring = ref [] in 
        let is_access = 
 	 match pb.unreachable_rules with 
@@ -652,7 +653,9 @@ module Compressor =
 				 a 
 				 (Some "()") 
 				 (fun x-> x) 
-				 (fun x -> x) true chan
+				 (fun x -> x) true 
+				 (Count_isomorphism.compute_kyn_factor2 a auto)
+				 chan
 			     in ();print_string "\n") ars_input) with _ -> ();
 			     print_newline ()
 			 end);
@@ -677,6 +680,7 @@ module Compressor =
 				     (fun x -> x) 
 				     sp_of_id 
 				     true 
+				     (Count_isomorphism.compute_kyn_factor2 a auto) 
 				     chan 
 				 in 
 				 solstring:=s::(!solstring)))				
@@ -705,7 +709,7 @@ module Compressor =
 	 match l with [] -> k
 	 |	t::q -> aux q ((String.length t)+k) in
        aux l 0 in 
-     let fadd i s map = 
+(*     let fadd i s map = 
        let j = List.map nameint_of_rule i in 
        try 
 	 let (_,old) = IntListMap.find j map in
@@ -721,46 +725,65 @@ module Compressor =
 	   begin
 	     IntListMap.add j (i,s) map
 	    end
-     in
+     in*)
      let rep = (!solstring) in 
-     let rep = 
-       let map = 
-	   List.fold_left 
-	     (fun map sol -> 
+     let count = 
 	       List.fold_left 
-		 (fun map (a,b) -> 
-		   try fadd a b map
-		   with _ -> map)
-		 map 
-		 sol)
-	     IntListMap.empty
-	     rep 
-	 in
-	 let l = 
-	   IntListMap.fold 
-	     (fun c (a,b) l -> 
-	       (let rec aux l rep = 
-		 match l with [] -> rep 
-		 | t::q when t<rep -> aux q t 
-		 | t::q -> aux q rep 
-	       in 
-	       match c with [] -> (-1),a,b 
-	       | t::q -> aux q t,a,b)::l) 
-	     map [] in 
-	 let l = 
-	   List.sort (fun (a,_,_) (b,_,_)-> compare a b) l in 
-	 List.rev (List.map (fun (a,b,c) -> [b,c]) l)
-     in  
-        let _ = 
-	  try 
-	    begin
+		 (fun map l1 ->
+		   List.fold_left
+		     (fun map (l,b) -> 
+		       let size1 = List.length l in 
+		       let size2 = List.length b in 
+		       let node = (size1,size2,l,b) in 
+		       List.fold_left 
+			 (fun map x -> 
+			   try 
+			     let (size1',size2',l1',l2'),_ = IntMap.find x.r_simplx.Rule.id map
+			     in 
+			     if size1<size1' or 
+			       (size1=size1' && size2<size2') 
+			     then 
+			       IntMap.add x.r_simplx.Rule.id (node,x) map 
+			     else 
+			       map 
+			   with 
+			     Not_found -> 
+			       IntMap.add x.r_simplx.Rule.id (node,x) map
+				 )
+			 map l)
+		     map l1
+		     )
+		 IntMap.empty rep in 
+	     let good_ids = 
+	       IntMap.fold 
+	       (fun _ (_,x) -> RuleIdSet.add x) 
+		 count 
+		 RuleIdSet.empty 
+	     in 
+	     let rep = 
+	       List.map 
+		 (fun x -> 
+		   List.map 
+		     (fun (l,b) -> 
+		       (List.filter (fun x -> RuleIdSet.mem x good_ids) l,b))
+		     x)
+		 rep in 
+	     let rep = 
+	       List.map 
+		 (fun x -> 
+		   List.filter (fun (l,b) -> l<>[]) x)
+		 rep in 
+     let _ = 
+       try 
+	 begin
 	   if fic = "" 
 	   then ()
 	   else 
 	     let output = open_out fic in 
 	     let print s = Printf.fprintf output s in 
 	     let print_opt x  = if !Config_complx.keep_comments then  print "%s" x else () in 
-             let dep,map,l = 
+             
+	     let dep,map,l = 
 	       List.fold_left 
                  (fun (m1,m2,idl) l1 -> 
                    (List.fold_left 
@@ -770,12 +793,13 @@ module Compressor =
 			  [] -> (m1,m2,idl)
 		        | rid1::a2 -> 
 		            (List.fold_left  
-                	       (fun (m1,m2,id) rid2 -> 
+                	       (fun (m1,m2,idl) rid2 -> 
 		                 (RuleIdMap.add rid2  rid1 m1,
 				  m2,
 				  rid2::idl))
                                (m1,RuleIdMap.add rid1 (l,b) m2,rid1::idl)
-			       a2)) (m1,m2,idl) l1))
+			       a2)) 
+		      (m1,m2,idl) l1))
 		 (RuleIdMap.empty,RuleIdMap.empty,[]) rep in 
 	     let rec aux cl lid = 
                match cl with 
@@ -821,54 +845,62 @@ module Compressor =
 			  (new_flaglength - oldflaglength)
 			  (String.get !Config_complx.comment 0)))
 		     with _ -> () in 
-		   print_opt !Config_complx.comment;
-		   (match a.flag with 
-		     None -> (print_opt !Config_complx.comment)
-		   | Some s -> (print_opt "'";
-				print_opt s;
-				print_opt "'"));
-		   (if nspace=0 then print_opt " ");
-		   print_opt  a.lhs;
-
-
-				print_opt  (a.arrow);
-				print_opt  a.rhs;
-				print_opt  a.comments;
-				print_opt "\n";
-				try (
-				  let f lid  = 
-				    try (
-				      let id,lid = match lid with t::q -> t,q | [] -> raise Exit in
-				      let dep = RuleIdMap.find id dep in      
-				      let fl = name_of_rule  dep in 
-				      print_opt !Config_complx.comment;
-				      print_opt "Gathered with ";
-				      print_opt fl;
-				      print_opt "\n";lid)
-				    with Not_found -> 
-				      try ( 
-					
-					let id,lid = match lid with t::q -> t,q | [] -> raise Exit in 
-					let (a,b) = 
-					    try RuleIdMap.find id map 
-                                            with Not_found -> error "865"  "" "" ([],[]) in 
-					print_opt !Config_complx.comment;
-					print_opt "simplified  rule:";
-					print_opt "\n";
-					let _ = 
-					  try (print_opt 
-						 (String.make 
-						    (oldflaglength - new_flaglength)
-						    ' '))
-					  with _ -> () in 	
-					let _ = 
-					  List.iter (fun x -> print "%s" x) (List.rev b) in
-					print_opt " ";
-					print_opt !Config_complx.comment;
-					print_opt  id.r_id;
-					print "\n";lid) 
-				      with Not_found -> (print_opt "Cannot be applied \n";let id,lid = List.hd lid,List.tl lid in   lid) in 
-				  ((let lid = 
+		   let _ = print_opt !Config_complx.comment in 
+		   let _ = 
+		     match a.flag with 
+		       None -> (print_opt !Config_complx.comment)
+		     | Some s -> (print_opt "'";
+				  print_opt s;
+				  print_opt "'") in 
+		   let _ = (if nspace=0 then print_opt " ") in 
+		   let _ = print_opt  a.lhs in 
+		   let _ = print_opt  (a.arrow) in 
+		   let _ = print_opt  a.rhs in 
+		   let _ = print_opt  a.comments in 
+		   let _ = print_opt "\n" in 
+		   let rule=a in 
+		   try (
+		     let f lid  = 
+		       try (
+			 let id,lid = 
+			   match lid with t::q -> t,q 
+			   | [] -> raise Exit in
+			 let dep = RuleIdMap.find id dep in      
+			 let fl = name_of_rule  dep in 
+			 print_opt !Config_complx.comment;
+			 print_opt "Gathered with ";
+			 print_opt fl;
+			 print_opt "\n";lid)
+		       with Not_found -> 
+			 try ( 
+			   
+			   let id,lid = match lid with t::q -> t,q | [] -> raise Exit in 
+			   let (a,b) = 
+			     try RuleIdMap.find id map 
+                             with Not_found -> error "865"  "" "" ([],[]) in 
+			   print_opt !Config_complx.comment;
+			   print_opt "simplified  rule:";
+			   print_opt "\n";
+			   let _ = 
+			     try (print_opt 
+				    (String.make 
+				       (oldflaglength - new_flaglength)
+				       ' '))
+			     with _ -> () in 	
+			   let _ = 
+			   (match rule.flag with 
+			     None -> (print_opt !Config_complx.comment)
+			   | Some s -> (print_opt "'";
+					print_opt s;
+					print_opt "' ")) in 
+			   let _ = 
+			     List.iter (fun x -> print "%s" x) (List.rev b) in
+			   print_opt " ";
+			   print_opt !Config_complx.comment;
+			   print_opt  id.r_id;
+			   print "\n";lid) 
+			 with Not_found -> (print_opt "Cannot be applied \n";let id,lid = List.hd lid,List.tl lid in   lid) in 
+		     ((let lid = 
 				    if a.dir = 1 then f lid else 
 				    (let lid = f lid in f lid) in aux q lid)))
 				with _ -> 

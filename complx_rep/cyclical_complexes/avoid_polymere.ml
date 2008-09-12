@@ -924,7 +924,7 @@ let dump_rs chan rs =
       with
       Not_found -> x) in 
 
-  let s = 
+   let s = 
     A.K.print_kleenean_system 
       string_txt
       (fun x->true) 
@@ -933,7 +933,13 @@ let dump_rs chan rs =
 	with None -> x.r_id 
 	| Some a -> a))
       (fun x -> 3) (IntSet.empty) 
-      s (Some "()") (fun x->x) (fun x->x) true None in 
+      s 
+      (Some "()") 
+      (fun x->x) 
+      (fun x->x) 
+      true 
+       None 
+       None in 
 
   let _ = 
     List.iter 
@@ -952,7 +958,8 @@ let dump_rs chan rs =
 		   let _ = print_string (Printf.sprintf  "%f" kynetic) in
 		   let _ = print_newline () in 
 		   ()
-	  | _ -> error 947 None ) s
+	  | _ -> error 947 None ) 
+      s
   in 
   () 
 

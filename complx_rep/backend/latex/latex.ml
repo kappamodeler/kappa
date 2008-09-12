@@ -151,7 +151,7 @@ let string_of_agent_name x = "\\"^(store_string ("Agents",x,"agent "^x,("\\agent
 let string_of_site_name x = "\\"^(store_string ("Sites",x,"site  "^x,("\\site{","}")))
 
 
-let dump_rs_latex chan rs bool (var_of_b,b_of_var,varset_add,varset_empty,fold_vars,build_kleenean_rule_system,print_kleenean_system)  =
+let dump_rs_latex chan rs bool  (var_of_b,b_of_var,varset_add,varset_empty,fold_vars,build_kleenean_rule_system,print_kleenean_system)  =
   let print_string = 
     match chan with None -> print_string 
     | Some a -> (fun x -> Printf.fprintf a "%s" x) in
@@ -189,8 +189,7 @@ let dump_rs_latex chan rs bool (var_of_b,b_of_var,varset_add,varset_empty,fold_v
 	StringMap.find x map
       with
       Not_found -> x) in 
-
-  let s = 
+ let s = 
     print_kleenean_system 
       (fun x->true) 
       (fun x -> 
@@ -199,7 +198,7 @@ let dump_rs_latex chan rs bool (var_of_b,b_of_var,varset_add,varset_empty,fold_v
 	| Some a -> a))
       (fun x -> 3) 
       (IntSet.empty) 
-      s (Some "()") sigma sigma  true None in 
+      s (Some "()") sigma sigma  true  None in 
 
   let bool = 
     List.fold_left

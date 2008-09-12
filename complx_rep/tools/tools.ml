@@ -481,3 +481,14 @@ let string_prefix x y =
       Not_found -> x in 
   sigma 
 *)
+
+let avoid_copy g a = 
+  let rec aux l old rep = 
+    match l with 
+      t::q when g t=old -> aux q old rep
+    | t::q -> aux q (g t) (t::rep)
+    | [] -> List.rev rep
+  in 
+  match a with 
+    [] -> []
+  | t::q -> aux q (g t) [t] 

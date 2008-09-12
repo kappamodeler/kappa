@@ -158,6 +158,7 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(COMPLXREP)/reachability/count_complexes.cmo \
 	./$(COMPLXREP)/vars/var.cmo \
 	./$(COMPLXREP)/expr/expr.cmo \
+	./$(COMPLXREP)/isomorphism_detection/count_isomorphism.cmo \
 	./$(COMPLXREP)/expr/kleenean_expr.cmo \
 	./$(COMPLXREP)/abstract_expr/abstract_expr_sig.cmo \
 	./$(COMPLXREP)/abstract_expr/bdd.cmo \
@@ -179,7 +180,6 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(COMPLXREP)/backend/contact_map/output_contact_map.cmo \
 	./$(COMPLXREP)/cyclical_complexes/avoid_polymere.cmo \
 	./$(COMPLXREP)/refinements/refinements.cmo \
-	./$(COMPLXREP)/isomorphism_detection/count_isomorphism.cmo \
 	./$(COMPLXREP)/backend/XML/xml.cmo \
 	./$(COMPLXREP)/backend/HTML/html.cmo \
 	./$(COMPLXREP)/influence_map/influence_map.cmo \

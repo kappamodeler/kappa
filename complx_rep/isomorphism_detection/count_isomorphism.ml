@@ -356,14 +356,7 @@ let cannonize_connected_bmap bmap =
   {views=view;
     back_edges=back_edge},n
 
-(** this function computes the number of automorphisms in the left hand side of a rule *)
-let count_isomorphism rule = 
-  let bmap = 
-    List.fold_left 
-      (fun map (b,bool) -> 
-	BMap.add b bool map)
-      BMap.empty 
-      rule.injective_guard in
+let count_isomorphism_in_bmap bmap = 
   let list = split_bmap bmap in 
   let hash = 
     List.fold_left
@@ -403,6 +396,16 @@ let count_isomorphism rule =
 	      )
       hash 
       1
+
+let count_isomorphism rule = 
+  let bmap = 
+    List.fold_left 
+      (fun map (b,bool) -> 
+	BMap.add b bool map)
+      BMap.empty 
+	rule.injective_guard  in 
+  count_isomorphism_in_bmap bmap
+
 
 let get_id r = r.Pb_sig.r_simplx.Rule.id 
 
@@ -472,3 +475,41 @@ let dump_automorphisms_in_XML channel rules rel =
     let _ = print_string "</Automorphisms>\n" in 
       ()
     end
+
+let kyn_factor_of_rule a auto = 
+  try 
+    Some (a.r_simplx.Rule.kinetics/.(auto a.r_simplx.Rule.id))
+  with 
+    _ -> None 
+
+let compute_kyn_factor a auto = 
+  match a 
+  with [] -> None 
+  | t::q -> 
+      let a = kyn_factor_of_rule t auto in 
+      if List.for_all 
+	  (fun x -> (kyn_factor_of_rule x auto) = a) 
+	  q 
+      then 
+	a
+      else None 
+
+let compute_kyn_factor2 a (auto:'a -> float) = 
+  let rep = 
+    match a 
+    with [] -> None 
+    | (t,a,b)::q -> 
+	let x = compute_kyn_factor t auto in 
+	if 
+	  List.for_all 
+	    (fun (a,b,c) -> 
+              List.for_all 
+	      (fun y -> (kyn_factor_of_rule y auto) = x) 
+		a)
+	    q 
+	then 
+	  x
+	else None 
+  in 
+  rep 
+

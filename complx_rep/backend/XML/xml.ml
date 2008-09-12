@@ -170,20 +170,25 @@ let print_compression mode channel pb =
 		let n = fresh () in 
 		let _ = print "<Rule Id=\"%d\" Name=\"" n in
 		let _ = 
-		    List.fold_left 
+		  List.fold_left 
 		    (fun bool s -> 
 		      (asso s n;
-if bool then print ",%s" (name_of_rule s)
-		      else print "%s" (name_of_rule s));
+		       if bool then print ",%s" (name_of_rule s)
+		       else print "%s" (name_of_rule s));
 		      true)
-		    false (List.sort compare a) in
+		    false (avoid_copy name_of_rule  (List.sort (fun x y ->  compare (name_of_rule x) (name_of_rule y)) a)) in
 		let _ = print "\" Data=\"" in 
 		let _ = 
-		  List.iter 
-		    (fun s -> print "%s" s)
-		    (List.rev b) in
+		  let rec aux l = 
+		    match l with 
+		      " @ "::[q] -> 
+			let _ = print "\" ForwardRate=\"" in
+			let _ = print "%s" q in ()
+		    | t::q -> (print "%s" t;aux q)
+		    | [] -> ()
+			in aux (List.rev b) in 
 		let _ = print "\"/>\n" in ())
-		l)
+	      l)
 	      (List.rev a) in
       let _ = print "<Map FromSet=\"Original\">\n" in 
       let g id =  id.Pb_sig.r_simplx.Rule.id in 
@@ -219,10 +224,12 @@ let print_rules channel pb  =
 	    List.iter 
 	      (fun id -> 
 		if not (id.Pb_sig.r_clone) then 
-		  print "<Rule Id=\"%d\" Name=\"%s\" Data=\"%s\"/>\n" 
-			      id.Pb_sig.r_simplx.Rule.id
-		    (name_of_rule id)
-		    id.Pb_sig.r_simplx.Rule.input)
+		  let _ = 
+		  print "<Rule Id=\"%d\" Name=\"%s\" Data=\"%s\" ForwardRate=\"%s\" />\n" 
+		      id.Pb_sig.r_simplx.Rule.id
+		      (name_of_rule id)
+		      id.Pb_sig.r_simplx.Rule.input
+		      (Float_pretty_printing.string_of_float  id.Pb_sig.r_simplx.Rule.kinetics) in ())
 	      case.Pb_sig.labels)
 	  rc.Pb_sig.rules)
       (List.rev system) in

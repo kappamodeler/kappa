@@ -987,8 +987,13 @@ module Pipeline =
 	     |  _ -> 
 	   frozen_error "line 936" "Unknown compression mode" "build_compression" (fun () -> raise Exit) in 
 	   (
-	       
-	       let rep,m = Com.do_it file1 file2 mode pb' m in 
+	       let pb',(l,m),auto = get_auto prefix' pb' (l,m) in 
+	       let auto x = 
+		 try 
+		     float_of_int (IntMap.find x  auto)
+		 with 
+		   Not_found -> 1. in 
+	       let rep,m = Com.do_it file1 file2 mode auto pb' m in 
 	       let l = chrono prefix title l in 
 	       Some 
 		 (match mode with Full -> {pb' with qualitative_compression = Some rep}
@@ -1180,8 +1185,27 @@ module Pipeline =
 	       let _ = Ref.dump (!Config_complx.output_without_polymere) pb (!Config_complx.cycle_depth) in 
 	       let l = chrono prefix "System refinement" l in 
 	       rep,(Some pb),(l,m))
+       and get_auto prefix pb (l,m) = 
+	 let prefix' = prefix in 
+	 match 
+	   pb.automorphisms 
+	 with 
+	   None -> 
+	     let pb2,(l,m)  = count_automorphisms prefix' (Some pb) (l,m) in 
+	     begin 
+	       match pb2 with 
+		 None -> error "line 1268" "cannot count automorphisms" "" (raise Exit)
+	       | Some pb2 -> 
+		   begin
+		     match pb2.automorphisms 
+		     with 
+		       None -> error "line 1273" "Cannot count automorphisms" "" (raise Exit)
+		     | Some a -> pb2,(l,m),a
+		   end
+	     end
+	 | Some a -> pb,(l,m),a 
 	   
-       and template = 
+     and template = 
 	 (fun file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 prefix pb (l,m) ->
 	   let prefix' = add_suffix prefix "template" in 
 	   let _ = print_option prefix (Some stderr) "Starting ODE generation\n" in
@@ -1254,24 +1278,7 @@ module Pipeline =
 		   None -> pb,(l,m) 
 		 | Some a -> 
 		     let pb,(l,m),boolean = get_boolean_encoding None prefix' a (l,m) in 
-		     let pb,(l,m),auto = 
-		       match 
-			 pb.automorphisms 
-		       with 
-			 None -> 
-			   let pb2,(l,m)  = count_automorphisms prefix' (Some pb) (l,m) in 
-			   begin 
-			     match pb2 with 
-			       None -> error "line 1268" "cannot count automorphisms" "" (raise Exit)
-			     | Some pb2 -> 
-				 begin
-				   match pb2.automorphisms 
-				   with 
-				     None -> error "line 1273" "Cannot count automorphisms" "" (raise Exit)
-				   | Some a -> pb2,(l,m),a
-				 end
-			   end
-		       | Some a -> pb,(l,m),a in 
+		     let pb,(l,m),auto = get_auto prefix' pb (l,m) in 
 		     (match pb.bdd_sub_views with None -> Some pb,(l,m)
 		     | Some sub ->
 			 
@@ -1708,7 +1715,20 @@ module Pipeline =
 		      A.K.E.V.varset_empty,
 		      A.K.E.V.fold_vars,
 		      A.K.build_kleenean_rule_system,
-		      A.K.print_kleenean_system string_latex) in 
+		      (fun is_access f  g set  ss print_any sigma sigma2 ret log -> 
+			A.K.print_kleenean_system 
+			  string_latex 
+			  is_access 
+			  f 
+			  g 
+			  set 
+			  ss
+			  print_any 
+			  sigma 
+			  sigma2 
+			  ret 
+			  None 
+			  log))in 
 		 (Some pb'),log
 	     end
        in

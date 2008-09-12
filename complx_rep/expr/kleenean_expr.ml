@@ -35,7 +35,7 @@ module type Kleenean_Expr =
     val extract_kleenean_rule_system: kleenean_rule_system -> kleenean_rule_system  
     val list_of_kleenean_valuation: kleenean_valuation -> (E.V.var * bool) list 
     val abstract:  kleenean_valuation -> E.V.var -> kleenean_valuation
-    val print_kleenean_system:  string_handler -> (rule_id -> bool) -> (rule_id  -> string) -> (string -> int) -> (IntSet.t) -> kleenean_rule_system -> string option -> (string->string) -> (string -> string) -> bool  ->  out_channel option -> (rule_id list * string list) list
+    val print_kleenean_system:  string_handler -> (rule_id -> bool) -> (rule_id  -> string) -> (string -> int) -> (IntSet.t) -> kleenean_rule_system -> string option -> (string->string) -> (string -> string) -> bool   ->  float option -> out_channel option -> (rule_id list * string list) list
     val empty_kleenean_rule_system: kleenean_rule_system 
   end
       
@@ -138,7 +138,7 @@ module Kleenean_expr =
 		E.V.varmap_add (E.V.var_of_b b) (if bool then TRUE else FALSE) e else e)
 	    b.context_update  e
 	    
-        let print_kleenean_system handler is_access (f:'a -> string)  g set  ss print_any sigma sigma2 ret log = 
+        let print_kleenean_system handler is_access (f:'a -> string)  g set  ss print_any sigma sigma2 ret kin log = 
 	  
 	  let print_option = 
 	    if handler.mode = TXT then print_option else (fun x y z -> ()) in 
@@ -272,6 +272,21 @@ module Kleenean_expr =
 		  | Dis(a,b) -> hb,sol,((a,b)::cons),cons'
 		  | Forb(a,l) -> hb,sol,cons,(a,l)::cons'
                   |_ -> hb,sol,cons,cons'  in 
+		let kin2 = 
+		  match kin with 
+		    None -> None
+		  | Some a -> 
+		      let bmap = 
+			E.V.varmap_fold
+			  (fun v b x -> 
+			    match b with 
+			      TRUE -> BMap.add (E.V.b_of_var v) true x
+			    | FALSE-> BMap.add (E.V.b_of_var v) false x
+			    |	ANY -> x)
+			  e 
+			  BMap.empty in 
+		      Some (a*.(float_of_int (Count_isomorphism.count_isomorphism_in_bmap bmap)))
+		in
      		let b1,(pretty,n),cons,consb = 
 		  E.V.varmap_fold
 		    fadd
@@ -377,6 +392,8 @@ module Kleenean_expr =
 			     cons)
 			  consb))
 		in 
+		
+	
 		let _ = print_option empty_prefix log handler.uni_rule  in
 		let l = 
 		  StringMap.fold (fun a b sol -> (a,b)::sol) pretty' [] in 
@@ -437,7 +454,7 @@ module Kleenean_expr =
 		      a,b or bool,n,List.fold_left (fun s a -> a::s) olds (List.rev string)) l ("",false,n',string) in 
 		
 		
-		
+	
 		let f x = () in 
 		let _ = f k in 
 		let _ = f b in 
@@ -445,6 +462,14 @@ module Kleenean_expr =
 		let _ = f n'' in
 		let _ = f pretty'' in 
 		let _ = f c' in 
+		let string  = 
+		  match kin2 with 
+		   Some a (*when a<>1.*)-> 
+		      let _ = print_option empty_prefix log " @ " in
+		      let _ = print_option empty_prefix log (Float_pretty_printing.string_of_float a) in 
+		      ((Float_pretty_printing.string_of_float a)::" @ "::string)
+		  | _ -> string 
+		in
 		let _ = if ret then print_option empty_prefix log  "\n"  else () in 
 		((let l = 
 		  List.sort compare real_id in
