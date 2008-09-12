@@ -311,10 +311,6 @@ let dump_html pb channel (l,m)  =
       output_xml channel;
       menutitle channel "Kappa rules";
       print_rules pb channel ;
-      print_pretty_compression Full pb channel; 
-      print_compressed_rules Full  pb channel;
-      print_pretty_compression Isolated pb channel; 
-      print_compressed_rules Isolated  pb channel;
       print_ckappa Unsmashed pb channel ;
       print_ckappa Smashed pb channel ;
       print_boolean_encoding Unsmashed pb channel ;
@@ -325,20 +321,32 @@ let dump_html pb channel (l,m)  =
       print_pack pb channel ;
       print_species_map pb channel; 
       print_reachables pb channel]@
+     (if !Config_complx.do_qualitative_compression or !do_quantitative_compression 
+     then [menutitle channel "Compression";
+	    print_pretty_compression Full pb channel; 
+	    print_compressed_rules Full  pb channel;
+	    print_pretty_compression Isolated pb channel; 
+	    print_compressed_rules Isolated  pb channel] else [])@
      (if is_refinement_relation_jpg pb (!Config_complx.output_dag_ref_jpg) (!Config_complx.output_maximal_ref_jpg)  
-     then [menutitle channel "Refinement relation"]
+     then [menutitle channel "Refinement relation";
+	    print_dag_refinement pb channel;
+	    print_maximal_refinement pb channel]
      else [])@
-     [print_dag_refinement pb channel;
-      print_maximal_refinement pb channel]@
-     if !Config_complx.do_ODE 
+      (if !Config_complx.force_cycle 
+      then [menutitle channel "Refinement (to avoid polymer)";
+	      precomputed_data channel 
+	       (!Config_complx.output_without_polymere)
+	       "Refinement"]
+     else [])@
+     (if !Config_complx.do_ODE 
      then 
        [menutitle channel "Ordinary differential equations";
-     print_ODE_alphabet pb channel;
-     print_ODE_system_mathematica pb channel;
+	 print_ODE_alphabet pb channel;
+	 print_ODE_system_mathematica pb channel;
 	 print_ODE_system_matlab pb channel;
-     print_ODE_obs pb channel] 
+	 print_ODE_obs pb channel] 
      else 
-       [])
+       []))
   in 
 
       

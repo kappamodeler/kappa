@@ -885,7 +885,7 @@ in false
       {boolean_encoding with system =  new_system} pb.refined_system ;
     rule_warning = rule_warning },new_system,(l,m)
       
-let dump_rs chan rs =
+let dump_rs chan rs auto =
   let print_string = 
     match chan with None -> print_string 
     | Some a -> (fun x -> Printf.fprintf a "%s" x) in
@@ -932,13 +932,13 @@ let dump_rs chan rs =
 	(match x.r_simplx.Rule.flag 
 	with None -> x.r_id 
 	| Some a -> a))
-      (fun x -> 3) (IntSet.empty) 
-      s 
-      (Some "()") 
-      (fun x->x) 
-      (fun x->x) 
-      true 
-       None 
+       (fun x -> 3) (IntSet.empty) 
+       s 
+       (Some "()") 
+       (fun x->x) 
+       (fun x->x) 
+       true 
+       (Count_isomorphism.compute_kyn_factor2 s auto)
        None in 
 
   let _ = 
@@ -954,8 +954,8 @@ let dump_rs chan rs =
 		   let _ = print_string flag in
 		   let _ = print_string "' " in
 		   let _ = List.iter print_string (List.rev b) in
-		   let _ = print_string " @ " in
-		   let _ = print_string (Printf.sprintf  "%f" kynetic) in
+		  (* let _ = print_string " @ " in
+		   let _ = print_string (Printf.sprintf  "%f" kynetic) in*)
 		   let _ = print_newline () in 
 		   ()
 	  | _ -> error 947 None ) 
@@ -964,7 +964,7 @@ let dump_rs chan rs =
   () 
 
       
-      let dump file pb  k = 
+      let dump file auto pb  k = 
 	let chan = 
 	  if file = "" then None
 	  else Some (open_out file) 
@@ -979,7 +979,8 @@ let dump_rs chan rs =
 		List.iter 
 		  (fun inj -> 
 		    dump_rs chan  
-		      [(inj.labels,rs.control,inj.injective_guard)])
+		      [(inj.labels,rs.control,inj.injective_guard)] 
+		      auto )
 		  inj)
 	      (List.rev system)
 	  with 

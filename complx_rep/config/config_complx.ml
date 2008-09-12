@@ -380,7 +380,7 @@ let options = List.rev
 "--output-specie-map","_plx_specie_map.txt";
 "--output-xml","_plx.xml";
 "--output-html","_plx.html";
-"--output-refined-system","_plx_refinment.ka";
+"--output-refined-system","_plx_refinement.ka";
 "--output_dag_ref_dot","_plx_dag_refinement_relation.dot";
 "--output_dag_ref_jpg","_plx_dag_refinement_relation.jpg";
 "--output_maximal_ref_dot","_plx_maximal_refinement_relation.dot";

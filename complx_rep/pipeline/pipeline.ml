@@ -1182,7 +1182,13 @@ module Pipeline =
 		   mode  
 		   (l,m)  
 	       in  
-	       let _ = Ref.dump (!Config_complx.output_without_polymere) pb (!Config_complx.cycle_depth) in 
+	       let pb,(l,m),auto = get_auto prefix' pb (l,m) in 
+	       let auto x= 
+		 try 
+		   float_of_int (IntMap.find x auto) 
+		 with 
+		   Not_found -> 1. in 
+	       let _ = Ref.dump (!Config_complx.output_without_polymere) auto pb (!Config_complx.cycle_depth) in 
 	       let l = chrono prefix "System refinement" l in 
 	       rep,(Some pb),(l,m))
        and get_auto prefix pb (l,m) = 
