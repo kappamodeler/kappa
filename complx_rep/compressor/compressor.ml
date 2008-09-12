@@ -889,10 +889,10 @@ module Compressor =
 			     with _ -> () in 	
 			   let _ = 
 			   (match rule.flag with 
-			     None -> (print_opt !Config_complx.comment)
-			   | Some s -> (print_opt "'";
-					print_opt s;
-					print_opt "' ")) in 
+			     None -> ()
+			   | Some s -> (print "'";
+					print "%s" s;
+					print "' ")) in 
 			   let _ = 
 			     List.iter (fun x -> print "%s" x) (List.rev b) in
 			   print_opt " ";
