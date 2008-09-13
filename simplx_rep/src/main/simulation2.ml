@@ -1437,25 +1437,26 @@ let rec iter log sim_data p c =
 
 		      let drawers = (Iso.classify (h,curr_time) c.drawers p.iso_mode) 
 		      in
-			if !debug_mode then begin
-			  Printf.printf "Story computed, restarting\n" ; flush stdout end ; 
-			let log = Session.add_log_entry (-1) "Story found, restarting from marshalized simulation data" log in
-			let d = open_in_bin p.init_sd in
-			let f_init_sd = (Marshal.from_channel d : marshalized_sim_data_t) in
-			let _ = close_in d in
-			let init_sd = unmarshal f_init_sd in
-			  iter log (init_sd) p {c with 
-						  curr_iteration = c.curr_iteration+1 ; 
-						  drawers = drawers ; 
-						  curr_time = 0.0 (*!init_time*); 
-						  curr_step = 0
-					       } 
+		      if !debug_mode then begin
+			Printf.printf "Story computed, restarting\n" ; flush stdout end ; 
+		      let log = Session.add_log_entry (-1) "Story found, restarting from marshalized simulation data" log in
+		      let d = open_in_bin p.init_sd in 
+			
+		      let f_init_sd = (Marshal.from_channel d : marshalized_sim_data_t) in
+		      let _ = close_in d in
+		      let init_sd = unmarshal f_init_sd in
+		      iter log (init_sd) p {c with 
+					     curr_iteration = c.curr_iteration+1 ; 
+					     drawers = drawers ; 
+					     curr_time = 0.0 (*!init_time*); 
+					     curr_step = 0
+					   } 
 		    else
 		      let sim_data = {sim_data with sol = sol' ; net = net'} in
-			iter log sim_data p {c with 
-					       curr_step = c.curr_step + 1 ; 
-					       curr_time = curr_time
-					    } 
+		      iter log sim_data p {c with 
+					    curr_step = c.curr_step + 1 ; 
+					    curr_time = curr_time
+					  } 
 			  (*End story sampling mode*)
 		else 
 		  if not !ignore_obs then (*if !ignore_obs is true there is no need to take data points*)

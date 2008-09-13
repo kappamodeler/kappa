@@ -271,48 +271,62 @@ let main =
 	    else log
 	  in
 
-	  let log,p,sd = 
-
+	  let log,p_sd = 
+	    (*MOD2 JF*)
+	    (*I prevent crash by computing the initial state in case of exception *)
 	    (***********Loading simulation data from marshalized file**********)
 	    if !load_sim_data then
-	      let log = Session.add_log_entry 0 
-		(sprintf "--Loading initial state from %s..." !serialized_sim_data_file) log 
-	      in
-	      let d = open_in_bin (!serialized_sim_data_file) in 
-	      let f_sd = (Marshal.from_channel d:Simulation2.marshalized_sim_data_t) in
-	      let p = {max_failure = !Data.max_clashes;
-		       init_sd = !serialized_sim_data_file ;
-		       compress_mode = true ;
-		       iso_mode = false ;
-		       gc_alarm_high = false ;
-		       gc_alarm_low = false 
-		      }
-	      in
-	      let log = Session.add_log_entry 0 "--Initial state successfully loaded." log in
-		(log,p,Simulation2.unmarshal f_sd)
-	    else
-
-	      (***************Creating simulation data*****************)
-	      let log = Session.add_log_entry 0 "--Computing initial state" log 
-	      in
-	      let log,sd = Simulation2.init log (rules,sol_init,obs_l,exp)  
-	      in
-	      let log = 
-		if !save_sim_data or (!max_iter>1) then
-		  let file = Filename.concat !output_dir !serialized_sim_data_file in
-		  let log = Session.add_log_entry 0 (sprintf "--Saving initial state to %s..." file) log 
+	      begin 
+		try 
+		  let log = Session.add_log_entry 0 
+		      (sprintf "--Loading initial state from %s..." !serialized_sim_data_file) log 
 		  in
-		  let d = open_out_bin file in
-		  let f_sd = Simulation2.marshal sd in
+		  let d = open_in_bin (!serialized_sim_data_file) in 
+		  let f_sd = (Marshal.from_channel d:Simulation2.marshalized_sim_data_t) in
+		  let p = {max_failure = !Data.max_clashes;
+			    init_sd = !serialized_sim_data_file ;
+			    compress_mode = true ;
+			    iso_mode = false ;
+			    gc_alarm_high = false ;
+			    gc_alarm_low = false 
+			  }
+		  in
+		  let log = Session.add_log_entry 0 "--Initial state successfully loaded." log in
+		  (log,Some(p,Simulation2.unmarshal f_sd))
+			  with 
+			    _ -> 
+			      log,None
+	      end
+	    else
+	      log,None in 
+	  let log,p,sd = 
+	    
+	    match p_sd 
+	    with 
+	      Some (p,sd) -> log,p,sd
+	    | None -> 
+	      begin 
+              (***************Creating simulation data*****************)
+		let log = Session.add_log_entry 0 "--Computing initial state" log 
+		in
+		let log,sd = Simulation2.init log (rules,sol_init,obs_l,exp)  
+		in
+		let log = 
+		  if true (*!save_sim_data or (!max_iter>1)*) then
+		    let file = Filename.concat !output_dir !serialized_sim_data_file in
+		    let log = Session.add_log_entry 0 (sprintf "--Saving initial state to %s..." file) log 
+		    in
+		    let d = open_out_bin file in
+		    let f_sd = Simulation2.marshal sd in
 		    begin
 		      Marshal.to_channel d f_sd [] ;
 		      let log = Session.add_log_entry 0 "--Initial state succesfully saved" log
 		      in 
-			close_out d ;
-			log
+		      close_out d ;
+		      log
 		    end
-		else log
-	      in
+		  else log
+		in
 		(log,{ max_failure = !Data.max_clashes;
 		       init_sd = !serialized_sim_data_file; 
 		       compress_mode = true ;
@@ -320,7 +334,8 @@ let main =
 		       gc_alarm_high = false ;
 		       gc_alarm_low = false
 		     },sd
-		)
+		   )
+	      end 
 	  in
 	  let msg = sprintf "-Initialization: %f sec. CPU" (Mods2.gettime() -. t_init) in
 	  let log = Session.add_log_entry 0 msg log in
