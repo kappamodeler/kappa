@@ -163,7 +163,7 @@ let main ()  =
       methods.template 
 	(!Config_complx.output_ODE_contact) 
 	(!Config_complx.output_ODE_covering) 
-	"" 
+	(!Config_complx.output_ODE_latex) 
 	"" (*(!Config_complx.output_ODE_matlab)  *)
 	(!Config_complx.output_ODE_mathematica) 
 	"" 

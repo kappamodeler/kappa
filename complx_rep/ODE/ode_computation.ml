@@ -190,12 +190,21 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
      data = None; 
      kappa = None ;
      mathematica = print_mathematica;
-     latex = None;
+     latex = print_latex;
      matlab = print_matlab}
   in
 
   let print_ODE_mathematica = 
     {print_ODE with matlab = None} in 
+ 
+  let print_ODE_latex = 
+     {dump = None;
+      txt = None;
+      data = None;
+      kappa = None;
+      mathematica = None;
+      latex = print_latex;
+      matlab = None} in
 
   let print_ODE_matlab = 
     {dump = None;
@@ -731,11 +740,12 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
     let activity = 
       List.fold_left  
 	(fun mainprod x -> 
-	  let rule_id,flag,kyn_factor  =
+	  let rule_key,rule_id,flag,kyn_factor  =
 	    try 
 	      let label = List.hd (List.hd x.Pb_sig.rules).Pb_sig.labels in 
 	      let rule_id = name_of_rule label in 
 	      let flag = ltrim label.r_id in 
+	      let key = label.Pb_sig.r_simplx.Rule.id in 
 	      let kyn_factor = 
 		Constf(label.Pb_sig.r_simplx.Rule.kinetics
 			 /. 
@@ -743,9 +753,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			   (float_of_int (IntMap.find label.Pb_sig.r_simplx.Rule.id  auto))
 			 end)
 	      in 
-	      rule_id,flag,kyn_factor
+	      key,rule_id,flag,kyn_factor
 	    with 
-	      _ -> "EMPTY","EMPTY",Constf 1.
+	      _ -> 0,"EMPTY","EMPTY",Constf 1.
 	  in 
 	 
 	  let _ = 
@@ -763,22 +773,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	    
 	    Intmap.add i ((k,Mult(coef,expr))::old) prod 
 	  in 
-	  let _ = print_comment print_ODE rule_id in 
-	  let _ = pprint_newline print_ODE  in 
-	  let _ = 
-	    if !Config_complx.trace_rule_iteration && rule_id <> "EMPTY"
-	    then 
-	      begin 
-		print_string prefix';
-		print_string "Start translating rule: ";
-		print_string rule_id;
-		print_newline ();
-		print_string prefix';
-		print_string "  ";
-		print_int (size ());
-		print_string " fragments so far";
-		print_newline ();
-	      end  in 
+	  
 	  
 	  let control = x.Pb_sig.control in 
 	  let passives = x.Pb_sig.passive_species in 
@@ -789,9 +784,31 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	      Not_found -> 
 		y in
 	  if rule_id = "EMPTY" then mainprod 
-	  else if trivial_rule2 (contact,keep_this_link) x
-	  then 
-	    begin
+	  else 
+	    let _ = pprint_string print_ODE_latex "\\odegroup{" in 
+	    let _ = pprint_string print_ODE_latex "\\oderulename{" in 
+	    let _ = print_comment print_ODE rule_id in
+	    let _ = print_comment print_ODE "}{" in 
+	    let _ = print_comment print_ODE (string_of_int rule_key) in 
+	    let _ = pprint_string print_ODE_latex "}}{" in 
+	    let _ = pprint_newline print_ODE  in 
+	    let _ = 
+	      if !Config_complx.trace_rule_iteration && rule_id <> "EMPTY"
+	      then 
+		begin 
+		  print_string prefix';
+		  print_string "Start translating rule: ";
+		  print_string rule_id;
+		  print_newline ();
+		  print_string prefix';
+		  print_string "  ";
+		  print_int (size ());
+		  print_string " fragments so far";
+		  print_newline ();
+		end  in
+	    if trivial_rule2 (contact,keep_this_link) x
+	    then 
+	      begin
 	      let deal_with (target_type,target_site,origin_type,origin_site) kyn prod = 
 		let _ = 
 		  if debug
@@ -938,7 +955,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			  kyn_factor
 			  prod)
 	       in 
-	        Intmap.fold 
+	       let x = 
+		 Intmap.fold 
 		 (fun i l (mainprod,bool) ->
 		   let l = 
 		     simplify_expr 
@@ -956,6 +974,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		       None -> () 
 		     |	Some a -> 
 			 a.print_string "function z = " in 
+		   let _ = pprint_string print_ODE_latex "\\odeequ{" in
+		   
 		   let _ = print_intermediar_var print_ODE flag (string_of_int i)   in
 		   let _ = 
 		     match print_ODE.matlab with 
@@ -967,6 +987,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		   let _ = pprint_assign print_ODE in 
 		   let _ = print_expr print_ODE true true l in 
 		   let _ = pprint_commandsep print_ODE in 
+		   let _ = pprint_string print_ODE_latex "}" in 
 		   let _ = pprint_newline print_ODE in
 		   let _ = 
 		     match print_ODE.matlab 
@@ -979,7 +1000,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		     Arraymap.add i ((1,Vari(i,flag))::l) mainprod in 
 		   (mainprod,true))
 		 prod  
-		 mainprod
+		 mainprod in 
+	       let _ = pprint_string print_ODE_latex "}\n" in x
 	     end
 	   else
 	     begin 
@@ -2499,14 +2521,15 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			   prod 
 			   p_list 
 		       in 
-		       Intmap.fold 
-			 (fun i l (mainprod,bool) ->
-			   let l = 
-			     List.fold_left 
-			       (fun a (i,j) -> 
-				 Plus(a,Mult(Const i,j)))
-			       (Const 0)
-			       l in 
+		       let x = 
+			 Intmap.fold 
+			   (fun i l (mainprod,bool) ->
+			     let l = 
+			       List.fold_left 
+				 (fun a (i,j) -> 
+				   Plus(a,Mult(Const i,j)))
+				 (Const 0)
+				 l in 
 			   let funname = ((prefix_output_file^(string_of_intermediar_var flag (string_of_int i)))^".m") in 
 			   let matlab =  set_print MATLAB funname in 
 			   let print_ODE = 
@@ -2516,6 +2539,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			       None -> () 
 			     |	Some a -> 
 				 a.print_string "function z = " in 
+			   let _ = pprint_string print_ODE_latex "\\odeequ{" in
+			 
 			   let _ = print_intermediar_var print_ODE flag (string_of_int i)   in
 			   let _ = 
 			     match print_ODE.matlab with 
@@ -2527,6 +2552,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			   let _ = pprint_assign print_ODE in 
 			   let _ = print_expr print_ODE true true (simplify_expr l) in 
 			   let _ = pprint_commandsep print_ODE in 
+			   let _ = pprint_string print_ODE_latex "}"in 
 			   let _ = pprint_newline print_ODE in
 			   let _ = 
 			     match print_ODE.matlab 
@@ -2540,7 +2566,12 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			   (mainprod,true))
 			 prod  
 			 (mainprod,bool) 
+		       in 
+		       let _ = 
+			 pprint_string print_ODE_latex "}\n" in 
+		       x 
 			 else
+			   let _ = pprint_string print_ODE_latex "}" in 
 			   let _ = dump_line 2137 in (mainprod,bool) 
 			     )
 		   mainprod   

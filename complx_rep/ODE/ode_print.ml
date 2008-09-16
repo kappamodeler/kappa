@@ -49,7 +49,18 @@ let print_intermediar_var print var rule  =
 	 mathematica.print_string var;
          mathematica.print_string "v";
          mathematica.print_string rule) in 
-  ( )
+  let _ = 
+    match print.latex with 
+      None -> ()
+    | Some latex -> 
+	(latex.print_string "\\oderv";
+	 latex.print_string "{";
+	 latex.print_string var;
+	 latex.print_string "}{";
+	 latex.print_string rule;
+	 latex.print_string "}")
+  in 
+  ()
 	 
 	 
 let pprint_float  print f = 
@@ -99,12 +110,24 @@ let pprint_var print k i =
       None -> () 
     | Some a -> a.print_string k;a.print_string i
   in
-   let _ = 
+  let _ = 
     match print.dump
     with 
       None -> ()
     | Some a -> a.print_string k;a.print_string "(";a.print_string i;a.print_string ")"
   in
+  let _ = 
+    match print.latex
+    with 
+      None -> ()
+    | Some a -> 
+	begin
+	  a.print_string "\\odevar{";
+	  a.print_string k;
+	  a.print_string "}{";
+	  a.print_string i;
+	  a.print_string "}"
+	end in 
   ()
 
 let pprint_lvar print k i =
@@ -120,7 +143,19 @@ let pprint_lvar print k i =
       None -> () 
     | Some a -> a.print_string k;a.print_string i
   in
-  
+  let _ = 
+    match print.latex
+    with 
+      None -> ()
+    | Some a -> 
+	begin
+	  a.print_string "\\odediff{";
+	  a.print_string k;
+	  a.print_string "}{";
+	  a.print_string i;
+	  a.print_string "}"
+	end
+  in 
   ()
 
 
@@ -133,7 +168,8 @@ let pprint_derivate print i =
   let _ = 
     match print.mathematica with 
       None -> ()
-    | Some a -> a.print_string "'[t]" in 
+    | Some a -> a.print_string "'[t]" 
+  in 
   () 
 
 let pprint_ty print = 
@@ -178,20 +214,42 @@ let pprint_equal print =
     match print.mathematica with 
       Some print -> print.print_string "=="
     | None -> ()
-  in ()
+  in 
+  let _ = 
+    match print.latex with 
+      Some print -> print.print_string "\\odeequal"
+    | None -> ()
+  in 
+  ()
+    
  
 let pprint_assign print = 
   let _ = 
     match print.mathematica with 
       Some print -> print.print_string "="
     | None -> ()
-  in pprint_string print "="
+  in pprint_string print "=" 
+
+let remove_latex print = {print with latex = None} 
+let keep_latex print = {print with matlab = None ; mathematica = None} 
 
 let pprint_eq_separator print = 
-  pprint_string print ","
+  let print' = remove_latex print in 
+  let _ = pprint_string print' "," in 
+  let _ = 
+    match print.latex with 
+      None -> ()
+    | Some a -> a.print_string "}"
+  in ()
 
 let pprint_as_separator print = 
-  pprint_string print ";"
+  let print' = remove_latex print in 
+  let _ = pprint_string print' ";" in 
+  let _ = 
+    match print.latex with 
+      None -> ()
+    | Some a -> a.print_string "\\odeassep"
+  in ()
 
 let pprint_vart print = 
   let _ =
@@ -218,6 +276,11 @@ let pprint_assign print =
       None -> ()
     | Some a -> a.print_string "="
   in
+  let _ = 
+    match print.latex with 
+      None -> ()
+    | Some a -> a.print_string "\\odeequal"
+  in 
   () 
 
 let pprint_commandsep print = 
@@ -236,6 +299,8 @@ let pprint_commandsep print =
 
 
 let pprint_ODE_head print = 
+  let print_latex = keep_latex print in 
+  let print = remove_latex print in 
   let _ = pprint_string print "global e; \n" in
   let _ = pprint_string print "e " in 
   let _ = pprint_assign print in 
@@ -252,6 +317,7 @@ let pprint_ODE_head print =
   let _ = pprint_float print (!Config_complx.ode_final_time) in
   let _ = pprint_commandsep print in
   let _ = pprint_newline print in 
+  let _ = pprint_string print_latex "\\odebeforeequs\n" in 
   ()
 
 let pprint_ODE_head' print = 
@@ -302,10 +368,20 @@ let pprint_ODE_middle2 print =
   in ()
 
 let pprint_ODE_foot print = 
-  match print.mathematica with 
+  let _ = 
+    match print.mathematica with 
     None -> ()
-  | Some a -> a.print_string "}/.s],{t,tinit,tend},PlotRange->All]\n" 
+  | Some a -> a.print_string "}/.s],{t,tinit,tend},PlotRange->All]\n" in
+  let _ = 
+    match print.latex with 
+      None -> ()
+    | Some a -> a.print_string "\\odeafterequs" in ()
 
+
+let forbidden_char x = 
+  match x with 
+    '%' | '_' -> true 
+  | _ -> false
   
 let print_comment print s = 
   let _ = 
@@ -316,6 +392,18 @@ let print_comment print s =
     match print.matlab with 
       None -> ()
     | Some a -> a.print_string ("\n %"^s^"\n")
+  in 
+  let _ = 
+    match print.latex with 
+      None -> ()
+    | Some a ->
+	String.iter 
+	  (fun x -> 
+	    if forbidden_char x then 
+	      a.print_string ("\\"^(String.make 1 x))
+	    else
+	      a.print_string (String.make 1 x))
+	  s
   in () 
 
 let pprint_y print =
@@ -345,7 +433,7 @@ let channel_set print set =
     (all_fields print)
 
 
-let rec print_expr print bool bool2  x = 
+let rec print_expr  print bool bool2  x = 
    match x with
      Constf f -> pprint_float print f
    | Letter s -> pprint_string print  s 
@@ -355,11 +443,12 @@ let rec print_expr print bool bool2  x =
    | Var i ->  (pprint_var print "y" (string_of_int i);(if bool then pprint_t print else if bool2 then pprint_zero print else ()))
    | Shortcut (s,a) -> (print_intermediar_var print s a;(if bool then pprint_t print else if bool2 then pprint_zero print else ())) 
    | Div (a,b) -> 
-      begin
+       begin
 	print_atom print bool  bool2 a;
 	pprint_string print  "/";
 	print_atom print bool bool2  b
-      end
+       end
+	 
   | Mult (a,b) -> 
       begin
 	print_atom print bool bool2  a;
@@ -387,18 +476,89 @@ and print_atom print  bool bool2 x =
       pprint_string print  ")"
     end
 
+let print_expr_no_latex = print_expr 
 
+let rec print_expr  print bool bool2  x = 
+   match x with
+     Constf f -> pprint_float print f
+   | Letter s -> pprint_string print  s 
+   | Const i ->  pprint_int print i 
+   | Vari (v,r) -> (print_intermediar_var print r (string_of_int v);(if bool then pprint_ty print else if bool2 then pprint_zero print else ())) 
+   | Vark i ->   pprint_var print "k" i 
+   | Var i ->  (pprint_var print "y" (string_of_int i);(if bool then pprint_t print else if bool2 then pprint_zero print else ()))
+   | Shortcut (s,a) -> (print_intermediar_var print s a;(if bool then pprint_t print else if bool2 then pprint_zero print else ())) 
+   | Div (a,b) -> 
+       begin
+	pprint_string print "\\odefrac{";
+	 print_atom print bool  bool2 a;
+	pprint_string print  "}{";
+	print_atom print bool bool2  b;
+	 pprint_string print "}"
+       end
+	
+   | Mult(Constf -1.,a) 
+   | Mult(a,Constf -1.) 
+   | Mult(Const -1,a) 
+   | Mult(a,Const -1) -> 
+       begin 
+	 pprint_string print "\\odeuniminus";
+	 print_expr print bool bool2 a 
+       end
+   | Mult (a,b) -> 
+       begin
+	(match a with 
+	   Mult _ -> print_expr 
+	|  _ -> print_atom ) print bool bool2 a;
+	pprint_string print "\\odetime";
+	(match b with 
+	  Mult _ -> print_expr 
+	|  _ -> print_atom)  print  bool bool2  b
+      end
+  | Plus (a,b) -> 
+      begin
+	(match a with 
+	   Plus _ -> print_expr 
+	|  _ -> print_atom ) print bool bool2 a;
+	pprint_string print " \\odeplus ";
+	(match b with 
+	  Plus _ -> print_expr 
+	|  _ -> print_atom)  print  bool bool2  b
+      end
+  | Eps -> pprint_string print "\varepsilon"
+and print_atom print  bool bool2 x = 
+  if is_atomic x 
+  then print_expr print  bool  bool2 x 
+  else 
+    begin
+      pprint_string print  "\\left(";
+      print_expr print bool bool2 x;
+      pprint_string print  "\\right)"
+    end
+
+let print_expr print bool bool2 x = 
+  let print' = remove_latex print in 
+  let print_latex = keep_latex print in 
+  let _ = print_expr_no_latex print' bool bool2 x in
+  let _ = 
+    match print.latex
+    with 
+      None -> ()
+    | Some a -> print_expr print_latex  bool bool2 x 
+  in ()
+  
 
  let dump_prod (prod,bool) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab output_data   = 
     let print_ODE = print_ODE_mathematica in 
+    let print_latex = keep_latex print_ODE_mathematica in 
+    let print_ODE_wo_latex = remove_latex print_ODE_mathematica in 
     let _ = pprint_ODE_head' print_ODE in
-    
-   
+  
     let bool  = 
       Arraymap.fold 
 	(fun k b bool ->
 	  let _ = if bool then pprint_eq_separator print_ODE in 
 	  let _ = pprint_newline print_ODE in 
+          let _ = pprint_string print_latex "\\odeequ{" in 
 	  let _ = pprint_derivate print_ODE k in
 	  let _ = pprint_equal print_ODE in 
 	  let _ = List.fold_left 
@@ -413,11 +573,12 @@ and print_atom print  bool bool2 x =
 	  true)
 	prod  false in
 
-    let _  = 
+    let bool  = 
       Arraymap.fold 
 	(fun k b bool -> 
 	  let _ = if bool then pprint_eq_separator print_ODE in 
 	  let _ = pprint_newline print_ODE in 
+	  let _ = pprint_string print_latex "\\odeequ{" in 
 	  let _ = pprint_initvar print_ODE k in
 	  let _ = if k=0 then (print_string "BUG";Printf.fprintf stdout "BUG\n") in 
 	   
@@ -433,16 +594,20 @@ and print_atom print  bool bool2 x =
 	      let _ = print_expr print_ODE true false  (Const 0) in () in  
 	  true)
 	init bool  in 
-    let _ = pprint_ODE_middle1 print_ODE in
-    let _ = 
-      List.fold_left
-	(fun bool c -> 
-	  let _ = if bool then pprint_eq_separator print_ODE in
-	  let _ = pprint_newline print_ODE in 
-	  let _ = print_expr print_ODE false false   (simplify_expr c) in
-	  true)
-	false 
-	obs in
+	  let _ = 
+	    if bool then pprint_string print_latex "}"
+	  in 
+	  let _ = pprint_ODE_middle1 print_ODE_wo_latex in
+	  let print_ODE = print_ODE_wo_latex in 
+	  let _ = 
+	    List.fold_left
+	      (fun bool c -> 
+		let _ = if bool then pprint_eq_separator print_ODE in
+		let _ = pprint_newline print_ODE in 
+		let _ = print_expr print_ODE false false   (simplify_expr c) in
+		true)
+	      false 
+	      obs in
     let _ = pprint_ODE_middle2 print_ODE in 
     let _ = 
       List.fold_left

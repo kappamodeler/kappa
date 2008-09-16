@@ -50,6 +50,8 @@ let rec simplify_expr (expr:expr) =
 
 module KeyMap = Map2.Make (struct type t = expr*expr*expr*expr let compare = compare end)
 
+module HExprMap = Map2.Make (struct type t = expr let compare = compare end)
+
 (*let simplify2 expr = 
   let rec aux expr l = 
     match expr with 
@@ -119,7 +121,7 @@ module KeyMap = Map2.Make (struct type t = expr*expr*expr*expr let compare = com
       (fun a b -> Plus(a,b))
       (KeyMap.fold 
 	 (fun _ b c -> Plus(b,c))
-	 output2
+	 output
 	 (Const 0)
 	 )
       output1 in 
@@ -127,13 +129,97 @@ module KeyMap = Map2.Make (struct type t = expr*expr*expr*expr let compare = com
 *)
 (*let simplify_expr = simplify2 *)
       
+let rec simplify2 expr = 
+  let rec simplify_term_list expr (map,const) = 
+    match expr with 
+      Plus(a,b) -> 
+	simplify_term_list a (simplify_term_list b (map,const)) 
+    | Constf f -> (map,const+.f)
+    | Const i -> (map,const+.(float_of_int i))
+    | x -> 
+	let map2,const2 = 
+	  simplify_factor_list x (HExprMap.empty,1.)
+	in
+	let exprx' = 
+	  recombine_factor_list map2 in
+	let old = 
+	  try 
+	    HExprMap.find exprx' map 
+	  with 
+	    Not_found -> 0.
+	in
+	HExprMap.add exprx' (old+.const2) map,const 
+  and
+      recombine_term_list map = 
+    HExprMap.fold
+      (fun a b expr -> 
+	if b = 1. then (Plus(a,expr))
+	else if b = 0. then expr
+	else Plus(Mult(Constf b,a),expr))
+      map
+      (Constf 0.)
+  and
+      simplify_factor_list expr ((map:int HExprMap.t),const) = 
+    match expr with 
+      Mult(a,b) -> 
+	simplify_factor_list a (simplify_factor_list b (map,const)) 
+    | Constf f -> (map,const*.f)
+    | Const i -> (map,const*.(float_of_int i))
+    | Plus _  ->
+	let x' = simplify2 expr in
+       	let old = 
+	  try 
+	    HExprMap.find x' map 
+	  with 
+	    Not_found -> 0
+	in
+	HExprMap.add x' (old+1) map,const  
+    | Div(a,b) 
+      -> let x' = Div(simplify2 a,simplify2 b) in 
+         let old = 
+	  try 
+	    HExprMap.find x' map 
+	  with 
+	    Not_found -> 0
+	in
+	HExprMap.add x' (old+1) map,const  
+    | _ -> 
+	let x' = expr in 
+         let old = 
+	  try 
+	    HExprMap.find x' map 
+	  with 
+	    Not_found -> 0
+	in
+	HExprMap.add x' (old+1) map,const  
+	
+  and
+      recombine_factor_list map = 
+    HExprMap.fold
+      (fun a b expr -> 
+	if b = 1 then Mult(a,expr)
+	else if b = 0 then expr
+	else 
+	  let rec aux k sol = 
+	    if k=0 then sol
+	    else aux (k-1) (Mult(a,sol))
+	  in aux b (Const 1)
+	    )
+      map
+      (Const 1)
+  in 
+  simplify_expr (
+  let map,cst = simplify_term_list expr (HExprMap.empty,0.) in
+  Plus(Constf cst,recombine_term_list map)) 
 
+let simplify_expr expr = simplify2 (simplify_expr  expr) 
 let is_atomic expr = 
   match expr with 
    Letter _ | Eps | Var _ | Vark _ -> true
    | Constf f -> f>= 0.
    | Const a -> a>=0 
  | _ -> false 
+
 
 
 type ('subclass,'subspecies) expr_handler = 

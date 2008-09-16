@@ -150,6 +150,7 @@ let skip_a_specie   = ref ""      (*to be printed when an agent can be fully abs
 let ode_memoization_level = ref 1
 let output_latex_rule_system = ref ""
 let output_latex_sty = ref ""
+let output_ODE_latex = ref ""
 let output_ODE_obs_head = ref ""
 let output_ODE_data = ref ""
 let output_ODE_obs_latex = ref ""
@@ -348,6 +349,7 @@ let options = List.rev
 "--output-latex-rule-system","_plx.tex";
 "--output-latex-sty","_plx.sty";
 "--output-ODE-obs-latex","_plx_ODE_obs.tex";
+"--output-ODE-latex","_plx_ODE_system.tex";
 "--output-ODE-contact","_plx_ODE_contact.dot";
 "--output-ODE-mathematica","_plx_ODE_system.nb";
 "--output-ODE-matlab","_plx_ODE_system.m";
@@ -437,6 +439,10 @@ let options = List.rev
   String output_ODE_matlab,
   "write the ODE system in a matlab file",
   ["2_Output'";"ODE"],Normal;
+"--output-ODE-latex",
+  String output_ODE_latex,
+  "write the ODE in latex mode",
+  ["2_Output'";"ODE";"LATEX"],Normal;
 "--output-ODE-obs-latex",
   String output_ODE_obs_latex,
   "write the observable in latex mode",
