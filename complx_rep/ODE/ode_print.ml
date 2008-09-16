@@ -552,7 +552,7 @@ let print_expr print bool bool2 x =
     let print_latex = keep_latex print_ODE_mathematica in 
     let print_ODE_wo_latex = remove_latex print_ODE_mathematica in 
     let _ = pprint_ODE_head' print_ODE in
-  
+    let _ = pprint_string print_latex "\\odesystem{" in 
     let bool  = 
       Arraymap.fold 
 	(fun k b bool ->
@@ -608,7 +608,8 @@ let print_expr print bool bool2 x =
 		true)
 	      false 
 	      obs in
-    let _ = pprint_ODE_middle2 print_ODE in 
+	  let _ = pprint_string print_latex "}" in 
+	  let _ = pprint_ODE_middle2 print_ODE in 
     let _ = 
       List.fold_left
 	(fun bool c -> 
