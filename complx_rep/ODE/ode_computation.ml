@@ -788,8 +788,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	    let _ = pprint_string print_ODE_latex "\\odegroup{" in 
 	    let _ = pprint_string print_ODE_latex "\\oderulename{" in 
 	    let _ = print_comment print_ODE rule_id in
-	    let _ = print_comment print_ODE "}{" in 
-	    let _ = print_comment print_ODE (string_of_int rule_key) in 
+	    let _ = print_comment print_ODE_latex "}{" in 
+	    let _ = print_comment print_ODE_latex (string_of_int rule_key) in 
 	    let _ = pprint_string print_ODE_latex "}}{" in 
 	    let _ = pprint_newline print_ODE  in 
 	    let _ = 
