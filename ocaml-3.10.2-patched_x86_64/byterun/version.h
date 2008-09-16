@@ -1,1 +1,0 @@
-#define OCAML_VERSION "3.10.2"
