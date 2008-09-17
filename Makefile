@@ -360,7 +360,7 @@ clean_all: clean
 	rm -f simplx_rep/sim complx_rep/compress complx_rep/compress_light  simplx complx_light bd_influence_map bd_influence_map_light complx *.options* 
 
 grab_svn_version_number:
-	svn up | sed -e "s/\([^0-9]*\)\([0-9]*\)\./let svn_number = \2 +1/" > complx_rep/automatically_generated/svn_number.ml 
+	svn up | tail -n 1 | sed -e "s/\([^0-9]*\)\([0-9]*\)\./let svn_number = \2 +1/" > complx_rep/automatically_generated/svn_number.ml 
 
 commit:
 	make grab_svn_version_number

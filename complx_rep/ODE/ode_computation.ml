@@ -140,11 +140,16 @@ let print_log s =
 let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matlab file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode (l,m) = 
   
   let prefix' = "-"^(fst prefix) in 
-
+  let do_latex = !Config_complx.do_dump_latex in 
   let good_mode a b = 
     (file_ODE_mathematica<>"" && b=MATHEMATICA) or 
     (file_ODE_matlab<>"" && b=MATLAB) or 
-    b=LATEX or b=DATA in 
+    (do_latex && b=LATEX) 
+      or b=DATA in 
+  let file_ODE_latex,file_obs_latex= 
+    if do_latex 
+    then file_ODE_latex,file_obs_latex
+    else "","" in 
   let f mode file = 
     if good_mode output_mode mode
     then
