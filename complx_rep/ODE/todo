@@ -1,6 +1,5 @@
 Check that rules are not dealt several time in case of sym.
 Check rules where two instances of the same agent occur.
-Correct kynetics for fragments that have automorphisms.
 Deal with bonds in initial solution 
 Deal with agent creation
 Deal with agent suppression

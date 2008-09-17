@@ -70,7 +70,7 @@ let canonical_fragment_of_subspecies subspecies =
       (fun _ a l -> a::l)
       subspecies []
   in 
-  List.sort compare l 
+  List.sort compare l,1
 
 
 (** emptyness test for fragments *) 

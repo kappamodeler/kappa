@@ -360,7 +360,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
   let contact =
     match pb.Pb_sig.contact_map 
     with 
-      None -> error 352 None 
+      None -> error 352 
     | Some a -> 
     begin 
       (fun x -> 
@@ -504,7 +504,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
       let n = ref 1 in
       let map = ref FragmentMap.empty in
       let size () = (!n)-1 in 
-      (let f x = 
+      (let f (x,aut) = 
 	let x'=x in 
 	try (FragmentMap.find x' (!map))
 	with Not_found -> 
@@ -515,8 +515,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		(fun i -> print_log (string_of_int i))
 		x' in () in 
 	  let _ = n:= (!n)+1 in
-	  let _ = map:=FragmentMap.add x' rep (!map) in
-	  rep
+	  let _ = map:=FragmentMap.add x' (rep,aut) (!map) in
+	  (rep,aut)
       in f),
       (let dump fmap  = 
 	let _ = 
@@ -534,7 +534,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	  
 	let l = 
 	  FragmentMap.fold
-	    (fun l n list -> 
+	    (fun l (n,aut) list -> 
 	      ((n,
 		let expr = 
 		  fold_views 
@@ -889,10 +889,10 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			  let prod = 
 			    List.fold_left 
 			      (fun prod consumed_species -> 
-				let conskey = 
+				let (conskey,aut) = 
 				  hash_subspecies consumed_species
 				in 
-				let prod_key = 
+				let (prod_key,aut') = 
 				  hash_subspecies 
 				    (apply_blist_with_species  
 				       ode_handler 
@@ -903,8 +903,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				       [AL((target_type,target_type,target_site),(origin_type,origin_site)),false;B(target_type,target_type,target_site),false]
 				       )
 				in 
-				fadd conskey (-1) kyn (Var conskey) 
-				  (fadd prod_key (1) kyn (Var conskey) prod))
+				fadd conskey (-1) kyn (Mult(Const aut,Var conskey)) 
+				  (fadd prod_key (1) kyn (Mult(Const aut,(Var conskey))) prod))
 			      prod 
 			      extended_list
 			   in prod )
@@ -1548,7 +1548,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 						     print_string ";"));
 						 List.iter
 						   (fun d -> 
-						     print_int (hash_subspecies d);
+						     (fun (i,j) -> 
+						       print_int i;
+						       print_string "#";
+						       print_int j)
+						       (hash_subspecies d);
 						     print_newline ()) 
 						   (complete_subspecies (subclass.subspecies));)
 					       x;
@@ -1576,7 +1580,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 								(
 							      List.fold_left 
 								(fun expr d -> 
-								  Plus(expr,Var (hash_subspecies d))) (Const 0)  (complete_subspecies_handling_compatibility  b),
+								  Plus(expr,expr_of_var expr_handler d))
+								(Const 0)  
+								(complete_subspecies_handling_compatibility  b),
 							      expr_of_denum expr_handler d))),
 							 String4Set.add ((a,s),(a',s')) black)
 						   ((Const 1),String4Set.empty)
@@ -2084,7 +2090,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					 let a = hash_subspecies consumed_species in 
 					 let _ = if debug then 
 					   let _ = print_string "\n CONSUME " in
-					   let _ = print_int a in 
+					   let _ = print_int (fst a) in
+					   let _ = print_string "#" in 
+					   let _ = print_int (snd a) in 
 					   let _ = print_newline () in ()
 					 in
       					 let product = 
@@ -2094,19 +2102,14 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					   let _ = print_species product in 
 					   ()
 					 in
+					 let expra = expr_of_var expr_handler consumed_species in 
 					 
-					 
-					 ((consumed_fragment,-1,[i,Mult(Var a,kyn_mod)])::c_list),
-					 ((product,1,[i,Mult(Var a,kyn_mod)](*,
-									       (List.fold_left 
-									       (fun sol c -> StringSet.add c sol) 
-									       (StringSet.fold 
-									       (fun x -> StringSet.add (specie_of_id x)) StringSet.empty  x) 
-									       solid_half)*))::p_list),
+					 ((consumed_fragment,-1,[i,Mult(expra,kyn_mod)])::c_list),
+					 ((product,1,[i,Mult(expra,kyn_mod)])::p_list),
 					 (List.fold_left 
 					    (fun l (target_type,target_site,
 						    origin_type,origin_site) -> 
-						      (consumed_fragment,[i,Mult(Var a,kyn_mod)],(target_type,target_site,origin_type,origin_site))::l)
+						      (consumed_fragment,[i,Mult(expra,kyn_mod)],(target_type,target_site,origin_type,origin_site))::l)
 					    sl_list res))
 				       (c_list,p_list,sl_list)
 				       consumed_species_list in
@@ -2161,7 +2164,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				 in
 				 List.fold_left 
 				   (fun (product_list,hash) a -> 
-				     let a_frag = canonical_form a in
+				     let (a_frag,_) = canonical_form a in
 				     let old_hash = 
 				       try 
 					 FragmentMap.find a_frag hash 
@@ -2415,17 +2418,15 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				       in
 				       List.fold_left 
 					 (fun prod context -> 
-					   let conskey = 
-					     hash_subspecies 
-					       (release_bond 
+					   let subspecies' = (release_bond 
 						  (build_species agent_of_tp_i
 						     (StringMap.add (agent_of_tp_i c) c StringMap.empty)
 						     context)
 						  rp_target
 						  rp_origin
-						  )
-					   in 
-					   let prodkey = 
+						  ) in 
+					   let conskey,_ = hash_subspecies subspecies' in 
+		                     	   let prodkey,_ = 
 					     hash_subspecies 
 					       (release_bond 
 						  (build_species agent_of_tp_i  
@@ -2434,10 +2435,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 						  rp_target
 						  rp_origin)
 					   in
-					   let expr = Mult(Div(Var conskey,expr_denum),expr) in 
+					   let expr = Mult(Div(expr_of_var expr_handler subspecies',expr_denum),expr) in 
 					   let _ = 
 					     if debug then 
 					       begin
+						 let conskey,_ = hash_subspecies subspecies' in 
 						 let _ = pprint_int print_ODE conskey in
 						 let _ = pprint_string print_ODE ":" in
 						 let _ = pprint_int print_ODE (-1) in
@@ -2479,13 +2481,14 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				       Mult(sol,e))
 				 expr (Const 1) in
 			     let _ = if debug then 
-			       let _ = pprint_int print_debug (hash_fragment c) in
+			       let _ = pprint_int print_debug (fst (hash_fragment c)) in
 			       let _ = pprint_string print_debug ":" in
 			       let _ = pprint_int print_debug k1 in
 			       let _ = pprint_string print_debug ";" in
 			       let _ = print_expr print_debug true true   (simplify_expr expr) in
-			       let _ = pprint_newline print_debug  in () in 
-			     fadd (hash_fragment c)  k1 kyn_factor expr prod)
+			       let _ = pprint_newline print_debug  in () 
+			     in 
+			     fadd (fst (hash_fragment c))  k1 kyn_factor expr prod)
 			   prod 
 			   consume_list 
 		       in 
@@ -2506,14 +2509,14 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				 expr (Const 1) in
 			     let _ = 
 			       if debug then 
-				 let _ = pprint_int print_debug (hash_subspecies c) in
+				 let _ = pprint_int print_debug (fst (hash_subspecies c)) in
 				 let _ = pprint_string print_debug ":" in
 				 let _ = pprint_int print_debug k1 in
 				 let _ = pprint_string print_debug ";" in 
 				 let _ = print_expr print_debug  true  true (simplify_expr expr) in
 				 let _ = pprint_newline print_debug  in () in 
 			     fadd  
-			       (hash_subspecies c)
+			       (fst (hash_subspecies c))
 			       k1 
 			       kyn_factor 
 			       expr   
@@ -2720,7 +2723,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	  (fun i l sol -> 
 	    List.fold_left 
 	      (fun sol (_,a) -> 
-		let key = hash_subspecies (plug_views_in_subspecies "" a empty_species) in 
+		let key,_ = hash_subspecies (plug_views_in_subspecies "" a empty_species) in 
 		let old = 
 		  try
 		    Arraymap.find key sol 

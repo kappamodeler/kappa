@@ -352,16 +352,18 @@ let canonical_fragment_of_subspecies graph  =
                    views = List.rev sol.views} in 
 	sol)
       path in 
-  let rec aux a b = 
+  let rec aux a b n = 
     match a with 
       (t:fragment)::q -> 
 	trace_print_fragment t;
 	if compare t b <0 
-	then aux q t 
-	else aux q b
-    | [] -> b in
+	then aux q t 1
+	else if compare t b = 0 
+	then aux q b (n+1)
+	else aux q b 1 
+    | [] -> (b,n) in
   let sol = 
-    match candidate with t::q -> (trace_print_fragment t;aux q t)
+    match candidate with t::q -> (trace_print_fragment t;aux q t 1)
     | [] -> error 105 None 
   in
   let _ = 

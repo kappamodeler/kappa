@@ -223,10 +223,16 @@ let is_atomic expr =
 
 
 type ('subclass,'subspecies) expr_handler = 
-  {hash_subspecies:'subspecies -> int;
+  {hash_subspecies:'subspecies -> (int*int);
    get_denum_handling_compatibility:(string*string*string*string)-> 'subspecies list;
    get_bond:'subclass  -> (string*string*string*string) option;
    get_fragment_extension: 'subclass -> 'subspecies list }
+
+let expr_of_var expr_handler d = 
+  match expr_handler.hash_subspecies d 
+  with 
+    (i,1) -> Var(i) 
+  | (i,n) -> Mult(Const n,Var i)
 
 let expr_of_denum expr_handler d = 
   let _ = 
@@ -236,7 +242,7 @@ let expr_of_denum expr_handler d =
   in
   List.fold_left 
     (fun expr d -> 
-      Plus(expr,(Var (expr_handler.hash_subspecies d))))
+      Plus(expr,expr_of_var expr_handler d))
     (Eps) 
     d
     
@@ -248,11 +254,11 @@ let expr_of_atom expr_handler (a:(string*string*string*string) option) b =
   in
   (match a 
   with 
-    None -> Var (expr_handler.hash_subspecies b)
+    None -> expr_of_var expr_handler b
   | Some a -> 
       let d = expr_handler.get_denum_handling_compatibility  a in
-      Div (Plus(Eps,Var (expr_handler.hash_subspecies b)), 
-	   expr_of_denum expr_handler d)) 
+      Div (Plus(Eps,expr_of_var expr_handler b),
+	   expr_of_denum expr_handler d))
     
 let expr_of_subcomponent expr_handler subcla  =
   let _ = 

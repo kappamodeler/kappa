@@ -18,8 +18,8 @@ module type Fragments =
       type hash	    
 	    
       
-
-      val canonical_form: subspecies -> fragment 
+      (** compute the canonical form of a species and also the number of automorphisms *)	    
+      val canonical_form: subspecies -> (fragment*int)
 (*      val species_from_fragment: fragment -> subspecies *)
 
       (** value for the empty fragment *)
