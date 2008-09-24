@@ -263,7 +263,7 @@ let cannonize_connected_bmap bmap =
     let view_map = 
       StringMap.map2 
 	(fun a b  -> ("",[]))
-	(fun a b  -> ("",[]))
+	(fun a c  -> (c,[]))
 	(fun a b c  -> (c,b))
 	view_map 
 	here 
