@@ -284,7 +284,7 @@ let main =
 		  let d = open_in_bin (!serialized_sim_data_file) in 
 		  let f_sd = (Marshal.from_channel d:Simulation2.marshalized_sim_data_t) in
 		  let p = {max_failure = !Data.max_clashes;
-			    init_sd = !serialized_sim_data_file ;
+			    init_sd = Some !serialized_sim_data_file ;
 			    compress_mode = true ;
 			    iso_mode = false ;
 			    gc_alarm_high = false ;
@@ -311,8 +311,8 @@ let main =
 		in
 		let log,sd = Simulation2.init log (rules,sol_init,obs_l,exp)  
 		in
-		let log = 
-		  if true (*!save_sim_data or (!max_iter>1)*) then
+		let log,serialized = 
+		  if !save_sim_data or (!max_iter>1) then (*if only one story is needed, no need to serialize the initial state*)
 		    let file = Filename.concat !output_dir !serialized_sim_data_file in
 		    let log = Session.add_log_entry 0 (sprintf "--Saving initial state to %s..." file) log 
 		    in
@@ -323,12 +323,12 @@ let main =
 		      let log = Session.add_log_entry 0 "--Initial state succesfully saved" log
 		      in 
 		      close_out d ;
-		      log
+		      (log,true)
 		    end
-		  else log
+		  else (log,false)
 		in
 		(log,{ max_failure = !Data.max_clashes;
-		       init_sd = !serialized_sim_data_file; 
+		       init_sd = if serialized then Some (Filename.concat !output_dir !serialized_sim_data_file) else None; 
 		       compress_mode = true ;
 		       iso_mode = false ;
 		       gc_alarm_high = false ;
@@ -362,7 +362,12 @@ let main =
 				     {c with drawers = drawers ;
 					compression_log = compress_log } in 
 				     
-				   let _ = if (deadlocked=1) then prerr_string " deadlocked \n" else prerr_string "\n" in
+				   let log = 
+				     if (deadlocked=1) then 
+				       (Session.add_log_entry 1 "-Simulation was interrupted because no rule could be applied anymore!" log)
+				     else 
+				       log
+				   in
 				     (Session.add_log_entry 0 (sprintf "-Simulation: %f sec. CPU" (Mods2.gettime() -. t_sim)) log,
 				      sd,p,c)
 				 end 

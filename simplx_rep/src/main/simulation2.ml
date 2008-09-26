@@ -151,7 +151,7 @@ let sd_empty() = {
 
 type sim_parameters = {
   (*simulation data*)
-  init_sd : string ; (*name of the marshalized file*)
+  init_sd : string option; (*name of the marshalized file*)
 
   (*Computation limits*)
   max_failure:int ; (*max number of failure when trying to apply rules*)
@@ -243,7 +243,7 @@ let print_rules rules inf_list =
   Rule_of_int.iter (fun i (r,inst) ->
 		      let auto = match r.automorphisms with 
 			  None -> (failwith "automorphisms not computed!") 
-			| Some i -> if i>1 then (Printf.sprintf "/%d" i) else ""
+			| Some i -> if not (i=1) then (Printf.sprintf "/%d" i) else ""
 		      in
 		      let act = r.kinetics *. inst in
 			if r.input = "" then
@@ -1439,18 +1439,23 @@ let rec iter log sim_data p c =
 		      in
 		      if !debug_mode then begin
 			Printf.printf "Story computed, restarting\n" ; flush stdout end ; 
-		      let log = Session.add_log_entry (-1) "Story found, restarting from marshalized simulation data" log in
-		      let d = open_in_bin p.init_sd in 
 			
-		      let f_init_sd = (Marshal.from_channel d : marshalized_sim_data_t) in
-		      let _ = close_in d in
-		      let init_sd = unmarshal f_init_sd in
-		      iter log (init_sd) p {c with 
-					     curr_iteration = c.curr_iteration+1 ; 
-					     drawers = drawers ; 
-					     curr_time = 0.0 (*!init_time*); 
-					     curr_step = 0
-					   } 
+		      let log = Session.add_log_entry (-1) "Story found!" log in
+		      let init_sd = 
+			match p.init_sd with
+			    None -> sim_data (*No more stories to compute*)
+			  | Some serialized_sim_data ->
+			      let d = open_in_bin serialized_sim_data in 
+			      let f_init_sd = (Marshal.from_channel d : marshalized_sim_data_t) in
+			      let _ = close_in d in
+				unmarshal f_init_sd 
+		      in
+			iter log (init_sd) p {c with 
+						curr_iteration = c.curr_iteration+1 ; 
+						drawers = drawers ; 
+						curr_time = 0.0 (*!init_time*); 
+						curr_step = 0
+					     } 
 		    else
 		      let sim_data = {sim_data with sol = sol' ; net = net'} in
 		      iter log sim_data p {c with 
@@ -1496,8 +1501,9 @@ let rec iter log sim_data p c =
 						    None -> (failwith "Automorphisms not computed") 
 						  | Some i -> float_of_int i 
 					      in
-					      let act_obs = inst_obs /. automorphisms in 
-						IntMap.add i (act_obs/.(!rescale)) obs_map
+					      let act_obs = inst_obs /. (automorphisms *. (!rescale)) in 
+					      	IntMap.add i act_obs obs_map
+
 					   ) mod_obs obs_map
 			  in
 			    if !bench_mode then Bench.data_time := !Bench.data_time +. (chrono t_data) ;
