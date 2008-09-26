@@ -16,7 +16,8 @@ let stdprint =
     
 
 
-let all_fields x  = [x.dump;x.matlab;x.mathematica;x.latex;x.data]
+let all_fields x  = [x.dump;x.matlab;x.mathematica;x.latex;x.data;x.kappa;x.txt]
+
       
 module CSet = Set.Make (struct type t = out_channel let compare = compare end)
 
@@ -705,38 +706,48 @@ let print_expr print bool bool2 x =
 	None -> ()
       |	Some print -> 
 	  print.print_string  ("Y("^(string_of_int n)^"):=");
-	  print_sb expr pb  print.chan;
-	  print.print_newline ()
     in 
      let _ = 
       match print.txt with 
 	None -> ()
       |	Some print -> 
 	  print.print_string  ("Y("^(string_of_int n)^"):=");
-	  print_sb expr pb print.chan;
-	  print.print_newline () 
-    in 
+     in 
      let _ = 
        match print.kappa  with 
 	 None -> ()
        |	Some print -> 
 	   print.print_string "%obs:";
-	   print_sb expr pb print.chan;
+     in 
+     let _ = 
+       match print.data with 
+	 None -> ()
+       | Some print -> 
+	   print.print_string "[";
+     in 
+     let _ = print_sb expr in 
+     let _ = 
+       match print.dump with 
+	 None -> ()
+       |	Some print -> print.print_newline ()
+     in 
+     let _ = 
+       match print.txt with 
+	 None -> ()
+       |	Some print -> 
 	   print.print_newline () 
      in 
      let _ = 
-       match print.latex  with 
+       match print.kappa  with 
 	 None -> ()
-       | Some print -> 
-	   print_sb expr pb print.chan;
+       |	Some print -> 
+	   print.print_newline () 
      in 
      let _ = 
        match print.data with 
 	 None -> ()
        | Some print -> 
 	   begin 
-	     print.print_string "[";
-	     print_sb expr pb print.chan;
 	     print.print_string "]";
 	     print.print_string " " 
 	   end

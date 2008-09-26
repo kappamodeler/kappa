@@ -10,7 +10,6 @@ open Output_contact_map
 open Ode_print_sig 
 open Rooted_path 
 open Annotated_contact_map 
-open Old_fragments 
 open Fragments 
 open Arithmetics 
 open Ode_print 
@@ -35,7 +34,6 @@ let dump_line i =
     end
 
 (* Temporary Linking *)
-module Old_F = Fragment 
 module New_F = New_Fragment
 
 module F = New_F 
@@ -65,6 +63,8 @@ let is_agent_in_species = F.is_agent_in_species
 let print_species = F.print_species
 let add_bond_to_subspecies = F.add_bond_to_subspecies 
 let release_bond = F.release_bond_from_subspecies 
+let print_fragment = F.pretty_print 
+
 module FragmentMap = F.FragMap 
 (* End of temporary linking *)
 
@@ -256,8 +256,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
       txt = None;
       matlab = None}
   in
- 
- 
   let _ = pprint_ODE_head print_ODE in 
 
   let is_access = 
@@ -523,7 +521,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	  let _ = map:=FragmentMap.add x' (rep,aut) (!map) in
 	  (rep,aut)
       in f),
-      (let dump fmap  = 
+      (let dump view_data_structure fmap  = 
 	let _ = 
 	    if !Config_complx.trace_rule_iteration 
 	    then 
@@ -540,54 +538,83 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	let l = 
 	  FragmentMap.fold
 	    (fun l (n,aut) list -> 
-	      ((n,
-		let expr = 
-		  fold_views 
-		      (fun xold expr  -> 
-			let view = 
-			  (try Arraymap.find xold fmap 
-			  with Not_found -> 
-			    error 93) in
-			let agent = agent_of_view view in 
-			(StringMap.add 
-			   agent
-			   (List.fold_left 
-			      (fun expr (y,z) ->
-				ode_handler.conj expr
-				  ((if z then ode_handler.atom_pos else ode_handler.atom_neg) ( y)))
-			      (ode_handler.atom_pos (ode_handler.var_of_b (H(agent,agent))))
-			      (valuation_of_view view))
-			   expr ))
-		      l 
-		      StringMap.empty 
-		      in
-		  expr)::list)) (!map) [] in
+	      ((n,l)::list))
+	    (!map) [] in 
 	  let l = List.sort (fun (a,b) (c,d) -> compare a c) l in
 	  let _ = pprint_string print_obs_latex (Latex.init_sep) in
 	  let bool = 
 	    List.fold_left
 	      (fun bool (n,expr) -> 
-		let _ = pprint_obs {print with data = None} (print_sb ode_handler) n expr pb in 
 		let _ = 
 		  if bool 
 		  then pprint_string print_obs_latex (Latex.sep) in 
 		let _ = 
-		  pprint_obs 
+		  print_fragment 
 		    print_obs_latex 
-		    (print_sb_latex 
-		       (fun x y -> keep_this_link x y annotated_contact_map)
-		       ode_handler) 
-		    n expr pb in  true )
-	      false  l 
+		    expr 
+		    string_latex 
+		    ode_handler 
+		    view_data_structure 
+		    (fun a b -> keep_this_link a b annotated_contact_map)
+		    (Some "")
+		    true 
+		in
+		  true)
+	      false  
+	      l 
 	  in 
-	  let _ = if bool then pprint_string print_obs_latex Latex.final_sep in 
+	  let _ = if bool then pprint_string print_obs_latex Latex.final_sep in 	  	  
 	  let _ =
 	    List.fold_left
 	      (fun bool (n,expr) -> 
-		let _ = pprint_obs print_only_data (print_sb ode_handler) n expr pb in 
+		let f print_obs expr = 
+		   ((print_fragment 
+		       print_obs
+		       expr
+		       string_txt 
+		       ode_handler 
+		       view_data_structure 
+		       (fun a b -> keep_this_link a b annotated_contact_map) 
+		       (Some "()")
+		       false
+                       ):unit) 
+		in
+		let print_obs = {print_obs with data = None} in 
+		let _ = 
+		  pprint_obs 
+		    print_obs 
+		    (f print_obs) 
+		    n
+		    expr 
+		    pb in 
 		true)
 	      false  
-	      (List.rev l) 
+	      l in  
+	  let _ =
+	    List.fold_left
+	      (fun bool (n,expr) -> 
+		let f print_obs expr = 
+		   ((print_fragment 
+		       print_obs
+		       expr
+		       string_txt 
+		       ode_handler 
+		       view_data_structure 
+		       (fun a b -> keep_this_link a b annotated_contact_map) 
+		       (Some "()")
+		       false
+                       ):unit) 
+		in
+		let _ = 
+		  pprint_obs 
+		    print_only_data
+		    (f print_only_data) 
+		    n
+		    expr 
+		    pb in 
+		true)
+	      false  
+	      (List.rev l)  
 	    
       in
 	  () in dump),
@@ -2779,7 +2806,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	
     in
     let l  = chrono (prefix',snd prefix)  "ODE computation" l in 
-    let _ = dump views_data_structures.interface_map  in
+    let _ = 
+      dump 
+	views_data_structures 
+	ode_handler 
+(*	views_data_structures.interface_map *) in
   
     let obs = 
        Arraymap.fold2

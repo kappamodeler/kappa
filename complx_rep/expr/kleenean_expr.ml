@@ -151,7 +151,8 @@ module Kleenean_expr =
 	    print_option empty_prefix log "#Cannot be applied \n\n";
 	    List.fold_left 
 	      (fun sol (r,c,e) -> 
-	        if List.for_all (fun r -> false(*r.r_clone*)) r then sol else
+	        if List.for_all 
+		    (fun r -> false(*r.r_clone*)) r then sol else
 		let id,b = list_fold 
 		    (fun rid  (l,bool)  -> 
 		      if false (*rid.r_clone*) then l,bool 

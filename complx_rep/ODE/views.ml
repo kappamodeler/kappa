@@ -53,6 +53,7 @@ type 'a views =
     {agent:string;
      interface:Annotated_contact_map.template_piece;
      solid_pending_edges: String4Set.t;
+     target:(string*string) String2Map.t; 
      valuation:('a*bool) list;
      valuation_map: bool BMap.t}
 
@@ -60,6 +61,7 @@ let build_view (b_of_var) (a,i,v) =
   {agent=a;
     interface=i;
     valuation=v;
+    target=String2Map.empty;
     solid_pending_edges=String4Set.empty;
     valuation_map=
     List.fold_left
@@ -81,7 +83,7 @@ let destroy view =
      pending_edges view 
 
 
-let create_view_hashtable ode_handler print  pb  = 
+(*let create_view_hashtable ode_handler print  pb  = 
   let hash_tp_list,dump = 
     let n = ref 1 in
     let map = ref IntListMap.empty in
@@ -125,14 +127,14 @@ let create_view_hashtable ode_handler print  pb  =
 		  l in
 	      expr)::list)) (!map) [] in
       let l = List.sort (fun (a,b) (c,d) -> compare a c) l in
-      let _ = List.iter 
+(*      let _ = List.iter 
 	(fun (n,expr) -> 
 	  let _ = pprint_obs print (print_sb ode_handler)   n expr pb in () )
 	  l 
-      in
+      in *)
       () in dump 
   in
-  hash_tp_list,dump 
+  hash_tp_list,dump *)
 
 let translate_classes_into_views ode_handler subviews rep  = 
   (** this primitives computes the set of valuated subviews 
@@ -187,17 +189,21 @@ let empty_structure v =
 let gather ode_handler rep rep2 = (*GENERATE DATA STRUCTURES *)
   List.fold_left  
     (fun (data_structures,n) view  -> 
-      let int = 
+      let int,int2 = 
 	List.fold_left 
-	  (fun sol (b,bool) -> 
+	  (fun (sol,sol2) (b,bool) -> 
 	    match ode_handler.b_of_var b,bool with 
 	      AL((a,b,c),(d,e)),true 
 	      when keep_this_link (a,c) (d,e) rep
 	      -> 
-		String4Set.add ((a,c),(d,e)) sol 
-	    | _ -> sol) 
-	  String4Set.empty  (valuation_of_view view) in
-      let view = {view with solid_pending_edges = int} in 
+		(String4Set.add ((a,c),(d,e)) sol,
+		 String2Map.add (a,c) (d,e) sol2)
+	    | _ -> sol,sol2) 
+	  (String4Set.empty,
+	   String2Map.empty)
+	  (valuation_of_view view) in
+      let view = {view with solid_pending_edges = int;
+                            target=int2 } in 
       let interface_map = Arraymap.add n view data_structures.interface_map in 
       let link_to_template =
 	    String4Set.fold

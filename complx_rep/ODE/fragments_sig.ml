@@ -2,7 +2,8 @@
 open Annotated_contact_map
 open Views 
 open Rooted_path
-
+open Ode_print_sig
+open Ode_print 
 
 module type Fragments = 
     sig 
@@ -106,4 +107,7 @@ module type Fragments =
 	    val add: fragment -> 'a -> 'a t -> 'a t 
 	    val fold: (fragment -> 'a -> 'b -> 'b) -> 'a t -> 'b -> 'b
 	  end) 
+
+      val pretty_print: print_desc -> fragment -> Tools.string_handler -> ('a,'b,'c,'d,'e,'f,'g) Views.ode_handler -> 'b Views.view_data_structure  -> 
+	(string*string -> string*string -> bool) -> string option -> bool -> unit 
 end

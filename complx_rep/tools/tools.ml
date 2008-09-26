@@ -118,7 +118,7 @@ let print_pretty string_handler a which_ag (pretty_map,n) tuple_f print_any pref
   let print_string1 s = 
     match log with None -> ()
     | Some log -> Printf.fprintf log "%s" s in
-   let print_string2 s =     sol:=s::(!sol) in
+   let print_string2 s = sol:=s::(!sol) in
    let print_string s = 
     (print_string2 s;
      print_string1 s) in 
@@ -127,7 +127,8 @@ let print_pretty string_handler a which_ag (pretty_map,n) tuple_f print_any pref
     print_string2 (string_handler.string_of_agent (sigma2 a)) in
   if which_ag a
   then 
-    let l = StringMap.fold 
+    let l = 
+      StringMap.fold 
 	(fun a b sol -> (a,b)::sol) 
 	(StringMap.find a pretty_map) 
 	[]
@@ -137,10 +138,12 @@ let print_pretty string_handler a which_ag (pretty_map,n) tuple_f print_any pref
 	(fun (x,tuple) (bool,(n:int)) -> 
 	  let port = (a,x) in 
 	  if (not (interesting tuple tuple_f))
-	  then (bool,n)
+	  then 
+	    begin
+	      (bool,n)
+	    end
 	  else 
 	    begin
-	      
 	      (if (not bool) 
 	      then (print_string  (string_handler.site_separator ());
                     print_string (string_handler.string_of_site x))

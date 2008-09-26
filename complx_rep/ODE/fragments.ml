@@ -1,6 +1,7 @@
 (** Implementation of fragments for ODE *)
 
 open Tools 
+open Config_complx
 open Data_structures
 open Annotated_contact_map 
 open Views 
@@ -8,6 +9,7 @@ open Pb_sig
 open Rooted_path 
 open Fragments_sig
 open Error_handler 
+open Ode_print 
 
 (** Set this boolean to true to dump more debugging information *)
 let trace = false
@@ -1401,7 +1403,7 @@ let get_neighbour species (agent_id,site) agent_type' =
     in
     if rp'.path = [] 
     then rp'.root 
-    else error 1066 None
+    else error 1405 None
   with 
     Not_found -> 
       error 1069 None 
@@ -1412,4 +1414,227 @@ let add_bond_to_subspecies sp (a,s) (a',s') =
   add_bond_to_subspecies sp (build_empty_path a,s) (build_empty_path a',s') 
 
 module FragMap = Map2.Make (struct type t = fragment let compare = compare end) 
+
+module BondSet = Set.Make (struct type t = (int*string) * (int*string) let compare = compare end) 
+
+let compute_edges fragment view_data_structure= 
+  let stack = [] in 
+  let views = fragment.views in
+  let back_bonds = fragment.back_bonds in
+  let map = IntMap.empty in
+  let fadd ((i,s),(i',s')) map = 
+    let aux (i,s) (i',s') map = 
+      let old = 
+	try IntMap.find i map 
+	with 
+	  Not_found -> StringMap.empty
+      in
+      IntMap.add i (StringMap.add s (i',s') old) map in
+    aux (i,s) (i',s') (aux (i',s') (i,s) map)
+  in
+  let occupied,bonds = 
+    List.fold_left
+      (fun (set,map) x -> BondSet.add x set,fadd x map)
+      (BondSet.empty,IntMap.empty)
+      back_bonds in
+  let counter,stack,bonds = 
+    List.fold_left
+      (fun (i,stack,bonds) view -> 
+	let view = view_of_tp_i view view_data_structure.interface_map  in 
+	let target = view.Views.target in 
+	let check,last,stack = 
+	  match stack with 
+	    [] -> None,None,[]
+	  | (t,i)::q -> Some t,Some i,q in
+	let bonds,stack = 
+	  String2Map.fold
+	    (fun (a,b) (c,d) (bonds,stack) -> 
+	      if check = Some ((c,d),(a,b)) 
+	      then 
+		match last with 
+		  None -> error 1451 None
+		| Some i' -> 
+		  begin 
+		    fadd ((i',d),(i,b)) bonds,
+		    stack
+		  end
+	      else
+		if 
+		  begin
+		    try
+		      let _ = 
+			StringMap.find b (IntMap.find i bonds)
+		      in true
+		    with 
+		      Not_found -> false
+		  end
+		then
+		  bonds,stack
+		else
+		  bonds,(((a,b),(c,d)),i)::stack)
+	    target
+	    (bonds,stack)
+	in
+	(i+1,stack,bonds))
+      (0,stack,bonds) 
+      views in
+  bonds 
+
+let pretty_print 
+    stdprint 
+    fragment 
+    handler 
+    ode_handler 
+    views_data_structure 
+    keep_this_link 
+    empty 
+    bool 
+    = 
+  let bonds = compute_edges fragment views_data_structure in 
+  let fadd_free site  site_map = 
+    let tuple  = 
+      try (StringMap.find site site_map) 
+      with Not_found -> 
+	tuple_bot 
+    in 
+    let tuple' = {tuple with is_bound = Init false} in 
+    StringMap.add site tuple'  site_map in
+  let fadd_sign site s site_map = 
+    let tuple = 
+      try 
+	StringMap.find site site_map 
+      with 
+	Not_found -> 
+	  tuple_bot in 
+    let tuple' = {tuple with mark = Init s} in 
+    StringMap.add site tuple' site_map  in 
+  let aux n (i,s) tuple_map = 
+      let (ag,old) = 
+	try
+	  IntMap.find i tuple_map 
+	with 
+	  Not_found -> error 1511 None in 
+      let tuple = 
+	try 
+	  StringMap.find s old
+	with 
+	  Not_found -> tuple_bot 
+      in
+      let tuple' = {tuple 
+		   with link = Init (bound_of_number n) 
+		   } 
+      in
+      IntMap.add i (ag,StringMap.add s tuple' old) tuple_map in
+  let add_link (i,s) (i',s') (n,tuple_map) = 
+    let tuple_map = 
+      aux n (i,s) (aux n (i',s')  tuple_map)
+    in
+    (n+1,tuple_map)
+  in
+  let counter,tuple_map,stack = 
+    List.fold_left 
+      (fun (counter,map,stack) view_id -> 
+	let view = view_of_tp_i view_id views_data_structure.interface_map  in 
+	let agent = agent_of_view view in 
+	let sigma = valuation_of_view view in
+	let tuple,stack = 
+	  List.fold_left 
+	    (fun (tuple,stack) (b,bool) -> 
+	      match ode_handler.b_of_var b,bool with 
+		B(_,_,s),false -> fadd_free s tuple,stack
+	      | M((_,_,s),mark),true -> fadd_sign s mark tuple,stack
+	      |	AL((_,a,s),(b,s')),true when 
+		  not (keep_this_link (a,s) (b,s')) -> 
+		    tuple,(counter,s,b,s')::stack
+	      | _ -> tuple,stack)
+	    (StringMap.empty,stack)
+	    sigma 
+	in
+	((counter+1),
+	 IntMap.add counter (agent,tuple) map,
+	 stack))
+      (0,IntMap.empty,[])
+      fragment.views
+  in 
+  let (n,tuple_map) =
+    IntMap.fold
+      (fun i site_map -> 
+	StringMap.fold 
+	  (fun s (i',s') (tuple_map) -> 
+	    if compare (i,s) (i',s')<= 0 
+	    then add_link (i,s) (i',s') tuple_map 
+	    else 
+	      tuple_map)
+	  site_map)
+      bonds 
+      (1,tuple_map)
+  in
+  let (n,tuple_map,counter) = 
+    List.fold_left
+      (fun (n,tuple_map,counter) (i,s,b,s') -> 
+	if not bool 
+	then 
+	let tuple = tuple_bot in 
+	let tuple_map = 
+	  IntMap.add 
+	    counter 
+	    (b,StringMap.add s' tuple StringMap.empty) 
+	    tuple_map in
+	let n,tuple_map = 
+	  add_link 
+	    (i,s) 
+	    (counter,s') 
+	    (n,tuple_map) in 
+	n,tuple_map,counter+1
+	else 
+	  let ag,sitemap = 
+	    try 
+	      IntMap.find i tuple_map 
+	    with 
+	      Not_found -> 
+		error 1611 None
+	  in
+	  let tuple = 
+	    try 
+	      StringMap.find s sitemap
+	    with 
+	      Not_found -> tuple_bot 
+	  in
+	  let tuple' = {tuple with link = Init(b,s')} in
+	  let tuple_map = 
+	    IntMap.add i (ag,StringMap.add s tuple' sitemap) tuple_map  in 
+	  (n,tuple_map,counter)) 
+      (n,tuple_map,counter)
+      stack in
+	  
+  let _ = 
+    IntMap.fold 
+      (fun _ (ag,tuple) bool -> 
+	let _ = 
+	  if bool then () in 
+	let l = 
+	  print_pretty 
+	    handler 
+	    ag
+	    (fun x->true)
+	    (StringMap.add ag  tuple StringMap.empty,0)
+	    tuple_known
+	    empty
+	    (if bool then handler.agent_separator () else "")
+	    (fun x->x) 
+	    (fun x->x) 
+	    None 
+	    None in 
+	let _ = 
+	  List.iter 
+	    (pprint_string stdprint)
+	    (List.rev 
+	       ((fun (_,a,_) -> a) 
+	       l)) in
+	true
+	  )
+      tuple_map false in
+  () 
+      
+      
 end:Fragments)

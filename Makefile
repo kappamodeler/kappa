@@ -191,7 +191,6 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(COMPLXREP)/ODE/rooted_path.cmo \
 	./$(COMPLXREP)/ODE/fragments_sig.cmo \
 	./$(COMPLXREP)/ODE/fragments.cmo \
-	./$(COMPLXREP)/ODE/old_fragments.cmo \
 	./$(COMPLXREP)/ODE/ode_computation.cmo \
 	./$(COMPLXREP)/backend/contact_map/find_cycles.cmo \
 	./$(COMPLXREP)/backend/contact_map/connected_components.cmo \

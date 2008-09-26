@@ -1,4 +1,3 @@
-Correct species pretty printing whenever there are more than one agent per type
 Check that rules are not dealt several time in case of sym.
 Check rules where two instances of the same agent occur.
 Deal with bonds in initial solution 
