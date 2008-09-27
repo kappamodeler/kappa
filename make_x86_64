@@ -36,7 +36,7 @@ KEY?=without_key
 $(BIN): bin/
 	mkdir bin
 
-OCAMLPREFIX?= ./ocaml-3.10.2-patched_x86_64
+OCAMLPREFIX?=  ../../3rd_party/ocaml/ocaml-3.10.2-patched_x86_64
 OCAMLC=		$(OCAMLPREFIX)/ocamlc -thread
 OCAMLCI=	$(OCAMLPREFIX)/ocamlc -thread
 OCAMLOPT= 	$(OCAMLPREFIX)/ocamlopt.opt -nostdlib -thread
@@ -49,14 +49,17 @@ TKINCLUDES? =
 test:
 	$(OCAMLOPT) -I $(OCAMLPREFIX)/ocamlbuild -I $(OCAMLPREFIX)/stdlib test_arch.ml
 
-OCAMLINCLUDES= -I $(OCAMLPREFIX)/ocamlbuild \
+OCAMLLIB64 = -I $(OCAMLPREFIX)/ocamlbuild \
 		-I $(OCAMLPREFIX)/stdlib \
 		-I $(OCAMLPREFIX)/otherlibs/unix \
 		-I $(OCAMLPREFIX)/otherlibs/num \
 		-I $(OCAMLPREFIX)/otherlibs/str \
-		-I $(OCAMLPREFIX)/otherlibs/systhreads \
-		-I $(COMPLXREP)/lib/$(TKREP) \
+		-I $(OCAMLPREFIX)/otherlibs/systhreads
+
+PLXINCLUDES= 	-I $(COMPLXREP)/lib/$(TKREP) \
 		-I $(COMPLXREP)/lib/$(KEY) \
+		-I $(COMPLXREP)/backend/latex \
+		-I $(COMPLXREP)/automatically_generated/ \
 		-I $(COMPLXREP)/backend \
 	        -I $(COMPLXREP)/config \
 	        -I $(COMPLXREP)/tools \
@@ -86,8 +89,10 @@ OCAMLINCLUDES= -I $(OCAMLPREFIX)/ocamlbuild \
 		-I $(COMPLXREP)/ODE \
 		-I $(COMPLXREP)/cyclical_complexes \
 		-I $(COMPLXREP)/refinements \
-		-I $(COMPLXREP)/isomorphism_detection\
-		$(TKINCLUDES) 
+		-I $(COMPLXREP)/isomorphism_detection \
+		$(TKINCLUDES)
+
+OCAMLINCLUDES= $(OCAMLLIB64) $(PLXINCLUDES)
 
 OCAMLFLAGS=	$(OCAMLINCLUDES)
 OCAMLLIBDIR=	$(shell ocamlc -where)
@@ -106,41 +111,44 @@ MLFULL? = $(COMPLXREP)/lib/$(TKREP)/superargTk.ml
 
 TKFILE=
 
-OBJS = 	./$(COMPLXREP)/tools/exceptions.cmo \
-	./$(COMPLXREP)/tools/error_handler.cmo \
+OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
+	./$(COMPLXREP)/tools/exceptions.cmo \
 	./$(COMPLXREP)/tools/memory_usage.cmo \
 	./$(COMPLXREP)/lib/$(KEY)/key.cmo \
+	./$(SIMPLXREP)/src/tools/float_pretty_printing.cmo \
 	./$(SIMPLXREP)/src/tools/error.cmo \
-	./$(SIMPLXREP)/src/data_structures/coord.cmo \
 	./$(SIMPLXREP)/src/html_config/config.cmo \
+	./$(COMPLXREP)/tools/tools2.cmo \
 	./$(COMPLXREP)/tools/map2.cmo \
 	./$(COMPLXREP)/tools/map_random.cmo \
 	./$(COMPLXREP)/tools/map_with_sharing.cmo \
-	./$(COMPLXREP)/tools/tools2.cmo \
 	./$(COMPLXREP)/tools/unbounded_array.cmo \
-	./$(SIMPLXREP)/src/data_structures/map_ext.cmo \
-	./$(COMPLXREP)/data_structures/big_array.cmo \
-	./$(SIMPLXREP)/src/data_structures/array_ext.cmo\
-	./$(SIMPLXREP)/src/data_structures/random_tree.cmo \
-	./$(SIMPLXREP)/src/tools/stringlist.cmo \
-	./$(SIMPLXREP)/src/tools/mods2.cmo \
-        ./$(SIMPLXREP)/src/kappa/agent.cmo \
-	./$(SIMPLXREP)/src/kappa/solution.cmo \
-	./$(SIMPLXREP)/src/data_structures/longString.cmo \
-	./$(SIMPLXREP)/src/kappa/species.cmo \
-	./$(SIMPLXREP)/src/data_structures/val_map.cmo \
-	./$(SIMPLXREP)/src/data_structures/implementation_choices.cmo \
-	./$(SIMPLXREP)/src/kappa/rule.cmo \
-	./$(SIMPLXREP)/src/kappa/experiment.cmo \
-	./$(SIMPLXREP)/src/main/data.cmo \
-	./$(SIMPLXREP)/src/stories/network.cmo \
-	./$(SIMPLXREP)/src/stories/story_compressor.cmo \
 	./$(COMPLXREP)/backend/parse_comment/comment_sig.cmo \
 	./$(COMPLXREP)/frontend/pb_sig.cmo \
 	./$(COMPLXREP)/data_structures/data_structures.cmo \
 	./$(COMPLXREP)/lib/superarg.cmo \
 	./$(COMPLXREP)/lib/$(TKREP)/superargTk.cmo \
+	./$(COMPLXREP)/data_structures/big_array.cmo \
+	./$(SIMPLXREP)/src/data_structures/array_ext.cmo\
+	./$(SIMPLXREP)/src/data_structures/random_tree.cmo \
+	./$(SIMPLXREP)/src/tools/stringlist.cmo \
+	./$(SIMPLXREP)/src/kappa/agent.cmo \
+	./$(SIMPLXREP)/src/data_structures/coord.cmo \
+	./$(SIMPLXREP)/src/data_structures/map_ext.cmo \
+	./$(SIMPLXREP)/src/data_structures/longString.cmo \
+	./$(SIMPLXREP)/src/data_structures/val_map.cmo \
+	./$(SIMPLXREP)/src/tools/mods2.cmo \
+	./$(SIMPLXREP)/src/kappa/solution.cmo \
+	./$(SIMPLXREP)/src/kappa/species.cmo \
+	./$(SIMPLXREP)/src/data_structures/implementation_choices.cmo \
+	./$(SIMPLXREP)/src/kappa/rule.cmo \
+	./$(SIMPLXREP)/src/kappa/experiment.cmo \
+	./$(SIMPLXREP)/src/main/data.cmo \
 	./$(COMPLXREP)/config/config_complx.cmo \
+	./$(COMPLXREP)/tools/error_handler.cmo \
+	./$(SIMPLXREP)/src/stories/network.cmo \
+	./$(SIMPLXREP)/src/stories/story_compressor.cmo \
+	./$(COMPLXREP)/backend/latex/latex.cmo \
 	./$(COMPLXREP)/tools/tools.cmo \
 	./$(SIMPLXREP)/src/stories/iso.cmo \
 	./$(COMPLXREP)/share/share.cmo \
@@ -150,6 +158,7 @@ OBJS = 	./$(COMPLXREP)/tools/exceptions.cmo \
 	./$(COMPLXREP)/reachability/count_complexes.cmo \
 	./$(COMPLXREP)/vars/var.cmo \
 	./$(COMPLXREP)/expr/expr.cmo \
+	./$(COMPLXREP)/isomorphism_detection/count_isomorphism.cmo \
 	./$(COMPLXREP)/expr/kleenean_expr.cmo \
 	./$(COMPLXREP)/abstract_expr/abstract_expr_sig.cmo \
 	./$(COMPLXREP)/abstract_expr/bdd.cmo \
@@ -167,11 +176,10 @@ OBJS = 	./$(COMPLXREP)/tools/exceptions.cmo \
 	./$(COMPLXREP)/frontend/translate.cmo \
 	./$(COMPLXREP)/reachability/packing.cmo \
 	./$(COMPLXREP)/influence_map/quarkification.cmo \
-	./$(COMPLXREP)/backend/contact_map/neighborhood.cmo\
+	./$(COMPLXREP)/backend/contact_map/neighborhood.cmo \
 	./$(COMPLXREP)/backend/contact_map/output_contact_map.cmo \
 	./$(COMPLXREP)/cyclical_complexes/avoid_polymere.cmo \
 	./$(COMPLXREP)/refinements/refinements.cmo \
-	./$(COMPLXREP)/isomorphism_detection/count_isomorphism.cmo \
 	./$(COMPLXREP)/backend/XML/xml.cmo \
 	./$(COMPLXREP)/backend/HTML/html.cmo \
 	./$(COMPLXREP)/influence_map/influence_map.cmo \
@@ -180,6 +188,8 @@ OBJS = 	./$(COMPLXREP)/tools/exceptions.cmo \
 	./$(COMPLXREP)/ODE/ode_print.cmo \
 	./$(COMPLXREP)/ODE/annotated_contact_map.cmo \
 	./$(COMPLXREP)/ODE/views.cmo \
+	./$(COMPLXREP)/ODE/rooted_path.cmo \
+	./$(COMPLXREP)/ODE/fragments_sig.cmo \
 	./$(COMPLXREP)/ODE/fragments.cmo \
 	./$(COMPLXREP)/ODE/ode_computation.cmo \
 	./$(COMPLXREP)/backend/contact_map/find_cycles.cmo \
@@ -189,8 +199,7 @@ OBJS = 	./$(COMPLXREP)/tools/exceptions.cmo \
 	./$(SIMPLXREP)/src/main/memory_control.cmo \
 	./$(SIMPLXREP)/src/tools/bench.cmo \
 	./$(SIMPLXREP)/src/main/simulation2.cmo \
-	./$(SIMPLXREP)/src/html_config/HTML.cmo 
-
+	./$(SIMPLXREP)/src/html_config/HTML.cmo
 
 SIMPLX_MAIN = ./$(SIMPLXREP)/src/main/main.ml
 COMPLX_MAIN = ./$(COMPLXREP)/main.ml 
