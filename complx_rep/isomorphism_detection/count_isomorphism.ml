@@ -385,7 +385,8 @@ let count_isomorphism_in_bmap bmap =
 	else aux (k/2) (a*rep*rep)
     in aux n a
  in  
-  if CanMap.is_empty hash then 0  (* #aut of empty lhs is equal to 0 *)
+  if CanMap.is_empty hash then 1  (* #aut of empty lhs is equal to 0, but we put 1 to prevent division by 0 later in the program (simulation/compression) *)
+ 
   else
     CanMap.fold 
       (fun _ l rep -> 
