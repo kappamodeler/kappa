@@ -17,8 +17,10 @@ let set_visibility (a:t) =
       try
 	let f = StringMap.find key !fmap in
 	if show_level lvl
-	then pack ~side:`Top ~anchor:`W [coe f] 
-	else Pack.forget [coe f]
+	then 
+	  List.iter (fun f ->pack ~side:`Top ~anchor:`W [coe f]) f
+	else 
+	  List.iter (fun f -> Pack.forget [coe f]) f
       with Not_found -> ()
     ) a
 
@@ -181,7 +183,14 @@ let balloon_delay = 100
 (* create an option widget, add the defined variables to the map *)
 let widget_of_spec (a:t) key spec msg lvl parent = 
   let f = Frame.create parent in
-  let _ = fmap := StringMap.add key f !fmap in 
+  let _ = 
+    fmap := 
+      let old = 
+	try 
+	  StringMap.find key !fmap
+	with 
+	  Not_found -> [] in 
+      StringMap.add key (f::old) !fmap in 
 
   let v = 
     try (StringMap.find key (!map))
