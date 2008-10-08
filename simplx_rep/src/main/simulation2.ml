@@ -1298,238 +1298,270 @@ let rec iter log sim_data p c =
       else 0
     in
     let c_sim = 
-      let t = 
-	if !max_time > 0.0 then
-	  int_of_float ((float_of_int c.clock_precision *. c.curr_time) /. !max_time)
-	else 0
-      and e = 
-	if !max_step > 0 then
-	  (c.clock_precision * c.curr_step) / !max_step
-	else 0
-      in
-	max e t
+      if !story_mode then 0 
+      else
+	let t = 
+	  if !max_time > 0.0 then
+	    int_of_float ((float_of_int c.clock_precision *. c.curr_time) /. !max_time)
+	  else 0
+	and e = 
+	  if !max_step > 0 then
+	    (c.clock_precision * c.curr_step) / !max_step
+	  else 0
+	in
+	  max e t
     in
       max c_story c_sim
   in
   let c = ticking clock c in
-    if !debug_mode then print sim_data ;
-    (*stop conditions*)
-    if (c.curr_iteration = !max_iter) 
-      or ((!max_time >= 0.0) && (c.curr_time > !max_time)) 
-      or ((!max_step >= 0) && (c.curr_step > !max_step))
-    then (Printf.fprintf stderr "\n";flush stderr; (0 (*termination*),log,sim_data,p,c))
-    else
-      let sim_data = apply_exp p c.curr_time sim_data in
-      let sim_data,p =
-	if !story_mode && (!init_time <= c.curr_time) && (Network.is_empty sim_data.net) then 
-	  let net = init_net Network.empty sim_data.sol in
-	  let sd = {sim_data with net = net} in
-	    (sd, p (*{p with init_sd = copy_sd sd}*))
-	else
-	  (sim_data,p)
-      in
-      let c,log= 
-	if !Data.snapshot_mode then
-	  begin
-	    match c.snapshot_time with
-		x::tl -> 
-		  if (x<=c.curr_time) then 
-		    let log =
-		      if !cores>1 then (*distributing computation of snapshots*)
-			let th = Thread.create Session.snapshot (Solution.copy sim_data.sol,c.curr_time,c.snapshot_counter)
-			in
-			  threads_id:=th::(!threads_id) ;
-			  Session.add_log_entry (-1) (Printf.sprintf "Spawning a thread for snapshot at t=%f" c.curr_time) log 
-		      else (*stoping process to compute snapshot*)
-			(
-			  Session.snapshot (sim_data.sol,c.curr_time,c.snapshot_counter) ;
-			  Session.add_log_entry (-1) (Printf.sprintf "Taking snapshot at t=%f" c.curr_time) log 
-			)
-		    in
-		      ({c with snapshot_time = tl ; snapshot_counter = c.snapshot_counter+1},log)
-		  else (c,log)
-	      | [] -> (c,log)
+  let _ = if !debug_mode then print sim_data else () in
+    if !story_mode && (c.curr_iteration = !max_iter) then (*testing stop conditions for story mode*)
+      begin (*exiting event loop*)
+	Printf.fprintf stderr "\n";
+	flush stderr; 
+	let log = Session.add_log_entry 1 (Printf.sprintf "-Exiting storification after %d iteration(s)" c.curr_iteration) log in
+	  (0 (*termination*),log,sim_data,p,c)
+      end
+    else       
+      (*Testing stop conditions for simulation mode*)
+      if ((!max_time >= 0.0) && (c.curr_time > !max_time)) or ((!max_step >= 0) && (c.curr_step > !max_step)) then 
+	begin (*exiting event loop*)
+	  Printf.fprintf stderr "\n";
+	  flush stderr; 
+	    let log = Session.add_log_entry 1 (Printf.sprintf "-Event loop terminated at t=%f (%d events)" c.curr_time c.curr_step) log in
+	      (0 (*termination*),log,sim_data,p,c)
 	  end
-	else (c,log)
-      in
-      let t_select = chrono 0.0 in
-      let (log,opt,sim_data,clashes) = select log sim_data p in
-	if !bench_mode then Bench.rule_select_time := !Bench.rule_select_time +. (chrono t_select) ;
-	match opt with
-	    None -> (
-	      let log = Session.add_log_entry 1 
-		(Printf.sprintf "Deadlock found (activity = %f)" (Rule_of_int.accval sim_data.rules)) log
-	      in
-		(1 (*deadlocked*),log,sim_data,p,c)
-	    )
-	  | Some (abst_ind,r_ind,assoc) ->
-	      let activity = Rule_of_int.accval sim_data.rules in
-	      let dt = 
-		if !Data.no_random_time then 1./. activity (*expectency*)
-		else Mods2.random_time_advance activity clashes 
-	      in (*sums clashes+1 time advance according to activity*)
-	      let _ = if !debug_mode then Printf.printf "dt=%f\n" dt in
-	      let curr_time = 
-		if IntSet.mem r_ind sim_data.oo then c.curr_time 
-		else
-		  c.curr_time +. dt 
-	      in
-		
-	      let r_abst,_ = Rule_of_int.find abst_ind sim_data.rules in
-	      let r_ref,_ = Rule_of_int.find r_ind sim_data.rules in
-	      let _ =
-		if !debug_mode then 
-		  begin
-		    Printf.printf "%f,r[%d]: %s\n" curr_time r_ind (Rule.name r_ref); flush stdout;
-		    Printf.printf "INF: %s\n" (string_of_set string_of_int IntSet.fold sim_data.inf_list) ;
-		  end
-	      in
-	      let t_apply = chrono 0.0 in
-	      let (mq,rmq,tq,assoc_add,sol',warn) = Rule.apply r_abst assoc sim_data.sol in (*passing r_abst in order to have a mq,rmq,tq as small as possible*)
-	      let _ = if !bench_mode then Bench.rule_apply_time := !Bench.rule_apply_time +. (chrono t_apply) in
-	      let log = 
-		if warn then
-		  Session.add_log_entry 4 ("Application of rule ["^(Rule.name r_abst)^"] was contextual") log  (*application of r_abst might be contextual when of r_ref would not*)
-		else log
-	      in
-		(*merge modif quarks and removed quarks*)
-	      let upd_q = PortMap.fold (fun q _ pset -> PortSet.add q pset) mq rmq in
-	      let t_update = chrono 0.0 in
-	      let sim_data,mod_obs = update warn abst_ind assoc upd_q assoc_add sol' sim_data p
-	      in
-	      let _ = if !bench_mode then Bench.update_time := !Bench.update_time +. (chrono t_update) in
-
-		(*story sampling mode*)
-		if !story_mode && (!init_time <= c.curr_time) then 
-		  let net',modifs = 
-		    let modifs = PortMap.fold (fun quark test_modif pmap ->
-						 PortMap.add quark test_modif pmap
-					      ) tq mq
-		    in
-		    let modifs = PortSet.fold (fun quark pmap ->
-						 PortMap.add quark [Rule.Remove] pmap
-					      ) rmq modifs 
-		    in 
-		      if (IntSet.mem r_ind sim_data.obs_ind) then (*rule is to be observed, so don't backtrack it!*)
-			(Network.add sol' sim_data.net (r_ref,modifs) !debug_mode false, modifs)
-		      else
-			(Network.add sol' sim_data.net (r_abst,modifs) !debug_mode p.compress_mode, modifs)
+	else
+	  (*Continuing event loop*)
+	  let sim_data = apply_exp p c.curr_time sim_data in
+	  let sim_data,p =
+	    if !story_mode && (!init_time <= c.curr_time) && (Network.is_empty sim_data.net) then 
+	      let net = init_net Network.empty sim_data.sol in
+	      let sd = {sim_data with net = net} in
+		(sd, p (*{p with init_sd = copy_sd sd}*))
+	    else
+	      (sim_data,p)
+	  in
+	  let c,log= 
+	    if !Data.snapshot_mode then
+	      begin
+		match c.snapshot_time with
+		    x::tl -> 
+		      if (x<=c.curr_time) then 
+			let log =
+			  if !cores>1 then (*distributing computation of snapshots*)
+			    let th = Thread.create Session.snapshot (Solution.copy sim_data.sol,c.curr_time,c.snapshot_counter)
+			    in
+			      threads_id:=th::(!threads_id) ;
+			      Session.add_log_entry (-1) (Printf.sprintf "Spawning a thread for snapshot at t=%f" c.curr_time) log 
+			  else (*stoping process to compute snapshot*)
+			    (
+			      Session.snapshot (sim_data.sol,c.curr_time,c.snapshot_counter) ;
+			      Session.add_log_entry (-1) (Printf.sprintf "Taking snapshot at t=%f" c.curr_time) log 
+			    )
+			in
+			  ({c with snapshot_time = tl ; snapshot_counter = c.snapshot_counter+1},log)
+		      else (c,log)
+		  | [] -> (c,log)
+	      end
+	    else (c,log)
+	  in
+	  let t_select = chrono 0.0 in
+	  let (log,opt,sim_data,clashes) = select log sim_data p in
+	    if !bench_mode then Bench.rule_select_time := !Bench.rule_select_time +. (chrono t_select) ;
+	    match opt with
+		None -> (
+		  let log = Session.add_log_entry 1 
+		    (Printf.sprintf "Deadlock found (activity = %f)" (Rule_of_int.accval sim_data.rules)) log
 		  in
-		    if (IntSet.mem r_ind sim_data.obs_ind) then 
-		      let flg = match r_ref.flag with Some flg -> flg | _ -> runtime "Simulation.iter: obs has no flag"
-		      in
-		      let h = Network.cut net' flg in
-		      let h = {h with Network.name_of_agent = 
-			  let n = Solution.AA.size sol'.Solution.agents in
-			  let vect = Array.make n "" in
-			  let rec aux k = 
-			    if k = n then ()
-			    else 
-			      ((vect.(k) <- 
-				  try 
-				    (let ag = 
-				       Solution.AA.find k sol'.Solution.agents in Agent.name ag) with _ -> "");
-			       aux (k+1))
-			  in
-			  let _ = aux 0 in
-			    Some vect} 
-		      in
-
-		      let drawers = (Iso.classify (h,curr_time) c.drawers p.iso_mode) 
-		      in
-		      if !debug_mode then begin
-			Printf.printf "Story computed, restarting\n" ; flush stdout end ; 
-			
-		      let log = Session.add_log_entry (-1) "Story found!" log in
-		      let init_sd = 
-			match p.init_sd with
-			    None -> sim_data (*No more stories to compute*)
-			  | Some serialized_sim_data ->
-			      let d = open_in_bin serialized_sim_data in 
-			      let f_init_sd = (Marshal.from_channel d : marshalized_sim_data_t) in
-			      let _ = close_in d in
-				unmarshal f_init_sd 
-		      in
-			iter log (init_sd) p {c with 
-						curr_iteration = c.curr_iteration+1 ; 
-						drawers = drawers ; 
-						curr_time = 0.0 (*!init_time*); 
-						curr_step = 0
-					     } 
+		    (1 (*deadlocked*),log,sim_data,p,c)
+		)
+	      | Some (abst_ind,r_ind,assoc) ->
+		  let activity = Rule_of_int.accval sim_data.rules in
+		  let dt = 
+		    if !Data.no_random_time then 1./. activity (*expectency*)
+		    else Mods2.random_time_advance activity clashes 
+		  in (*sums clashes+1 time advance according to activity*)
+		  let _ = if !debug_mode then Printf.printf "dt=%f\n" dt in
+		  let curr_time = 
+		    if IntSet.mem r_ind sim_data.oo then c.curr_time 
 		    else
-		      let sim_data = {sim_data with sol = sol' ; net = net'} in
-		      iter log sim_data p {c with 
-					    curr_step = c.curr_step + 1 ; 
-					    curr_time = curr_time
-					  } 
-			  (*End story sampling mode*)
-		else 
-		  if not !ignore_obs then (*if !ignore_obs is true there is no need to take data points*)
-		    begin
-		      
-		      (*Simulation mode*)
-		      let t_data = chrono 0.0 in (*for benchmarking*)
-		      let t = 
-			if !time_mode then get_time_range p curr_time (*get the time interval corresponding to current time*)
-			else get_step_range p (c.curr_step+1) (*get the event interval corresponding to current event*)
-		      in
-			if (!init_time <= curr_time) then (*take measures only if passed init time*)
-			  let obs_map = 
-			    try IntMap.find t c.concentrations 
-			    with Not_found -> IntMap.empty 
-			  in
-			  let mod_obs = 
-			    if c.curr_step = 0 then (*if first event*)
-			      IntSet.fold (fun i cont -> 
-					     let r_obs,_ = Rule_of_int.find i sim_data.rules in
-					       match r_obs.flag with
-						   None -> runtime "Simulation.iter: rule has no name"
-						 | Some flg -> (*Printf.printf "init %s\n" flg ;*) StringSet.add flg cont
-					  ) sim_data.obs_ind StringSet.empty
-			    else mod_obs
-			  in
-			  let obs_map =
-			    StringSet.fold (fun flg obs_map ->
-					      let i = StringMap.find flg sim_data.rule_of_name in
-					      let r_obs,inst_obs = 
-						try Rule_of_int.find i sim_data.rules 
-						with Not_found -> runtime "Simulation.iter: obs not found" 
-					      in
-						(*automorphism correction for obs and activity for rules*)
-					      let automorphisms = 
-						match r_obs.automorphisms with 
-						    None -> (failwith "Automorphisms not computed") 
-						  | Some i -> float_of_int i 
-					      in
-					      let act_obs = inst_obs /. (automorphisms *. (!rescale)) in 
-					      	IntMap.add i act_obs obs_map
+		      c.curr_time +. dt 
+		  in
+		    
+		  let r_abst,_ = Rule_of_int.find abst_ind sim_data.rules in
+		  let r_ref,_ = Rule_of_int.find r_ind sim_data.rules in
+		  let _ =
+		    if !debug_mode then 
+		      begin
+			Printf.printf "%f,r[%d]: %s\n" curr_time r_ind (Rule.name r_ref); flush stdout;
+			Printf.printf "INF: %s\n" (string_of_set string_of_int IntSet.fold sim_data.inf_list) ;
+		      end
+		  in
+		  let t_apply = chrono 0.0 in
+		  let (mq,rmq,tq,assoc_add,sol',warn) = Rule.apply r_abst assoc sim_data.sol in (*passing r_abst in order to have a mq,rmq,tq as small as possible*)
+		  let _ = if !bench_mode then Bench.rule_apply_time := !Bench.rule_apply_time +. (chrono t_apply) in
+		  let log = 
+		    if warn then
+		      Session.add_log_entry 4 ("Application of rule ["^(Rule.name r_abst)^"] was contextual") log  (*application of r_abst might be contextual when of r_ref would not*)
+		    else log
+		  in
+		    (*merge modif quarks and removed quarks*)
+		  let upd_q = PortMap.fold (fun q _ pset -> PortSet.add q pset) mq rmq in
+		  let t_update = chrono 0.0 in
+		  let sim_data,mod_obs = update warn abst_ind assoc upd_q assoc_add sol' sim_data p
+		  in
+		  let _ = if !bench_mode then Bench.update_time := !Bench.update_time +. (chrono t_update) in
 
-					   ) mod_obs obs_map
+		    (*story sampling mode*)
+		    if !story_mode && (!init_time <= c.curr_time) then 
+		      let net',modifs = 
+			let modifs = PortMap.fold (fun quark test_modif pmap ->
+						     PortMap.add quark test_modif pmap
+						  ) tq mq
+			in
+			let modifs = PortSet.fold (fun quark pmap ->
+						     PortMap.add quark [Rule.Remove] pmap
+						  ) rmq modifs 
+			in 
+			  if (IntSet.mem r_ind sim_data.obs_ind) then (*rule is to be observed, so don't backtrack it!*)
+			    (Network.add sol' sim_data.net (r_ref,modifs) !debug_mode false, modifs)
+			  else
+			    (Network.add sol' sim_data.net (r_abst,modifs) !debug_mode p.compress_mode, modifs)
+		      in
+			if (IntSet.mem r_ind sim_data.obs_ind) then (*if applied rule triggers storification*)
+			  let flg = match r_ref.flag with Some flg -> flg | _ -> runtime "Simulation.iter: obs has no flag"
 			  in
-			    if !bench_mode then Bench.data_time := !Bench.data_time +. (chrono t_data) ;
-			    iter log {sim_data with sol = sol'} p 
-			      {c with 
-				 concentrations = IntMap.add t obs_map c.concentrations;
-				 curr_step = c.curr_step + 1 ;
-				 curr_time = curr_time ;
-				 time_map = (*JF if !time_mode then c.time_map else*) IntMap.add t curr_time c.time_map
-			      } 
-			else
-			  iter log {sim_data with sol = sol'} p 
-			    {c with 
-			       curr_step = c.curr_step + 1 ;
-			       curr_time = curr_time ;
-			       time_map = (*JF if !time_mode then c.time_map else*) IntMap.add t curr_time c.time_map
-			    } 
-		    end
-		      (*end simulation mode*)
-		  else
-		    (*no observation mode*)
-		    iter log {sim_data with sol = sol'} p 
-		      {c with 
-			 curr_step = c.curr_step + 1 ;
-			 curr_time = curr_time 
-		      } 
+			  let h = Network.cut net' flg in
+			  let h = {h with Network.name_of_agent = 
+			      let n = Solution.AA.size sol'.Solution.agents in
+			      let vect = Array.make n "" in
+			      let rec aux k = 
+				if k = n then ()
+				else 
+				  ((vect.(k) <- 
+				      try 
+					(let ag = 
+					   Solution.AA.find k sol'.Solution.agents in Agent.name ag) with _ -> "");
+				   aux (k+1))
+			      in
+			      let _ = aux 0 in
+				Some vect} 
+			  in
+			  let drawers = (Iso.classify (h,curr_time) c.drawers p.iso_mode) 
+			  in
+			    if !debug_mode then begin
+			      Printf.printf "Story computed, restarting\n" ; flush stdout end ; 
+			    
+			    let log = Session.add_log_entry (-1) "-Causal trace computed" log in
+			    let init_sd = 
+			      match p.init_sd with
+				  None -> sim_data (*No more stories to compute*)
+				| Some serialized_sim_data ->
+				    let d = open_in_bin serialized_sim_data in 
+				    let f_init_sd = (Marshal.from_channel d : marshalized_sim_data_t) in
+				    let _ = close_in d in
+				      unmarshal f_init_sd 
+			    in
+			      iter log (init_sd) p {c with 
+						      curr_iteration = c.curr_iteration+1 ; 
+						      drawers = drawers ; 
+						      curr_time = 0.0 (*!init_time*); 
+						      curr_step = 0
+						   } 
+			else (*last rule was not observable for stories*)
+			  let sim_data = {sim_data with sol = sol' ; net = net'} in
+
+			    if ((!max_time >= 0.0) && (curr_time > !max_time)) or ((!max_step >= 0) && (c.curr_step+1 > !max_step)) then
+			      (*if time or event limit is reached, discarding network*)
+			      let log = Session.add_log_entry 4 "-No story could be found within the given limit!" log in
+			      let init_sd = 
+				match p.init_sd with
+				    None -> sim_data (*for type checking*)
+				  | Some serialized_sim_data ->
+				      let d = open_in_bin serialized_sim_data in 
+				      let f_init_sd = (Marshal.from_channel d : marshalized_sim_data_t) in
+				      let _ = close_in d in
+					unmarshal f_init_sd 
+			      in
+				iter log (init_sd) p {c with 
+							curr_iteration = c.curr_iteration+1 ; 
+							curr_time = 0.0 (*!init_time*); 
+							curr_step = 0
+						     }
+			    else			      
+			      (*limit is not reached continuing with the same network*)
+			      iter log sim_data p {c with 
+						     curr_step = c.curr_step + 1 ; 
+						     curr_time = curr_time
+						  } 
+				(*End story sampling mode*)
+		    else 
+		      if not !ignore_obs then (*if !ignore_obs is true there is no need to take data points*)
+			begin
+			  (*Simulation mode*)
+			  let t_data = chrono 0.0 in (*for benchmarking*)
+			  let t = 
+			    if !time_mode then get_time_range p curr_time (*get the time interval corresponding to current time*)
+			    else get_step_range p (c.curr_step+1) (*get the event interval corresponding to current event*)
+			  in
+			    if (!init_time <= curr_time) then (*take measures only if passed init time*)
+			      let obs_map = 
+				try IntMap.find t c.concentrations 
+				with Not_found -> IntMap.empty 
+			      in
+			      let mod_obs = 
+				if c.curr_step = 0 then (*if first event*)
+				  IntSet.fold (fun i cont -> 
+						 let r_obs,_ = Rule_of_int.find i sim_data.rules in
+						   match r_obs.flag with
+						       None -> runtime "Simulation.iter: rule has no name"
+						     | Some flg -> (*Printf.printf "init %s\n" flg ;*) StringSet.add flg cont
+					      ) sim_data.obs_ind StringSet.empty
+				else mod_obs
+			      in
+			      let obs_map =
+				StringSet.fold (fun flg obs_map ->
+						  let i = StringMap.find flg sim_data.rule_of_name in
+						  let r_obs,inst_obs = 
+						    try Rule_of_int.find i sim_data.rules 
+						    with Not_found -> runtime "Simulation.iter: obs not found" 
+						  in
+						    (*automorphism correction for obs and activity for rules*)
+						  let automorphisms = 
+						    match r_obs.automorphisms with 
+							None -> (failwith "Automorphisms not computed") 
+						      | Some i -> float_of_int i 
+						  in
+						  let act_obs = inst_obs /. (automorphisms *. (!rescale)) in 
+						    IntMap.add i act_obs obs_map
+
+					       ) mod_obs obs_map
+			      in
+				if !bench_mode then Bench.data_time := !Bench.data_time +. (chrono t_data) ;
+				iter log {sim_data with sol = sol'} p 
+				  {c with 
+				     concentrations = IntMap.add t obs_map c.concentrations;
+				     curr_step = c.curr_step + 1 ;
+				     curr_time = curr_time ;
+				     time_map = (*JF if !time_mode then c.time_map else*) IntMap.add t curr_time c.time_map
+				  } 
+			    else
+			      iter log {sim_data with sol = sol'} p 
+				{c with 
+				   curr_step = c.curr_step + 1 ;
+				   curr_time = curr_time ;
+				   time_map = (*JF if !time_mode then c.time_map else*) IntMap.add t curr_time c.time_map
+				} 
+			end
+			  (*end simulation mode*)
+		      else
+			(*no observation mode*)
+			iter log {sim_data with sol = sol'} p 
+			  {c with 
+			     curr_step = c.curr_step + 1 ;
+			     curr_time = curr_time 
+			  } 
 		      (*end no observation mode*)
 
 let build_data concentrations time_map obs_ind =

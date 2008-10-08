@@ -71,55 +71,57 @@ let kappa_of_solution ?(full=false) ?whitelist sol =
       let get_lnk () = (let t = (!lnk_id) in lnk_id := (!lnk_id)+1 ; t) 
       and hsh_link = Hashtbl.create 10 
       in
-      let str_of_agents agents =
-	AA.fold (fun id ag cont ->
-		   if with_whitelist && not (IntSet.mem id wl) then cont
+      let longstr_of_agents agents =
+	AA.fold (fun id ag ls ->
+		   if with_whitelist && not (IntSet.mem id wl) then ls
 		   else
-		     let name = if full then Printf.sprintf "%s#%d" (Agent.name ag) id else Agent.name ag in
-		       cont@[Printf.sprintf "%s(%s)"
-			       name
-			       (String.concat ","
-				  (Agent.fold_interface 
-				     (fun site (inf,lnk) cont -> 
-					if site = "_" then cont else
-					  let (inf,lnk) = Agent.state ag site in
-					  let s_inf = 
-					    match inf with
-						Agent.Marked s -> ("~"^s) 
-					      | Agent.Wildcard -> ""
-					      | (Agent.Bound | Agent.Free) ->
-						  runtime "Solution.kappa_of_solution: not a valid mark for a state"
-					  and s_lnk = 
-					    match lnk with
-						Agent.Bound -> "!"
-					      | Agent.Free -> ""
-					      | Agent.Wildcard -> "?"
-					      | Agent.Marked _  ->
-						  runtime "Solution.kappa_of_solution: not a valid mark for a link"
-					  in 
-					  let s_site = site^s_inf^s_lnk
-					  in
-					    try
-					      let (id',site') = PA.find (id,site) sol.links in
-						try
-						  let n = Hashtbl.find hsh_link (id',site') in
-						    (s_site^(string_of_int n))::cont
-						with Not_found ->
-						  let n = get_lnk() in
-						    Hashtbl.add hsh_link (id,site) n ;
-						    (s_site^(string_of_int n))::cont
-					    with 
-						Not_found -> 
-						  if lnk=Agent.Bound 
-						  then (s_site^"_"(*string_of_int (get_lnk())*))::cont 
-						  else s_site::cont 
-				     ) ag  []
-				  )
+		     let name = if full then Printf.sprintf "%s#%d" (Agent.name ag) id else Agent.name ag 
+		     in
+		       LongString.concat ~sep:','
+			 (Printf.sprintf "%s(%s)"
+			    name
+			    (String.concat ","
+			       (Agent.fold_interface 
+				  (fun site (inf,lnk) cont -> 
+				     if site = "_" then cont else
+				       let (inf,lnk) = Agent.state ag site in
+				       let s_inf = 
+					 match inf with
+					     Agent.Marked s -> ("~"^s) 
+					   | Agent.Wildcard -> ""
+					   | (Agent.Bound | Agent.Free) ->
+					       runtime "Solution.kappa_of_solution: not a valid mark for a state"
+				       and s_lnk = 
+					 match lnk with
+					     Agent.Bound -> "!"
+					   | Agent.Free -> ""
+					   | Agent.Wildcard -> "?"
+					   | Agent.Marked _  ->
+					       runtime "Solution.kappa_of_solution: not a valid mark for a link"
+				       in 
+				       let s_site = site^s_inf^s_lnk
+				       in
+					 try
+					   let (id',site') = PA.find (id,site) sol.links in
+					     try
+					       let n = Hashtbl.find hsh_link (id',site') in
+						 (s_site^(string_of_int n))::cont
+					     with Not_found ->
+					       let n = get_lnk() in
+						 Hashtbl.add hsh_link (id,site) n ;
+						 (s_site^(string_of_int n))::cont
+					 with 
+					     Not_found -> 
+					       if lnk=Agent.Bound 
+					       then (s_site^"_"(*string_of_int (get_lnk())*))::cont 
+					       else s_site::cont 
+				  ) ag  []
 			       )
-			    ]
-		) agents []
+			    )
+			 ) ls
+		) agents LongString.empty
       in
-	String.concat "," (str_of_agents sol.agents)
+	LongString.to_string (longstr_of_agents sol.agents)
 
 let to_dot ?(low_reso=false) sol = 
   let hsh_done = Hashtbl.create 10 in

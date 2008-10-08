@@ -1,7 +1,7 @@
 (**Data references*)
 
 let version_main = 3
-let version_cpt = 393 (*bug arrondi dans le nombre d'observables*)
+let version_cpt = 394 (*bug in stop condition for stories*)
 let version_svn = Svn_number.svn_number
 let version_branch = ""
 let arch_type = string_of_int Sys.word_size
@@ -37,7 +37,7 @@ let closure = ref true
 let story_compression = ref true
 let story_compression_mode = ref FIRST
 let no_weak_arrow = ref true (*TODO do not consider weak arrows in story computation*)
-let short_intro_name = ref true (*Coarse intro label for stories*)
+let short_intro_name = ref false (*Coarse intro label for stories*)
 
 (*let story_compression_granularity = ref WEAK*)
 let story_iteration_strategy = 2 (*1->follow causal order,2->follow linear order*) 
