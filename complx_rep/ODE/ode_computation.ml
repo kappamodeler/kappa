@@ -477,7 +477,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
   (*****************************)
 
    let _ = 
-    if debug   then 
+    if true (*debug*)   then 
       let _ = print_string "VARIABLES\n" in 
       let _ = 
 	List.iter 
@@ -628,7 +628,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
   (*****************************************)
 
   let hash_fragment,dump,size  = create_fragments_hashtable ode_handler print_obs pb in 
-  let hash_subspecies x = hash_fragment (canonical_form x) in 
+  let hash_subspecies x = (hash_fragment (canonical_form x)) in 
     (* hash_subspecie maps each subspecies to their fragment identifier. *)
     (* dump dump the content of the hashtable *)
   
@@ -1086,14 +1086,14 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			     (fun map (b,bool) -> 
 			       match b with 
 				 B(_) 
-			       | AL(_) | M(_) -> BMap.add (downgrade_b b) bool map 
+			       | AL(_) | M(_) -> BMap.add ((*downgrade_b*) b) bool map 
 			       | L((a,b,c),(d,e,f)) -> 
 				   if bool then 
 				     BMap.add 
-				       (downgrade_b (AL((a,b,c),(e,f))))
+				       ((*downgrade_b*) (AL((a,b,c),(e,f))))
 				       bool
 				       (BMap.add 
-					  (downgrade_b (AL((d,e,f),(b,c)))) 
+					  ((*downgrade_b*) (AL((d,e,f),(b,c)))) 
 					  bool
 					  map)
 				   else

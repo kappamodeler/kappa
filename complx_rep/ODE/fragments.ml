@@ -16,8 +16,8 @@ let trace = false
 let debug = false
 let cannonical_debug = false
 let merge_debug = false
-let map_debug = false 
-let complete_debug = false
+let map_debug = false
+let complete_debug = true
 let split_debug = false
 let apply_blist_debug = false
 let release_debug = false
@@ -909,14 +909,21 @@ let complete_subspecies (pending_edges,view_of_tp_i,keep_this_link,get_denum) su
 	print_newline ();
 	print_species subspecies 
       end in
-  let target (*set of the typed site to be connected to the frontier of the subspecies by a solid line *)
-	, map  (*map each target site to the rooted path of the agent it is connected to and the type of the connected site and the potential extentions of this bond *)
+  let add rp site a map = 
+    let old = 
+      try 
+	RPathMap.find rp map
+      with 
+	Not_found -> 
+	  StringMap.empty in
+    RPathMap.add rp (StringMap.add site a old) map in 
+  let  map  (*map each root_path to the potential extentions of this bond *)
 	= 
     RPathMap.fold
-      (fun rp tp (target,map) ->
+      (fun rp tp map ->
 	let pending_edges = pending_edges (view_of_tp_i tp) in
 	String4Set.fold 
-	  (fun (y1,y2) (target,map) ->
+	  (fun (y1,y2) map ->
 	    if 
 	      begin (*not an internal edges *)
 		try 
@@ -927,63 +934,67 @@ let complete_subspecies (pending_edges,view_of_tp_i,keep_this_link,get_denum) su
 		with 
 		  Not_found -> false 
 	      end
-		&& 
+		or 
 	      begin (*a solid edge *)
-		keep_this_link y1 y2 
+		not (keep_this_link y1 y2 )
 	      end
 	    then 
-	      (target,map)
+	      map
 	    else
 	      (
-	      String2Set.add y2 target,
-	      String2Map.add y2 (rp,y1,get_denum (fst y2,snd y2,fst y1,snd y1)) map))
+	      add 
+		rp  
+		(snd y1) 
+		(get_denum (fst y2,snd y2,fst y1,snd y1)) 
+		map))
 	  pending_edges 
-	  (target,map))
+	  map)
       subspecies.subspecies_views 
-      (String2Set.empty,String2Map.empty) in 
+      RPathMap.empty in 
   let _ = 
     if map_debug
-    then
-      begin 
-	print_string "MAP:\n";
-	String2Map.iter 
-	  (fun y2 (rp,y1,ext_list) -> 
-	    print_string (fst y2);
-	    print_string ".";
-	    print_string (snd y2);
-	    print_rpath rp;
-	    print_string (fst y1);
-	    print_string ".";
-	    print_string (snd y1);
-	    print_newline ();
-	    List.iter print_species ext_list)
-	  map 
-      end
-  in 
-  
-  let sol = 
-    String2Map.fold 
-      (fun y2 (rp,y1,extension_list) sol_list -> 
-	let rp' = {rp with path = (*(y2,y1)::*)rp.path} in 
-	List.fold_left 
-	  (fun pre_sol_list extension -> 
-	    List.fold_left 
-	      (fun sol_list pre_sol -> 
-                let extended_sol = 
-		  (*add_bond_to_subspecies  *)
-		    (merge
-		       pre_sol 
-		       (shift_subspecies 
-			  extension 
-			  (StringMap.add "" rp' StringMap.empty)))
-		    (*(rp,snd y1) (rp',snd y2)*) in
-		extended_sol::sol_list		
-				)
-	      pre_sol_list sol_list
-	      )
-	  []  extension_list 
+    then 
+      RPathMap.iter
+	(fun rp map -> 
+	  StringMap.iter 
+	    (fun site  extension_list -> 
+	  let _ = print_string "MAP_DEBUG\n" in
+	  let _ = print_rpath rp in
+	  let _ = print_string site in
+	  let _ = print_newline () in 
+	  let _ = 
+	    List.iter 
+	      (fun ext -> 
+		print_species ext)
+	      extension_list in()) map)
+	map
+	
+  in
 	  
-	  ) 
+  let sol = 
+    RPathMap.fold 
+      (fun rp map sol_list -> 
+	StringMap.fold
+	  (fun _ extension_list sol_list -> 
+	    let rp' = {rp with path = rp.path} in 
+	    List.fold_left 
+	      (fun pre_sol_list extension -> 
+		List.fold_left 
+		  (fun sol_list pre_sol -> 
+                    let extended_sol = 
+		      (merge
+			 pre_sol 
+			 (shift_subspecies 
+			    extension 
+			    (StringMap.add "" rp' StringMap.empty))) in 
+		    extended_sol::sol_list		
+				    )
+		  pre_sol_list sol_list
+		  )
+	      []  extension_list 
+	      
+	      ) 
+	  map sol_list)
       map [subspecies] in 
   let _ = 
     if complete_debug 

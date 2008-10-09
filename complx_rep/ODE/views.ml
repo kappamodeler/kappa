@@ -83,58 +83,6 @@ let destroy view =
      pending_edges view 
 
 
-(*let create_view_hashtable ode_handler print  pb  = 
-  let hash_tp_list,dump = 
-    let n = ref 1 in
-    let map = ref IntListMap.empty in
-    let f x = 
-      let x' = List.sort compare x in
-      try (IntListMap.find x' (!map))
-      with Not_found -> 
-	let rep = (!n) in
-	let _ = if debug then 
-          let _ = print_log ("NEW FRAGMENT: "^(string_of_int (!n))) in
-   	  let _ = List.iter 
-	      (fun i -> print_log (string_of_int i))
-	      x' in () in 
-	let _ = n:= (!n)+1 in
-	let _ = map:=IntListMap.add x' rep (!map) in
-	rep
-    in f,
-    let dump fmap  = 
-      let l = 
-	IntListMap.fold
-	  (fun l n list -> 
-	    ((n,
-	      let expr = 
-		List.fold_left 
-		  (fun expr xold -> 
-		    let view = 
-		      (try Arraymap.find xold fmap 
-		      with Not_found -> 
-			error 93) in
-		    let agent = agent_of_view view in 
-		    (StringMap.add 
-		       agent
-		       (List.fold_left 
-			  (fun expr (y,z) ->
-			    ode_handler.conj expr
-			      ((if z then ode_handler.atom_pos else ode_handler.atom_neg) ( y)))
-			  (ode_handler.atom_pos (ode_handler.var_of_b (H(agent,agent))))
-			  (valuation_of_view view))
-		       expr ))
-		  StringMap.empty 
-		  l in
-	      expr)::list)) (!map) [] in
-      let l = List.sort (fun (a,b) (c,d) -> compare a c) l in
-(*      let _ = List.iter 
-	(fun (n,expr) -> 
-	  let _ = pprint_obs print (print_sb ode_handler)   n expr pb in () )
-	  l 
-      in *)
-      () in dump 
-  in
-  hash_tp_list,dump *)
 
 let translate_classes_into_views ode_handler subviews rep  = 
   (** this primitives computes the set of valuated subviews 
@@ -271,27 +219,27 @@ let compute_interface_tp_i tp_i int_map ode_handler result =
 let compute_compatible_views_id blist restricted_blist bmap agent_id (specie_of_id,agent_to_int_to_nlist,view_of_tp_i,ode_handler) = 
   (* we compute the list of sites *)
   let site_list,_ = 
-       List.fold_left
-	 (fun (sol,black) (b,bool) -> 
-	   match b with 
-	     B(_,_,s) | AL((_,_,s),_) | M((_,_,s),_) -> 
-	       if StringSet.mem s black then (sol,black) else
-	       s::sol,StringSet.add s black
-	   | L((a',_,s'),(b',_ ,s'')) -> 
-	       let sol,black = 
-		 if a'=agent_id then 
-		   if StringSet.mem s' black then
-		     (sol,black) 
-		   else s'::sol,StringSet.add s' black  
-		 else sol,black in 
-	       let sol,black = 
-		 if b'=agent_id then 
-		   if StringSet.mem s''  black then
-		     (sol,black) 
-		   else s''::sol,StringSet.add s'' black 
-		 else sol,black 
-	       in 
-	       sol,black
+    List.fold_left
+      (fun (sol,black) (b,bool) -> 
+	match b with 
+	  B(_,_,s) | AL((_,_,s),_) | M((_,_,s),_) -> 
+	    if StringSet.mem s black then (sol,black) else
+	    s::sol,StringSet.add s black
+	| L((a',_,s'),(b',_ ,s'')) -> 
+	    let sol,black = 
+	      if a'=agent_id then 
+		if StringSet.mem s' black then
+		  (sol,black) 
+		else s'::sol,StringSet.add s' black  
+	      else sol,black in 
+	    let sol,black = 
+	      if b'=agent_id then 
+		if StringSet.mem s''  black then
+		  (sol,black) 
+		else s''::sol,StringSet.add s'' black 
+	      else sol,black 
+	    in 
+	    sol,black
 	   | _ -> sol,black )
 	 ([],StringSet.empty) 
       restricted_blist in
@@ -332,7 +280,7 @@ let compute_compatible_views_id blist restricted_blist bmap agent_id (specie_of_
 	      let b = ode_handler.b_of_var b in 
 	      if 
 		try 
-		  (BMap.find b bmap)=bool
+		  (BMap.find (upgrade_b b agent_id) bmap)=bool
 		with 
 		  Not_found -> true 
 	      then 

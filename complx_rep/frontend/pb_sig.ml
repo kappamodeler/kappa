@@ -899,3 +899,10 @@ let downgrade_b b =
   | AL((_,a,b),c) -> AL((a,a,b),c)
   | _ -> b
 
+let upgrade_b b id = 
+  match b with 
+    H(_,a) -> H(id,a)
+  | B(_,a,b) -> B(id,a,b)
+  | M((_,a,b),c) -> M((id,a,b),c)
+  | AL((_,a,b),c) -> AL((id,a,b),c)
+  | _ -> b
