@@ -17,7 +17,7 @@ let debug = false
 let cannonical_debug = false
 let merge_debug = false
 let map_debug = false
-let complete_debug = true
+let complete_debug = false
 let split_debug = false
 let apply_blist_debug = false
 let release_debug = false
@@ -533,6 +533,7 @@ let get_denum_without_recursive_memoisation (agent_to_int_to_nlist,view_of_tp_i,
   (** If the boolean is true then this function associates a maximal list of compatible fragments to a bond *)
   (** If the boolean is false then this function associated a maximal list of fragments to a bond *)
   (** This function is hash consed *)
+  let agent_to_int_to_nlist = agent_to_int_to_nlist bool in 
   let hash = Hashtbl.create 20001 in
   let f x = 
     try 
@@ -715,12 +716,12 @@ let get_denum_without_recursive_memoisation (agent_to_int_to_nlist,view_of_tp_i,
 
 
 let get_denum_with_recursive_memoization 
-    ((agent_to_int_to_nlist:Views.views_id list StringListMap.t StringMap.t),
-     (view_of_tp_i:(Views.views_id -> 'a Views.views)),
-     (ode_handler:('b,'a,'c,'d,'e,'f,'g) ode_handler)) level bool = 
+    (agent_to_int_to_nlist,view_of_tp_i,ode_handler)
+    level bool = 
   (** If the boolean is true then this function associates a maximal list of compatible fragments to a bond *)
   (** If the boolean is false then this function associated a maximal list of fragments to a bond *)
   (** This function is hash consed *)
+  let agent_to_int_to_nlist = agent_to_int_to_nlist bool in 
   let hash = Hashtbl.create 200001 in
   let rec fetch (x:Pb_sig.name_specie*string*string*string) = 
     try Hashtbl.find hash x 
@@ -744,7 +745,9 @@ let get_denum_with_recursive_memoization
 	  print_string ag1;
 	  print_string s1;
 	  print_string ag2;
-	  print_string s2
+	  print_string s2;
+	  if bool then print_string "TRUE" else print_string "FALSE";
+	  print_newline ()
 	end in 
     let tp_list = (*here is the list of all template piece for agent a containing site s*)
       try 
@@ -770,6 +773,14 @@ let get_denum_with_recursive_memoization
 	       )
 	   tp_list 
       else tp_list in 
+    let _ = 
+      if get_denum_debug 
+      then 
+	begin
+	  print_string "TP LIST" ;
+	  print_newline ();
+	  List.iter (fun x -> print_int x;print_newline ()) tp_list 
+	end in
     List.fold_left 
       (fun liste tp -> 
 	let view = view_of_tp_i tp in 
