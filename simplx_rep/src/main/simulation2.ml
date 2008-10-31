@@ -588,10 +588,7 @@ let init log (rules,(sol_init:Solution.t),obs_l,exp) =
   (*computing influence maps*)
   let (cplx_simplx:Pipeline.simplx_encoding) = 
     Some (fake_rules@rules,
-	  (*[sol_init,1]*) [] (*JF : to prevent parsing all ininital condition, 
-				to be impoved in the case when we want to take into account reachables.
-				The improvment will consist in passing the list of initial agents without repetitions
-			      *)
+	  [sol_init,1] (*JF : I would like the initial state without expansion of multiplicator coefficients, in order to avoid reanalizing the same species several time *)
 	 )  
   in
   let pb = pipeline_methods.Pipeline.build_pb cplx_simplx (add_suffix (add_suffix Tools.empty_prefix "") "")  
