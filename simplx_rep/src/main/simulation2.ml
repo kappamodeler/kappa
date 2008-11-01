@@ -1291,7 +1291,10 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 				 in
 				   match r.intra with 
 				       None -> r.kinetics
-				     | Some u -> max (u /. (phi +. psi)) (r.kinetics) 
+				     | Some u -> 
+					 if phi = 0. or psi = 0. then r.kinetics (*no need to boost, rule is dead*)
+					 else
+					   max (u /. (phi +. psi)) (r.kinetics) 
 			       in
 			       let rules = Rule_of_int.add rule_ind ({r with boost=boost},inst_rule_ind') rules in
 			       let inf_list = (*removing infinite rate rule with no more instances*)
@@ -1523,7 +1526,10 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 			     in
 			       match r.intra with 
 				   None -> r.kinetics
-				 | Some u -> max (u /. (phi +. psi)) (r.kinetics) 
+				 | Some u -> 
+				     if phi = 0. or psi = 0. then r.kinetics
+				     else
+				       max (u /. (phi +. psi)) (r.kinetics) 
 			   in
 			     
 			   let t0 = chrono 0.0 in

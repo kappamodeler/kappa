@@ -238,13 +238,14 @@ module Make(Ord:OrderedType with type t = int) =
       match accval m with 
 	  0.0 -> raise Not_found
 	| f ->
-	    
 	    try 
 	      (
-	      let r = Random.float f in
-	      let rep = find_acc (Random.float r) m in
-	      rep)
-	    with Invalid_argument "Val_map.find_acc" -> invalid_arg "Val_map.random_val"
+		let r = Random.float f in
+		let rep = find_acc (Random.float r) m in
+		  rep)
+	    with 
+		Invalid_argument "Val_map.find_acc" -> invalid_arg "Val_map.random_val"
+	      | Not_found -> invalid_arg "Val_map.random_val: cannot find rule"
 
 end:S with type val_type = Ord.map_val and type key = Ord.t  )
 
