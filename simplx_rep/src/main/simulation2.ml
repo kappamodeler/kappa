@@ -1287,7 +1287,7 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 				   try
 				     let _,_,map'= InjArray.find (Coord.of_pair (rule_ind,(cc_ind + 1) mod 2)) injs in
 				       float_of_int (AssocArray.size map')
-				   with Not_found -> 0.0 (*unary rule*)
+				   with Not_found -> 0.0 (*cc has no injection or unary rule*)
 				 in
 				   match r.intra with 
 				       None -> r.kinetics
@@ -1508,16 +1508,18 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 			     (*boosting rule kinetics if necessary*)
 			   let boost = 
 			     let phi = 
+			       try
 			       let _,_,map0 = InjArray.find (Coord.of_pair (r_i,0)) injs
 			       in
 				 float_of_int (AssocArray.size map0)
+			       with Not_found -> 0.0 (*cc has no injection*)
 			     in
 			     let psi = 
 			       try
 				 let _,_,map1 = InjArray.find (Coord.of_pair (r_i,1)) injs
 				 in
 				   float_of_int (AssocArray.size map1)
-			       with Not_found -> 0.0 (*unary rule*)
+			       with Not_found -> 0.0 (*cc has no injection or unary rule*)
 			     in
 			       match r.intra with 
 				   None -> r.kinetics
