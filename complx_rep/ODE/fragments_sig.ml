@@ -44,7 +44,7 @@ module type Fragments =
 	      1 -> light memoization
               2 -> recursive memoization *)
       val get_denum: 
-	  ((bool -> views_id list Data_structures.StringListMap.t Pb_sig.StringMap.t)  * (views_id -> 'b Views.views) * ('a, 'b, 'c, 'd, 'e, 'f, 'g) Views.ode_handler -> 
+	  (views_id list Data_structures.StringListMap.t Pb_sig.StringMap.t * (views_id -> 'b Views.views) * ('a, 'b, 'c, 'd, 'e, 'f, 'g) Views.ode_handler -> 
 	    (
 	    (bool -> (Pb_sig.name_specie * Pb_sig.name_site * Pb_sig.name_specie * Pb_sig.name_site)  -> subspecies  list) *
 	      (bool -> (Pb_sig.name_specie * Pb_sig.name_site * Pb_sig.name_specie * Pb_sig.name_site)  -> subspecies  list) *

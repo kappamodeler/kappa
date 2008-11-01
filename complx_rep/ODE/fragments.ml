@@ -16,7 +16,7 @@ let trace = false
 let debug = false
 let cannonical_debug = false
 let merge_debug = false
-let map_debug = false
+let map_debug = false 
 let complete_debug = false
 let split_debug = false
 let apply_blist_debug = false
@@ -328,7 +328,7 @@ let canonical_fragment_of_subspecies graph  =
 			  RPathMap.iter
 			    (fun rp v -> 
 			      (try
-				(RPathMap.find rp graph.subspecies_views;()) 
+				(let _ = RPathMap.find rp graph.subspecies_views in ()) 
 			      with 
 				Not_found -> print_string "!!!ERROR");
 			      print_rpath rp;
@@ -533,7 +533,6 @@ let get_denum_without_recursive_memoisation (agent_to_int_to_nlist,view_of_tp_i,
   (** If the boolean is true then this function associates a maximal list of compatible fragments to a bond *)
   (** If the boolean is false then this function associated a maximal list of fragments to a bond *)
   (** This function is hash consed *)
-  let agent_to_int_to_nlist = agent_to_int_to_nlist bool in 
   let hash = Hashtbl.create 20001 in
   let f x = 
     try 
@@ -554,7 +553,6 @@ let get_denum_without_recursive_memoisation (agent_to_int_to_nlist,view_of_tp_i,
 		  RPathMap.fold 
 		    (fun rpath tp_i comp -> 
 		      let view = view_of_tp_i tp_i in 
-		      let agent = agent_of_view view in 
 		      let interface = interface_of_view view in 
 		      if (* is there a conflict *)
 			try 
@@ -605,7 +603,6 @@ let get_denum_without_recursive_memoisation (agent_to_int_to_nlist,view_of_tp_i,
 		  (fun tp -> 
 		    let view = view_of_tp_i tp in 
 		    let interface = interface_of_view view  in 
-		    let agent = agent_of_view view in
 		    try 
 		      (not bool) 
 			or RPathMap.find rpath' compatibility = interface 
@@ -716,12 +713,12 @@ let get_denum_without_recursive_memoisation (agent_to_int_to_nlist,view_of_tp_i,
 
 
 let get_denum_with_recursive_memoization 
-    (agent_to_int_to_nlist,view_of_tp_i,ode_handler)
-    level bool = 
+    ((agent_to_int_to_nlist:Views.views_id list StringListMap.t StringMap.t),
+     (view_of_tp_i:(Views.views_id -> 'a Views.views)),
+     (ode_handler:('b,'a,'c,'d,'e,'f,'g) ode_handler)) level bool = 
   (** If the boolean is true then this function associates a maximal list of compatible fragments to a bond *)
   (** If the boolean is false then this function associated a maximal list of fragments to a bond *)
   (** This function is hash consed *)
-  let agent_to_int_to_nlist = agent_to_int_to_nlist bool in 
   let hash = Hashtbl.create 200001 in
   let rec fetch (x:Pb_sig.name_specie*string*string*string) = 
     try Hashtbl.find hash x 
@@ -745,9 +742,7 @@ let get_denum_with_recursive_memoization
 	  print_string ag1;
 	  print_string s1;
 	  print_string ag2;
-	  print_string s2;
-	  if bool then print_string "TRUE" else print_string "FALSE";
-	  print_newline ()
+	  print_string s2
 	end in 
     let tp_list = (*here is the list of all template piece for agent a containing site s*)
       try 
@@ -773,14 +768,6 @@ let get_denum_with_recursive_memoization
 	       )
 	   tp_list 
       else tp_list in 
-    let _ = 
-      if get_denum_debug 
-      then 
-	begin
-	  print_string "TP LIST" ;
-	  print_newline ();
-	  List.iter (fun x -> print_int x;print_newline ()) tp_list 
-	end in
     List.fold_left 
       (fun liste tp -> 
 	let view = view_of_tp_i tp in 
@@ -920,21 +907,14 @@ let complete_subspecies (pending_edges,view_of_tp_i,keep_this_link,get_denum) su
 	print_newline ();
 	print_species subspecies 
       end in
-  let add rp site a map = 
-    let old = 
-      try 
-	RPathMap.find rp map
-      with 
-	Not_found -> 
-	  StringMap.empty in
-    RPathMap.add rp (StringMap.add site a old) map in 
-  let  map  (*map each root_path to the potential extentions of this bond *)
+  let target (*set of the typed site to be connected to the frontier of the subspecies by a solid line *)
+	, map  (*map each target site to the rooted path of the agent it is connected to and the type of the connected site and the potential extentions of this bond *)
 	= 
     RPathMap.fold
-      (fun rp tp map ->
+      (fun rp tp (target,map) ->
 	let pending_edges = pending_edges (view_of_tp_i tp) in
 	String4Set.fold 
-	  (fun (y1,y2) map ->
+	  (fun (y1,y2) (target,map) ->
 	    if 
 	      begin (*not an internal edges *)
 		try 
@@ -945,67 +925,63 @@ let complete_subspecies (pending_edges,view_of_tp_i,keep_this_link,get_denum) su
 		with 
 		  Not_found -> false 
 	      end
-		or 
+		&& 
 	      begin (*a solid edge *)
-		not (keep_this_link y1 y2 )
+		keep_this_link y1 y2 
 	      end
 	    then 
-	      map
+	      (target,map)
 	    else
 	      (
-	      add 
-		rp  
-		(snd y1) 
-		(get_denum (fst y2,snd y2,fst y1,snd y1)) 
-		map))
+	      String2Set.add y2 target,
+	      String2Map.add y2 (rp,y1,get_denum (fst y2,snd y2,fst y1,snd y1)) map))
 	  pending_edges 
-	  map)
+	  (target,map))
       subspecies.subspecies_views 
-      RPathMap.empty in 
+      (String2Set.empty,String2Map.empty) in 
   let _ = 
     if map_debug
-    then 
-      RPathMap.iter
-	(fun rp map -> 
-	  StringMap.iter 
-	    (fun site  extension_list -> 
-	  let _ = print_string "MAP_DEBUG\n" in
-	  let _ = print_rpath rp in
-	  let _ = print_string site in
-	  let _ = print_newline () in 
-	  let _ = 
-	    List.iter 
-	      (fun ext -> 
-		print_species ext)
-	      extension_list in()) map)
-	map
-	
-  in
-	  
+    then
+      begin 
+	print_string "MAP:\n";
+	String2Map.iter 
+	  (fun y2 (rp,y1,ext_list) -> 
+	    print_string (fst y2);
+	    print_string ".";
+	    print_string (snd y2);
+	    print_rpath rp;
+	    print_string (fst y1);
+	    print_string ".";
+	    print_string (snd y1);
+	    print_newline ();
+	    List.iter print_species ext_list)
+	  map 
+      end
+  in 
+  
   let sol = 
-    RPathMap.fold 
-      (fun rp map sol_list -> 
-	StringMap.fold
-	  (fun _ extension_list sol_list -> 
-	    let rp' = {rp with path = rp.path} in 
+    String2Map.fold 
+      (fun y2 (rp,y1,extension_list) sol_list -> 
+	let rp' = {rp with path = (*(y2,y1)::*)rp.path} in 
+	List.fold_left 
+	  (fun pre_sol_list extension -> 
 	    List.fold_left 
-	      (fun pre_sol_list extension -> 
-		List.fold_left 
-		  (fun sol_list pre_sol -> 
-                    let extended_sol = 
-		      (merge
-			 pre_sol 
-			 (shift_subspecies 
-			    extension 
-			    (StringMap.add "" rp' StringMap.empty))) in 
-		    extended_sol::sol_list		
-				    )
-		  pre_sol_list sol_list
-		  )
-	      []  extension_list 
-	      
-	      ) 
-	  map sol_list)
+	      (fun sol_list pre_sol -> 
+                let extended_sol = 
+		  (*add_bond_to_subspecies  *)
+		    (merge
+		       pre_sol 
+		       (shift_subspecies 
+			  extension 
+			  (StringMap.add "" rp' StringMap.empty)))
+		    (*(rp,snd y1) (rp',snd y2)*) in
+		extended_sol::sol_list		
+				)
+	      pre_sol_list sol_list
+	      )
+	  []  extension_list 
+	  
+	  ) 
       map [subspecies] in 
   let _ = 
     if complete_debug 
@@ -1168,7 +1144,7 @@ let split_subspecies data_structure ode_handler contact_map subspecies =
       
 let is_agent_in_species x s = 
   try
-    (RPathMap.find (build_empty_path x) s.subspecies_views;true)
+    (let _ = RPathMap.find (build_empty_path x) s.subspecies_views in true)
   with 
     Not_found -> false
 	
@@ -1443,7 +1419,6 @@ let compute_edges fragment view_data_structure=
   let stack = [] in 
   let views = fragment.views in
   let back_bonds = fragment.back_bonds in
-  let map = IntMap.empty in
   let fadd ((i,s),(i',s')) map = 
     let aux (i,s) (i',s') map = 
       let old = 

@@ -99,6 +99,8 @@ val remove : int -> t -> (bool * t)
 (**Map from role in the recognition to instructions*)
 type cc_recognition 
 
+val empty_reco:cc_recognition
+
 val string_of_recognition : cc_recognition -> string
 
 (**[get_instructions id reco map fresh sol] computes the necessary instructions to recognise agent [id] in solution [sol].  returns [(reco',map',fresh')] where [reco'] is the updated recognition, [map'] is the updated map from identifier to role in the recognition and [fresh'] is the next role to be attributed*)
@@ -114,7 +116,7 @@ val connected_names : int -> t -> int -> Mods2.StringSet.t -> Mods2.StringSet.t
 val split : t -> t Mods2.IntMap.t
 
 (**[recognitions_of_cc cc] returns a list of all possible recognitions of [cc] starting at a different entry point in [cc]. It returns a list of triple of the form [(id_i,reco_i,role_of_id_i)] where [reco_i] is the ith recognition of the connected component [cc] starting at agent [id_i] and where [role_of_id_i] is the association from identifiers in [cc] to roles in [reco_i]*)
-val recognitions_of_cc : t -> (int * cc_recognition * int Mods2.IntMap.t) list
+val recognitions_of_cc : ?rooted:bool -> t -> (int * cc_recognition * int Mods2.IntMap.t) list
 
 exception Matching_failed
 
@@ -154,11 +156,12 @@ type msg = Warning of string | OK
 (**[diff sol sol'] returns [(map,add_sol,rate,corr)] where [map] is a is a map from id in [sol] to a list [act_msg_list] of the form [[(act_1,msg_1);...;(act_n,msg_n)]] corresponding to the actions to apply in order to transform [sol] into [sol']. [add_sol] is a map form identifier in sol' to agents which are not present in [sol], [rate] is an integer which counts the number of actions necessary to transform [sol] into [sol'] and [corr] is the difference between the number of agents in [sol] and the number of agents in [sol']*)
 val diff : t -> t -> (action * msg) list Mods2.IntMap.t * Agent.t Mods2.IntMap.t * int * int
 
+(*
 (**Constraints in the application of a rule: [CC pid set_joints set_disjoints] allows to declare that the image of agent [pid] should not be in the connected component of the image of agents in [set_disconnect]. On the contrary images of agents in [set_connect] should be in the connected component of the image of [pid]. *)
 type constraints = CC of (int * Mods2.IntSet.t * Mods2.IntSet.t * Mods2.StringSet.t)
-
 (**[satisfy cstr_l inj sol] checks whether the constraints in list [cstr_l] are satisfied in solution [sol] according to injection [inj]*)
 val satisfy : constraints list -> int Mods2.IntMap.t -> t -> bool
+*)
 
 (**[compose sol sol'] returns a solution that is the sum of [sol] and [sol']. Because of side effects in imperative parts of [sol], that function should always be used as [let sol = compose sol sol']*)
 val compose : t -> t -> t
@@ -174,7 +177,7 @@ val injections_product : int Mods2.AssocArray.t (*Mods2.IntMap.t Mods2.IntMap.t*
 val fuse_cc : t Mods2.IntMap.t -> t
 
 (**[cc_of_id id sol] returns the solution corresponding to the connected component of id in sol*)
-val cc_of_id : int -> t -> t
+val cc_of_id : int -> t -> Mods2.IntSet.t -> (t * Mods2.IntSet.t)
 
 type observation = Concentration of (string * t) | Occurrence of string | Story of string
 
@@ -182,3 +185,6 @@ type marshalized_obs = FConcentration of (string * marshalized_t) | FOccurrence 
 
 val marshal_obs : observation -> marshalized_obs
 val unmarshal_obs : marshalized_obs -> observation 
+val paths_of_id : int -> t -> (Mods2.IntSet.t * Paths.t)
+val get_binding : (action * msg) list -> (string * int * string) list
+val sol_of_init: (t * int) list -> t

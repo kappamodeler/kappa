@@ -72,7 +72,7 @@ let compare_state s1 s2 =
     | _ -> (-1) 
 
 let to_str ?(ordered=false) ag = 
-  let l = SharedStringMap.fold (fun site (inf,_) cont ->
+  let l = SharedStringMap.fold (fun site (inf,lnk) cont ->
 				  if site = "_" then cont else
 				    let s_inf =
 				      match inf with
@@ -80,7 +80,14 @@ let to_str ?(ordered=false) ag =
 					| Marked s -> "~"^s
 					| _ -> invalid_arg "Agent.to_str"
 				    in
-				      (site^s_inf)::cont
+				    let s_lnk = 
+				      match lnk with
+					  Bound -> "!"
+					| Free -> ""
+					| Wildcard -> "?"
+					| _ -> invalid_arg "Agent.to_str"
+				    in
+				      (site^s_inf^s_lnk)::cont
 			       ) (environment ag) []
   in
   let l = if ordered then List.fast_sort compare l else l in

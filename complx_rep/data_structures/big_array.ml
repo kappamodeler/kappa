@@ -165,7 +165,6 @@ module BigArray =
 	if size = 0 
 	then Unary [||]
 	else
-	  let elt = get a 0 in
 	  let c = init len (fun x -> get a (x+start)) in
 	  c
 	    

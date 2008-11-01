@@ -252,7 +252,7 @@ module Pipeline =
 	     let _ = print_option prefix (Some stderr) "Compilation(simplx)\n" in 
 	     let _ = add_suffix prefix "Compilation(simplx)\n" in
 	     let (a,b,c,d) = Kappa_lex.compile s  in 
-	     let b = !Data.pairs in
+	     let b = !Data.init in
 	     let _ = trace_print "COMPILATION DONE" in
 	     let l = chrono 
 		 prefix 
@@ -1512,13 +1512,6 @@ module Pipeline =
 		 match a.simplx_encoding with 
 		   None -> frozen_error "line 1340" "" "" (fun () -> raise Exit)
 		 | Some (a,_) -> a in 
-	       let rule_map = 
-		 List.fold_left 
-		   (fun map a -> 
-		     let id = a.Rule.id in
-		     IntMap.add id a map)
-		   IntMap.empty rules 
-	       in 
 	       let rules = 
 		 List.map 
 		   (fun r -> 
@@ -1662,7 +1655,7 @@ module Pipeline =
 		   Some {a with refinement_relation_dag = Some rep},(l,m))
        and dump_refinement_relation (get,compute,string) = 
 	 (fun file file2 prefix pb (l,m) -> 
-	   let prefix' = add_suffix prefix string in 
+	   let _  = add_suffix prefix string in 
 	   if file="" 
 	   then pb,(l,m)
 	   else

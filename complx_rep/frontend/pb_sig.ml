@@ -196,6 +196,8 @@ type action =
   | Break_half of (id*cpb_site)
   | Check_choice of id list 
   | Check of id 
+  | No_Helix
+  | No_Pol
 
 
 type gen_action = 
@@ -204,6 +206,8 @@ type gen_action =
   | GMark of ((string*string)*string)
   | GRel  of ((string*string)*(string*string))
   | GCheck of string	
+  | GNo_Helix
+  | GNo_Pol
 
 module GLMap = Map.Make (struct type t = gen_action list let compare = compare end)
 
@@ -899,10 +903,3 @@ let downgrade_b b =
   | AL((_,a,b),c) -> AL((a,a,b),c)
   | _ -> b
 
-let upgrade_b b id = 
-  match b with 
-    H(_,a) -> H(id,a)
-  | B(_,a,b) -> B(id,a,b)
-  | M((_,a,b),c) -> M((id,a,b),c)
-  | AL((_,a,b),c) -> AL((id,a,b),c)
-  | _ -> b

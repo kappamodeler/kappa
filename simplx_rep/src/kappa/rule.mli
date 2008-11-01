@@ -1,5 +1,8 @@
 (**Module for managing rule-based operations*)
 
+(**Type for rule constraints*)
+type constraints = NO_HELIX | NO_POLY
+
 (**Type of rules*)
 type t = {
   lhs : Solution.t Mods2.IntMap.t; (**Rule left hand side is a map 0->sol_0... n->sol_n where each sol_i is a connected solution of the left hand side of the rule*)
@@ -11,13 +14,15 @@ type t = {
   rate : int; (**Rate which is indicating whether the rule has a warning or not --old*)
   input : string; (**Kappa syntax of the rule*)
   flag : string option; (**If [flag] is [Some str] then str denotes the name that was given to the rule upon creation*)
-  constraints : Solution.constraints list; (**Constraints list for application of the rule*)
+  constraints : constraints list; (**Constraints list for application of the rule*)
   kinetics : float; (**Kinetic rate of the rule (-1) denotes infinite rate*)
+  boost: float ; (**Boosted kinetic rate of rule when intra rate is under sampled*)
   automorphisms : int option ; (**Number of automorphisms of the lhs *)  
   n_cc : int; (**[n_cc] is the number of connected component in the lhs of the rule --old*)
   id : int; (**Identifier of the rule in the rule set*)
   infinite : bool; (**boolean which is true when the rule has infinite rate*)
-  abstraction :  t list option (**pointer to the rules that are the most generic refinements of this rule*) 
+  abstraction :  t list option; (**pointer to the rules that are the most generic refinements of this rule*) 
+  intra : float option (**Whether one should look for intras upon rule application*)
 }
 
 type rule_type=t (**alias for Rule.t*)
@@ -47,6 +52,7 @@ val print_compil : ?filter:bool -> ?with_warning:bool -> t -> unit (**[print_com
 val rhs : t -> Solution.t (**[rhs r] is identical to [r.rhs]*)
 val flag : t -> string option (**[flag r] is identifcal to [r.flag]*)
 val name : t -> string (**[string_of_rule r] just returns r.input*)
+val test_intra : t -> bool (**[test_intra r] returns whether r requires to look for intras during application*)
 val mod_quarks : t -> Mods2.PortSet.t * Mods2.IntSet.t (**[mod_quarks r] returns the pair [(mod_sites,mod_ids)] of which are respectively the set of sites modified by the rule and the set of agent identifiers mdoified by the rule. [mod_sites] is a set of the form [{(id_1,s_1),...,(id_n,s_n)}] where [id_i] is an agent identifier in the solution and [s_i] is a string of the form "xx~" when denoting the internal state of site [xx] of agent [id_i] and "xx!" when denoting the link state of site [xx] of agent [id_i]. *)
 val ( << ) : t -> t -> bool (**[r<<r'] is [true] when rule [r] has a positive influence on rule [r']*)
 val ( %> ) : t -> t -> bool (**[r%>r'] is [true] when rule [r] has a negative influence rule [r']*)
@@ -85,13 +91,13 @@ val is_deletion : modif_type list -> bool
 (**Converts a modif into a string for pretty printing purpose*)
 val string_of_modif_type : modif_type -> string
 
-(**[apply r inj sol] applies rule [r] via injection [inj] to solution [sol]. The result is a tuple [(mq,rmq,tq,map_add,sol',w)]
-where [mq,rmq,tq] are the sets of quarks in [sol] that are respectively modified, deleted or tested by the rule application,
+(**[apply r inj_list sol] applies rule [r] according to injections in [inj_list] to solution [sol]. The result is a tuple [(mq,rmq,tq,map_add,sol',w)]
+where [mq,rmq,tq] are the sets of quarks in [sol] that are respectively modified, deleted or tested by the rule application(s),
 [map_add] is mapping agent keys in [r.add] to agent identifiers in [sol'],
 [sol'] is the solution resulting from the application of [r] to [sol] via [inj] and [w] is a warning that is set to [true] if rule application had side effects.*)
 val apply :
   t ->
-  int Mods2.IntMap.t ->
+  int Mods2.IntMap.t list->
   Solution.t ->
   modif_type list Mods2.PortMap.t * Mods2.PortSet.t *
   modif_type list Mods2.PortMap.t * int Mods2.IntMap.t * Solution.t * bool

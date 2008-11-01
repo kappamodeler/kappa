@@ -95,4 +95,12 @@ let random_time_advance a clashes =
   in
     lambda clashes 0.0
 	  
-    
+let merge_injections map1 map2 =
+  let image = IntMap.fold (fun _ j set -> IntSet.add j set) map2 IntSet.empty in
+  let m,_ = 
+    IntMap.fold (fun i j (m2,im) ->
+		   if IntSet.mem j im then raise Not_found
+		   else (IntMap.add i j m2,IntSet.add j im)
+		) map1 (map2,image)
+  in 
+    m

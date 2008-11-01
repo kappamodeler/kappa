@@ -11,7 +11,7 @@ let good_vertice file  =
 	     let _ = Data.forward:= (!Config_complx.forward) in 
 	     let _ = Data.compile_mode:=true in 
 	     let (a,b,_,_) = Kappa_lex.compile a  in 
-	     let b = !Data.pairs in
+	     let b = !Data.init in (*modif JK*)
 	     let _ = Data.forward:= tmp_forward in
 	     let _ = Data.compile_mode := tmp_mode in 
 

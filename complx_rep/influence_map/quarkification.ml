@@ -138,6 +138,8 @@ let quarkify cpb contact rule =
 	List.fold_left 
 	  (fun (mp,mn) action ->
 	    match action with 
+	      No_Pol | No_Helix -> (mp,mn) 
+	    | 
 	      Bind ((a,s),(a',s')) -> 
 		let aid = specie a in
 		let aid' = specie a' in

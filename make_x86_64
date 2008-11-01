@@ -36,7 +36,7 @@ KEY?=without_key
 $(BIN): bin/
 	mkdir bin
 
-OCAMLPREFIX?=  ../../3rd_party/ocaml/ocaml-3.10.2-patched_x86_64
+OCAMLPREFIX?=  ../../../../3rd_party/ocaml/ocaml-3.10.2-patched_x86_64
 OCAMLC=		$(OCAMLPREFIX)/ocamlc -thread
 OCAMLCI=	$(OCAMLPREFIX)/ocamlc -thread
 OCAMLOPT= 	$(OCAMLPREFIX)/ocamlopt.opt -nostdlib -thread
@@ -138,6 +138,7 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(SIMPLXREP)/src/data_structures/longString.cmo \
 	./$(SIMPLXREP)/src/data_structures/val_map.cmo \
 	./$(SIMPLXREP)/src/tools/mods2.cmo \
+	./$(SIMPLXREP)/src/data_structures/paths.cmo \
 	./$(SIMPLXREP)/src/kappa/solution.cmo \
 	./$(SIMPLXREP)/src/kappa/species.cmo \
 	./$(SIMPLXREP)/src/data_structures/implementation_choices.cmo \
@@ -213,6 +214,7 @@ MLI =  ./$(SIMPLXREP)/src/tools/error.mli \
 	./$(SIMPLXREP)/src/data_structures/array_ext.mli \
 	./$(SIMPLXREP)/src/data_structures/longString.mli \
 	./$(SIMPLXREP)/src/tools/mods2.mli \
+	./$(SIMPLXREP)/src/data_structures/paths.mli \
         ./$(SIMPLXREP)/src/kappa/agent.mli \
 	./$(SIMPLXREP)/src/kappa/solution.mli \
 	./$(SIMPLXREP)/src/kappa/rule.mli\
@@ -222,8 +224,8 @@ CMI = $(MLI:mli=cmi)
 CMA = unix.cma threads.cma str.cma nums.cma
 CMXA = unix.cmxa threads.cmxa str.cmxa nums.cmxa
 
-SIMPLX_OUT = simplx
-INTERPLX_OUT = interplx
+SIMPLX_OUT = simplx.x86_64
+INTERPLX_OUT = interplx.x86_64
 
 LIB_OPT = $(SIMPLX_OUT).cmxa
 LIB_BYTE = $(SIMPLX_OUT).cma

@@ -12,20 +12,16 @@
       Hashtbl.replace hsh key (sol',n+k)
 
   let sol_of_hsh hsh = 
-    Hashtbl.fold (fun _ (sol,n) (init,pairs) -> 
-		    let init =
-		      if !compile_mode then init
-		      else
-			Solution.compose (Solution.multiply sol n) init
-		    and pairs = (sol,n)::pairs
+    Hashtbl.fold (fun _ (sol,n) init -> 
+		    let init = (sol,n)::init
 		    in
-		      (init,pairs)
-		 ) hsh (!init,!pairs) 
+		      init
+		 ) hsh !init
     
   (*Hashtable to control the type of the labels*)
   let (flag_env:(string,int) Hashtbl.t) = Hashtbl.create 100 (** flag->0 (type rule) 1 (type obs)*)
 
-  let make_rule (lhs:Solution.t) (rhs:Solution.t) k (constraints:Solution.constraints list) is_infinite = 
+  let make_rule (lhs:Solution.t) (rhs:Solution.t) (beta,u_opt) (constraints:Rule.constraints list) = 
     let (diffs,add,rate,corr) = Solution.diff lhs rhs in
     let arrow = 
       match rate with
@@ -36,6 +32,14 @@
     let input_str = (Solution.kappa_of_solution lhs)^arrow^(Solution.kappa_of_solution rhs) in
     let cc_map = Solution.split lhs in
     let n_cc = IntMap.size cc_map in
+    let _ = if n_cc > 2 then Error.warning (Printf.sprintf "Rule %s has more than 2 possibly disconnected component in the left hand side" input_str)
+    and _ = 
+      match u_opt with 
+	  None -> () 
+	| Some _ -> 
+	    if n_cc < 2 then Error.warning (Printf.sprintf "Unary exception rate defined for rule %s that is already unary" input_str) 
+	    else ()
+    in
     let precompil = 
       IntMap.fold (fun i cc_i map -> 
 		     IntMap.add i (Solution.recognitions_of_cc cc_i) map
@@ -51,57 +55,34 @@
        input = input_str;
        flag = None;
        constraints= constraints;
-       kinetics = k *. (!rescale ** (1.0 -. (float_of_int n_cc))) ;
+       kinetics = (let k = if beta<(-(1.0)) then 1.0 else beta in k *. (!rescale ** (1.0 -. (float_of_int n_cc)))) ;
+       boost = (let k = if beta<(-(1.0)) then 1.0 else beta in k *. (!rescale ** (1.0 -. (float_of_int n_cc)))) ;
        automorphisms = None ;	
        n_cc = n_cc ;
        id = (incr rule_id ; !rule_id) ;
-       infinite = is_infinite ;
+       infinite = (beta<(-(1.0))) ;
        abstraction = None;
+       intra = u_opt 
       }
 
   let check_flag_obs flag = 
     let flg_type = 
       try Hashtbl.find flag_env flag 
-      with Not_found -> Error.before ("observation "^flag^" is undefined")
+      with Not_found -> Error.found ("observation "^flag^" is undefined")
     in
-      if flg_type = 0 then Error.after (flag^" is a rule name, expecting an observation name") else ()
+      if flg_type = 0 then Error.found (flag^" is a rule name, expecting an observation name") else ()
 	
   let check_flag_rule flag = 
     let flg_type = 
       try Hashtbl.find flag_env flag 
-      with Not_found -> Error.after ("rule "^flag^" is undefined")
+      with Not_found -> Error.found ("rule "^flag^" is undefined")
     in
       if flg_type > 0 then 
-	Error.before (flag^" is an observation name, expecting a rule name")
-
-  type atom_constraint = JOINT of int * int | DISJOINT of int * int | SEPARATE of int * string
-
-  let rec make_constraints hsh = function
-      [] -> Hashtbl.fold (fun i (joints,disjoints,sep) cont -> Solution.CC(i,joints,disjoints,sep)::cont) hsh []
-    | cons::tl -> 
-	begin
-	  match cons with
-	      JOINT(i,j) -> 
-		let joints,disjoints,sep = try Hashtbl.find hsh i with Not_found -> (IntSet.empty,IntSet.empty,StringSet.empty)
-		in
-		  Hashtbl.replace hsh i (IntSet.add j joints,disjoints,sep) ;
-		  make_constraints hsh tl
-	    | DISJOINT(i,j) ->
-		let joints,disjoints,sep = try Hashtbl.find hsh i with Not_found -> (IntSet.empty,IntSet.empty,StringSet.empty)
-		in
-		  Hashtbl.replace hsh i (joints,IntSet.add j disjoints,sep) ;
-		  make_constraints hsh tl
-	    | SEPARATE(i,name) ->
-		let joints,disjoints,sep = try Hashtbl.find hsh i with Not_found -> (IntSet.empty,IntSet.empty,StringSet.empty)
-		in
-		  Hashtbl.replace hsh i (joints,disjoints,StringSet.add name sep) ;
-		  make_constraints hsh tl
-	end
-
+	Error.found (flag^" is an observation name, expecting a rule name")
 %}
 
 %token INIT_LINE  OBS_LINE  STORY_LINE NEWLINE MODIF_LINE EOF
-%token MULT DIVIDE PLUS MINUS COMMA GREATER SMALLER DIFF EQUIV SET INFINITY SEP
+%token MULT DIVIDE PLUS MINUS COMMA SEMICOLON GREATER SMALLER SET INFINITY SEP
 %token DO AT TIME
 %token KAPPA_LNK KAPPA_WLD KAPPA_SEMI KAPPA_LRAR KAPPA_RAR
 %token OP_PAR CL_PAR OP_CONC CL_CONC OP_ACC CL_ACC
@@ -125,10 +106,10 @@
 | MODIF_LINE modif_expr {exp := Experiment.add $2 (!exp)}
 | NEWLINE {()}
 | named_rule_expr {rules := (List.fold_left (fun rules r -> r::rules) (!rules) $1)} 
-| EOF {let sol,assoc = sol_of_hsh env in
-         init := sol ; pairs := assoc ;
+| EOF {let sol = sol_of_hsh env in
+         init := sol ;
 	 raise End_of_file}
-| error {raise (Error.before "syntax error")}
+| error {raise (Error.found "syntax error")}
   ;
 
   modif_expr:
@@ -146,7 +127,7 @@
 										   Experiment.modif_str=str2
 										  }
 				   }
-| error {Error.after "invalid modification"}
+| error {Error.found "invalid modification"}
   ;
 
   assignement: 
@@ -174,7 +155,7 @@
 			     (modif,str)
 			}
 
-| LABEL SET error {Error.before "invalid assignement"}
+| LABEL SET error {Error.found "invalid assignement"}
   ;
 
   assign_expr:
@@ -238,7 +219,7 @@
 | FLOAT {Experiment.Val_float $1}
 | INT {Experiment.Val_float (float_of_int $1)}
 | OP_CONC LABEL CL_CONC {Experiment.Val_sol ("["^$2^"]")}
-| OP_CONC error {Error.before "invalid concentration expression"}
+| OP_CONC error {Error.found "invalid concentration expression"}
   ;
 
   time_ineq:
@@ -256,13 +237,13 @@
 		    let str = "current time > "^(string_of_float t0) in
 		      (dep,test,str)
 		   }
-| TIME error {Error.before "invalid precondition"}
+| TIME error {Error.found "invalid precondition"}
   ;
 
   init_expr:
 | NEWLINE {(Solution.empty(),0)} 
 | mult_sol_expr NEWLINE {$1}
-| mult_sol_expr EOF {Error.before "missing end of line"}
+| mult_sol_expr EOF {Error.found "missing end of line"}
   ;
 
 
@@ -275,7 +256,7 @@
 			    let str = 
 			      String.concat "," (IntMap.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
 			    in
-			      Error.after (Printf.sprintf "dangling bound(s): {%s}." str)
+			      Error.found (Printf.sprintf "dangling bound(s): {%s}." str)
 			  else 
 			    (*Solution.multiply sol coef*)
 			    (sol,coef)
@@ -285,7 +266,7 @@
 			      let str = 
 				String.concat "," (IntMap.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
 			      in
-				Error.after (Printf.sprintf "dangling bound(s): {%s}." str)
+				Error.found (Printf.sprintf "dangling bound(s): {%s}." str)
 			    else
 			      (*Solution.multiply sol (int_of_float ($1 *. (!rescale)))*)
 			      (sol,int_of_float ($1 *. (!rescale)))
@@ -295,7 +276,7 @@
 		   let str = 
 		     String.concat "," (IntMap.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
 		   in
-		     Error.after (Printf.sprintf "dangling bound(s): {%s}." str)
+		     Error.found (Printf.sprintf "dangling bound(s): {%s}." str)
 		 else 
 		   (*Solution.multiply sol (int_of_float (!rescale))*)
 		   (sol,int_of_float (!rescale))
@@ -321,7 +302,7 @@
 				  IntMap.fold 
 				    (fun n s (semi_bounds_sol,used,links) -> 
 				       if IntSet.mem n used then 
-					 Error.before 
+					 Error.found 
 					   (Printf.sprintf "link %d is defined multiple times" n)
 				       else
 					 let i = sol.Solution.fresh_id in
@@ -360,7 +341,7 @@
 				   let ag = Agent.make $1 interface state_of_site in
 				     (semi_bound,ag)
 				  }
-| ID OP_PAR interface_expr error {Error.before "mismatch parenthesis"}
+| ID OP_PAR interface_expr error {Error.found "mismatch parenthesis"}
   ;
 
   interface_expr: /*empty*/ {IntMap.empty,Agent.empty_environment}
@@ -373,14 +354,14 @@
 			  }
 | ID state_expr link_expr COMMA interface_expr {let semi_bounds,smap = $5 in 
 						  if Agent.mem_environment  $1 smap 
-						  then Error.before 
+						  then Error.found 
 						    (Printf.sprintf "site %s is defined multiple times" $1)
 						  else
 						    let inf,lnk,semi_bounds =  
 						      match ($2,$3) with
 							  (inf,(lnk,Some n)) -> 
 							    if IntMap.mem n semi_bounds 
-							    then Error.before 
+							    then Error.found 
 							      (Printf.sprintf "link %d is defined multiple times" n)
 							    else (inf,lnk,IntMap.add n $1 semi_bounds)
 							| (inf,(lnk,None)) -> (inf,lnk,semi_bounds)
@@ -396,7 +377,7 @@
   link_expr: /*empty*/ {(Agent.Free,None)}
 | KAPPA_LNK INT {(Agent.Bound,Some $2)}
 | KAPPA_LNK KAPPA_SEMI {(Agent.Bound, None)}
-| KAPPA_LNK error {Error.before "invalid link identifier"}
+| KAPPA_LNK error {Error.found "invalid link identifier"}
 | KAPPA_WLD {(Agent.Wildcard,None)}
   ;
 
@@ -411,7 +392,7 @@
 			     String.concat "," 
 			       (IntMap.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
 			   in
-			     Error.after (Printf.sprintf "dangling bound(s): {%s}." str)
+			     Error.found (Printf.sprintf "dangling bound(s): {%s}." str)
 		      }
 | LABEL ne_sol_expr NEWLINE {Hashtbl.replace flag_env ("["^$1^"]") 1 ;
 			     let (semi_bounds,_,sol) = $2 in 
@@ -421,15 +402,15 @@
 				   String.concat "," 
 				     (IntMap.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
 				 in
-				   Error.after (Printf.sprintf "dangling bound(s): {%s}." str)
+				   Error.found (Printf.sprintf "dangling bound(s): {%s}." str)
 			    } 
-| LABEL EOF {Error.before "missing end of line"}
-| ne_sol_expr EOF {Error.before "missing end of line"}
+| LABEL EOF {Error.found "missing end of line"}
+| ne_sol_expr EOF {Error.found "missing end of line"}
   ;
 
   story_expr: 
 | LABEL NEWLINE {let flag = $1 in (check_flag_rule flag ; Solution.Story flag)} 
-| LABEL EOF {Error.before "missing end of line"}
+| LABEL EOF {Error.found "missing end of line"}
   ;
   
   named_rule_expr:
@@ -443,18 +424,18 @@
 			      | _ -> Error.runtime "Parser.named_rule_expr failure" 
 			  }
 | rule_expr NEWLINE {$1}
-| LABEL rule_expr EOF {Error.before "missing end of line"}
-| rule_expr EOF {Error.before "missing end of line"}
+| LABEL rule_expr EOF {Error.found "missing end of line"}
+| rule_expr EOF {Error.found "missing end of line"}
   ;
 
 
-  lhs_rhs_expr:  /*empty*/ {Solution.empty()}
+  sol_expr:  /*empty*/ {Solution.empty()}
 | ne_sol_expr {let semi_bounds,_,sol = $1 in 
 		 if not (IntMap.is_empty semi_bounds) then 
 		   let str = 
 		     String.concat "," (IntMap.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
 		   in
-		     Error.after (Printf.sprintf "dangling bound(s): {%s}." str)
+		     Error.found (Printf.sprintf "dangling bound(s): {%s}." str)
 		 else 
 		   sol
 	      }
@@ -462,58 +443,52 @@
 
 
   rule_expr:
-| lhs_rhs_expr constraints KAPPA_RAR lhs_rhs_expr kin_expr1 
-      {let lhs = $1 and rhs = $4 and constraints = $2 and (k,inf) = if $5<0.0 then (1.0,true) else ($5,false)
+| sol_expr KAPPA_RAR sol_expr kin_expr1 constraint_expr
+      {let lhs = $1 and rhs = $3 and constraints = $5 and (k,u) = $4
        in 
-	 [make_rule lhs rhs k constraints inf]
+	 [make_rule lhs rhs (k,u) constraints]
       }
-| lhs_rhs_expr constraints KAPPA_LRAR lhs_rhs_expr constraints kin_expr2 
-	  {let lhs = $1 and rhs = $4 and constraints1 = $2 and constraints2 = $5 
+| sol_expr KAPPA_LRAR sol_expr kin_expr2 constraint_expr
+	  {let lhs = $1 and rhs = $3 and (k,u,k') = $4 and constraints = $5
 	   in 
-	   let k,k' = $6 in 
-	     if !forward then 
-	       let k,inf = if k<0.0 then (1.0,true) else (k,false) in
-		 [make_rule lhs rhs k constraints1 inf] 
-	     else
-	       let k,inf = if k<0.0 then (1.0,true) else (k,false)
-	       and k',inf'= if k'<0.0 then (1.0,true) else (k',false)
-	       in
-		 [make_rule rhs lhs k' constraints2 inf'; make_rule lhs rhs k constraints1 inf]}
+	     [make_rule rhs lhs (k',None) [] ; make_rule lhs rhs (k,u) constraints]
+	  }
   ;
 
-  constraints: /*empty*/ {[]}
-| OP_ACC constraint_expr CL_ACC {make_constraints (Hashtbl.create 20) $2}
-| OP_ACC error {Error.before (Printf.sprintf "malformed constraint expression")}
+  constraint_expr: /*empty*/ {[]}
+| OP_CONC cstr_list CL_CONC {$2}
+  ;
+  cstr_list: /*empty*/ {[]}
+| ID {match $1 with "NO_HELIX" -> [Rule.NO_HELIX] | "NO_POLY" -> [Rule.NO_POLY] | s -> Error.found (Printf.sprintf "Unkown constraint %s" s)}
+| ID SEMICOLON cstr_list {let hd=
+			    match $1 with 
+				"NO_HELIX" -> Rule.NO_HELIX 
+			      | "NO_POLY" -> Rule.NO_POLY 
+			      | s -> Error.found (Printf.sprintf "Unkown constraint %s" s)
+			  in hd::$3 
+			 }
   ;
 
-  constraint_expr: 
-| cstr {[$1]}
-| cstr COMMA constraint_expr {$1::$3}
+  kin_expr1: /*empty*/ {(1.0,None) (*default kinetics*)}
+| AT var_kin intra_rate {($2,$3)}
+| AT error {Error.found "invalid kinetics rate"}
   ;
 
-  cstr:
-| REF EQUIV REF  {JOINT($1-1,$3-1)}
-| REF DIFF REF {DISJOINT($1-1,$3-1)}
-| REF SEP ID {SEPARATE($1-1,$3)}
-  ;
-
-  kin_expr1: /*empty*/ {1.0 (*default kinetics*)}
-| AT FLOAT {$2}
-| AT INT {float_of_int $2}
-| AT INFINITY {-(1.0)}
-| AT error {Error.after "invalid kinetics rate"}
-  ;
-
-  kin_expr2: /*empty*/ {(1.0,1.0)}
-| AT var_kin COMMA var_kin {($2,$4)}
-| AT error {Error.after "invalid pair of kinetics rates"}
+  kin_expr2: /*empty*/ {(1.0,None,1.0) (*default kinetics*)}
+| AT var_kin intra_rate COMMA var_kin {($2,$3,$5)}
+| AT error {Error.found "invalid kinetics rate"}
   ;
 
   var_kin:
 | KAPPA_WLD {1.0}
 | FLOAT {$1}
-| INFINITY {-(1.0)}
+| INFINITY {-(10.0)}
 | INT {float_of_int $1}
   ;
+
+  intra_rate: /*empty*/ {None}
+| OP_PAR FLOAT CL_PAR {Some $2}
+| OP_PAR INT CL_PAR {Some (float_of_int $2)}
+| OP_PAR INFINITY CL_PAR {Error.found "infinite rate for implicit unary rule is not allowed"}
 
 %%

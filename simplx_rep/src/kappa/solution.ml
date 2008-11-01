@@ -355,55 +355,70 @@ let get_instructions id compil role_of_id fresh_role sol =
   in
     span id (IntMap.add id fresh_role role_of_id) compil (fresh_role+1)
 
-let cc_of_id id sol =
-  let rec f todo_ids cc =
+let cc_of_id id sol blacklist =
+  let rec f todo_ids cc blacklist =
     match todo_ids with
 	id::tl -> 
 	  let ag = agent_of_id id sol in
 	  let cc = {cc with agents = AA.add id ag cc.agents; fresh_id = max cc.fresh_id (id+1)} in
-	  let todo,cc = 
-	    Agent.fold_interface (fun x (_,lnk) (tl,cc) -> 
+	  let todo,cc,blacklist = 
+	    Agent.fold_interface (fun x (_,lnk) (tl,cc,bl) -> 
 				    match lnk with
 					Agent.Bound ->
 					  let (id',y) = get_port (id,x) sol in
-					    if AA.mem id' cc.agents then 
+					    if IntSet.mem id' bl then 
 					      (tl,{cc with 
 						     links = PA.add (id',y) (id,x) (PA.add (id,x) (id',y) cc.links) ;
-						  })
+						  },bl)
 					    else 
 					      (id'::tl,{cc with 
 							  links = PA.add (id',y) (id,x) (PA.add (id,x) (id',y) cc.links) ;
-						       })
-				      | _ -> (tl,cc)
-				 ) ag (tl,cc)
+						       },IntSet.add id' bl)
+				      | _ -> (tl,cc,bl)
+				 ) ag (tl,cc,blacklist)
 	  in
-	    f todo cc
-      | [] -> cc
+	    f todo cc blacklist
+      | [] -> (cc,blacklist)
   in
     try
-      f [id] (empty())
+      f [id] (empty()) (IntSet.add id blacklist)
     with
 	Not_found -> runtime "Solution.cc_of_id: mal formed solution"
   
-(*
-let complexes_of_sol sol =
-  let _,cc_map =
-    AA.fold (fun id _ (blacklist,cc_map) -> 
-	       if IntSet.mem id blacklist then (blacklist,cc_map) 
-	       else
-		 let sol_cc = cc_of_id id sol in
-		 let blacklist = AA.fold (fun id _ set -> 
-					    IntSet.add id set
-					 ) sol_cc.agents blacklist
-		 in
-		 let cc_str = to_canonic sol_cc in
-		 let cc,n = try StringMap.find cc_str cc_map with Not_found -> (sol_cc,0) in
-		 let cc_map = StringMap.add cc_str (cc,n+1) cc_map in
-		   (blacklist,cc_map)
-    	    ) sol.agents (IntSet.empty,StringMap.empty)
+
+let paths_of_id id sol = 
+  let rec f todo_ids cc paths blacklist exiting_ports= 
+    match todo_ids with
+	id::tl ->
+	  let todo,paths,blacklist,exiting_ports = 
+	    let ag = agent_of_id id sol in
+	      Agent.fold_interface (fun site (_,lnk) (todo,paths,bl,exiting_ports) ->
+				      match lnk with
+					  Agent.Bound ->
+					    let (id',site') = get_port (id,site) sol in
+					    let name = Agent.name (agent_of_id id' sol) in
+					      if IntSet.mem id' bl then 
+						let paths = 
+						  if PortSet.mem (id',site') exiting_ports then paths 
+						  else Paths.add name id' site' paths 
+						in
+						  (todo,paths,bl,PortSet.add (id,site) exiting_ports)
+					      else
+						let paths = 
+						  if PortSet.mem (id',site') exiting_ports then paths 
+						  else Paths.add name id' site' paths
+						in
+						  (id'::todo,paths,IntSet.add id' bl,PortSet.add (id,site) exiting_ports)
+					| _ -> (todo,paths,bl,exiting_ports)
+				   ) ag (tl,paths,blacklist,exiting_ports)
+	  in
+	  let cc = IntSet.add id cc
+	  in
+	    f todo cc paths blacklist exiting_ports
+      | [] -> (cc,paths)
   in
-    cc_map
-*)
+    f [id] IntSet.empty (Paths.empty()) (IntSet.singleton id) (PortSet.empty)
+
 
 (*returns the set of ids which belong to the connected component of id in sol*)
 let connected_component ?exclude id sol = 
@@ -437,7 +452,6 @@ let rec find_path id map_paths acc =
       Not_found -> acc
 
 
-(*type t = {agents:(Agent.t)IntMap.t ; links:(int*string)PortMap.t; fresh_id:int;constraints: int IntMap.t}*)
 let split sol_init = 
   try 
     let rec iter sol ids acc_cc =
@@ -485,12 +499,18 @@ let split sol_init =
 type cc_recognition = (inst StringMap.t * inst StringMap.t) IntMap.t
 let empty_reco = IntMap.empty
 
-let recognitions_of_cc sol = 
-  AA.fold (fun id ag cont -> 
-	     let c,r,f = get_instructions id empty_reco IntMap.empty 1 sol in
-	     let role_of_id = IntMap.fold (fun role id map -> IntMap.add id role map) r IntMap.empty in
-	       (id,c,role_of_id)::cont
-	  ) sol.agents []
+let recognitions_of_cc ?(rooted=false) sol = 
+  if rooted then
+    let id,_ = AA.random sol.agents in
+    let c,r,f = get_instructions id empty_reco IntMap.empty 1 sol in
+    let role_of_id = IntMap.fold (fun role id map -> IntMap.add id role map) r IntMap.empty in
+      [(id,c,role_of_id)]
+  else
+    AA.fold (fun id ag cont -> 
+	       let c,r,f = get_instructions id empty_reco IntMap.empty 1 sol in
+	       let role_of_id = IntMap.fold (fun role id map -> IntMap.add id role map) r IntMap.empty in
+		 (id,c,role_of_id)::cont
+	    ) sol.agents []
 
 exception Matching_failed 
 
@@ -643,6 +663,18 @@ type action =   Bind of (string*int*string)
 		| Modify of string (*break a semi-link*)
 		| Remove 
 
+let get_binding act_msg_list = 
+  let rec f l acc = 
+    match l with
+	[] -> acc
+      | (act,_)::tl -> 
+	  match act with
+	      Bind triple -> f tl (triple::acc)
+	    | _ -> f tl acc
+  in
+    f act_msg_list []
+
+
 let string_of_action id act =
   match act with
       Bind (s,i,s') -> Printf.sprintf "BND (#%d,%s) (#%d,%s)" id s i s'  
@@ -704,7 +736,7 @@ let diff sol1 sol2 =
 			      else
 				([(Mark (site,s),OK)],modif rate r_ok)     (*Activate*)
 			  | Agent.Wildcard -> 
-			      raise (After 
+			      raise (Found 
 				       ("Site state not specified for "
 					^site
 					^" in agent "^(Agent.to_str ag2))
@@ -715,7 +747,7 @@ let diff sol1 sol2 =
 
 		    let (mod_lnk,rate) =
 		      if not (lnk'=lnk) then
-			if lnk = Agent.Wildcard then raise (After "rule cannot remove a wildcard")
+			if lnk = Agent.Wildcard then raise (Found "rule cannot remove a wildcard")
 			else
 			  match lnk' with
 			      Agent.Bound -> ( (*agent is bound in sol2*)
@@ -727,7 +759,7 @@ let diff sol1 sol2 =
 				    if (id2<id) or (id=id2 && (compare site site2 =(-1))) (*only binds to a smaller id*)
 				    then ([(Bind (site,id2,site2),OK)],modif rate r_ok)
 				    else ([],rate)
-				with Not_found -> raise (After "cannot create a semi-link on rhs")
+				with Not_found -> raise (Found "cannot create a semi-link on rhs")
 			      )
 			    | Agent.Free -> ( 
 				try
@@ -738,7 +770,7 @@ let diff sol1 sol2 =
 				with Not_found -> (*W:modifying a dangling link.. site 2 becomes Free*)
 				  ([(Modify site,Warning "Breaking a semi-link on rhs")],r_sem_break_rhs)
 			      )
-			    | Agent.Wildcard -> raise (After "rule cannot add a wildcard")
+			    | Agent.Wildcard -> raise (Found "rule cannot add a wildcard")
 			    | Agent.Marked _  -> raise (Runtime "Solution.diff: malformed state")
 
 		      else (*lnk=lnk' meaning the link state does not change*)
@@ -762,13 +794,12 @@ let diff sol1 sol2 =
 				      else []
 				    in
 				      (inst2@inst1,modif rate r_realloc)
-					(*Error.after "link on right hand side is a reallocation of a link in the left hand side"*)
 			      with Not_found ->  (*dangling link in sol1*)
-				Error.after "link on right hand side is a reallocation of a semi link in the left hand side"
+				Error.found "link on right hand side is a reallocation of a semi link in the left hand side"
 			  else 
 			    if PA.mem (id,site) sol1.links then (*not a dangling link in sol1*)
 			      (*but dangling in sol2*)
-			      raise (After "cannot add semi-link on the right hand side")
+			      raise (Found "cannot add semi-link on the right hand side")
 			    else ([],rate) (*link is dangling in both rhs and lhs*)
 			else (*lnk'=lnk=Free|Wildcard*)
 			  ([],rate) 
@@ -802,7 +833,7 @@ let diff sol1 sol2 =
 				      ) (agent_of_id id sol2) m
 	       in
 		 (m,IntMap.add (assign id) (Agent.detach (agent_of_id id sol2)) add_sol, modif rate r_add) 
-	     else Error.after ("adding an agent with a non instanciated link")
+	     else Error.found ("adding an agent with a non instanciated link")
       ) sol2.agents (IntMap.empty,IntMap.empty,0)
   in
   let (map,rate,n_rm) =
@@ -835,32 +866,22 @@ let get_ports sol =
 	     Agent.fold_interface  (fun s _ cont -> (i,s)::cont) ag  cont
 	  ) sol.agents []
 
-type constraints = CC of (int * IntSet.t * IntSet.t * StringSet.t) (*constraints on CC(id)*)
-
-let rec satisfy constraints assoc sol = 
-  try
-    match constraints with
-	CC (i,joints,disjoints,sep)::tl -> 
-	  begin
-	    let i_sol = IntMap.find i assoc 
-	    and joints_sol = IntSet.fold (fun i set -> IntSet.add (IntMap.find i assoc) set) joints IntSet.empty
-	      (*and disjoints_sol = IntSet.fold (fun i set -> IntSet.add (IntMap.find i assoc) set) disjoints IntSet.empty*)
-	    in
-	    let excl_set = IntSet.fold (fun i set -> 
-					  let i' = IntMap.find i assoc in
-					    connected_names i' sol i_sol set 
-				       ) disjoints sep
-	    in
-	      try
-		(*allowing blacklisted agent types to be accepted if corresponding agent is in the injection of the lhs*)
-		let cc_i_sol = connected_component i_sol sol ~exclude:excl_set in
-		  if (IntSet.subset joints_sol cc_i_sol) (*&& (IntSet.is_empty (IntSet.inter disjoints_sol cc_i_sol)) *)
-		  then satisfy tl assoc sol 
-		  else false
-	      with False -> false (*can be returned by connected_component*)
-	  end
-      | [] -> true
-  with Not_found -> Error.runtime "Solution.satisfy: assoc invariant violation"
+(*let rec satisfy constraints assoc sol = try match constraints with
+  CC (i,joints,disjoints,sep)::tl -> begin let i_sol = IntMap.find i
+  assoc and joints_sol = IntSet.fold (fun i set -> IntSet.add
+  (IntMap.find i assoc) set) joints IntSet.empty (*and disjoints_sol =
+  IntSet.fold (fun i set -> IntSet.add (IntMap.find i assoc) set)
+  disjoints IntSet.empty*) in let excl_set = IntSet.fold (fun i set ->
+  let i' = IntMap.find i assoc in connected_names i' sol i_sol set )
+  disjoints sep in try (*allowing blacklisted agent types to be
+  accepted if corresponding agent is in the injection of the lhs*) let
+  cc_i_sol = connected_component i_sol sol ~exclude:excl_set in if
+  (IntSet.subset joints_sol cc_i_sol) (*&& (IntSet.is_empty
+  (IntSet.inter disjoints_sol cc_i_sol)) *) then satisfy tl assoc sol
+  else false with False -> false (*can be returned by
+  connected_component*) end | [] -> true with Not_found ->
+  Error.runtime "Solution.satisfy: assoc invariant violation"
+*)
 
 let compose sol1 sol2 = 
   let renaming,sol = AA.fold (fun id ag (renaming,sol2) -> 
@@ -872,18 +893,18 @@ let compose sol1 sol2 =
 				let agents = AA.add id' ag sol2.agents
 				in
 				let links,renaming,fresh_id = 
-				 Agent.fold_interface  (fun site _ (links,renaming,fresh_id) ->
-						    try
-						      let (i,s) = get_port (id,site) sol1 in
-						      let i',renaming,fresh_id =
-							try (IntMap.find i renaming,renaming,fresh_id) 
-							with Not_found -> 
-							  (fresh_id,IntMap.add i fresh_id renaming,fresh_id+1) 
-						      in
-						      let links = PA.add (id',site) (i',s) links in
-							(links,renaming,fresh_id)
-						    with Not_found -> (links,renaming,fresh_id)
-						 ) ag (sol2.links,renaming,fresh_id)
+				  Agent.fold_interface (fun site _ (links,renaming,fresh_id) ->
+							  try
+							    let (i,s) = get_port (id,site) sol1 in
+							    let i',renaming,fresh_id =
+							      try (IntMap.find i renaming,renaming,fresh_id) 
+							      with Not_found -> 
+								(fresh_id,IntMap.add i fresh_id renaming,fresh_id+1) 
+							    in
+							    let links = PA.add (id',site) (i',s) links in
+							      (links,renaming,fresh_id)
+							  with Not_found -> (links,renaming,fresh_id)
+						       ) ag (sol2.links,renaming,fresh_id)
 
 				in
 				  (renaming,{agents = agents ; links = links ; fresh_id = fresh_id})
@@ -898,7 +919,7 @@ let multiply sol n =
     else f sol (n-1) (compose sol acc)
   in
     f sol n (empty())
-   
+      
 
 let pushout cc1 cc2 =
   let rec match_ag hsh (id1,ag1) (id2,ag2) = 
@@ -1102,3 +1123,10 @@ let str_of_obs obs =
     | Occurrence s -> s
     | Story s -> s
 
+
+let sol_of_init init = 
+  List.fold_left (fun acc (sol,n) -> 
+		    let sol' = multiply (copy sol) n in
+		    let acc = compose sol' acc in (*compose folds on first argument*)
+		      acc
+		 ) (empty()) init

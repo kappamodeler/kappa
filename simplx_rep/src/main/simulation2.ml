@@ -25,6 +25,7 @@ type sim_data_type = {(*fresh_ind:int ;*)
 
   flow:IntSet.t IntMap.t ;
   conflict: IntSet.t IntMap.t;
+  init: (Solution.t * int) list ;
   sol:Solution.t ;
   net:Network.t ;
   n_ag:int ;
@@ -49,6 +50,7 @@ type marshalized_sim_data_t = {
   f_lift:((int*string)*((Coord.t*int) list)) list ; 
   f_flow:IntSet.t IntMap.t ;
   f_conflict: IntSet.t IntMap.t;
+  f_init: (Solution.marshalized_t * int) list ;
   f_sol:Solution.marshalized_t ;
   f_net:Network.marshalized_t ;
   f_n_ag:int ;
@@ -80,6 +82,7 @@ let marshal sim_data =
 				) sim_data.lift [] ;
     f_flow = sim_data.flow ;
     f_conflict = sim_data.conflict ;
+    f_init = List.map (fun (s,i) -> (Solution.marshal s,i)) sim_data.init ;
     f_sol = Solution.marshal sim_data.sol ; 
     f_net = Network.marshal sim_data.net ; 
     f_n_ag = sim_data.n_ag ; 
@@ -120,6 +123,7 @@ let unmarshal f_sd =
 			    ) (CoordSetArray.create 1) f_sd.f_lift ;
       flow = f_sd.f_flow ;
       conflict = f_sd.f_conflict ;
+      init = List.map (fun (f_s,i) -> (Solution.unmarshal f_s,i)) f_sd.f_init ;
       sol = Solution.unmarshal f_sd.f_sol ; 
       net = Network.unmarshal f_sd.f_net ; 
       n_ag = f_sd.f_n_ag ; 
@@ -140,6 +144,7 @@ let sd_empty() = {
   injections = InjArray.create 100 ;(*imp*)
   flow = IntMap.empty ;
   conflict = IntMap.empty;
+  init = [] ;
   sol = Solution.empty() ;          (*imp*)
   net = Network.empty();            (*imp*)
   n_ag = 0 ;
@@ -150,8 +155,8 @@ let sd_empty() = {
 }
 
 type sim_parameters = {
-  (*simulation data*)
-  init_sd : string option; (*name of the marshalized file*)
+  (*Name of the file containing the serialized sim data*)
+  init_sd:string option ;
 
   (*Computation limits*)
   max_failure:int ; (*max number of failure when trying to apply rules*)
@@ -266,8 +271,8 @@ let print sim_data =
     if not only_obs then
       Printf.printf "Current solution: %s\n" (Solution.kappa_of_solution ~full:true sim_data.sol);
     print_rules sim_data.rules sim_data.inf_list ;
-    print_injections only_obs sim_data;
-    if not only_obs then print_lift sim_data.lift 
+    print_injections only_obs sim_data
+    (*if not only_obs then print_lift sim_data.lift *)
 
 
 (****************TODO HERE ASSOC_MAP <- AssocArray + modif Solution.cmo********************)
@@ -532,7 +537,7 @@ let concretize sim_data abs_pos_map abs_neg_map log =
     (pos_map,neg_map,log)
 
 (*sim_data initialisation*)
-let init log (rules,(sol_init:Solution.t),obs_l,exp) =
+let init log (rules,init,(sol_init:Solution.t),obs_l,exp) =
   let flag_obs = List.fold_right (fun obs set ->
 				    match obs with
 					Solution.Occurrence flg -> if !story_mode then set else StringSet.add flg set
@@ -565,11 +570,13 @@ let init log (rules,(sol_init:Solution.t),obs_l,exp) =
 				flag = Some flg ;
 				constraints = [] ;
 				kinetics = 1.0 ;
+				boost = 1.0 ;
 				automorphisms = None ;
 				n_cc = IntMap.size lhs ;
 				id = fresh_id;
 				infinite = false;
 				abstraction = None;
+				intra = None
 			       }
 			     in
 			       (r::cont,fresh_id+1)
@@ -585,10 +592,10 @@ let init log (rules,(sol_init:Solution.t),obs_l,exp) =
     (*converting simplx data structure to the complx one*)
   let cplx_log = pipeline_methods.Pipeline.empty_channel in 
 
-  (*computing influence maps*)
+ (*computing influence maps*)
   let (cplx_simplx:Pipeline.simplx_encoding) = 
     Some (fake_rules@rules,
-	  [sol_init,1] (*JF : I would like the initial state without expansion of multiplicator coefficients, in order to avoid reanalizing the same species several time *)
+	  init (*JK: list of pairs (sol,n) where n is the multiplication coef of sol*)
 	 )  
   in
   let pb = pipeline_methods.Pipeline.build_pb cplx_simplx (add_suffix (add_suffix Tools.empty_prefix "") "")  
@@ -732,13 +739,277 @@ let mult_kinetics flg mult sim_data =
       {sim_data with rules = Rule_of_int.add i (r_i',inst_i) sim_data.rules}
   with Not_found -> Error.runtime ("Simulation.mult_kinetics: label "^flg^" does not match any rule.")
 
+exception Intra of assoc
+exception Unary
+
+let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log = 
+  let r,_ = Rule_of_int.find ind_r sim_data.rules in
+  let try_intra = test_intra r in
+  let _ = 
+    if !debug_mode then (Printf.printf "[*] Entering Bologna procedure for application of injections [%d,%d,%d],[%d,%d,%d]\n" ind_r i_psi nb_psi ind_r i_phi nb_phi) else ()
+  in
+    (*0. COMPUTING P_INTRA*)
+  let n_phi = 
+    let coord = Coord.of_pair (ind_r,i_phi) in
+    let _,_,m = InjArray.find coord sim_data.injections in
+      float_of_int (AssocArray.size m)
+  in
+  let n_psi = 
+    let coord = Coord.of_pair (ind_r,i_psi) in
+    let _,_,m = InjArray.find coord sim_data.injections in
+      float_of_int (AssocArray.size m)
+  in
+  let n_inj = (n_psi/. !rescale) +. (n_phi/. !rescale) in
+  let p_intra = (*p_intra is 0.0 if rule is infinite or no intra rate is defined*)
+    if (r.kinetics < 0.0) then 0.0
+    else
+      match r.intra with
+	  Some u -> begin u /. (r.boost *. n_inj) end
+	| None -> 0.0
+  in (*u=coef_unary*beta and p = u/beta.(|phi|+|psi|-1)*)
+  let log,p_intra,boost = 
+    if try_intra then
+      let u = match r.intra with Some u -> u | None -> Error.runtime "Simulation.bologna: intra rate not specified" in
+      let boost = u /. n_inj in
+	if (p_intra > 1.0) then
+	  let log = Session.add_log_entry 4 (Printf.sprintf "Rule %s: boosting binary rate to catch up" (Rule.name r)) log 
+	  in
+	    (log,1.0,boost)
+	else 
+	  if (boost >= r.kinetics) && (boost < r.boost) then (*decreasing boost if possible*)
+	    let log = Session.add_log_entry 4 (Printf.sprintf "Rule %s: decreasibg boosted binary rate" (Rule.name r)) log 
+	    in
+	      (log,p_intra,boost)
+	  else
+	    (log,p_intra,r.boost)
+    else
+      (log,p_intra,r.boost)
+  in
+
+
+  (*1. CHECKING FOR PURE COLLISION*)
+  let phi_psi_opt = try Some (merge_injections phi psi) with Not_found -> None 
+  in
+    if not try_intra then  (*if not looking for depolymerization, then no clash is enough to answer*)
+      match phi_psi_opt with
+	  Some inj -> 
+	    if boost > r.kinetics then 
+	      let _ =
+		if !debug_mode then (Printf.printf "Binary rate overestimated, correcting with p_inter = %f\n" (r.kinetics /.boost) ; flush stdout) else ()
+	      in
+	      let dice = Random.float 1.0 in
+		if dice < (r.kinetics /. boost) then ([inj],log,None,boost) (*add here p_inter*)
+		else
+		  let _ =
+		    if !debug_mode then (Printf.printf "Rejected\n" ; flush stdout) else ()
+		  in
+		    ([],log,None,boost)
+	    else
+	      ([inj],log,None,boost)
+	| None -> 
+	    let _ = if !debug_mode then (Printf.printf "Clash by non injectivity of maps\n" ; flush stdout) else ()
+	    in
+	      ([],log,None,boost) (*clash by collision*)    
+    else
+      if phi_psi_opt = None then 
+	let _ = if !debug_mode then (Printf.printf "Clash by non injectivity of maps\n" ; flush stdout) else ()
+	in
+	  ([],log,None,boost) 
+      else
+	
+	(*2. Unary vs. binary*)
+	let _,phi_0 = IntMap.get phi 
+	and _,psi_0 = IntMap.get psi
+	in
+	let cc_phi,paths_phi = Solution.paths_of_id phi_0 sim_data.sol (*extending codomain of phi to the whole CC*)
+	and cc_psi,paths_psi = Solution.paths_of_id psi_0 sim_data.sol (*extending codomain of phi to the whole CC*)
+	in
+	let r,_ = Rule_of_int.find ind_r sim_data.rules in 
+	let paths_phi,paths_psi = (*adding the newly created bond to the paths*)
+	  IntMap.fold (fun id act_msg_list (paths_phi,paths_psi) ->
+			 let l = Solution.get_binding act_msg_list in
+			 let id',i = 
+			   try (IntMap.find id phi,0)
+			   with Not_found -> 
+			     try (IntMap.find id psi,1) with Not_found -> Error.runtime "Simulation.bologna: Agent is not in the image of any injections!"
+			 in
+			 let name = Agent.name (Solution.agent_of_id id' sim_data.sol) in
+			   List.fold_left (fun (paths_phi,paths_psi) (site,id2,site2) -> 
+					     if i=0 (*action on the phi side*) then
+					       let id2 = try IntMap.find id2 psi with Not_found -> Error.runtime "Simulation.bologna: malformed injection"
+					       in
+					       let name' = Agent.name (Solution.agent_of_id id2 sim_data.sol) in
+					       let paths_phi = Paths.add name id site paths_phi
+					       and paths_psi = Paths.add name' id2 site2 paths_psi
+					       in
+						 (paths_phi,paths_psi)  
+					     else (*action on the psi side*)
+					       let id2 = try IntMap.find id2 phi with Not_found -> Error.runtime "Simulation.bologna: malformed injection"
+					       in
+					       let name' = Agent.name (Solution.agent_of_id id2 sim_data.sol) in
+					       let paths_psi = Paths.add name id site paths_psi
+					       and paths_phi = Paths.add name' id2 site2 paths_phi
+					       in
+						 (paths_phi,paths_psi)
+					  ) (paths_phi,paths_psi) l
+		      ) r.Rule.actions (paths_phi,paths_psi)
+	in
+	let _ =
+	  if !debug_mode then Printf.printf "-Injective map, testing now whether constraints are satisfied...\n" else ()
+	in
+	let co_psi = IntMap.fold (fun _ j codomain -> IntSet.add j codomain) psi IntSet.empty
+	and co_phi = IntMap.fold (fun _ j codomain -> IntSet.add j codomain) phi IntSet.empty
+	in
+	let no_helix,no_poly = List.fold_left (fun (no_helix,no_poly) cstr -> 
+						 match cstr with
+						     NO_HELIX -> (true,no_poly)
+						   | NO_POLY -> (no_helix,true)
+					      ) (false,false) r.constraints
+	in
+	let clash = Paths.clashing_on_names ~debug:(!debug_mode) (no_helix,no_poly) paths_psi paths_phi
+	in
+	  
+	  (*rule is not clashing according to constraints *)
+	  if not clash then 
+	    if IntSet.is_empty (IntSet.inter cc_phi cc_psi) then (*not clashing and binary!*)
+	      match phi_psi_opt with
+		  Some inj -> 
+		    let _ =
+		      if !debug_mode then Printf.printf "-Reaction satisfies constraints...\n" else ()
+		    in
+		      if boost > r.kinetics then 
+			let _ =
+			  if !debug_mode then (Printf.printf "But binary rate overestimated, correcting with p_inter = %f\n" (r.kinetics /. boost) ; flush stdout) else ()
+			in
+			let dice = Random.float 1.0 in
+			  if dice < (r.kinetics /. boost) then ([inj],log,None,boost) (*add here p_inter*)
+			  else
+			    let _ =
+			      if !debug_mode then (Printf.printf "Rejected\n" ; flush stdout) else ()
+			    in
+			      ([],log,None,boost)
+		      else
+			([inj],log,None,boost)
+		| None -> Error.runtime "Simulation.bologna: injections are not clashing but cannot be composed!" 
+	    else (*not clashing and unary!*)
+	      begin
+		let _ =
+		  if !debug_mode then (Printf.printf "Unary reaction...\n" ; flush stdout) else () 
+		in
+		let dice = Random.float 1.0 in
+		  if dice < p_intra then
+		    match phi_psi_opt with
+			Some inj -> ([inj],log,Some p_intra,boost)
+		      | None -> Error.runtime "Simulation.bologna: injections are not clashing but cannot be composed!" 
+		  else ([],log,Some p_intra,boost)
+	      end
+	  else
+
+	    (*3. trying to resolve clashes using intras*)
+
+	    let intra ids indice_cc inj_number map co_map = 
+	      try
+		let _ =
+		  IntSet.fold (fun id inj_blacklist ->
+				 let ag = Solution.agent_of_id id sim_data.sol in
+				   if IntSet.mem id co_map then inj_blacklist 
+				   else
+				     Agent.fold_interface (fun site _  inj_blacklist -> 
+							     let coordSet = try CoordSetArray.find (id,site^"!") sim_data.lift with Not_found -> CoordSet.empty 
+							     in
+							       CoordSet.fold (fun (coord,inj_number') inj_blacklist -> 
+										let (indice_r',indice_cc') = Coord.to_pair coord in
+										  if (indice_r' = ind_r) && (indice_cc'=indice_cc) then 
+										    let _,_,assoc_map = InjArray.find coord sim_data.injections in
+										      if inj_number' = inj_number then
+											let _ =
+											  if !debug_mode then (Printf.printf " but context says the reaction is unary!\n" ; flush stdout) 
+											  else ()
+											in
+											  raise Unary
+										      else
+											let inj = AssocArray.find inj_number' assoc_map in
+											let merge_inj = try Some (merge_injections inj map) with Not_found -> None
+											in
+											let inj_blacklist = IntSet.add inj_number' inj_blacklist in
+											  match merge_inj with
+											      Some ga -> 
+												let _ = 
+												  if !debug_mode then 
+												    (Printf.printf " with injection [%d,%d,%d]\n" ind_r indice_cc inj_number' ; flush stdout)
+												  else () 
+												in
+												  raise (Intra ga)
+											    | None -> inj_blacklist
+										  else inj_blacklist
+									     ) coordSet inj_blacklist
+							  ) ag inj_blacklist
+			      ) ids IntSet.empty
+		in
+		let _ = if !debug_mode then 
+		  (Printf.printf " but cannot find any candidate\n" ; flush stdout ) else () 
+		in
+		  (None,false)
+	      with 
+		  Intra inj -> (Some inj,false)
+		| Unary -> (None,true) 
+	    in
+	    let _ = if !debug_mode then (Printf.printf "Reaction does not satisfy constraints, trying to exchange [%d,%d,%d]..." ind_r i_phi nb_phi ; flush stdout) else () 
+	    in
+	    let opt_intra_phi,unary = intra cc_psi i_phi nb_phi psi co_psi in
+	      if unary then
+		let dice = Random.float 1.0 in
+		let log = Session.add_log_entry 4 (Printf.sprintf "Unary case of binary rule r[%d] no need to apply intra\n" ind_r) log in
+		  if dice<p_intra then 
+		    match phi_psi_opt with
+			Some inj -> ([inj],log,Some p_intra,boost)
+		      | None -> Error.runtime "Simulation.bologna: rule should not be clashing" 
+		  else 
+		    let _ = if !debug_mode then (Printf.printf "Reject (p_intra = %f)\n" p_intra ; flush stdout) else () 
+		    in
+		      ([],log,Some p_intra,boost) 
+	      else
+		let _ = if !debug_mode then Printf.printf "Trying to exchange [%d,%d,%d]..." ind_r i_psi nb_psi ; flush stdout in
+		let opt_intra_psi,_ = intra cc_phi i_psi nb_psi phi co_phi in
+		  match (opt_intra_phi,opt_intra_psi) with
+		      (None,None) -> ([],log,None,boost) (*clash because no intra could be found*)
+		    | (Some ga,None) -> 
+			let dice = Random.float 1.0 in
+			  if dice < p_intra then ([ga],log,Some p_intra,boost) 
+			  else 
+			    let _ = if !debug_mode then (Printf.printf "Reject (p_intra = %f)\n" p_intra ; flush stdout) else () 
+			    in 
+			      ([],log,Some p_intra,boost)
+		    | (Some ga0,Some ga1) ->
+			let dice1 = Random.float 1.0 in
+			let dice2 = Random.float 1.0 in
+			let l = if dice1 < p_intra then [ga0] else 
+			  let _ = if !debug_mode then (Printf.printf "Reject first intra (p_intra = %f)\n" p_intra ; flush stdout) else () 
+			  in
+			    [] 
+			in
+			let l = 
+			  if dice2<p_intra then ga1::l else 
+			    let _ = if !debug_mode then (Printf.printf "Reject second intra (p_intra = %f)\n" p_intra ; flush stdout) else () 
+			    in
+			      l 
+			in
+			let log = Session.add_log_entry 4 "Multiple intras detected" log in (l,log,Some p_intra,boost)
+		    | (None,Some ga) -> 
+			let dice = Random.float 1.0 in
+			  if dice<p_intra then ([ga],log,Some p_intra,boost)
+			  else
+			    let _ = if !debug_mode then (Printf.printf "Reject (p_intra = %f)\n" p_intra ; flush stdout) else () 
+			    in
+			      ([],log,Some p_intra,boost)
+			    
 exception Not_applicable of int*Rule.t
 exception Found of int*Rule.t
 exception Assoc of int IntMap.t
 
-let select log sim_data p =
+let select log sim_data p c =
   let get_map_opt map = 
-    let (k,assoc) = (*IntMap.random*) AssocArray.random map in assoc
+    let (k,assoc) = (*IntMap.random*) AssocArray.random map in (k,assoc)
   in
   let activity = Rule_of_int.accval sim_data.rules 
   in
@@ -857,37 +1128,80 @@ let select log sim_data p =
 	      | (m,_)::_ -> 
 		  let log = Session.add_log_entry 1 (Printf.sprintf "Applying infinitely fast rule r[%d]" ind_r) log 
 		  in
-		    (log,Some (abst_ind,ind_r,m),sim_data,cpt) (*cpt doesn't matter since infinite rate rule and time advance is null*)
+		    (log,Some (abst_ind,ind_r,[m]),sim_data,cpt) (*cpt doesn't matter since infinite rate rule and time advance is null*)
 	else
 	  try
-	    let m,_ =
-	      IntMap.fold (fun i lhs_i (map,invmap) -> 
+	    let inj_list,arity =
+	      IntMap.fold (fun i lhs_i (inj_list,length) -> 
 			     try
 			       let free_keys,fresh,assoc_map_i = 
 				 InjArray.find (Coord.of_pair (abst_ind,i)) sim_data.injections in
 			       let length_i = AssocArray.size assoc_map_i in
 				 if length_i = 0 then raise (Not_applicable (-1,r)) 
 				 else
-				   let assoc_i = get_map_opt assoc_map_i 
+				   let inj_nb,phi_i = get_map_opt assoc_map_i 
 				   in
-				     IntMap.fold (fun i j (map,invmap) -> 
-						    if IntMap.mem j invmap then raise (Not_applicable (1,r)) (*collision*)
-						    else
-						      (IntMap.add i j map,IntMap.add j i invmap)
-						 ) assoc_i (map,invmap)
+				     ((inj_nb,i,phi_i)::inj_list,length+1)
 			     with
 				 Not_found -> raise (Not_applicable (0,r))  (*not applicable because one cc has no injection*)
 				   
-			  ) (r.lhs) (IntMap.empty,IntMap.empty)
+			  ) (r.lhs) ([],0) (*IntMap.empty,IntMap.empty*)
 	    in
-	      if Solution.satisfy r.constraints m sim_data.sol then 
-		(log,Some (abst_ind,ind_r,m),sim_data,cpt) 
-	      else raise (Not_applicable (2,r))
+	    let inj_list,log,opt_intra,boost = 
+	      if inj_list = [] then Error.runtime "Simulation2.select: empty injection list!"
+	      else
+		if arity = 1 then 
+		  match inj_list with 
+		      [(_,_,phi)] -> ([phi],log,None,r.boost) 
+		    | _ -> Error.runtime "Simulation2.select: invalid argument"
+		else
+		  match inj_list with
+		      [(psi_nb,cc_psi,psi);(phi_nb,cc_phi,phi)] -> bologna ind_r (cc_psi,psi_nb,psi) (cc_phi,phi_nb,phi) sim_data log
+		    | _ -> Error.runtime "Simulation2.select: invalid number of injections"
+	    in
+	      if !plot_p_intra then 
+		begin
+		  match opt_intra with
+		      Some p -> 
+			let d = match !prob_desc with
+			    None -> 
+			      let d = open_out !p_intra_fic in
+				prob_desc:=Some d ;
+				d
+			  | Some d -> d
+			in
+			  Printf.fprintf d "%f %f\n" c.curr_time p ;
+		    | None -> ()
+		end ;
+	      match inj_list with
+		  [] -> raise (Not_applicable (2,r))
+		| [ga] -> 
+		    let r,a = Rule_of_int.find ind_r sim_data.rules in
+		    let rules = Rule_of_int.add ind_r ({r with boost = boost},a) sim_data.rules in
+		    let sd = {sim_data with rules = rules} in
+		      (log,Some (abst_ind,ind_r,[ga]),sd,cpt)			
+		| [ga0;ga1] -> 
+		    let compatible = try let _ = merge_injections ga0 ga1 in true with Not_found -> false
+		    in
+		      if compatible then 
+			let r,a = Rule_of_int.find ind_r sim_data.rules in
+			let rules = Rule_of_int.add ind_r ({r with boost = boost},a) sim_data.rules in
+			let sd = {sim_data with rules = rules} in
+			  (log,Some (abst_ind,ind_r,[ga0;ga1]),sd,cpt)
+		      else 
+			begin
+			  let log = Session.add_log_entry 4 "Selected pair of intras are conflicting, discarding one." log in
+			  let r,a = Rule_of_int.find ind_r sim_data.rules in
+			  let rules = Rule_of_int.add ind_r ({r with boost = boost},a) sim_data.rules in
+			  let sd = {sim_data with rules = rules} in
+			    (log,Some (abst_ind,ind_r,[ga0]),sd,cpt)
+			end
+		| _ -> Error.runtime "Simulation.selec: invalid argument"
 	  with 
 	      Not_applicable (-1,r) -> runtime "Simulation.select: selected rule has no injection (error -1)"
 	    | Not_applicable (0,r) -> runtime (Printf.sprintf "Simulation.select: selected rule %s has no injection (error 0)" (r.Rule.input))
 	    | Not_applicable (1,r) -> 
-		let log = Session.add_log_entry 1 (Printf.sprintf "Clash in rule %s" (Rule.name r)) log in
+		let log = Session.add_log_entry 4 (Printf.sprintf "Clash in rule %s" (Rule.name r)) log in
 		  if max_failure < 0 then choose_rule log sim_data max_failure (cpt+1)
 		  else 
 		    if cpt < max_failure then choose_rule log sim_data max_failure (cpt+1) 
@@ -896,8 +1210,8 @@ let select log sim_data p =
 		      in
 			(log,None,sim_data,max_failure)
 	    | Not_applicable (2,r) ->
-		let log = Session.add_log_entry 1 
-		  (Printf.sprintf "Application of rule %s does not satisfy constraints" (Rule.name r)) log in
+		let log = Session.add_log_entry 4 
+		  (Printf.sprintf "Application of rule %s is clashing" (Rule.name r)) log in
 		  if max_failure < 0 then choose_rule log sim_data max_failure (cpt+1)
 		  else 
 		    if cpt < max_failure then choose_rule log sim_data max_failure (cpt+1) 
@@ -931,6 +1245,7 @@ let consistency_check assoc assoc_map =
     
 let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is the indice of the abstract rule when quotient_refs is enabled !!*)
   if !debug_mode then Printf.printf "modified quarks: %s\n" (Mods2.string_of_set string_of_port PortSet.fold upd_quarks) ;
+
   (*negative update*)
   let t_neg = chrono 0.0 in
   let lift,injs,rules,rm_coord,mod_ids,mod_obs,inf_list = 
@@ -965,7 +1280,20 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 			       let _ = if !Mods2.bench_mode then Bench.t_upd_rules:=!Bench.t_upd_rules +. (chrono t0) in
 			       let inst_rule_ind' = (inst_rule_ind /. length) *. length' in
 			       let t0 =  chrono 0.0 in
-			       let rules = Rule_of_int.add rule_ind (r,inst_rule_ind') rules in
+				 (*modifying rule kinetics if necessary*)
+			       let boost = 
+				 let phi = length'
+				 and psi = 
+				   try
+				     let _,_,map'= InjArray.find (Coord.of_pair (rule_ind,(cc_ind + 1) mod 2)) injs in
+				       float_of_int (AssocArray.size map')
+				   with Not_found -> 0.0 (*unary rule*)
+				 in
+				   match r.intra with 
+				       None -> r.kinetics
+				     | Some u -> max (u /. (phi +. psi)) (r.kinetics) 
+			       in
+			       let rules = Rule_of_int.add rule_ind ({r with boost=boost},inst_rule_ind') rules in
 			       let inf_list = (*removing infinite rate rule with no more instances*)
 				 if ((int_of_float inst_rule_ind') = 0) && (IntSet.mem rule_ind inf_list) then IntSet.remove rule_ind inf_list
 				 else inf_list
@@ -1165,9 +1493,9 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 							let _,_,map = 
 							  try InjArray.find (Coord.of_pair (r_i,cc_i)) injs 
 							  with Not_found -> 
-							    ([],0,(*IntMap.empty*) AssocArray.create 1)
+							    ([],0, AssocArray.create 1)
 							in
-							  (float_of_int ((*IntMap.size*) AssocArray.size map)) *. act
+							  (float_of_int (AssocArray.size map)) *. act
 						     ) r.lhs 1.0
 			   in
 			   let mod_obs = 
@@ -1177,8 +1505,27 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 				 | None -> Error.runtime "Rule.update: obs invariant violation"
 			     else mod_obs
 			   in
+			     (*boosting rule kinetics if necessary*)
+			   let boost = 
+			     let phi = 
+			       let _,_,map0 = InjArray.find (Coord.of_pair (r_i,0)) injs
+			       in
+				 float_of_int (AssocArray.size map0)
+			     in
+			     let psi = 
+			       try
+				 let _,_,map1 = InjArray.find (Coord.of_pair (r_i,1)) injs
+				 in
+				   float_of_int (AssocArray.size map1)
+			       with Not_found -> 0.0 (*unary rule*)
+			     in
+			       match r.intra with 
+				   None -> r.kinetics
+				 | Some u -> max (u /. (phi +. psi)) (r.kinetics) 
+			   in
+			     
 			   let t0 = chrono 0.0 in
-			   let rules = Rule_of_int.add r_i (r,inst_r') rules in
+			   let rules = Rule_of_int.add r_i ({r with boost = boost},inst_r') rules in
 			   let inf_list = (*adding infinite rate rule with new instances*)
 			     if ((int_of_float inst_r') > 0) && (IntSet.mem r_i sim_data.oo) then IntSet.add r_i inf_list
 			     else inf_list
@@ -1364,16 +1711,16 @@ let rec iter log sim_data p c =
 	    else (c,log)
 	  in
 	  let t_select = chrono 0.0 in
-	  let (log,opt,sim_data,clashes) = select log sim_data p in
+	  let (log,inj_list,sim_data,clashes) = select log sim_data p c in
 	    if !bench_mode then Bench.rule_select_time := !Bench.rule_select_time +. (chrono t_select) ;
-	    match opt with
+	    match inj_list with
 		None -> (
 		  let log = Session.add_log_entry 1 
 		    (Printf.sprintf "Deadlock found (activity = %f)" (Rule_of_int.accval sim_data.rules)) log
 		  in
 		    (1 (*deadlocked*),log,sim_data,p,c)
 		)
-	      | Some (abst_ind,r_ind,assoc) ->
+	      | Some (abst_ind,r_ind,assoc_list) ->
 		  let activity = Rule_of_int.accval sim_data.rules in
 		  let dt = 
 		    if !Data.no_random_time then 1./. activity (*expectency*)
@@ -1396,7 +1743,7 @@ let rec iter log sim_data p c =
 		      end
 		  in
 		  let t_apply = chrono 0.0 in
-		  let (mq,rmq,tq,assoc_add,sol',warn) = Rule.apply r_abst assoc sim_data.sol in (*passing r_abst in order to have a mq,rmq,tq as small as possible*)
+		  let (mq,rmq,tq,assoc_add,sol',warn) = Rule.apply r_abst assoc_list sim_data.sol in (*passing r_abst in order to have a mq,rmq,tq as small as possible*)
 		  let _ = if !bench_mode then Bench.rule_apply_time := !Bench.rule_apply_time +. (chrono t_apply) in
 		  let log = 
 		    if warn then
@@ -1406,6 +1753,19 @@ let rec iter log sim_data p c =
 		    (*merge modif quarks and removed quarks*)
 		  let upd_q = PortMap.fold (fun q _ pset -> PortSet.add q pset) mq rmq in
 		  let t_update = chrono 0.0 in
+		  let assoc = 
+		    match assoc_list with
+			[phi] -> phi
+		      | [phi1;phi2] -> 
+			  let union,_ = IntMap.fold (fun i j (union,image) ->
+						       if IntSet.mem j image then Error.runtime "Simulation2.iter: intras are clashing!"
+						       else
+							 (IntMap.add i j union,IntSet.add j image)
+						    ) phi1 (phi2,IntSet.empty)
+			  in
+			    union
+		      | _ -> Error.runtime "Simulation2.iter: invalid number of intras"
+		  in
 		  let sim_data,mod_obs = update warn abst_ind assoc upd_q assoc_add sol' sim_data p
 		  in
 		  let _ = if !bench_mode then Bench.update_time := !Bench.update_time +. (chrono t_update) in

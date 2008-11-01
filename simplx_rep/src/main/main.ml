@@ -15,7 +15,6 @@ let main =
     ("--sim", Arg.String (fun s -> fic := s), "name of the kappa file to simulate");
     ("--compile", Arg.String (fun s -> compile_mode:=true; fic := s), "name of the kappa file to compile");
     ("--storify", Arg.String (fun s -> story_mode := true ; fic := s), "name of the kappa file to storify");
-    ("--generate-map", Arg.String (fun s -> map_mode := true ; fic := s), "generate only map(s) from the given kappa file");
     ("--version", Arg.Unit (fun () -> print_string (version_msg^"\n") ; flush stdout ; exit 0), "print simplx version");
     ("--time", Arg.Float (fun f -> time_mode:=true ; max_time := f), "(infinite): time units of computation");
     ("--event", Arg.Int (fun i -> time_mode :=false ; max_step := i), "(infinite): number of rule applications");
@@ -76,6 +75,7 @@ let main =
      "name of the xml file containing results of the current session (default simplx.xml)");
     ("--deadlock-threshold",
      Arg.Float (fun i -> deadlock_sensitivity:=i),"[expert] Defines the activity of a deadlocked system (default 0.0)");
+    ("--plot-prob-intra", Arg.String (fun s -> plot_p_intra:=true ; p_intra_fic:=s), "[expert] Plot the evolution of the proba of intra during time in given file name");
 
     (*temporary options*)
     ("--light-xml", Arg.Unit (fun () -> skip_xml:=true), "[temporary] prevent simplx from building xml structures for results") ;
@@ -165,15 +165,15 @@ let main =
 
     let _ = 
       try 
-
-	let log,warn,rules,sol_init,obs_l,exp =
+	let log,warn,rules,init,sol_init,obs_l,exp =
 	  if !load_sim_data then
 	    let rules=[]
-	    and sol_init=Solution.empty()
+	    and init=[]
+	    and sol_init = Solution.empty()
 	    and obs_l=[]
 	    and exp=Experiment.empty
 	    in
-	      (log,0,rules,sol_init,obs_l,exp)
+	      (log,0,rules,init,sol_init,obs_l,exp)
 	  else
 	    let log,t_compil = 
 	      if !load_compilation then 
@@ -183,26 +183,32 @@ let main =
 	      if !load_compilation then 
 		begin
 		  let d = open_in_bin (!serialized_kappa_file) in 
-		  let (f_r,f_s,f_o,e) = 
+		  let (f_r,f_i,f_s,f_o,e) = 
 		    (Marshal.from_channel d:
-		       (Rule.marshalized_t list * Solution.marshalized_t * Solution.marshalized_obs list * Experiment.t)
+		       (Rule.marshalized_t list 
+			* ((Solution.marshalized_t * int) list) 
+			* Solution.marshalized_t 
+			* Solution.marshalized_obs list 
+			* Experiment.t)
 		    ) 
 		  in
 		    close_in d ; 
 		    let r = List.map Rule.unmarshal f_r 
+		    and i = List.map (fun (f_s,i) -> (Solution.unmarshal f_s,i)) f_i
 		    and s = Solution.unmarshal f_s 
 		    and o = List.map Solution.unmarshal_obs f_o
 		    in
 		    let log = Session.add_log_entry 0 
 		      (sprintf "-%s succesfully loaded" !serialized_kappa_file) log
 		    in
-		      (log,0,r,s,o,e)
+		      (log,0,r,i,s,o,e)
 		end
 	      else 
 		(*compute rules,sol_init,obs_l and exp from a kappa file*)
 		begin
 		  try
-		    let (r,s,o,e) = Kappa_lex.compile (!fic) in
+		    let (r,i,o,e) = Kappa_lex.compile (!fic) in
+		    let s = Solution.sol_of_init i in
 		    let log = 
 		      Session.add_log_entry 0 (sprintf "-Compilation: %f sec. CPU" (Mods2.gettime()-.t_compil)) log 
 		    in
@@ -212,7 +218,8 @@ let main =
 			  let d = open_out_bin file in
 			    begin
 			      Marshal.to_channel d 
-				(List.map Rule.marshal r,Solution.marshal s,List.map Solution.marshal_obs o,e) [] ;
+				(List.map Rule.marshal r,List.map (fun (s,i) -> (Solution.marshal s,i)),
+				 Solution.marshal s,List.map Solution.marshal_obs o,e) [] ;
 			      let log = Session.add_log_entry 0 
 				(sprintf "-%s succesfully saved" file) log
 			      in 
@@ -220,12 +227,12 @@ let main =
 				log
 			    end
 			in
-	      		  (log,0,r,s,o,e)
-		      else (log,0,r,s,o,e)
+	      		  (log,0,r,i,s,o,e)
+		      else (log,0,r,i,s,o,e)
 		  with
 		      Error.Syntax (msg,line) -> 
 			let log = Session.add_log_entry 2 msg ~line:line log in
-			  (log,2,[],Solution.empty(),[],Experiment.empty)
+			  (log,2,[],[],Solution.empty(),[],Experiment.empty)
 		end
 	in
 	  if (warn > 1) or (!compile_mode) then 
@@ -244,7 +251,7 @@ let main =
 		  List.iter (fun (sol,n) -> 
 			       let str = Solution.kappa_of_solution sol in
 				 Printf.printf "-%d*[%s]\n" n str
-			    ) !pairs
+			    ) init
 		) ;
 	      (************* TEMP RENDERING OF RULES***************)
 	      Session.finalize xml_file log warn  
@@ -272,76 +279,73 @@ let main =
 	  in
 
 	  let log,p_sd = 
-	    (*MOD2 JF*)
-	    (*I prevent crash by computing the initial state in case of exception *)
 	    (***********Loading simulation data from marshalized file**********)
 	    if !load_sim_data then
 	      begin 
 		try 
 		  let log = Session.add_log_entry 0 
-		      (sprintf "--Loading initial state from %s..." !serialized_sim_data_file) log 
+		    (sprintf "--Loading initial state from %s..." !serialized_sim_data_file) log 
 		  in
 		  let d = open_in_bin (!serialized_sim_data_file) in 
 		  let f_sd = (Marshal.from_channel d:Simulation2.marshalized_sim_data_t) in
 		  let p = {max_failure = !Data.max_clashes;
-			    init_sd = Some !serialized_sim_data_file ;
-			    compress_mode = true ;
-			    iso_mode = false ;
-			    gc_alarm_high = false ;
-			    gc_alarm_low = false 
+			   init_sd = Some !serialized_sim_data_file ;
+			   compress_mode = true ;
+			   iso_mode = false ;
+			   gc_alarm_high = false ;
+			   gc_alarm_low = false 
 			  }
 		  in
 		  let log = Session.add_log_entry 0 "--Initial state successfully loaded." log in
-		  (log,Some(p,Simulation2.unmarshal f_sd))
-			  with 
-			    _ -> 
-			      log,None
+		    (log,Some(p,Simulation2.unmarshal f_sd))
+		with 
+		    _ -> Error.runtime (Printf.sprintf "Could not load %s" !serialized_sim_data_file)
 	      end
 	    else
-	      log,None in 
+	      (log,None) 
+	  in 
 	  let log,p,sd = 
-	    
 	    match p_sd 
 	    with 
-	      Some (p,sd) -> log,p,sd
-	    | None -> 
-	      begin 
-              (***************Creating simulation data*****************)
-		let log = Session.add_log_entry 0 "--Computing initial state" log 
-		in
-		let log,sd = Simulation2.init log (rules,sol_init,obs_l,exp)  
-		in
-		let log,serialized = 
-		  if !save_sim_data or (!max_iter>1) then (*if only one story is needed, no need to serialize the initial state*)
-		    let file = Filename.concat !output_dir !serialized_sim_data_file in
-		    let log = Session.add_log_entry 0 (sprintf "--Saving initial state to %s..." file) log 
+		Some (p,sd) -> (log,p,sd)
+	      | None -> 
+		  begin 
+		    (***************Creating simulation data*****************)
+		    let log = Session.add_log_entry 0 "--Computing initial state" log 
 		    in
-		    let d = open_out_bin file in
-		    let f_sd = Simulation2.marshal sd in
-		    begin
-		      Marshal.to_channel d f_sd [] ;
-		      let log = Session.add_log_entry 0 "--Initial state succesfully saved" log
-		      in 
-		      close_out d ;
-		      (log,true)
-		    end
-		  else (log,false)
-		in
-		(log,{ max_failure = !Data.max_clashes;
-		       init_sd = if serialized then Some (Filename.concat !output_dir !serialized_sim_data_file) else None; 
-		       compress_mode = true ;
-		       iso_mode = false ;
-		       gc_alarm_high = false ;
-		       gc_alarm_low = false
-		     },sd
-		   )
-	      end 
+		    let log,sd = Simulation2.init log (rules,init,sol_init,obs_l,exp)  
+		    in
+		    let log,serialized = 
+		      if !save_sim_data or (!max_iter >1) then 
+			let file = Filename.concat !output_dir !serialized_sim_data_file in
+			let log = Session.add_log_entry 0 (sprintf "--Saving initial state to %s..." file) log 
+			in
+			let d = open_out_bin file in
+			let f_sd = Simulation2.marshal sd in
+			  begin
+			    Marshal.to_channel d f_sd [] ;
+			    let log = Session.add_log_entry 0 "--Initial state succesfully saved" log
+			    in 
+			      close_out d ;
+			      (log,true)
+			  end
+		      else (log,false)
+		    in
+		      (log,{ max_failure = !Data.max_clashes;
+			     init_sd = if serialized then Some (Filename.concat !output_dir !serialized_sim_data_file) else None;
+			     compress_mode = true ;
+			     iso_mode = false ;
+			     gc_alarm_high = false ;
+			     gc_alarm_low = false 
+			   },sd
+		      )
+		  end 
 	  in
 	  let msg = sprintf "-Initialization: %f sec. CPU" (Mods2.gettime() -. t_init) in
 	  let log = Session.add_log_entry 0 msg log in
 	  let _ = Gc.compact() in (*collecting dead memory at the end of initialization*)
 	    (*end initialization*)
-	  
+	    
 	  let ref_log = ref log (*session log*)
 	  and ref_sd = ref sd (*simulation data*)
 	  and ref_p = ref p (*simulation parameters*)

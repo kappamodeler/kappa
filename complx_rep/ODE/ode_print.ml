@@ -525,7 +525,7 @@ let rec print_expr  print bool bool2  x =
 	  Plus _ -> print_expr 
 	|  _ -> print_atom)  print  bool bool2  b
       end
-  | Eps -> pprint_string print "\varepsilon"
+  | Eps -> pprint_string print "\\varepsilon"
 and print_atom print  bool bool2 x = 
   if is_atomic x 
   then print_expr print  bool  bool2 x 

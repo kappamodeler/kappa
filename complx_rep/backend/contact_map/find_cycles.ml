@@ -63,8 +63,6 @@ let find_cycles limit pb =
 	  match pb.Pb_sig.first_encoding 
 	  with None -> exit 14
 	  |  Some cpb -> 
-	      let access = (fun (a,b) -> 
-		[(b,b,a)]) in  
 	      let access2 = 
 		(fun a -> 
 		  try 

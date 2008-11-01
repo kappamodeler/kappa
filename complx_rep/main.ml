@@ -198,7 +198,7 @@ let main ()  =
 	    then None,log
 	    else 
 	      let (a,b,c,d) = Kappa_lex.compile s  in 
-	      let b = !Data.pairs in
+	      (*let b = !Data.pairs in*) (*Correction JK*)
 	      let _ = trace_print "COMPILATION DONE" in
 	      Some (Some(a,b)),log 
 		

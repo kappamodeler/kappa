@@ -279,8 +279,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	  [] rs.rules)} in 
     rs in
  
-  let simplify rs = rs in 
-(*    (* when a passive species is not tested, it can be written in the binding type *)
+  let simplify rs = 
+    (* when a passive species is not tested, it can be written in the binding type *)
     let a = rs.Pb_sig.passive_species in 
     let pass,forget_agents = 
       List.fold_left 
@@ -345,7 +345,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		      [] r.Pb_sig.injective_guard
 		      
 	      })	
-	rs.Pb_sig.rules } in *)
+	rs.Pb_sig.rules } in 
 
 
   (******************************************************)
@@ -628,7 +628,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
   (*****************************************)
 
   let hash_fragment,dump,size  = create_fragments_hashtable ode_handler print_obs pb in 
-  let hash_subspecies x = (hash_fragment (canonical_form x)) in 
+  let hash_subspecies x = hash_fragment (canonical_form x) in 
     (* hash_subspecie maps each subspecies to their fragment identifier. *)
     (* dump dump the content of the hashtable *)
   
@@ -682,41 +682,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
       StringMap.map 
 	(fun map -> 
 	  let add l n map = 
-	    let n = 
-	      List.fold_left 
-		(fun sol a -> IntSet.add a sol)
-		IntSet.empty 
-		n in 
 	    try 
-	      let old =
-		StringListMap.find l map in
-	      StringListMap.add l (IntSet.union n old) map 
-	    with 
-	      Not_found -> 
-		StringListMap.add l n map in
-	  StringListMap.fold 
-	    (fun l n map -> 
-	      List.fold_left
-		(fun map l' -> add l' n map)
-		map 
-		(sublist l))
-	    map 
-	    StringListMap.empty)
-	pre_agent_to_int_to_nlist in
-  let agent_to_int_to_nlist = 
-    StringMap.map 
-      (StringListMap.map 
-	 (fun x -> IntSet.fold (fun a b -> a::b) x [])
-	 )
-      agent_to_int_to_nlist 
-  in 
-
-   let agent_to_int_to_nlist_with_compatibility = 
-      StringMap.map 
-	(fun map -> 
-	  let add l n map = 
-	    try 
-	      let old =
+	      let _ =
 		StringListMap.find l map in
 	      map 
 	    with 
@@ -728,22 +695,15 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		(fun map l' -> add l' n map)
 		map 
 		(sublist l))
-	    map 
-	    map)
+	    map map )
 	pre_agent_to_int_to_nlist in
-
-   let agent_to_int_to_nlist bool = 
-     if bool 
-     then agent_to_int_to_nlist_with_compatibility
-     else agent_to_int_to_nlist
-   in 
 
   (****************************************************************)
   (* WE DUMP WHICH VIEWS CAN BE PLUGGED TO COVER A GIVEN SITE SET *)
   (****************************************************************)
 
    let _ =
-     if debug  then 
+     if false then 
        let _ = 
 	 print_string "AGENT_to_INT_to_nlist\n" in
        StringMap.iter 
@@ -757,15 +717,14 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	       List.iter (fun n -> print_int n;print_string ",") n;
 	       print_newline ())
 	     map)
-	 (agent_to_int_to_nlist false)
+	 agent_to_int_to_nlist 
     in 
 
 
    
-   let level = Config_complx.ode_memoization_level in 
+ 
   
-   let get_denum0,get_denum1,get_denum2 = 
-     get_denum (agent_to_int_to_nlist,view_of_tp_i,ode_handler)   in 
+   let get_denum0,get_denum1,get_denum2 = get_denum (agent_to_int_to_nlist,view_of_tp_i,ode_handler)   in 
    let get_denum = 
      match !Config_complx.ode_memoization_level 
      with 
@@ -774,14 +733,10 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
      | _ -> get_denum0  in 
 
     (* The following function maps a bonds to a maximal class of compatible extensions of it (according the views and the annotated contact map) *)
-   let get_denum_handling_compatibility = 
-      let _ = if debug then print_string "COMPATIBILITY\n" in 
-      get_denum true  in 
+   let get_denum_handling_compatibility = get_denum true  in 
   
     (* The following function maps a bonds to all compatible extensions (according to the views and the annotated contact map *)
-    let get_denum = 
-       let _ = if debug then print_string "NO COMPATIBILITY\n" in 
-     get_denum false in
+    let get_denum = get_denum false in
 
 
 
@@ -789,22 +744,20 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
     let keep_this_link a b = keep_this_link a b annotated_contact_map in
 
    
-    let complete_subspecies_handling_compatibility x  = 
-      let _ = if debug then print_string "COMPATIBILITY\n" in 
+    let complete_subspecies_handling_compatibility = 
        complete_subspecies 
 	(pending_edges,
 	 view_of_tp_i,
 	 keep_this_link,
-	 get_denum_handling_compatibility) x in 
+	 get_denum_handling_compatibility) in 
 
  (* This function provides the list of extension of a subspecies according to the annotated contact map *)
-    let complete_subspecies x = 
-      let _ = if debug then print_string "NO COMPATIBILITY\n" in 
+    let complete_subspecies = 
       complete_subspecies 
 	(pending_edges,
 	 view_of_tp_i,
 	 keep_this_link,
-	 get_denum) x in 
+	 get_denum) in 
 
    
     let _ = print_log "COMPUTE ACTIVITY" in 
@@ -896,12 +849,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		in
 		let prod = 
 		  begin 
-		     let rp_target,rp_origin = 
-		       build_rp_bond_from_half_bond 
-			 ((target_type,target_site,
-			   origin_type,origin_site)) in 
-		     
-		     let tp_list = 
+		    let tp_list = 
 		       try StringMap.find target_type annotated_contact_map.subviews 
 		       with 
 			 Not_found -> 
@@ -917,10 +865,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				  skel.kept_sites  
 				 [] in
 			     (StringListMap.find (List.rev skel) 
-				(try 
-				  StringMap.find 
-				    target_type  
-				    (agent_to_int_to_nlist false)
+				(try StringMap.find target_type  agent_to_int_to_nlist
 				with Not_found -> 
 				  error 2481 )
 				 
@@ -945,29 +890,13 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			 tp_list in
 		     List.fold_left
 		       (fun prod tp_i -> 
-			  let blist = valuation_of_view (view_of_tp_i tp_i) in 
-			  let extended_list = 
+			 let extended_list = 
 			    complete_subspecies 
 			      (build_species 
 				 agent_of_tp_i 
 				 (StringMap.add (agent_of_tp_i tp_i) tp_i StringMap.empty)
 			         [])
 			  in 
-			  let p = 
-			   List.map 
-			     (fun (b,bool) -> 
-			       let x = ode_handler.b_of_var b  in 
-			       match ode_handler.b_of_var b with 
-				 AL((_,a,s),(a',s')) when (a=target_type && s=target_site && a'=origin_type && s'=origin_site)  -> x,false
-			       | B(_,a,s) when (a=target_type && s = target_site)  -> x,false
-				     
-			       | _  -> x,bool) 
-			     blist  in
-			  let p = 
-			    try 
-			      StringBListMap.find (target_type,p) views_data_structures.blist_to_template 
-			    with Not_found -> error 1898 
-			  in
 			  let prod = 
 			    List.fold_left 
 			      (fun prod consumed_species -> 
@@ -1089,18 +1018,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	     begin 
 	       let classes = 
 		 List.map  
-		   (fun xx ->
+		   (fun xx -> 
 		     StringSet.fold 
 		       (fun x l ->
-		       	 let _ = 
-			   if debug 
-			   then 
-			     begin
-			       print_string "1049\n";
-			       print_string x;
-			       print_newline ()
-			     end
-			 in
 			 let rec aux to_visit black set = 
 			   match to_visit with 
 			     [] -> set
@@ -1145,14 +1065,14 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			     (fun map (b,bool) -> 
 			       match b with 
 				 B(_) 
-			       | AL(_) | M(_) -> BMap.add ((*downgrade_b*) b) bool map 
+			       | AL(_) | M(_) -> BMap.add (downgrade_b b) bool map 
 			       | L((a,b,c),(d,e,f)) -> 
 				   if bool then 
 				     BMap.add 
-				       ((*downgrade_b*) (AL((a,b,c),(e,f))))
+				       (downgrade_b (AL((a,b,c),(e,f))))
 				       bool
 				       (BMap.add 
-					  ((*downgrade_b*) (AL((d,e,f),(b,c)))) 
+					  (downgrade_b (AL((d,e,f),(b,c)))) 
 					  bool
 					  map)
 				   else
@@ -1245,7 +1165,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					      restricted_blist 
 					      bmap 
 					      a 
-					      (specie_of_id,agent_to_int_to_nlist true,view_of_tp_i,ode_handler)  in 
+					      (specie_of_id,agent_to_int_to_nlist,view_of_tp_i,ode_handler)  in 
 					  let _ = 
 					    if debug
 					    then 
@@ -1253,7 +1173,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 						print_string "COMPATIBLE_VIEWS";
 						print_string a;
 						List.iter 
-						  (fun x -> print_string ":";print_int x;print_newline ())
+						  (fun x -> print_int x;print_newline ())
 						  tp_list;
 						print_newline ()
 					      end in 
@@ -1534,7 +1454,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 						       restricted_blist 
 						       bmap 
 						       a 
-						       (specie_of_id,agent_to_int_to_nlist true,view_of_tp_i,ode_handler)  in 
+						       (specie_of_id,agent_to_int_to_nlist,view_of_tp_i,ode_handler)  in 
 						   
 						   
 						   
@@ -1874,9 +1794,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					       let a = 
 						 try 
 						   StringListMap.find l 
-						     (StringMap.find 
-							(specie_of_id ag) 
-							(agent_to_int_to_nlist false))
+						     (StringMap.find (specie_of_id ag) agent_to_int_to_nlist)
 						 with 
 						   Not_found -> 
 						     error 1850 
@@ -1976,18 +1894,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 						 pprint_newline print_debug)
 					       b) liste
 				       in () in 
-				   let graph_agent_to_agent = 
-				     List.fold_left
-				       (fun map ((a,a',s),(b,b',s')) -> 
-					 let fadd a x map = 
-					   let old = 
-					     try 
-					       StringMap.find a map 
-					     with Not_found -> [] in
-					   StringMap.add a (x::old) map in
-					 fadd a (a',s,b,b',s')
-					   (fadd b (b',s',a,a',s) map))
-				       StringMap.empty passives in
 				   let graph_agent_site_to_agent = 
 				     List.fold_left 
 				       (fun map ((a,a',s),(b,b',s')) -> 
@@ -2407,10 +2313,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					       skel.kept_sites  
 					       [] in
 					   (StringListMap.find (List.rev skel) 
-					      (try 
-						StringMap.find 
-						  target_type  
-						  (agent_to_int_to_nlist false)
+					      (try StringMap.find target_type  agent_to_int_to_nlist
 					      with Not_found -> 
 						error 2481 )
 					      

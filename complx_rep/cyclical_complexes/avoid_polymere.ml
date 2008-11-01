@@ -621,7 +621,6 @@ let avoid_polymere file sub k kin_coef pb mode (l,m) =
 			    let rec aux rule (a0,id0,s0) list agmap agfresh bool = 
 			      match list with [] -> rule,bool 
 			      | ((a,id,s),s')::q -> 
-				  let rule' = rule in
 				  let agmap,agfresh,a'' = 
 				    if s'="" then 
 				      agmap,
@@ -792,15 +791,6 @@ in false
 				      let l0 = 
 					try StringMap.find b' agmap 
 					with Not_found -> [] in 
-				      let l = 
-					List.filter 
-					  (fun a'' -> 
-					    (try 
-		       			      (let _ = PortMap.find (a'',b',s') graph in false)  with Not_found -> true)
-					      &&
-					    ((*not*) (try BMap.find (B(a'',b',s')) bmap
-					    with Not_found -> true)))
-					  l0 in 
 				      
 				      begin(*2*)
 					if l0 = [] 
@@ -910,21 +900,7 @@ let dump_rs chan rs auto =
 	  sol b)
       A.K.E.V.varset_empty rs in
   let s = A.K.build_kleenean_rule_system rs vars in 
-  let sigma =
-    let map = 
-      (A.K.E.V.fold_vars
-	 (fun v map ->
-	   match A.K.E.V.b_of_var v with H(a',a) -> StringMap.add a' a map
-	   | _ -> map)
-	 vars
-	 StringMap.empty) in
-    (fun x -> 
-      try 
-	StringMap.find x map
-      with
-      Not_found -> x) in 
-
-   let s = 
+  let s = 
     A.K.print_kleenean_system 
       string_txt
       (fun x->true) 
@@ -948,7 +924,6 @@ let dump_rs chan rs auto =
 	    [r] -> let rid = r.Pb_sig.r_id in 
 	           let old = name_of_rule r in 
 		   let flag = if string_prefix old rid then rid else old in
-		   let kynetic = kynetic_of_rule r in
 		   if r.Pb_sig.r_clone  then () else 
 		   let _ = print_string "'" in
 		   let _ = print_string flag in
@@ -958,7 +933,7 @@ let dump_rs chan rs auto =
 		   let _ = print_string (Printf.sprintf  "%f" kynetic) in*)
 		   let _ = print_newline () in 
 		   ()
-	  | _ -> error 947 None ) 
+	  | _ -> error 947 ) 
       s
   in 
   () 

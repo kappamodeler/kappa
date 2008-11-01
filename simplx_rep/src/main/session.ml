@@ -367,7 +367,13 @@ let finalize xml_file ?xml_content log code =
   let _ = 
   if (not !save_sim_data) && (!max_iter>1) then 
     try Sys.remove !serialized_sim_data_file 
-    with _ -> () else () in 
+    with _ -> () else () 
+  in
+  let _ = 
+    match !prob_desc with 
+	Some d -> close_out d
+      | None -> ()
+  in
 (*I have put a protection to prevent crashes *)
   let _ = if !Mods2.bench_mode then Gc.print_stat stdout else () in 
   let commandLine = 

@@ -54,7 +54,7 @@ let add_contact with_dots (a1,s1) (a2,s2) cm =
   if String22Set.mem k cm.relation_set 
   then cm
   else 
-    {cm with relation_set = String22Set.add k cm.relation_set;
+    { relation_set = String22Set.add k cm.relation_set;
       relation_list = k::(cm.relation_list);
       possible_linksb = (L((k1,k1,k2),(k3,k3,k4)))::cm.possible_linksb;
       link_of_site = fadd_contact  (a1,s1) (a2,s2) cm.link_of_site;
@@ -184,7 +184,8 @@ let build_drawer p rules contact =
 	List.fold_left 
 	  (fun drawer action -> 
 	    match action with 
-	      Bind ((i,s),(i',s')) -> 
+	      No_Pol | No_Helix -> drawer 
+	    | Bind ((i,s),(i',s')) -> 
 		let ag = get_id i in 
 		let ag' = get_id i' in 
 		fadd_edges_to_rules drawer ((ag,s),(ag',s')) r 

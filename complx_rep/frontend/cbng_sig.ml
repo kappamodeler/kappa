@@ -198,7 +198,9 @@ let dump_a_rule channel  r =
     print "CONTROL \n";
     List.iter (fun x -> 
       match x with 
-	Mark((x,s),m) -> print "MARK %d,%s,%s;\n" x s m
+	No_Pol -> print "NO_POLYMERE;\n"
+      |	No_Helix -> print "No_Helix;\n"
+      |	Mark((x,s),m) -> print "MARK %d,%s,%s;\n" x s m
       | Check_choice l -> (print "CHECK_CHOICE:";
                           let _ = List.fold_left 
 			     (fun bool a -> 

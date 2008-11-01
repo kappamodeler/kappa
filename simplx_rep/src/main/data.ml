@@ -1,9 +1,9 @@
 (**Data references*)
 
 let version_main = 3
-let version_cpt = 394 (*bug in stop condition for stories*)
+let version_cpt = 53 (*intra with biary rate boost*)
 let version_svn = Svn_number.svn_number
-let version_branch = ""
+let version_branch = "polymers"
 let arch_type = string_of_int Sys.word_size
 let version = (string_of_int version_main)^"."^(string_of_int version_cpt)^version_branch^".."^(string_of_int version_svn)^"_"^arch_type
 
@@ -146,6 +146,11 @@ let (seed:int option ref) = ref None
 (**rescaling (default 1.0)*)
 let rescale = ref 1.0           
 
+let coef_unary = ref 1.0 (*unary rate n times faster than binary rate*)
+let p_intra_fic = ref ""
+let plot_p_intra = ref false
+let prob_desc:out_channel option ref = ref None
+
 (**ploting*)
 let ignore_obs = ref false
 
@@ -191,8 +196,7 @@ let (rule_id:int ref) = ref 0
 let (obs_l:Solution.observation list ref) = ref []
 
 (**Initial solution*)
-let init = ref (Solution.empty())
-let (pairs:(Solution.t*int) list ref) = ref [] (*list of pairs (solution,coefficient multiplicateur) will be populated if ode_mode is enabled*)
+let (init:(Solution.t*int) list ref) = ref [] 
 
 (**Do we take into account coefficients in initial states [JF]*)
 let parse_coef = ref true 

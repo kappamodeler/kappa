@@ -12,20 +12,20 @@ open Cbng_sig
 open Error_handler 
 
 
-let error (*i*) x (*t*) y = 
+let error i x (*t*) y = 
     unsafe
       (Some x) 
       (Some "cbng.ml") 
       None (*(Some t)*) 
-      None (*(Some i)*) 
+      (Some (string_of_int i)) 
       y
 
-let error_frozen (*i*) x (*t*) y = 
+let error_frozen i x (*t*) y = 
     unsafe_frozen
       (Some x) 
       (Some "cbng.ml") 
       None (*(Some t)*) 
-      None (*(Some i)*) 
+      (Some (string_of_int i))
       y
 
 module CBnG = 
@@ -62,19 +62,19 @@ module CBnG =
 	       (try (IntMap.add 
 		 (match StringMap.find s m1 
                   with [i] -> (i:int) 
-                       | _ -> (error "PRECOMPUTATION_CBNG" (-1) ))
+                       | _ -> (error 65 "PRECOMPUTATION_CBNG" (-1) ))
                  ) 
-                with Not_found -> (error "BUG_PRECOMPUTATION_CBNG" (fun  x y -> m))) 
+                with Not_found -> (error 67 "BUG_PRECOMPUTATION_CBNG" (fun  x y -> m))) 
 
              (s,s) m 
 	     else m) c m0 in 
-       let f0 i = try (IntMap.find i m0) with Not_found -> (error ("F0_CBNG.ml"^(string_of_int i)) ((string_of_int i),(string_of_int i))) in 
+       let f0 i = try (IntMap.find i m0) with Not_found -> (error 71 ("F0_CBNG.ml"^(string_of_int i)) ((string_of_int i),(string_of_int i))) in 
        let am = 
 	 IntMap.fold (fun i (s1,s2) sol -> 
 	   let old = try (StringMap.find s2 sol) with Not_found -> [] in 
 	   StringMap.add s2 (i::old) sol) 
 	   m0 StringMap.empty in 
-       let fm i = try (StringMap.find i am)  with Not_found -> (error "FM_CBNG.ml" []) in  
+       let fm i = try (StringMap.find i am)  with Not_found -> (error 77 "FM_CBNG.ml" []) in  
        {id_list=l;
         id_mapping=f0;
 	agent_mapping=fm;
@@ -121,7 +121,8 @@ module CBnG =
 	   
     let translate_control_update pb irule map t  (context_control,uncontext_control) = 
     match t with 
-    	Bind ((i1,s1),(i2,s2)) -> 
+      No_Pol | No_Helix -> (context_control,uncontext_control) 
+    | Bind ((i1,s1),(i2,s2)) -> 
 	  let i1',ig1 = irule.id_mapping i1 in 
 	  let i2',ig2 = irule.id_mapping i2 in 
 	  (AL((i1',ig1,s1),(ig2,s2)),true)::(AL((i2',ig2,s2),(ig1,s1)),true)::(l((i1',ig1,s1),(i2',ig2,s2)),true)::(B(i1',ig1,s1),true)::(B(i2',ig2,s2),true)::context_control,uncontext_control
@@ -155,7 +156,7 @@ module CBnG =
       let l = list_fold
 	  (fun x q -> 
 	    match x with 
-	      Bind((i1,s1),(i2,s2)) -> 
+	     Bind((i1,s1),(i2,s2)) -> 
 		(
 		 match compare (snd (ir.id_mapping i1),s1) (snd (ir.id_mapping i2),s2) 
 		 with 1 -> 
@@ -175,7 +176,7 @@ module CBnG =
 		     list_fold 
 		       (fun (id,l) sol -> (id,((Bind((i2,s2),(i1,s1)))::l))::sol)
 		       q []
-		| _ -> error "COMPARE" (list_fold 
+		| _ -> error 179 "COMPARE" (list_fold 
 		     (fun (id,l) sol -> (id,((Bind((i1,s1),(i2,s2)))::l))::sol)
 		     q []))
 	    |  Release((i1,s1),(i2,s2)) -> 
@@ -210,10 +211,10 @@ module CBnG =
 		   list_fold 
 		     (fun (id,l) sol -> (id,((Release((i2,s2),(i1,s1)))::l))::sol)
 		     q []
-	       | _ -> error "COMPARE\n"  (list_fold 
+	       | _ -> error 214 "COMPARE\n"  (list_fold 
 		   (fun (id,l) sol -> (id,((Release((i1,s1),(i2,s2)))::l))::sol)
 		   q []))
-	    | Mark _ | Break_half _ | Check _   -> 
+	    | Mark _ | Break_half _ | Check _  | No_Pol | No_Helix  -> 
 		list_fold 
 		  (fun (id,l) sol -> (id,x::l)::sol)
 		  q [] 
@@ -251,10 +252,12 @@ module CBnG =
 	  let (a,b) = order (rename_site s1,rename_site s2) in 
           GRel(a,b)
       | Break_half(s) -> GRel_half(rename_site s)
+      |	No_Pol -> GNo_Pol
+      |	No_Helix -> GNo_Helix 
       |	Check(i) -> GCheck(rename_agent i)
      (* | Disjoint (i,i') -> GDisjoint(rename_agent i,rename_agent i')
       |	Forbid (i,s) -> GForbid(rename_agent i,s)*)
-      |	_ ->  error_frozen "Unknown control command in Cbng.gen_order" (fun () -> raise Exit)
+      |	_ ->  error_frozen 260 "Unknown control command in Cbng.gen_order" (fun () -> raise Exit)
       
 	    
 	    
@@ -272,7 +275,9 @@ module CBnG =
 	(List.iter 
 	   (fun x -> 
 	     match x with 
-	       GBind x -> (print_string "B";
+	       GNo_Pol -> print_string "No_Pol;"
+	     | GNo_Helix -> print_string "No_Helix;"
+	     | GBind x -> (print_string "B";
                            print_site_pair x;
 			   print_string";")
 		   
@@ -318,7 +323,8 @@ module CBnG =
       let c1 = list_fold
 	  (fun t c -> 
 	    (match t with 
-	      Release((i1,_),(i2,_)) | Bind((i1,_),(i2,_))  -> 
+	      Release((i1,_),(i2,_)) | 
+	      Bind((i1,_),(i2,_))  -> 
 		if i1 < i2 then 
 		rename_var i2 (rename_var i1 c)
 		else
@@ -326,7 +332,8 @@ module CBnG =
 	    | Mark((i,_),_) ->  rename_var i c
 	    | Check i -> rename_var i c
 	    | Break_half (i,_) -> rename_var i c
-            | _ -> error_frozen  "Unknown control command in Cbng.compute_renaming" (fun () -> raise Exit)))
+	    | No_Pol | No_Helix -> c 
+            | _ -> error_frozen  336 "Unknown control command in Cbng.compute_renaming" (fun () -> raise Exit)))
 	  (order_control r.cpb_control.cpb_update) (IntMap.empty,0)
       in 
       let c2 = IntSet.fold rename_var r.cpb_control.cpb_remove c1 in 
@@ -345,7 +352,8 @@ module CBnG =
 	    | Mark((i,s),m) -> Mark((f i,s),m)
 	   | Check(i) -> Check(f i)
 	   | Break_half(i1,s1) -> Break_half(f i1,s1)
-           | _ -> error_frozen  "Unknown control command in Cbng.apply_renaming_control" (fun () -> raise Exit))
+	   | No_Pol | No_Helix -> x 
+           | _ -> error_frozen  356 "Unknown control command in Cbng.apply_renaming_control" (fun () -> raise Exit))
 	    (order_control r.cpb_control.cpb_update)}
        with 
 	cpb_remove = IntSet.fold (fun i s -> IntSet.add (f i) s) r.cpb_control.cpb_remove IntSet.empty}
@@ -398,7 +406,8 @@ List.map (rename_test f) b)) r.cpb_guard;
 		| Mark((x1,_),_) -> set,set'
 		| Check(x1) -> (IntSet.add x1 set,set')
 		| Break_half (x1,_) -> set,IntSet.add x1 set'
-		| _ -> error  "Unknown control command in Cbng.build_passive" (set,set'))
+		| No_Helix | No_Pol -> set,set'
+		| _ -> error  409 "Unknown control command in Cbng.build_passive" (set,set'))
 		t.cpb_control.cpb_update (IntSet.empty,IntSet.empty) in  
 	    let modset = IntSet.union t.cpb_control.cpb_create t.cpb_control.cpb_remove in 
 	    let rootset = 
@@ -491,7 +500,7 @@ List.map (rename_test f) b)) r.cpb_guard;
 	   let translate_path p ir = 
 	     let rec aux p sol = 
 	       match p with
-		 (Agent_id x)::t::q -> aux (t::q) ((Agent_gen (try (snd(ir.id_mapping x)) with _ -> (error "id_mapping" (string_of_int x))))::sol)
+		 (Agent_id x)::t::q -> aux (t::q) ((Agent_gen (try (snd(ir.id_mapping x)) with _ -> (error 502 "id_mapping" (string_of_int x))))::sol)
 	       | t::q -> aux q (t::sol)
 	       | [] -> List.rev sol
 	     in aux p [] in 
@@ -541,13 +550,13 @@ List.map (rename_test f) b)) r.cpb_guard;
 			 (alias,None) all_path in 
 		     let renaming = 
 		       let x' = try (S4.find main_path f_path_to_int)
-		       with Not_found -> (error "renaming473" (-1)) in 
+		       with Not_found -> (error 552 "renaming473" (-1)) in 
 		       let renaming = IntMap.add x x' renaming in 
 		       renaming in 
 		     (f_path_to_int,f_int_to_path,alias,renaming,n)
 		   end
 		     
-		 with _ -> error "renaming 461" 
+		 with _ -> error 558 "renaming 461" 
 		     (f_path_to_int,f_int_to_path,alias,renaming,n))
                (IntSet.diff targetset rootset) (f_path_to_int,f_int_to_path,[],renaming,n)  in 
            
@@ -604,14 +613,14 @@ List.map (rename_test f) b)) r.cpb_guard;
 		  alias in () in  
 	    let _ = trace_print "NG_OK" in 
 	     let fr x = try (IntMap.find x renaming) 
-	     with Not_found -> (error "FR.CBNG.ml" x) in  
+	     with Not_found -> (error 615 "FR.CBNG.ml" x) in  
 	    Some {
 	     cpb_quarks = None ;
 	     cpb_r_species=(trace_print "R_SPECIES";
 	     IntMap.fold (fun i j sol ->
 	       match j with 
 		 (Agent_gen x)::_ -> (i,x)::sol
-	       | _ -> error "CBNG 518" sol) 
+	       | _ -> error 622 "CBNG 518" sol) 
 	       f_int_to_path []); 
 	     cpb_passive= (trace_print "PASSIVE";
 		       Some 
@@ -626,7 +635,7 @@ List.map (rename_test f) b)) r.cpb_guard;
 										|  Agent_gen s -> print_string s;
       | Site s -> print_string s
 	    ) path;
-  error "CBNG 528" 0),c))::sol 
+  error 637 "CBNG 528" 0),c))::sol 
 			      | _ -> sol)
 			      f_int_to_path 
 			      []));
@@ -689,7 +698,7 @@ List.map (rename_test f) b)) r.cpb_guard;
 	      (fun sol (f,r,l) -> ((h,l)::sol)) 
 	      ll 
 	      b 
-	| _ -> error "FEED_FUNCTION in CBNG.ml" ll  in 
+	| _ -> error 700 "FEED_FUNCTION in CBNG.ml" ll  in 
       let enrich_l = 
 	List.sort 
 	  (fun (r,ir) (r',ir') -> 
@@ -704,7 +713,7 @@ List.map (rename_test f) b)) r.cpb_guard;
 	     let _ = trace_print "END PREHASH" in 
 	     let f' = 
 	       match compute_renaming_rule r'
-	       with None -> (error_frozen "Compute_renaming_rule has output None" (fun () -> raise Exit))
+	       with None -> (error_frozen 715 "Compute_renaming_rule has output None" (fun () -> raise Exit))
 		 | Some f -> f in 
 	       (match old_hash with 
 		   None -> (Some h',
@@ -789,7 +798,7 @@ List.map (rename_test f) b)) r.cpb_guard;
 	     try (compare 
 		    (try (List.hd ((List.hd  c1.Pb_sig.rules).labels)).Pb_sig.r_id
 		     with _ -> "")
-		    (try (List.hd ((List.hd  c2.Pb_sig.rules).labels)).Pb_sig.r_id     with _ -> "")) with _ -> error "Empy rule_class" 0)
+		    (try (List.hd ((List.hd  c2.Pb_sig.rules).labels)).Pb_sig.r_id     with _ -> "")) with _ -> error 800 "Empy rule_class" 0)
 	  
 	  (List.rev_map 
 	     (fun c -> 
@@ -1020,7 +1029,7 @@ List.map (rename_test f) b)) r.cpb_guard;
 							    (idb,c,d))) map2))
 					 (try (StringMap.find c id_of_species) with Not_found -> []) map2
 					 )) (try (StringMap.find a id_of_species) with Not_found -> []) (map1,map2)))
-		  |	 _ -> (error "PARSE_CASE" (raise Exit))) 
+		  |	 _ -> (error 1031 "PARSE_CASE" (raise Exit))) 
 		possible_linksb
 		(BMap.empty,BMap.empty) in
 	    let b_of_id = 
@@ -1129,7 +1138,7 @@ List.map (rename_test f) b)) r.cpb_guard;
 	  None -> 
 	    (match pb.gathered_intermediate_encoding 
 		with Some a -> a
-	    | None -> error_frozen "CBNG 980" (fun () -> raise Exit))
+	    | None -> error_frozen 980 "CBNG 980" (fun () -> raise Exit))
 	| Some a -> a in 
       
       let pretty_map = 

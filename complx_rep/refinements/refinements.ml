@@ -333,16 +333,6 @@ let dump_refinement_in_XML title channel rules rel =
       let _ = print_string (string_of_int s.Rule.id) in
       let _ = print_string "\"" in () 
     in
-    let print_rule_id a = 
-      try 
-	let s = 
-	  try 
-	    IntMap.find a rule_map
-	  with 
-	    Not_found -> raise Exit in
-	print_rule s 
-      with _ -> error 232  None  
-    in
     let is_diag (x,y) = x=y in 
     let _ = 
       List.fold_left

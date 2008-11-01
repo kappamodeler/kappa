@@ -271,45 +271,46 @@ let translate_rule t flags fset (agents,marks,markable_sites,linkable_sites,mark
       t.Rule.lhs  (test,IntMap.empty,contact,IntStringSet.empty)
   in
   let test,agents,marks,markable_sites,linkable_sites,mark_site_rel = 
-    Mods2.IntMap.fold (fun _ cc -> 
-			Solution.AA.fold 
-			  (fun i a (test,agents,marks,markable_sites,linkable_sites,mark_site_rel) ->
-			     let i = sigma i in 
-			     let test = (Pb_sig.Is_here(i))::test in 
-			       Agent.fold_interface 
-				 (fun s (m1,m2) (test,agents,marks,markable_sites,linkable_sites,mark_site_rel)-> 
-				    let test,marks,markable_sites,mark_site_rel = 
-				      match m1 with Agent.Wildcard -> (test,marks,markable_sites,mark_site_rel)
-					| Agent.Marked m -> 
-					    (Pb_sig.Is_marked((i,s),m)::test,
-					     StringSet.add m marks,
-					     fadd i s markable_sites,
-					     fadd_mark_site (i,s) m mark_site_rel)
-					| _ -> (print_string "translate";print_newline ();raise Exit)
+    Mods2.IntMap.fold 
+      (fun _ cc -> 
+	Solution.AA.fold 
+	  (fun i a (test,agents,marks,markable_sites,linkable_sites,mark_site_rel) ->
+	    let i = sigma i in 
+	    let test = (Pb_sig.Is_here(i))::test in 
+	    Agent.fold_interface 
+	      (fun s (m1,m2) (test,agents,marks,markable_sites,linkable_sites,mark_site_rel)-> 
+		let test,marks,markable_sites,mark_site_rel = 
+		  match m1 with Agent.Wildcard -> (test,marks,markable_sites,mark_site_rel)
+		  | Agent.Marked m -> 
+		      (Pb_sig.Is_marked((i,s),m)::test,
+		       StringSet.add m marks,
+		       fadd i s markable_sites,
+		       fadd_mark_site (i,s) m mark_site_rel)
+		  | _ -> (print_string "translate";print_newline ();raise Exit)
 				    in 
-				    let test,linkable_sites = 
-				      match m2 with Agent.Wildcard -> test,linkable_sites
-					| Agent.Free -> 
-					    if s="_" 
-					    then (test,linkable_sites) 
-					    else 
-					      ((Pb_sig.Is_free (i,s)):: test,linkable_sites)
-					| Agent.Bound ->  
-					    if IntStringSet.mem (i,s) bs
-					    then (test,fadd i s linkable_sites)
-					    else 
+		let test,linkable_sites = 
+		  match m2 with Agent.Wildcard -> test,linkable_sites
+		  | Agent.Free -> 
+		      if s="_" 
+		      then (test,linkable_sites) 
+		      else 
+			((Pb_sig.Is_free (i,s)):: test,linkable_sites)
+		  | Agent.Bound ->  
+		      if IntStringSet.mem (i,s) bs
+		      then (test,fadd i s linkable_sites)
+		      else 
 					      ((Pb_sig.Is_bound (i,s))::test,
 					       fadd i s linkable_sites)
-					| _ -> (print_string "translate.184";print_newline ();raise Exit)
+		  | _ -> (print_string "translate.184";print_newline ();raise Exit)
 				    in 
-				      test,agents,marks,markable_sites,linkable_sites,mark_site_rel)
-				 a
-				 (test,StringSet.add (Agent.name a) agents,marks,markable_sites,linkable_sites,mark_site_rel))
-			  cc.Solution.agents)
+		test,agents,marks,markable_sites,linkable_sites,mark_site_rel)
+	      a
+	      (test,StringSet.add (Agent.name a) agents,marks,markable_sites,linkable_sites,mark_site_rel))
+	  cc.Solution.agents)
       t.Rule.lhs 
       (test,agents,marks,markable_sites,linkable_sites,mark_site_rel)
   in 
-    
+  
   let permute (i1,s1) (i2,s2) =
     let ag1 = IntMap.find i1 speciemap in
     let ag2 = IntMap.find i2 speciemap in 
@@ -378,92 +379,78 @@ let translate_rule t flags fset (agents,marks,markable_sites,linkable_sites,mark
     
   let test,control,agents,markable_sites,mark_site_rel,linkable_sites,contact = 
     let c1,c2 = control in
-    let c1,roots = 
-      list_fold  
-	(fun (Solution.CC(i,a,b,sep)) (c1,roots) ->  (*MODIF JEAN 18/04/2008: sep is a list of names which should not be connected to agent i*)
-	  let i = sigma i in 
-	  let c1,roots = Pb_sig.Check(i)::c1,IntSet.add i roots in 
-	  let c1,roots = 
-	    Mods2.IntSet.fold 
-              (fun a (c1,roots) ->
-		let a = sigma a in 
-                ((Pb_sig.Check(a)::c1),
-		 IntSet.add a roots))
-              a  (c1,roots) in 
-	  let c1,roots = 
-            Mods2.IntSet.fold
-               (fun a (c1,roots) -> 
-		 let a = sigma a in 
-                 (Pb_sig.Check(a)::c1),IntSet.add a roots)
-               b (c1,roots) 
-	  in c1,roots)
-	(t.Rule.constraints) 
-	(c1,roots) in 
+    let c1 = 
+      List.fold_left 
+	(fun c1 x -> 
+	  match x with 
+	    Rule.NO_POLY -> Pb_sig.No_Pol::c1
+	  | Rule.NO_HELIX -> Pb_sig.No_Helix::c1)
+	c1 t.Rule.constraints in 
     let (c1,c3),agents,cr_agents,ms,mark_site_rel  = 
       Mods2.IntMap.fold
 	(fun i a (((c1:Pb_sig.action list),c3),agents,cr_agents,ms,mark_site_rel) -> 
 	  let i = sigma i in 
 	  let ig = Agent.name a in 
-	   (let a1,marks_site_rel = 
-		(Agent.fold_interface 
-		   (fun s (m1,m2) (ms,mark_site_rel) ->  
-		      if s = "_" then ms,mark_site_rel
-		      else 
-			match m1 with 
-			    Agent.Marked x -> (Pb_sig.Mark((i,s),x))::ms,
-			      fadd_mark_site (i,s) x mark_site_rel
-			  | Agent.Wildcard -> ms,mark_site_rel
-			  | Agent.Bound -> error "BOUND: translate.ml Added complex" (ms,mark_site_rel)
-			  | Agent.Free -> error "BOUND: translate.ml Added complex" 
-			      (ms,mark_site_rel)
-		   )
-		   a 
-		   (c1,mark_site_rel)) in 
-		(a1, 
-		 IntSet.add i c3),
-              StringSet.add ig agents,
-	      IntSet.add i cr_agents,
-	      enrich_ms a ms,
-	      mark_site_rel))
+	  (let a1,marks_site_rel = 
+	    (Agent.fold_interface 
+	       (fun s (m1,m2) (ms,mark_site_rel) ->  
+		 if s = "_" then ms,mark_site_rel
+		 else 
+		   match m1 with 
+		     Agent.Marked x -> (Pb_sig.Mark((i,s),x))::ms,
+		       fadd_mark_site (i,s) x mark_site_rel
+		   | Agent.Wildcard -> ms,mark_site_rel
+		   | Agent.Bound -> error "BOUND: translate.ml Added complex" (ms,mark_site_rel)
+		   | Agent.Free -> error "BOUND: translate.ml Added complex" 
+			 (ms,mark_site_rel)
+			 )
+	       a 
+	       (c1,mark_site_rel)) in 
+	  (a1, 
+	   IntSet.add i c3),
+          StringSet.add ig agents,
+	  IntSet.add i cr_agents,
+	  enrich_ms a ms,
+	  mark_site_rel))
 	t.Rule.add 
 	((c1,IntSet.empty),agents,IntSet.empty,markable_sites,mark_site_rel) in 
     let rec aux (bl,wl,sol) = 
       match wl with [] -> sol 
-	| t::q -> 
-	    aux (
-	      let s = try (IntMap.find t graph) with Not_found -> IntSet.empty  in
-		IntSet.fold 
-		  (fun i (bl,wl,sol) ->
-		     if IntSet.mem i bl then (bl,wl,sol)
-		     else (IntSet.add i bl,
-			   i::wl,
-			   IntSet.add i sol))
-		  s (bl,q,sol)) in 
+      | t::q -> 
+	  aux (
+	  let s = try (IntMap.find t graph) with Not_found -> IntSet.empty  in
+	  IntSet.fold 
+	    (fun i (bl,wl,sol) ->
+	      if IntSet.mem i bl then (bl,wl,sol)
+	      else (IntSet.add i bl,
+		    i::wl,
+		    IntSet.add i sol))
+	    s (bl,q,sol)) in 
     let close = aux (roots,IntSet.fold (fun i sol -> i::sol) roots [],roots) in
     let control,close = 
       Mods2.IntMap.fold
 	(fun _ cc (control,close) -> 
-	   Solution.AA.fold 
-	     (fun i _ (control,close) -> 
-	       let i = sigma i in 
-	       if IntSet.mem i close
-	       then control,close
-	       else (
-		 let new_comp = aux (IntSet.singleton i,[i],IntSet.singleton i) in 
-		 ((Pb_sig.Check_choice(IntSet.elements new_comp)::control),
-		  IntSet.union close new_comp)))
+	  Solution.AA.fold 
+	    (fun i _ (control,close) -> 
+	      let i = sigma i in 
+	      if IntSet.mem i close
+	      then control,close
+	      else (
+		let new_comp = aux (IntSet.singleton i,[i],IntSet.singleton i) in 
+		((Pb_sig.Check_choice(IntSet.elements new_comp)::control),
+		 IntSet.union close new_comp)))
 	    cc.Solution.agents (control,close))
 	t.Rule.lhs (c1,close)
     in test,(control,c2,c3),agents,ms,mark_site_rel,linkable_sites,contact
   in
-    
+  
   let a = match t.Rule.flag with None -> id | Some a -> a in 
   let f= 
     let rec aux n = 
       let fl = 
 	if n=0 then a else a^"."^(string_of_int n) in 
-	if StringSet.mem fl fset then aux (n+1)
-	else (fl)
+      if StringSet.mem fl fset then aux (n+1)
+      else (fl)
     in aux 0 in 
   let fset = StringSet.add f fset in 
   let flags = StringMap.add id f flags in 
@@ -471,34 +458,14 @@ let translate_rule t flags fset (agents,marks,markable_sites,linkable_sites,mark
   let c,linkable_sites = 
     IntSet.fold 
       (fun i (c,ls) -> 
-	 list_fold 
-	   (fun b (c,s) -> 
-	     match b with Pb_sig.Is_related((i1,s1),(i2,s2)) when i1=i or i2 =i -> 
-	       (Pb_sig.Check_choice([i1;i2]))::
-	       Pb_sig.Release((i1,s1),(i2,s2))::c,fadd i1 s1 (fadd i2 s2 s)
-	     | _ -> (c,s))
+	list_fold 
+	  (fun b (c,s) -> 
+	    match b with Pb_sig.Is_related((i1,s1),(i2,s2)) when i1=i or i2 =i -> 
+	      (Pb_sig.Check_choice([i1;i2]))::
+	      Pb_sig.Release((i1,s1),(i2,s2))::c,fadd i1 s1 (fadd i2 s2 s)
+	    | _ -> (c,s))
 	  test (c,ls))
       cr (c,linkable_sites) in 
-  let c,test = c,
-    list_fold 
-      (fun (Solution.CC(i,a,b,c)) test -> 
-	let test = 
-	  Mods2.IntSet.fold 
-	    (fun j test -> Pb_sig.Is_connected(i,j)::test) 
-	    a 
-	    test in 
-	let test = 
-	  Mods2.IntSet.fold
-	    (fun a test -> 
-	      let (a1,a2) = if a<i then (a,i) else (i,a) in 
-              ((Pb_sig.Is_disjoint(a1,a2)::test)))
-		 b test in
-	let test = 
-	  if Mods2.StringSet.is_empty c  then test
-	    else
-	      Pb_sig.Is_forbid(i,Mods2.StringSet.fold (fun a b -> a::b) c [])::test 
-	in test)
-      (t.Rule.constraints) test in 
     {
       Pb_sig.cpb_quarks = None;
       Pb_sig.cpb_equal = [];

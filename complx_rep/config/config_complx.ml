@@ -274,49 +274,6 @@ let foot = head
 let do_maximal_refinement = ref true
 let do_dag_refinement = ref true 
 
-let outputlist = 
-  MultiExt [
-  "--output-latex-rule-system","_plx.tex";
-  "--output-latex-sty","_plx.sty";
-  "--output-ODE-obs-latex","_plx_ODE_obs.tex";
-  "--output-ODE-latex","_plx_ODE_system.tex";
-  "--output-ODE-contact","_plx_ODE_contact.dot";
-  "--output-ODE-mathematica","_plx_ODE_system.nb";
-  "--output-ODE-matlab","_plx_ODE_system.m";
-  "--output-ODE-alphabet","_plx_ODE_alphabet";
-  "--output-ODE-covering","_plx_ODE_covering";
-"--output-ODE-obs","_plx_ODE_obs";
-  "--output-ODE-obs-head","_plx_head.data";
-  "--output-ODE-data","_plx_foot.data";
-  "--output-marshalling","_plx.marshalling";
-  "--output-influence-map-txt","_plx_influence_map.txt";
-  "--output-influence-map-dot","_plx_influence_map.txt";
-  "--output-quantitative-compression","_plx_compressed_quantitative.ka";
-"--output-qualitative-compression","_plx_compressed_qualitative.ka";
-  "--output-low-res-contact-map-dot","_plx_low_res_contact.dot";
-  "--output-low-res-contact-map-ps","_plx_low_res_contact.ps";
-  "--output-low-res-contact-map-jpg","_plx_low_res_contact.jpg";
-  "--output-low-res-contact-map-txt","_plx_low_res_contact.txt";
-  "--output-high-res-contact-map-dot","_plx_high_res_contact.dot";
-  "--output-high-res-contact-map-ps","_plx_high_res_contact.ps";
-  "--output-high-res-contact-map-jpg","_plx_high_res_contact.jpg";
-  "--output-high-res-contact-map-txt","_plx_high_res_contact.txt";
-"--output-intermediate-encoding","_plx_ckappa.txt";
-  "--output-gathered-intermediate-encoding","_plx_ckappa_gathered.txt";
-  "--output-pretty-qualitative-compression","_plx_compressed_qualitative.txt";
-  "--output-pretty-quantitative-compression","_plx_compressed_quantitative.txt";
-  "--output-boolean-encoding","_plx_boolean_encoding.txt";
-  "--output-gathered-boolean-encoding","_plx_boolean_encoding_gathered.txt";
-  "--output-pack-constraints","_plx_site_constraints.txt";
-"--output-reachable-complexes","_plx_reachables.txt";
-  "--output-specie-map","_plx_specie_map.txt";
-  "--output-xml","_plx.xml";
-  "--output-html","_plx.html";
-  "--output-refined-system","_plx_refinement.ka";
-  "--output_dag_ref_dot","_plx_dag_refinement_relation.dot";
-  "--output_dag_ref_jpg","_plx_dag_refinement_relation.jpg";
-  "--output_maximal_ref_dot","_plx_maximal_refinement_relation.dot";
-  "--output_maximal_ref_jpg","_plx_maximal_refinement_relation.jpg"]
 
 let options = List.rev
 
@@ -324,11 +281,11 @@ let options = List.rev
 
     [
   "--do-all",
-  Multi(["--do-local-views";
-	  "--do-complexes";
-	  "--do-influence-map";
-	  "--do-qualitative-compression";
-	  "--do-quantitative-compression";
+  Multi(["--compute-local-views";
+	  "--enumerate-complexes";
+	  "--build-influence-map";
+	  "--compute-qualitative-compression";
+	  "--compute-quantitative-compression";
 	  "--do-low-res-contact-map";
 	  "--do-high-res-contact-map";
 	  "--do-marshalling";
@@ -342,9 +299,9 @@ let options = List.rev
   "launch everything",["0_Actions"],Normal;
   "--reset-all",
   Multi([
-	"--no-do-local-views";
-	"--no-do-complexes";
-	"--no-do-influence-map";
+	"--no-compute-local-views";
+	"--no-enumerate-complexes";
+	"--no-build-influence-map";
 	"--no-do-low-res-contact-map";
 	"--no-do-high-res-contact-map";
 	"--no-compute-qualitative-compression";
@@ -360,19 +317,13 @@ let options = List.rev
       ],[]),
   "launch nothing",["0_Actions"],Normal;
   "--truc",Void,"",["0_Actions"],Normal;
-"--build-influence-map",Bool do_influence,"construct influence maps",["0_Actions";"Influence map"],Hidden; 
-"--compute-local-views",Bool do_local_views,"compute reachability analysis",["0_Actions";"Reachability analysis"],Hidden;
-"--enumerate-complexes",Bool do_enumeration,"enumerate complexes",["0_Actions";"Concretization"],Hidden;
-"--do-influence-map",Bool do_influence,"construct influence maps",["0_Actions";"Influence map"],Hidden; 
-"--do-local-views",Bool do_local_views,"compute reachability analysis",["0_Actions";"Reachability analysis"],Normal;
-"--do-complexes",Bool do_enumeration,"enumerate complexes",["0_Actions";"Concretization"],Normal;
-
-"--do-low-res-contact-map", Bool do_low_res_contact_map,"construct the low resolution contact map",["0_Actions";"Contact map"],Normal;
+  "--compute-local-views",Bool do_local_views,"compute reachability analysis",["0_Actions";"Reachability analysis"],Normal;
+  "--enumerate-complexes",Bool do_enumeration,"enumerate complexes",["0_Actions";"Concretization"],Normal;
+  "--build-influence-map",Bool do_influence,"construct influence maps",["0_Actions";"Influence map"],Normal;
+  "--do-low-res-contact-map", Bool do_low_res_contact_map,"construct the low resolution contact map",["0_Actions";"Contact map"],Normal;
   "--do-high-res-contact-map", Bool do_high_res_contact_map,"constrauct the high resolution contact map",["0_Actions";"Contact map"],Normal;  
- "--compute-qualitative-compression",Bool do_qualitative_compression,"simplify the rules",["0_Actions";"Compression"],Hidden;
-  "--compute-quantitative-compression",Bool do_quantitative_compression,"simplify the rules",["0_Actions";"Compression"],Hidden;
-"--do-qualitative-compression",Bool do_qualitative_compression,"simplify the rules",["0_Actions";"Compression"],Normal;
-  "--do-quantitative-compression",Bool do_quantitative_compression,"simplify the rules",["0_Actions";"Compression"],Normal;
+ "--compute-qualitative-compression",Bool do_qualitative_compression,"simplify the rules",["0_Actions";"Compression"],Normal;
+  "--compute-quantitative-compression",Bool do_quantitative_compression,"simplify the rules",["0_Actions";"Compression"],Normal;
   "--do-LATEX",Bool do_dump_latex,"dump the LaTeX style file and the LaTeX document for the list of rules",["0_Actions";"LATEX"],Normal;
   "--do-ODE",Bool do_ODE,"compute the ODE system",["0_Actions";"ODE"],Normal;
   "--do-refine-to-force-cycles",Bool force_cycle,"Refine the system to avoid polymere formation",["0_Actions";"Polymers prevention"],Normal;
@@ -382,8 +333,7 @@ let options = List.rev
 "--do-marshalling",Bool do_marshalling,"Dump mashallization",["0_Actions";"Marshalling"],Normal;
  "--do-HTML",Bool do_HTML_session,"Launch HTML desktop",["0_Actions";"HTML"],Normal;
  "--do-XML",Bool do_XML_session,"dump XML session",["0_Actions";"XML"],Normal;
-
-"--truc",Void,"",["Reachability analysis";"Concretization";"Contact map";"Influence map";"Compression";"HTML";"XML";"Marshalling";"Polymers prevention"],Normal;
+"--truc",Void,"",["Reachability analysis";"Concretization";"Influence map";"Compression";"HTML";"XML";"Marshalling"],Normal;
 
 (*0_Input*)
 									    
@@ -393,60 +343,164 @@ let options = List.rev
  "--focus-on",String input_focus_on,
 "Focus contact maps around the given rules",
 ["1_Input";"Contact map"],Normal;
-"--trucc",Void,"",["Contact map";"Marshalling";"Refinement detection";"LATEX";"ODE"],Normal;
-
-
 (*2_Output*)
-"--output-scheme",outputlist,"generic file name for output files",["2_Output";"2_Output'";"2_Output''";"2_Output'''"],Normal;
-"--truc2",Void,"help",["2_Output";"2_Output'";"2_Output''";"2_Output'''"],Normal;
 
-"--output-boolean-encoding",String output_boolean_encoding,"write the boolean encoding with isolated rules",["2_Output";"Boolean encoding"],Expert;
-"--output_dag_ref_dot",String output_dag_ref_dot,"dump the dag-like refinement relation in a dot file",["2_Output";"Refinement detection"],Normal;
-"--output_dag_ref_jpg",String output_dag_ref_jpg,"dump the dag-like refinement relation in a jpg file",["2_Output";"Refinement detection"],Normal;
-"--output-gathered-boolean-encoding",String output_gathered_boolean_encoding,"write the boolean encoding with isolated rules (gathered)",["2_Output";"Boolean encoding"],Expert;
-"--output-gathered-intermediate-encoding",String output_gathered_cbng,"write the intermediate endoding (gathered)",["2_Output";"Intermediar encoding"],Expert;
-"--output-high-res-contact-map-dot",String output_high_res_contact_dot_file,"write the high resolution contact map with a .dot format",["2_Output";"Contact map"],Normal;
-"--output-high-res-contact-map-jpg",String output_high_res_contact_jpg_file,"write the high resolution contact map with a .jpg format",["2_Output";"Contact map"],Normal;
-"--output-high-res-contact-map-ps",String output_high_res_contact_ps_file,"write the high resolution contact map with a .ps format",["2_Output";"Contact map"],Normal;
-"--output-high-res-contact-map-txt",String output_high_res_contact_txt_file,"write the high resolution contact map with a .txt format",["2_Output";"Contact map"],Normal;
-"--output-html",String output_html,"write an html file",["2_Output";"HTML"],Normal;
+									"--output-scheme",MultiExt [
+"--output-latex-rule-system","_plx.tex";
+"--output-latex-sty","_plx.sty";
+"--output-ODE-obs-latex","_plx_ODE_obs.tex";
+"--output-ODE-latex","_plx_ODE_system.tex";
+"--output-ODE-contact","_plx_ODE_contact.dot";
+"--output-ODE-mathematica","_plx_ODE_system.nb";
+"--output-ODE-matlab","_plx_ODE_system.m";
+"--output-ODE-alphabet","_plx_ODE_alphabet";
+"--output-ODE-covering","_plx_ODE_covering";
+"--output-ODE-obs","_plx_ODE_obs";
+"--output-ODE-obs-head","_plx_head.data";
+"--output-ODE-data","_plx_foot.data";
+"--output-marshalling","_plx.marshalling";
+"--output-influence-map-txt","_plx_influence_map.txt";
+"--output-influence-map-dot","_plx_influence_map.txt";
+"--output-quantitative-compression","_plx_compressed_quantitative.ka";
+"--output-qualitative-compression","_plx_compressed_qualitative.ka";
+"--output-low-res-contact-map-dot","_plx_low_res_contact.dot";
+"--output-low-res-contact-map-ps","_plx_low_res_contact.ps";
+"--output-low-res-contact-map-jpg","_plx_low_res_contact.jpg";
+"--output-low-res-contact-map-txt","_plx_low_res_contact.txt";
+"--output-high-res-contact-map-dot","_plx_high_res_contact.dot";
+"--output-high-res-contact-map-ps","_plx_high_res_contact.ps";
+"--output-high-res-contact-map-jpg","_plx_high_res_contact.jpg";
+"--output-high-res-contact-map-txt","_plx_high_res_contact.txt";
+"--output-intermediate-encoding","_plx_ckappa.txt";
+"--output-gathered-intermediate-encoding","_plx_ckappa_gathered.txt";
+"--output-pretty-qualitative-compression","_plx_compressed_qualitative.txt";
+"--output-pretty-quantitative-compression","_plx_compressed_quantitative.txt";
+"--output-boolean-encoding","_plx_boolean_encoding.txt";
+"--output-gathered-boolean-encoding","_plx_boolean_encoding_gathered.txt";
+"--output-pack-constraints","_plx_site_constraints.txt";
+"--output-reachable-complexes","_plx_reachables.txt";
+"--output-specie-map","_plx_specie_map.txt";
+"--output-xml","_plx.xml";
+"--output-html","_plx.html";
+"--output-refined-system","_plx_refinement.ka";
+"--output_dag_ref_dot","_plx_dag_refinement_relation.dot";
+"--output_dag_ref_jpg","_plx_dag_refinement_relation.jpg";
+"--output_maximal_ref_dot","_plx_maximal_refinement_relation.dot";
+"--output_maximal_ref_jpg","_plx_maximal_refinement_relation.jpg"],
+"generic file name for output files",
+["2_Output"],Normal;
+"--truc2",Void,"help",["2_Output"],Normal;
+"--output-quantitative-compression",String dump_quantitative_compression,"write the compressed quantitative compression in a .bng format",["2_Output";"Compression"],Normal;
+"--output-qualitative-compression",String dump_qualitative_compression,"write the compressed qualitative compression in a .bng format",["2_Output";"Compression"],Normal;
+ "--output-pretty-qualitative-compression",String output_pretty_qualitative_compression, "write the pretty compressed qualitative compression",["2_Output";"Compression"],Normal;
+"--output-pretty-quantitative-compression",String output_pretty_quantitative_compression, "write the pretty compressed quantitative compression",["2_Output";"Compression"],Normal;
+"--output-refined-system",String output_without_polymere, 
+"write the refined system without polymeres",["2_Output";"Polymers prevention"],Normal;
 
-"--output-influence-map-dot",String output_influence_map_dot_file,"write the causality map with .dot format",["2_Output'";"Influence map"],Normal;
-"--output-influence-map-txt",String output_influence_map_txt_file,"write the causality map with .txt format",["2_Output'";"Influence map"],Normal; 
-"--output-intermediate-encoding",String output_cbng,"write the intermediate encoding", ["2_Output'";"Intermediar encoding"],Expert;
-"--output-latex-rule-system",String output_latex_rule_system,"dump the rules in latex format",["2_Output'";"LATEX"],Normal;
-"--output-latex-sty",String output_latex_sty,"write the style file for a model",["2_Output'";"LATEX"],Normal;
-"--output-low-res-contact-map-dot",String output_low_res_contact_dot_file,"write the low resolution contact map with a .dot format",["2_Output'";"Contact map"],Normal;
-"--output-low-res-contact-map-jpg",String output_low_res_contact_jpg_file,"write the low resolution contact map with a .jpg format",["2_Output'";"Contact map"],Normal;
-"--output-low-res-contact-map-ps",String output_low_res_contact_ps_file,"write the low resolution contact map with a .ps format",["2_Output'";"Contact map"],Normal;
-"--output-low-res-contact-map-txt",String output_low_res_contact_txt_file,"write the low resolution contact map with a .txt format",["2_Output'";"Contact map"],Normal;
-"--output-marshalling",String output_marshalling,"marshallize the computation state",["2_Output'";"Marshalling"],Normal;
+"--output-influence-map-txt",String output_influence_map_txt_file,
+    "write the causality map with .txt format",["2_Output";"Influence map"],Normal; 
+"--output-influence-map-dot",String output_influence_map_dot_file,
+  "write the causality map with .dot format",["2_Output";"Influence map"],Normal;
+"--output-low-res-contact-map-dot",String output_low_res_contact_dot_file,
+    "write the low resolution contact map with a .dot format",["2_Output";"Contact map"],Normal;
+"--output-low-res-contact-map-ps",String output_low_res_contact_ps_file,
+    "write the low resolution contact map with a .ps format",["2_Output";"Contact map"],Normal;
+"--output-low-res-contact-map-jpg",String output_low_res_contact_jpg_file,
+    "write the low resolution contact map with a .jpg format",["2_Output";"Contact map"],Normal;
+"--output-low-res-contact-map-txt",String output_low_res_contact_txt_file,
+    "write the low resolution contact map with a .txt format",["2_Output'";"Contact map"],Normal;
+"--output-high-res-contact-map-dot",String output_high_res_contact_dot_file,
+    "write the high resolution contact map with a .dot format",["2_Output'";"Contact map"],Normal;
+"--output-high-res-contact-map-ps",String output_high_res_contact_ps_file,
+    "write the high resolution contact map with a .ps format",["2_Output'";"Contact map"],Normal;
+"--output-high-res-contact-map-jpg",String output_high_res_contact_jpg_file,
+    "write the high resolution contact map with a .jpg format",["2_Output'";"Contact map"],Normal;
+"--output-high-res-contact-map-txt",String output_high_res_contact_txt_file,
+    "write the high resolution contact map with a .txt format",["2_Output'";"Contact map"],Normal;
+"--output-intermediate-encoding",String output_cbng,
+    "write the intermediate encoding", ["2_Output'";"Intermediar encoding"],Expert;
+"--output-gathered-intermediate-encoding",String output_gathered_cbng,
+    "write the intermediate endoding (gathered)",["2_Output'";"Intermediar encoding"],Expert;
+"--output-boolean-encoding",String output_boolean_encoding,
+    "write the boolean encoding with isolated rules",["2_Output'";"Boolean encoding"],Expert;
+"--output-gathered-boolean-encoding",
+  String output_gathered_boolean_encoding,
+  "write the boolean encoding with isolated rules (gathered)",
+  ["2_Output'";"Boolean encoding"],Expert;
+"--output-ODE-contact",
+  String output_ODE_contact,
+  "write the annotated(for ODE) contact map in a dot file",
+  ["2_Output'";"ODE"],Normal;
+"--output-ODE-mathematica",
+  String output_ODE_mathematica,
+  "write the ODE system in a mathematica file",
+  ["2_Output'";"ODE"],Normal;
+"--output-ODE-matlab",
+  String output_ODE_matlab,
+  "write the ODE system in a matlab file",
+  ["2_Output'";"ODE"],Normal;
+"--output-ODE-latex",
+  String output_ODE_latex,
+  "write the ODE in latex mode",
+  ["2_Output'";"ODE";"LATEX"],Normal;
+"--output-ODE-obs-latex",
+  String output_ODE_obs_latex,
+  "write the observable in latex mode",
+  ["2_Output'";"ODE";"LATEX"],Normal;
+"--output-latex-sty",
+  String output_latex_sty,
+  "write the style file for a model",
+  ["2_Output'";"LATEX"],Normal;
+"--output-ODE-alphabet",
+  String output_ODE_alphabet,
+  "write the ODE alphabet",
+  ["2_Output'";"ODE"],Normal;
+"--output-ODE-covering",
+  String output_ODE_covering,
+  "dump the covering classes for each agent type",
+  ["2_Output'";"ODE"],Normal;
+"--output-ODE-obs",
+  String output_ODE_obs,
+  "write the set of obervables tracked in the ODE",
+  ["2_Output'";"ODE"],Normal;
+"--output-ODE-obs-head",
+  String output_ODE_obs_head,
+  "write the preamble of the data file",
+  ["2_Output'";"ODE"],Normal;
+"--output-ODE-data",
+  String output_ODE_data,
+  "add the generation of the data file in the mathematica output",
+  ["2_Output'";"ODE"],Normal;
+"--output-pack-constraints",
+ String output_pack_value_file,
+ "dump contraints among sites in a file",["2_Output'";"Reachability analysis"],Normal;
+"--output-reachable-complexes",String output_reachable_complexes,
+  "write the reachable species (or just their number)  in a file",["2_Output'";"Concretization";"Reachability analysis"],Normal;
+"--output-specie-map",String output_specie_map,
+  "write the specie map in a file",["2_Output'";"Reachability analysis"],Normal;
+"--output_dag_ref_dot",String output_dag_ref_dot,
+"dump the dag-like refinement relation in a dot file",
+["2_Output'";"Refinement detection"],Normal;
+"--output_dag_ref_jpg",String output_dag_ref_jpg,
+"dump the dag-like refinement relation in a jpg file",
+["2_Output'";"Refinement detection"],Normal;
+"--output_maximal_ref_dot",String output_maximal_ref_dot,
+"dump the maximal refinement relation in a dot file",
+["2_Output'";"Refinement detection"],Normal;
+"--output_maximal_ref_jpg",String output_maximal_ref_jpg,
+"dump the maximal refinement relation in a jpg file",
+["2_Output'";"Refinement detection"],Normal;
+"--output-latex-rule-system",String output_latex_rule_system,
+"dump the rules in latex format",
+["2_Output'";"LATEX"],Normal;
+"--output-xml",String output_xml,
+    "write an xml file",["2_Output'";"XML"],Normal;
+"--output-html",String output_html,
+    "write an html file",["2_Output'";"HTML"],Normal;
+"--output-marshalling",String output_marshalling,
+    "marshallize the computation state",["2_Output'";"Marshalling"],Normal;
 
-"--output_maximal_ref_dot",String output_maximal_ref_dot,"dump the maximal refinement relation in a dot file",["2_Output''";"Refinement detection"],Normal;
-"--output_maximal_ref_jpg",String output_maximal_ref_jpg,"dump the maximal refinement relation in a jpg file",["2_Output''";"Refinement detection"],Normal;
-"--output-ODE-alphabet",String output_ODE_alphabet,"write the ODE alphabet",["2_Output''";"ODE"],Normal;
-"--output-ODE-contact",String output_ODE_contact,"write the annotated(for ODE) contact map in a dot file",["2_Output''";"ODE"],Normal;
-"--output-ODE-covering",String output_ODE_covering,"dump the covering classes for each agent type",["2_Output''";"ODE"],Normal;
-"--output-ODE-data",String output_ODE_data,"add the generation of the data file in the mathematica output",["2_Output''";"ODE"],Normal;
-"--output-ODE-latex",String output_ODE_latex,"write the ODE in latex mode",["2_Output''";"ODE";"LATEX"],Normal;
-"--output-ODE-mathematica",String output_ODE_mathematica,"write the ODE system in a mathematica file",["2_Output''";"ODE"],Normal;
-"--output-ODE-matlab",String output_ODE_matlab,"write the ODE system in a matlab file",["2_Output''";"ODE"],Normal;
-"--output-ODE-obs-head",String output_ODE_obs_head,"write the preamble of the data file",["2_Output''";"ODE"],Normal;
-"--output-ODE-obs-latex",String output_ODE_obs_latex,"write the observable in latex mode",["2_Output''";"ODE";"LATEX"],Normal;
-
-"--output-ODE-obs",String output_ODE_obs,"write the set of obervables tracked in the ODE",["2_Output'''";"ODE"],Normal;
-"--output-pack-constraints",String output_pack_value_file,"dump contraints among sites in a file",["2_Output'''";"Reachability analysis"],Normal;
- "--output-pretty-qualitative-compression",String output_pretty_qualitative_compression, "write the pretty compressed qualitative compression",["2_Output'''";"Compression"],Normal;
-"--output-pretty-quantitative-compression",String output_pretty_quantitative_compression, "write the pretty compressed quantitative compression",["2_Output'''";"Compression"],Normal;
-"--output-qualitative-compression",String dump_qualitative_compression,"write the compressed qualitative compression in a .bng format",["2_Output'''";"Compression"],Normal;
-"--output-quantitative-compression",String dump_quantitative_compression,"write the compressed quantitative compression in a .bng format",["2_Output'''";"Compression"],Normal;
-"--output-reachable-complexes",String output_reachable_complexes,"write the reachable species (or just their number)  in a file",["2_Output'''";"Concretization";"Reachability analysis"],Normal;
-"--output-refined-system",String output_without_polymere,"write the refined system without polymeres",["2_Output'''";"Polymers prevention"],Normal;
-"--output-specie-map",String output_specie_map,"write the specie map in a file",["2_Output'''";"Reachability analysis"],Normal;
-"--output-xml",String output_xml,"write an xml file",["2_Output'''";"XML"],Normal;
-
-
-"--truc3",Void,"",["Compression";"Concretization";"Contact map";"Intermediar encoding";"Boolean encoding";"Reachability analysis";"Marshalling";"Influence map";"ODE";"Refinement detection";"HTML"],Normal;
+"--truc3",Void,"",["Compression";"Contact map";"Intermediar encoding";"Boolean encoding";"Reachability analysis";"Marshalling";"Influence map"],Normal;
 
 
 (*
@@ -519,12 +573,11 @@ let options = List.rev
 	"to abstract away information about phosphorilation",["Reachability analysis"],Normal;
 
 (*Refinment*)
-"--refine-only-these-rules",String refine_fic,"Only refine these rules",["1_Input";"Polymers prevention"],Normal; 
-"--truccccc",Void,"",["Polymers prevention"],Normal;
-"--use-constraints-to-refine",Bool only_closing_rules,"Only dump the rules that close a cyclical complex",["Polymers prevention"],Normal;
-   "--cycles-depth",Int cycle_depth,"Define the neighbourhood in which an agent can test for cycles",["Contact map";"Polymers prevention"],Normal; 
+
+  "--cycles-depth",Int cycle_depth,"Define the neighbourhood in which an agent can test for cycles",["Contact map";"Polymers prevention"],Normal; 
   "--cycle-detection-mode",Bool only_detect_cycles,"Show warning, but do not refine rules",["Polymers prevention"],Normal;
-  
+  "--use-constraints-to-refine",Bool only_closing_rules,"Only dump the rules that close a cyclical complex",["Polymers prevention"],Normal;
+  "--refine-only-these-rules",String refine_fic,"Only refine these rules",["1_Input";"Polymers prevention"],Normal;
   "--kinetic-amplifier",Float kinetic_amplifier,"Multiply the rate of rules that close complexes",["Polymers prevention"],Normal;
 (*Semantics*)
 "--forward",
@@ -551,17 +604,34 @@ let options = List.rev
 
 "--key",String key,"security key",["Reachability analysis"],Hidden;
 
+(*
+(*Pretty print*)
+"--site-separator",String site_separator,"site separator",["Pretty printing"],Normal;
+"--solution-separator",String solution_separator,"solution separator",["Pretty printing"],Normal;
+"--created-species",String created_species,"separator between regular agents and created/removed ones",["Pretty printing"],Expert;
+"--mark_symbol",String mark_symbol,"mark symbol",["Pretty printing"],Normal;
+"--bound-symbol",String bound_symbol,"bound symbol",["Pretty printing"],Normal;
+"--free-symbol",String free,"to be printed when a site is free",["Pretty printing"],Normal;
+"--bound-or-not",String bound_or_not,"to be printed when we do not know when a site is bounded, or not",["Pretty printing"],Normal;
+"--bound_undefined",String bound_undefined,"to be printed when a site is not a binding site",["Pretty printing"],Normal;
+"--bound_abstracted",String bound_abstracted,"to be printed when the binding of a site is not considered by the abstract domain",["Pretty printing"],Normal;
+"--unmark",String unmark,"to be print whaen a site has no mark",["Pretty printing"],Normal;
+
+"--comment",String comment,"to be print before adding a comment",["Pretty printing"],Expert;
+"--decl",String decl,"to be print before adding a declaration",["Pretty printing"],Expert;
+*)
 
 (*Colors and shapes*)
 
+"--truc",Void,"",["Contact map"],Normal;
 
-"--boolean-site-color",String boolean_site_color,"color of sites that cannot be bound",["Contact map (colors and shapes)"],Normal;
-"--boundable-site-color",String boundable_site_color,"color of sites that cannot be marked",["Contact map (colors and shapes)"],Normal;
-"--both-site-color",String both_site_color,"color of sites that can be both marked and bound",["Contact map (colors and shapes)"],Normal;
-"--agent0",String agent0,"color of agent that have no site",["Contact map (colors and shapes)"],Normal;
-"--agent1",String agent1,"color of agent that have one site",["Contact map (colors and shapes)"],Normal;
-"--agent2",String agent2,"color of agent that have two sites",["Contact map (colors and shapes)"],Normal;
-"--agent3",String agent3,"color of agent that have three sites",["Contact map (colors and shapes)"],Normal;
-"--agentn",String agentn,"color of agent that have many sites",["Contact map (colors and shapes)"],Normal;
+"--boolean-site-color",String boolean_site_color,"color of sites that cannot be bound",["Contact map"],Normal;
+"--boundable-site-color",String boundable_site_color,"color of sites that cannot be marked",["Contact map"],Normal;
+"--both-site-color",String both_site_color,"color of sites that can be both marked and bound",["Contact map"],Normal;
+"--agent0",String agent0,"color of agent that have no site",["Contact map"],Normal;
+"--agent1",String agent1,"color of agent that have one site",["Contact map"],Normal;
+"--agent2",String agent2,"color of agent that have two sites",["Contact map"],Normal;
+"--agent3",String agent3,"color of agent that have three sites",["Contact map"],Normal;
+"--agentn",String agentn,"color of agent that have many sites",["Contact map"],Normal;
     ] 
 

@@ -283,3 +283,4 @@ val gettime: unit -> float
 val random_time_advance: float -> int -> float
 val option_type: string -> string -> bool
 
+val merge_injections: int IntMap.t -> int IntMap.t -> int IntMap.t 

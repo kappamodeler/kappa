@@ -2,6 +2,8 @@ open Error
 open Mods2
 open Solution
 
+type constraints = NO_HELIX | NO_POLY
+
 type t = {lhs:Solution.t IntMap.t;
 	  rhs:Solution.t;
 	  precompil: ((int * Solution.cc_recognition * int IntMap.t) list) IntMap.t ;
@@ -11,13 +13,15 @@ type t = {lhs:Solution.t IntMap.t;
 	  rate:int;
 	  input:string;
 	  flag:string option ;
-	  constraints: Solution.constraints list ;
+	  constraints: constraints list ;
 	  kinetics: float ;
+	  boost: float ;
 	  automorphisms: int option ; 
 	  n_cc: int ;
 	  id:int ;
 	  infinite:bool ;
-	  abstraction:t list option
+	  abstraction:t list option ;
+	  intra:float option 
 	 }
 
 type rule_type = t (*alias*)
@@ -31,35 +35,42 @@ type marshalized_t = {f_lhs:Solution.marshalized_t IntMap.t;
 		      f_rate:int;
 		      f_input:string;
 		      f_flag:string option ;
-		      f_constraints: Solution.constraints list ;
+		      f_constraints: constraints list ;
 		      f_kinetics: float ;
+		      f_boost: float ;
 		      f_automorphisms: int option ;
 		      f_n_cc: int ;
 		      f_id:int ;
 		      f_infinite:bool ;
-		      f_abstraction: marshalized_t list option
+		      f_abstraction: marshalized_t list option ;
+		      f_intra:float option
 		     }
 
-let rec marshal r = {f_lhs = IntMap.map Solution.marshal r.lhs ;
-		 f_rhs = Solution.marshal r.rhs ;
-		 f_precompil = r.precompil ;
-		 f_add = r.add ;
-		 f_actions = r.actions ;
-		 f_corr_ag = r.corr_ag ;
-		 f_rate = r.rate ;
-		 f_input = r.input ;
-		 f_flag = r.flag ;
-		 f_constraints = r.constraints ;
-		 f_kinetics = r.kinetics ;
-		 f_automorphisms = r.automorphisms ; 
-		 f_n_cc = r.n_cc ;
-		 f_id = r.id ;
-		 f_infinite = r.infinite ;
-		 f_abstraction = 
-		      match r.abstraction 
-		      with None -> None
-		      |	Some a -> Some (List.map marshal a) ; 
-		}
+let rec marshal r = {
+  f_lhs = IntMap.map Solution.marshal r.lhs ;
+  f_rhs = Solution.marshal r.rhs ;
+  f_precompil = r.precompil ;
+  f_add = r.add ;
+  f_actions = r.actions ;
+  f_corr_ag = r.corr_ag ;
+  f_rate = r.rate ;
+  f_input = r.input ;
+  f_flag = r.flag ;
+  f_constraints = r.constraints ;
+  f_kinetics = r.kinetics ;
+  f_boost = r.boost ;
+  f_automorphisms = r.automorphisms ; 
+  f_n_cc = r.n_cc ;
+  f_id = r.id ;
+  f_infinite = r.infinite ;
+  f_abstraction = 
+    begin
+      match r.abstraction 
+      with None -> None
+	| Some a -> Some (List.map marshal a) 
+    end ;
+  f_intra = r.intra
+}
 
 let rec unmarshal f_r = {
                      lhs=IntMap.map Solution.unmarshal f_r.f_lhs ;
@@ -73,10 +84,12 @@ let rec unmarshal f_r = {
 		     flag=f_r.f_flag;
 		     constraints=f_r.f_constraints;
 		     kinetics=f_r.f_kinetics;
+		     boost = f_r.f_boost;
 		     automorphisms=f_r.f_automorphisms;
                      n_cc=f_r.f_n_cc;
 		     id=f_r.f_id;
 		     infinite = f_r.f_infinite;
+		     intra = f_r.f_intra;
 		     abstraction = 
 		      match f_r.f_abstraction with 
 			None -> None
@@ -95,19 +108,24 @@ let empty = {lhs=IntMap.empty;
 	     flag=None;
 	     constraints=[];
 	     kinetics = 1.0 ;
+	     boost= 1.0;
              automorphisms = None ;
 	     n_cc = 0 ;
 	     id = -1 ;
 	     infinite = false ;
 	     abstraction = None ;
+	     intra = None
     	    }
 
+let test_intra r = 
+  match r.intra with
+      Some _ -> true
+    | None -> false
 
 let name r = 
   match r.flag with
       None -> r.input
     | Some flg -> flg
-
 
 (*Modified map to select a rule according to its activity in log time*)
 module Rule_of_int = 
@@ -116,16 +134,16 @@ module Rule_of_int =
       type map_val = (rule_type * float) 
       let def = (empty,0.0)
       let compare = compare 
-     let to_f = 
-       fun (r,inst) ->
-	 if r.input = "" then 0.0 
-	 else
-	   let automorphisms = 
-	     match r.automorphisms with 
-		 None -> (failwith ("Rule_of_int: automorphisms not computed for rule "^r.input)) 
-	       | Some i -> float_of_int i 
-	   in
-	   let k = r.kinetics in k *. inst /. automorphisms
+      let to_f = 
+	fun (r,inst) ->
+	  if r.input = "" then 0.0 
+	  else
+	    let automorphisms = 
+	      match r.automorphisms with 
+		  None -> (failwith ("Rule_of_int: automorphisms not computed for rule "^r.input)) 
+		| Some i -> float_of_int i 
+	    in
+	    let k = (*r.kinetics*) r.boost in k *. inst /. automorphisms
     end):Val_map.S with type val_type = (rule_type * float) and type key = int)
 
 
@@ -171,21 +189,14 @@ let print_compil ?(filter=false) ?(with_warning=false) r =
 
   let rec print_constraints constraints = 
     match constraints with
-	CC(i,joints,disjoints,sep)::tl -> 
-	  if IntSet.is_empty joints then ()
-	  else
-	    Printf.printf "Agents in %s are in CC(#%d)" 
-	      (string_of_set (fun i ->"#"^(string_of_int i)) IntSet.fold joints) i  ;
-	  if IntSet.is_empty disjoints then ()
-	  else
-	    Printf.printf "Agents in %s are not in CC(#%d)" 
-	      (string_of_set (fun i ->"#"^(string_of_int i)) IntSet.fold disjoints) i  ;
-	  if StringSet.is_empty sep then ()
-	  else
-	    Printf.printf "CC(#%d) does not contain agent types in %s"
-	      i (string_of_set (fun i -> i) StringSet.fold sep)   ;
-	  print_constraints tl
+	NO_HELIX::tl -> (print_string "No type intersection allowed" ; print_constraints tl)
+      | NO_POLY::tl -> (print_string "No polymerisation allowed" ; print_constraints tl)
       | [] -> print_newline()
+  in
+  let print_rate() = 
+    let s1 = if r.kinetics < 0.0 then "INF" else string_of_float r.kinetics in
+    let s2 = match r.intra with None -> "" | Some f -> (Printf.sprintf "(%f)" f) in
+      Printf.printf "@%s%s" s1 s2
   in
   let print_rule() = 
     let flg = match r.flag with
@@ -198,7 +209,7 @@ let print_compil ?(filter=false) ?(with_warning=false) r =
 	  print_string (String.make (String.length r.input) '-') ;
 	  print_newline();
 	  print_string flg;
-	  print_string r.input;print_newline();
+	  print_string r.input; print_rate() ; print_newline();
 	  print_string (String.make (String.length r.input) '-') ;
 	  print_newline();
 	  print_constraints r.constraints
@@ -418,175 +429,186 @@ let rec string_of_modif_type m =
   | Test_free -> "Test free"
   | Init_free _ -> "Free"
     
-let apply r assoc sol = (*sol is imperative!*)
-  try
-    let lnk s = s^"!"
-    and inf s = s^"~"
-    in
-    let mod_quarks,assoc_add,sol' = (*adding new agents in solution*)
-      IntMap.fold (fun id ag (mod_quarks,assoc_add,sol') ->
-		     let id_sol,fresh_id = 
-		       try (IntMap.find id assoc_add,(Solution.fresh_id sol'))
-		       with Not_found -> (Solution.fresh_id sol',(Solution.fresh_id sol'+1))
-		     in
-		     let sol' = Solution.add ~with_id:id_sol ag sol' (*with a given id already attributed*)
-		     in
-		       
-		     let assoc_add = IntMap.add id id_sol assoc_add in 
-		     let sol' = {sol' with Solution.fresh_id = fresh_id}
-		     in
-		     let mod_quarks = 
-		       Agent.fold_interface (fun site (info,_) mq ->
-					       let mq = 
-						 match info with
-						     Agent.Marked s -> 
-						       PortMap.add (id_sol,inf site) [Init_mark (Agent.name ag,s)] mq
-						   | _ -> mq
-					       in
-						 (*added agent is assumed to be free, bound are dealt with later on*)
-						 PortMap.add (id_sol,lnk site) [Init_free (Agent.name ag)] mq
-					    ) ag mod_quarks 
-		     in
-		       (mod_quarks,assoc_add,sol')
-		  ) r.add (PortMap.empty,IntMap.empty,sol)
-    in
-    let phi id = 
-      try IntMap.find id assoc 
-      with Not_found -> 
-	begin
-	  try IntMap.find id assoc_add 
-	  with Not_found -> runtime "Rule.apply: cannot find id in phi"
-	end
-    in
-    let mod_quarks,rm_quarks,sol',warn =
-      IntMap.fold (fun id act_msg_list (mod_quarks,rm_quarks,sol',warn) -> 
-		     let id_sol = phi id in
-		       List.fold_right 
-			 (fun (act,_) (mod_quarks,rm_quarks,sol',warn) ->
-			    match act with
-				Solution.Bind (site,id',site') -> 
-				  let id_sol'=phi id' in
-				  let sol'= Solution.bind (id_sol,site) (id_sol',site') sol' in
-				  let modif1 = 
-				    if IntMap.mem id r.add then
-				      let ag_new = IntMap.find id r.add in
-					Init_bound (Agent.name ag_new,id_sol',lnk site')
-				    else
-				      Bound (id_sol',lnk site')
-				  and modif2 = 
-				    if IntMap.mem id' r.add then
-				      let ag_new' = IntMap.find id' r.add in
-					Init_bound (Agent.name ag_new',id_sol,lnk site)
-				    else
-				      Bound (id_sol,lnk site)
-				  in
-				  let mod_quarks = 
-				    let l = try PortMap.find (id_sol,lnk site) mod_quarks with Not_found -> [] in
-				      (PortMap.add (id_sol,lnk site) (modif1::l) mod_quarks)
-				  in
-				  let mod_quarks = 
-				    let l = try PortMap.find (id_sol',lnk site') mod_quarks with Not_found -> [] in
-				      (PortMap.add (id_sol',lnk site') (modif2::l) mod_quarks)
-				  in
-				    (mod_quarks,rm_quarks,sol',warn)
-			      | Solution.Break (site,id',site') ->
-				  let id_sol' = phi id' in
-				  let sol' = Solution.unbind (id_sol,site) (id_sol',site') sol' in
-				  let mod_quarks = 
-				    PortMap.add (id_sol',lnk site') [Break (id_sol,lnk site)]
-				      (PortMap.add (id_sol,lnk site) [Break (id_sol',lnk site')] mod_quarks)
-				  in
-				    (mod_quarks,rm_quarks,sol',warn)
-				      
-			      | Solution.Mark (site,mk) ->
-				  let ag = Solution.agent_of_id id_sol sol' in
-				  let sol' = Solution.mark (id_sol,site,mk) sol' in (*side effect on sol'*)
-				  let (info,_) = Agent.state ag site in
-				  let old_mk = 
-				    match info with
-					Agent.Wildcard -> "*"
-				      | Agent.Marked s -> s
-				      | _ -> runtime "Rule.apply: invalid info marker"
-				  in
-				  let mod_quarks = PortMap.add (id_sol,inf site) [Marked (old_mk,mk)] mod_quarks in
-				    (mod_quarks,rm_quarks,sol',warn)
+let apply r assoc_list sol = (*sol is imperative!*)
+  let app assoc sol mq add rmq tq = 
+    try
+      let lnk s = s^"!"
+      and inf s = s^"~"
+      in
+      let mod_quarks,assoc_add,sol' = (*adding new agents in solution*)
+	IntMap.fold (fun id ag (mod_quarks,assoc_add,sol') ->
+		       let id_sol,fresh_id = 
+			 try (IntMap.find id assoc_add,(Solution.fresh_id sol'))
+			 with Not_found -> (Solution.fresh_id sol',(Solution.fresh_id sol'+1))
+		       in
+		       let sol' = Solution.add ~with_id:id_sol ag sol' (*with a given id already attributed*)
+		       in
+			 
+		       let assoc_add = IntMap.add id id_sol assoc_add in 
+		       let sol' = {sol' with Solution.fresh_id = fresh_id}
+		       in
+		       let mod_quarks = 
+			 Agent.fold_interface (fun site (info,_) mq ->
+						 let mq = 
+						   match info with
+						       Agent.Marked s -> 
+							 PortMap.add (id_sol,inf site) [Init_mark (Agent.name ag,s)] mq
+						     | _ -> mq
+						 in
+						   (*added agent is assumed to be free, bound are dealt with later on*)
+						   PortMap.add (id_sol,lnk site) [Init_free (Agent.name ag)] mq
+					      ) ag mod_quarks 
+		       in
+			 (mod_quarks,assoc_add,sol')
+		    ) r.add (mq (*PortMap.empty*),add (*IntMap.empty*),sol)
+      in
+      let phi id = 
+	try IntMap.find id assoc 
+	with Not_found -> 
+	  begin
+	    try IntMap.find id assoc_add 
+	    with Not_found -> runtime "Rule.apply: cannot find id in phi"
+	  end
+      in
+      let mod_quarks,rm_quarks,sol',warn =
+	IntMap.fold (fun id act_msg_list (mod_quarks,rm_quarks,sol',warn) -> 
+		       let id_sol = phi id in
+			 List.fold_right 
+			   (fun (act,_) (mod_quarks,rm_quarks,sol',warn) ->
+			      match act with
+				  Solution.Bind (site,id',site') -> 
+				    let id_sol'=phi id' in
+				    let sol'= Solution.bind (id_sol,site) (id_sol',site') sol' in
+				    let modif1 = 
+				      if IntMap.mem id r.add then
+					let ag_new = IntMap.find id r.add in
+					  Init_bound (Agent.name ag_new,id_sol',lnk site')
+				      else
+					Bound (id_sol',lnk site')
+				    and modif2 = 
+				      if IntMap.mem id' r.add then
+					let ag_new' = IntMap.find id' r.add in
+					  Init_bound (Agent.name ag_new',id_sol,lnk site)
+				      else
+					Bound (id_sol,lnk site)
+				    in
+				    let mod_quarks = 
+				      let l = try PortMap.find (id_sol,lnk site) mod_quarks with Not_found -> [] in
+					(PortMap.add (id_sol,lnk site) (modif1::l) mod_quarks)
+				    in
+				    let mod_quarks = 
+				      let l = try PortMap.find (id_sol',lnk site') mod_quarks with Not_found -> [] in
+					(PortMap.add (id_sol',lnk site') (modif2::l) mod_quarks)
+				    in
+				      (mod_quarks,rm_quarks,sol',warn)
+				| Solution.Break (site,id',site') ->
+				    let id_sol' = phi id' in
+				    let sol' = Solution.unbind (id_sol,site) (id_sol',site') sol' in
+				    let mod_quarks = 
+				      PortMap.add (id_sol',lnk site') [Break (id_sol,lnk site)]
+					(PortMap.add (id_sol,lnk site) [Break (id_sol',lnk site')] mod_quarks)
+				    in
+				      (mod_quarks,rm_quarks,sol',warn)
+					
+				| Solution.Mark (site,mk) ->
+				    let ag = Solution.agent_of_id id_sol sol' in
+				    let sol' = Solution.mark (id_sol,site,mk) sol' in (*side effect on sol'*)
+				    let (info,_) = Agent.state ag site in
+				    let old_mk = 
+				      match info with
+					  Agent.Wildcard -> "*"
+					| Agent.Marked s -> s
+					| _ -> runtime "Rule.apply: invalid info marker"
+				    in
+				    let mod_quarks = PortMap.add (id_sol,inf site) [Marked (old_mk,mk)] mod_quarks in
+				      (mod_quarks,rm_quarks,sol',warn)
 
-			      | Solution.Modify site ->
-				  let (id_sol',site') = 
-				    try Solution.get_port (id_sol,site) sol' 
-				    with Not_found -> runtime "Rule.apply: assoc invariant violation in Modify case"
-				  in
-				  let sol' = Solution.unbind (id_sol,site) (id_sol',site') sol' in
-				  let mod_quarks = 
-				    PortMap.add (id_sol',lnk site') [Break (id_sol,lnk site)]
-				      (PortMap.add (id_sol,lnk site) [Break (id_sol',lnk site')] mod_quarks)
-				  in
-				    (mod_quarks,rm_quarks,sol',true)
-				      
-			      | Solution.Remove -> 
-				  let ag_sol = 
-				    try Solution.agent_of_id id_sol sol' 
-				    with Error.Runtime msg -> runtime ("Rule.apply:"^msg)
-				  in
-				  let mod_quarks,rm_quarks =
-				    Agent.fold_interface  
-				      (fun site _ (pmap,pset) ->
-					 let pmap,pset =
-					   try
-					     let (i,x) = Solution.get_port (id_sol,site) sol' in
-					       (*mod quark*)
-					       (PortMap.add (i,lnk x) [Side_break (id_sol,lnk site)] pmap, 
-						(*removed quark*)
-						PortSet.add (id_sol,lnk site) pset)
-					   with Not_found ->
-					     (pmap,PortSet.add (id_sol,lnk site) pset)
+				| Solution.Modify site ->
+				    let (id_sol',site') = 
+				      try Solution.get_port (id_sol,site) sol' 
+				      with Not_found -> runtime "Rule.apply: assoc invariant violation in Modify case"
+				    in
+				    let sol' = Solution.unbind (id_sol,site) (id_sol',site') sol' in
+				    let mod_quarks = 
+				      PortMap.add (id_sol',lnk site') [Break (id_sol,lnk site)]
+					(PortMap.add (id_sol,lnk site) [Break (id_sol',lnk site')] mod_quarks)
+				    in
+				      (mod_quarks,rm_quarks,sol',true)
+					
+				| Solution.Remove -> 
+				    let ag_sol = 
+				      try Solution.agent_of_id id_sol sol' 
+				      with Error.Runtime msg -> runtime ("Rule.apply:"^msg)
+				    in
+				    let mod_quarks,rm_quarks =
+				      Agent.fold_interface  
+					(fun site _ (pmap,pset) ->
+					   let pmap,pset =
+					     try
+					       let (i,x) = Solution.get_port (id_sol,site) sol' in
+						 (*mod quark*)
+						 (PortMap.add (i,lnk x) [Side_break (id_sol,lnk site)] pmap, 
+						  (*removed quark*)
+						  PortSet.add (id_sol,lnk site) pset)
+					     with Not_found ->
+					       (pmap,PortSet.add (id_sol,lnk site) pset)
+					   in
+					     (pmap,PortSet.add (id_sol,inf site) pset)
+					) ag_sol  (mod_quarks,rm_quarks)
+				    in
+				    let warn',sol' = Solution.remove id_sol sol'
+				    in
+				      (mod_quarks,rm_quarks,sol',warn or warn')
+					
+			   ) act_msg_list (mod_quarks,rm_quarks,sol',warn)
+		    ) r.actions (mod_quarks,rmq (*PortSet.empty*),sol',false)
+      in
+	
+      let tested_quarks = 
+	IntMap.fold (fun _ lhs_i pmap -> 
+		       AA.fold (fun id ag pmap ->
+				  let id_sol = phi id in
+				    Agent.fold_interface 
+				      (fun site (info,link) pmap -> 
+					 let pmap = 
+					   if PortMap.mem (id_sol,lnk site) mod_quarks then pmap
+					   else
+					     match link with
+						 Agent.Bound -> (
+						   try
+						     let (id',site') = Solution.get_port (id,site) lhs_i in
+						     let id_sol'= phi id'
+						     in
+						       PortMap.add (id_sol,lnk site) 
+							 [Test_bound (id_sol',lnk site')] pmap
+						   with 
+						       Not_found -> 
+							 PortMap.add (id_sol,lnk site) [Test_any_bound] pmap
+						 )
+					       | Agent.Free -> PortMap.add (id_sol,lnk site) [Test_free] pmap 
+					       | _ -> pmap (*wildcard*)
 					 in
-					   (pmap,PortSet.add (id_sol,inf site) pset)
-				      ) ag_sol  (mod_quarks,rm_quarks)
-				  in
-				  let warn',sol' = Solution.remove id_sol sol'
-				  in
-				    (mod_quarks,rm_quarks,sol',warn or warn')
-				      
-			 ) act_msg_list (mod_quarks,rm_quarks,sol',warn)
-		  ) r.actions (mod_quarks,PortSet.empty,sol',false)
-    in
-      
-    let tested_quarks = 
-      IntMap.fold (fun _ lhs_i pmap -> 
-		     AA.fold (fun id ag pmap ->
-				let id_sol = phi id in
-				  Agent.fold_interface 
-				    (fun site (info,link) pmap -> 
-				       let pmap = 
-					 if PortMap.mem (id_sol,lnk site) mod_quarks then pmap
-					 else
-					   match link with
-					       Agent.Bound -> (
-						 try
-						   let (id',site') = Solution.get_port (id,site) lhs_i in
-						   let id_sol'= phi id'
-						   in
-						     PortMap.add (id_sol,lnk site) 
-						       [Test_bound (id_sol',lnk site')] pmap
-						 with 
-						     Not_found -> 
-						       PortMap.add (id_sol,lnk site) [Test_any_bound] pmap
-					       )
-					     | Agent.Free -> PortMap.add (id_sol,lnk site) [Test_free] pmap 
-					     | _ -> pmap (*wildcard*)
-				       in
-					 if PortMap.mem (id_sol,inf site) mod_quarks then pmap
-					 else
-					   match info with
-					       Agent.Marked mk -> PortMap.add (id_sol,inf site) [Test_marked mk] pmap
-					     | _ -> pmap (*wildcard*)
-				    ) ag pmap
-			     ) lhs_i.Solution.agents pmap
-		  ) r.lhs PortMap.empty
-    in
-      (mod_quarks,rm_quarks,tested_quarks,assoc_add,sol',warn)
-  with exn -> (Printf.printf "In Rule.apply:" ; flush stdout; raise exn)
+					   if PortMap.mem (id_sol,inf site) mod_quarks then pmap
+					   else
+					     match info with
+						 Agent.Marked mk -> PortMap.add (id_sol,inf site) [Test_marked mk] pmap
+					       | _ -> pmap (*wildcard*)
+				      ) ag pmap
+			       ) lhs_i.Solution.agents pmap
+		    ) r.lhs tq (*PortMap.empty*)
+      in
+	(mod_quarks,rm_quarks,tested_quarks,assoc_add,sol',warn)
+    with exn -> (Printf.printf "In Rule.apply:" ; flush stdout; raise exn)
+  in
+    match assoc_list with
+	[phi] -> app phi sol PortMap.empty IntMap.empty PortSet.empty PortMap.empty
+      | [phi1;phi2] -> 
+	  let mq1,rmq1,tq1,add1,sol1,warn1 = app phi1 sol PortMap.empty IntMap.empty PortSet.empty PortMap.empty in
+	  let mq2,rmq2,tq2,add2,sol2,warn2 = app phi2 sol1 mq1 add1 rmq1 tq1
+	  in
+	    (mq2,rmq2,tq2,add2,sol2,warn1 or warn2)
+      | _ -> Error.runtime "Rule.apply: invalid number of injections"
+	    
 
 let print r = 
   let str = 

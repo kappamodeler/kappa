@@ -138,6 +138,7 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(SIMPLXREP)/src/data_structures/longString.cmo \
 	./$(SIMPLXREP)/src/data_structures/val_map.cmo \
 	./$(SIMPLXREP)/src/tools/mods2.cmo \
+	./$(SIMPLXREP)/src/data_structures/paths.cmo \
 	./$(SIMPLXREP)/src/kappa/solution.cmo \
 	./$(SIMPLXREP)/src/kappa/species.cmo \
 	./$(SIMPLXREP)/src/data_structures/implementation_choices.cmo \
@@ -215,6 +216,7 @@ MLI =  ./$(SIMPLXREP)/src/tools/error.mli \
 	./$(SIMPLXREP)/src/data_structures/array_ext.mli \
 	./$(SIMPLXREP)/src/data_structures/longString.mli \
 	./$(SIMPLXREP)/src/tools/mods2.mli \
+	./$(SIMPLXREP)/src/data_structures/paths.mli \
         ./$(SIMPLXREP)/src/kappa/agent.mli \
 	./$(SIMPLXREP)/src/kappa/solution.mli \
 	./$(SIMPLXREP)/src/kappa/rule.mli\
@@ -353,9 +355,9 @@ clean:
 	cd $(COMPLXREP) ; make -f cleanup ; 
 	cd $(INTERPLXREP) ; make -f cleanup
 
+
 clean_all: clean 
 	rm $(AUTOGENML) 
-	rm -rf bin 
 	rm -f simplx_rep/sim complx_rep/compress complx_rep/compress_light  simplx complx_light bd_influence_map bd_influence_map_light complx *.options* 
 
 grab_svn_version_number:
