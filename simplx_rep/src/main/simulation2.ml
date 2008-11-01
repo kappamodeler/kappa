@@ -1527,7 +1527,7 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 			       match r.intra with 
 				   None -> r.kinetics
 				 | Some u -> 
-				     if phi = 0. or psi = 0. then r.kinetics
+				     if phi = 0. or psi = 0. then r.kinetics (*no need to boost for binary rule has no instance, which means unary one has no instance either*)
 				     else
 				       max (u /. (phi +. psi)) (r.kinetics) 
 			   in
@@ -1797,6 +1797,7 @@ let rec iter log sim_data p c =
 			if (IntSet.mem r_ind sim_data.obs_ind) then (*if applied rule triggers storification*)
 			  let flg = match r_ref.flag with Some flg -> flg | _ -> runtime "Simulation.iter: obs has no flag"
 			  in
+			    Printf.printf "-Computing story...\n" ; flush stdout ;
 			  let h = Network.cut net' flg in
 			  let h = {h with Network.name_of_agent = 
 			      let n = Solution.AA.size sol'.Solution.agents in
