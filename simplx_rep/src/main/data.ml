@@ -1,9 +1,9 @@
 (**Data references*)
 
 let version_main = 3
-let version_cpt = 53 (*intra with biary rate boost*)
+let version_cpt = 6 (*Bologna procedure*) 
 let version_svn = Svn_number.svn_number
-let version_branch = "polymers"
+let version_branch = ""
 let arch_type = string_of_int Sys.word_size
 let version = (string_of_int version_main)^"."^(string_of_int version_cpt)^version_branch^".."^(string_of_int version_svn)^"_"^arch_type
 

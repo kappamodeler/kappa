@@ -29,14 +29,11 @@ top:
 TKREP?=light
 SIMPLXREP?=simplx_rep
 COMPLXREP?=complx_rep
-INTERPLXREP?=interplx_rep
+
 BIN = ./bin
 KEY?=without_key
 
-$(BIN): bin/
-	mkdir bin
-
-OCAMLPREFIX?=  ../../../../3rd_party/ocaml/ocaml-3.10.2-patched_x86_64
+OCAMLPREFIX?=	../../3rd_party/ocaml/ocaml-3.10.2-patched_x86_64
 OCAMLC=		$(OCAMLPREFIX)/ocamlc -thread
 OCAMLCI=	$(OCAMLPREFIX)/ocamlc -thread
 OCAMLOPT= 	$(OCAMLPREFIX)/ocamlopt.opt -nostdlib -thread
@@ -224,8 +221,8 @@ CMI = $(MLI:mli=cmi)
 CMA = unix.cma threads.cma str.cma nums.cma
 CMXA = unix.cmxa threads.cmxa str.cmxa nums.cmxa
 
-SIMPLX_OUT = simplx.x86_64
-INTERPLX_OUT = interplx.x86_64
+SIMPLX_OUT = simplx64
+COMPLX_OUT = complx64
 
 LIB_OPT = $(SIMPLX_OUT).cmxa
 LIB_BYTE = $(SIMPLX_OUT).cma
@@ -250,9 +247,6 @@ simplx :$(MLI) $(CMI) $(LIBSC_CMXA) $(LIB_OPT) $(SIMPLX_MAIN) $(BIN)
 byte :  $(MLI) $(CMI) $(LIBSC_CMA) $(LIB_BYTE) $(SIMPLX_MAIN) $(BIN)
 	$(OCAMLC) $(OCAMLFLAGS) $(CMA) $(LIBSC_CMA) $(LIB_BYTE) $(SIMPLX_MAIN) -o $(BIN)/$(SIMPLX_OUT).byte
 
-interplx :$(MLI) $(CMI) $(LIBSC_CMXA) $(LIB_OPT) $(INTERPLX_MAIN) $(BIN)
-	$(OCAMLOPT) $(OCAMLFLAGS) $(CMXA) $(TK_CMXA) $(LIBSC_CMXA) $(LIB_OPT)  $(INTERPLX_MAIN) -o $(BIN)/$(INTERPLX_OUT)
-
 $(SIMPLX_OUT).cmxa: $(MLI) $(CMI) $(LIBSC_CMXA) $(NATIVE_OBJS) 
 	$(OCAMLOPT) $(OCAMLFLAGS) -a $(NATIVE_OBJS)  -o $(SIMPLXREP)/lib/$(SIMPLX_OUT).cmxa
 
@@ -262,7 +256,7 @@ $(SIMPLX_OUT).cma: $(MLI) $(CMI) $(LIBSC_CMA) $(OBJS)
 LINE = $(OCAMLOPT) $(OCAMLFLAGS) $(TKINCLUDES) $(CMXA) $(TK_CMXA) $(LIBSC_CMXA)  $(NATIVE_OBJS) 
 
 complx: $(LIBSC_CMXA) $(NATIVE_OBJS) $(COMPLX_MAIN)
-	$(LINE) $(COMPLX_MAIN) -o $(BIN)/complx
+	$(LINE) $(COMPLX_MAIN) -o $(BIN)/$(COMPLX_OUT)
 
 influence_map: $(COMPLXREP)/influence_pipeline.cmx 
 	$(LINE) $(COMPLXREP)/influence_pipeline.cmx -o $(BIN)/bd_influence_map
