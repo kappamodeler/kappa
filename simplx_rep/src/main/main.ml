@@ -15,6 +15,7 @@ let main =
     ("--sim", Arg.String (fun s -> fic := s), "name of the kappa file to simulate");
     ("--compile", Arg.String (fun s -> compile_mode:=true; fic := s), "name of the kappa file to compile");
     ("--storify", Arg.String (fun s -> story_mode := true ; fic := s), "name of the kappa file to storify");
+    ("--generate-map", Arg.String (fun s -> map_mode :=true ; fic := s), "name of the kappa file for which the influence map should be computed");
     ("--version", Arg.Unit (fun () -> print_string (version_msg^"\n") ; flush stdout ; exit 0), "print simplx version");
     ("--time", Arg.Float (fun f -> time_mode:=true ; max_time := f), "(infinite): time units of computation");
     ("--event", Arg.Int (fun i -> time_mode :=false ; max_step := i), "(infinite): number of rule applications");
