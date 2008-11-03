@@ -2680,7 +2680,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			    with 
 			      Not_found -> [] in 
 			  let (bmap:bool BMap.t) = 
-			    if linklist = [] then bmap else
 			    List.fold_left
 				(fun bmap l -> 
 				  BMap.add (AL((ag,ag,s),l)) false bmap)

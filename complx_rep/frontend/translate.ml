@@ -120,7 +120,7 @@ let translate_init_elt t (agents,marks,markable_sites,linkable_sites,mark_site_r
 		  match m2 with Agent.Wildcard -> test,linkable_sites
 		    | Agent.Free -> 
 			   (fadd_test i (Pb_sig.S_free s) test,
-			    linkable_sites
+			    fadd i s linkable_sites
 			   )
 		    | Agent.Bound ->  
 			(test,
