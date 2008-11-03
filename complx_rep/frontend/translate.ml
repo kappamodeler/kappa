@@ -294,7 +294,8 @@ let translate_rule t flags fset (agents,marks,markable_sites,linkable_sites,mark
 		      if s="_" 
 		      then (test,linkable_sites) 
 		      else 
-			((Pb_sig.Is_free (i,s)):: test,linkable_sites)
+			((Pb_sig.Is_free (i,s)):: test,
+                         fadd i s linkable_sites)
 		  | Agent.Bound ->  
 		      if IntStringSet.mem (i,s) bs
 		      then (test,fadd i s linkable_sites)
