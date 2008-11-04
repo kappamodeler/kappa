@@ -89,8 +89,8 @@ and graph_node = {node_id:int;
 		  node_globalId:int option;
 		  node_depth:int option
 		 }
-
-and graph_connection = {fromNode:int; toNode:int ; relation:int option} (*relation: 0 (NEGATIVE) 1 (POSITIVE)*)
+and connection_type = STRONG | WEAK | POSITIVE | NEGATIVE 
+and graph_connection = {fromNode:int; toNode:int ; relation:connection_type} 
 
 let xml_of_graph_nodes nodes =
   String.concat "\n"
@@ -123,8 +123,10 @@ let xml_of_graph_connections edges =
   String.concat "\n" 
     (List.fold_right (fun c cont ->
 			let rel_str = match c.relation with
-			    Some i -> if i=0 then " Relation =\"NEGATIVE\"" else " Relation=\"POSITIVE\""
-			  | None -> ""
+			    STRONG -> " Relation =\"STRONG\""
+			  | WEAK -> " Relation =\"WEAK\""
+			  | POSITIVE -> " Relation =\"POSITIVE\""
+			  | NEGATIVE -> " Relation =\"NEGATIVE\""
 			in
 			let str = 
 			  Printf.sprintf "<Connection FromNode=\"%d\" ToNode=\"%d\"%s/>" c.fromNode c.toNode rel_str
@@ -134,7 +136,7 @@ let xml_of_graph_connections edges =
 
 
 let graph_of_network net = 
-(*  let net = Story_compressor.compress net 
+  (*  let net = Story_compressor.compress net 
       (!Data.story_compression_mode) 
       (!Data.story_compression_granularity) in *)
   let label e = 
@@ -167,12 +169,12 @@ let graph_of_network net =
 			let set = try IntMap.find id net.s_preds with Not_found -> IntSet.empty in
 			let map =
 			  IntSet.fold (fun id' map ->
-			    let e' = event_of_id id' net in
-			    let weight = depth - e'.s_depth in 
+					 let e' = event_of_id id' net in
+					 let weight = depth - e'.s_depth in 
 					   (*negative value to have an increasing map*)
-			    let cont = try IntMap.find weight map with Not_found -> [] in
-			    IntMap.add weight ((id',id)::cont) map
-			      				 ) set map
+					 let cont = try IntMap.find weight map with Not_found -> [] in
+					   IntMap.add weight ((id',id)::cont) map
+			      	      ) set map
 			in
 			  (map,nodes)
 		     ) l (map,nodes) 
@@ -199,16 +201,27 @@ let graph_of_network net =
 							   else
 							     let set_k = 
 							       try IntMap.find k preds_star 
-							       with Not_found -> IntSet.empty in
+							       with Not_found -> IntSet.empty 
+							     in
 							       if IntSet.mem i set_k then raise False
 							       else keep
 							) preds_j true
 					  with False -> false
 				      in
-					if keep then {fromNode=i;toNode=j;relation=None}::cont
+					if keep then {fromNode=i;toNode=j;relation=STRONG}::cont
 					else cont
 				   ) l cont
 		) weight_map []
+  in
+  let graph_connections = (*adding weak arrows i-->_w j only if i-->_s j *)
+    IntMap.fold (fun j w_preds_j connections -> 
+		   IntSet.fold (fun i connections ->
+				  let preds_j = try IntMap.find j preds_star with Not_found -> IntSet.empty in
+				    if IntSet.mem i preds_j then connections
+				    else 
+				      {fromNode=i;toNode=j;relation=WEAK}::connections
+			       ) w_preds_j connections
+		) net.w_preds graph_connections
   in
     (graph_nodes,graph_connections)
 
@@ -318,7 +331,7 @@ let xml_of_maps rules ?conflict flow =
   and pos_edges = 
     IntMap.fold (fun id succ edges -> 
 		   IntSet.fold (fun id' edges ->
-				  {fromNode=id;toNode=id';relation=Some 1 (*pos*)}::edges
+				  {fromNode=id;toNode=id';relation=POSITIVE}::edges
 			       ) succ edges
 		) flow []
   and neg_edges = 
@@ -327,7 +340,7 @@ let xml_of_maps rules ?conflict flow =
       | Some conflict ->
 	  IntMap.fold (fun id succ edges ->
 			 IntSet.fold (fun id' edges ->
-					{fromNode=id;toNode=id';relation=Some 0 (*neg*)}::edges
+					{fromNode=id;toNode=id';relation=NEGATIVE}::edges
 				     ) succ edges
 		      ) conflict []
   in

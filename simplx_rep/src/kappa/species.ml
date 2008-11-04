@@ -33,35 +33,23 @@ let of_sol sol =
 			if IntSet.mem id blacklist then (blacklist,spec_map) 
 			else
 			  let sol_cc,blacklist = Solution.cc_of_id id sol blacklist in
-			    Printf.printf "Species found\n" ; flush stdout ;
 			  let new_spec = spec_of_cc sol_cc in
-			    Printf.printf "Signature computed\n" ; flush stdout ;
 			  let spec_list = try StringMap.find new_spec.signature spec_map with Not_found -> [] in (*may raise Not_found*)
 			  let spec_list = 
 			    let spec_list',already_added = (*TODO: resolving clashes by a list is NOT efficient!*)
-			      Printf.printf "Checking whether species is unkown...\n" ; flush stdout ;
 			      List.fold_left (fun (spec_list,already_added) (old_spec,n) -> 
 						let is_equal = iso old_spec new_spec in
 						  if already_added then ((old_spec,n)::spec_list,true) 
 						  else 
 						    if is_equal then 
-						      begin
-							Printf.printf "Species already found\n" ; flush stdout ;
-							((old_spec,n+1)::spec_list,true)
-						      end
+						      ((old_spec,n+1)::spec_list,true)
 						    else 
-						      begin
-							Printf.printf "Another species has the same sig but is not equal!\n" ; flush stdout ;
-							((old_spec,n)::spec_list,false)
-						      end
+						      ((old_spec,n)::spec_list,false)
 					     ) ([],false) spec_list 
 			    in
 			      if already_added then spec_list'
 			      else 
-				begin
-				  Printf.printf "Species is new!\n" ; flush stdout ;
-				  (new_spec,1)::spec_list'
-				end
+				(new_spec,1)::spec_list'
 			  in
 			    (blacklist,StringMap.add new_spec.signature spec_list spec_map) 
     		     ) sol.Solution.agents (IntSet.empty,StringMap.empty)

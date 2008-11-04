@@ -22,28 +22,28 @@ let image_of_dot ?(neato=false) file =
       
 let dot_of_network ?(story=true) ?(limit=true) fic (net,nb,time) = 
   (*if limit && (net.Network.fresh_id > !Data.network_display_limit)
-  then 
+    then 
     let d = open_out fic in
     let _ = fprintf d "digraph G{\n label=\"This story is too big to be displayed\"}" in
     let _ = close_out d in () 
-  else
+    else
   *)
-    let label e = 
-      match Rule.flag e.r with
+  let label e = 
+    match Rule.flag e.r with
 	None -> if e.kind = 0 then e.label else (e.r.Rule.input)
       | Some flg -> (flg)
-    in
-    let sort_events_by_depth events =
-      let dp = IntMap.empty in
+  in
+  let sort_events_by_depth events =
+    let dp = IntMap.empty in
       EventArray.fold (fun id e dp -> 
-	let l = try IntMap.find e.s_depth dp with Not_found -> [] in
-	IntMap.add e.s_depth ((id,e)::l) dp
-	  ) events dp
+			 let l = try IntMap.find e.s_depth dp with Not_found -> [] in
+			   IntMap.add e.s_depth ((id,e)::l) dp
+		      ) events dp
   in
   let d = open_out fic 
   and dp = sort_events_by_depth net.events
   in
-  try
+    try
       fprintf d "digraph G{\n" ;
       if story then
 	let time_str = if nb = 1 then "once at" else sprintf "%d times after an average of" nb in 
@@ -72,14 +72,14 @@ let dot_of_network ?(story=true) ?(limit=true) fic (net,nb,time) =
 				    lab id shape fillcolor ;
 				  let set = try IntMap.find id net.s_preds with Not_found -> IntSet.empty in
 				    IntSet.fold (fun id' map -> 
-				      try (
-						   let e' = event_of_id id' net in
-						   let weight = depth - e'.s_depth in 
-						     (*negative value to have an increasing map*)
-						   let cont = try IntMap.find weight map with Not_found -> [] in
-						     IntMap.add weight ((id',id)::cont) map) 
-				      with _ -> 
-					(print_string "BUG_HTML.ml";print_int id;print_string "->";print_int id';print_newline ();map)
+						   try (
+						     let e' = event_of_id id' net in
+						     let weight = depth - e'.s_depth in 
+						       (*negative value to have an increasing map*)
+						     let cont = try IntMap.find weight map with Not_found -> [] in
+						       IntMap.add weight ((id',id)::cont) map) 
+						   with _ -> 
+						     (print_string "BUG_HTML.ml";print_int id;print_string "->";print_int id';print_newline ();map)
 						) set map
 			     ) l map
 			 in
@@ -117,6 +117,19 @@ let dot_of_network ?(story=true) ?(limit=true) fic (net,nb,time) =
 					    (label (event_of_id i net)) i (label (event_of_id j net)) j style shape 
 				 ) l
 		    ) weight_map 
+      in
+      let _ =
+	IntMap.iter (fun j w_preds_j  -> 
+		       IntSet.iter (fun i ->
+				      let preds_j = try IntMap.find j preds_star with Not_found -> IntSet.empty in
+					if IntSet.mem i preds_j then ()
+					else 
+					  let style,shape = ("dotted","right")
+					  in
+					    fprintf d  "\"[%s]_%d\"->\"[%s]_%d\" [style=%s,dir=%s]\n" 
+					      (label (event_of_id i net)) i (label (event_of_id j net)) j style shape 
+				   ) w_preds_j 
+		    ) net.w_preds 
       in
 	fprintf d "}\n" ;
 	close_out d

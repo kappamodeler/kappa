@@ -412,19 +412,15 @@ let add_intro (str,modifs) safe net =
   in
     {net with fresh_id = net.fresh_id+1}
 
-
 let preds_closure net closure = 
   let rec f net closure preds = 
     let news =
       IntSet.fold (fun i set -> 
 		     let p_i = strong_preds i net in  
-		     let filter =
 		       IntSet.fold (fun i set -> 
 				      if IntSet.mem i closure then set 
 				      else IntSet.add i set
-				   ) p_i IntSet.empty
-		     in
-		       IntSet.union filter set
+				   ) p_i set
 		  ) preds IntSet.empty
     in
       if IntSet.is_empty news then closure
@@ -676,7 +672,7 @@ let add sol net (r,modifs) debug compress =
 			 ) nodes {net with events=events;s_preds=preds; w_preds=w_preds ; fresh_id=net.fresh_id+1}
 	  in
 	  let last =
-	    IntSet.union preds_rm (IntSet.remove rm_eid net.last)
+	    IntSet.fold (fun eid last -> IntSet.add eid last) preds_rm (IntSet.remove rm_eid net.last)
 	  in
 	    {net with last = last}
 	end
@@ -757,6 +753,19 @@ let cut net (*port_obs*) obs_str =
 		     {h with 
 			events = EventArray.add i e h.events ;
 			s_preds = IntMap.add i (strong_preds i net) h.s_preds ;  
+			w_preds = 
+			 begin
+			   let w_ids = weak_preds i net in
+			      (*only adding weak arrows that are internal to the story*)
+			   let w_ids = 
+			     IntSet.fold (fun eid set ->
+					    if IntSet.mem eid preds_star then
+					      IntSet.add eid set
+					    else set
+					 ) w_ids IntSet.empty
+			   in
+			     IntMap.add i w_ids h.w_preds
+			 end;
 			fresh_id = if (i >= h.fresh_id) then (i+1) else h.fresh_id ;
 			last = if IntSet.mem i net.last then IntSet.add i h.last else h.last ;
 		     }
@@ -771,7 +780,7 @@ let cut net (*port_obs*) obs_str =
   in
     {h with events = EventArray.add id_obs {e_obs with kind=2} h.events}
       
-    
+
 let obs_story h = 
   let rec find_obs last =
     if IntSet.is_empty last then Error.runtime "No observable in story"
@@ -783,7 +792,7 @@ let obs_story h =
 	      None -> e.label
 	    | Some flg -> flg
 	else
-	  find_obs (IntSet.remove i last)
+	  Error.runtime "No observable in story" (*find_obs (IntSet.remove i last)*)
   in
     find_obs h.last
 	

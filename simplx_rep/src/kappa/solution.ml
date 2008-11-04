@@ -418,33 +418,7 @@ let paths_of_id id sol =
       | [] -> (cc,paths)
   in
     f [id] IntSet.empty (Paths.empty()) (IntSet.singleton id) (PortSet.empty)
-
-
-(*returns the set of ids which belong to the connected component of id in sol*)
-let connected_component ?exclude id sol = 
-  let excl_set = match exclude with None -> StringSet.empty | Some set -> set in
-  let _,role_map,_ = get_instructions id IntMap.empty IntMap.empty 1 sol in (**TODO: not efficient!*)
-  let cc = IntMap.fold (fun id role set -> 
-			  let ag_name = Agent.name (agent_of_id id sol) in
-			    if StringSet.mem ag_name excl_set then raise False 
-			    else
-			      IntSet.add id set
-		       ) role_map IntSet.empty
-  in
-    cc
-
-let connected_names id sol ref_id set = 
-  let _,role_map,_ = get_instructions id IntMap.empty IntMap.empty 1 sol in (**TODO: not efficient!*)
-    try
-      IntMap.fold (fun id _ set -> 
-		     if id=ref_id then raise False (*agents are already connected so no exclusion hold*)
-		     else
-		       let ag = agent_of_id id sol in
-			 StringSet.add (Agent.name ag) set
-		  ) role_map set
-    with
-	False -> StringSet.empty
-    
+  
 let rec find_path id map_paths acc = 
   try
     let s,id',s' = IntMap.find id map_paths in find_path id' map_paths ((id,s)::(id',s')::acc)
@@ -453,44 +427,15 @@ let rec find_path id map_paths acc =
 
 
 let split sol_init = 
-  try 
-    let rec iter sol ids acc_cc =
-      if IntSet.is_empty ids then acc_cc
-      else 
-	let id = IntSet.choose ids in
-	let cc_id = connected_component id sol in 
-	let ids = IntSet.fold (fun id ids -> IntSet.remove id ids) cc_id ids in
-	  iter sol ids (cc_id::acc_cc)
-    in
-    let cc =
-      iter sol_init (AA.fold (fun id _ set -> IntSet.add id set) sol_init.agents IntSet.empty) []
-    in
-    let restrict_links ids links =
-      PA.fold (fun (i,x) (j,y) map -> 
-		 match (IntSet.mem i ids,IntSet.mem j ids) with  
-		     (true,true) -> PA.add (i,x) (j,y) map
-		   | (false,false) -> map
-		   | _ -> Error.runtime "Solution.split: link exiting connected component!"
-	      ) links (PA.create (PA.size links))
-    in
-    let split_map,_ =
-      List.fold_right (fun ids (cont,i) ->
-			 let sol =
-			   IntSet.fold (fun id sol -> 
-					  let agents = AA.add id (agent_of_id id sol_init) sol.agents 
-					  in
-					    {sol with agents = agents; 
-					       fresh_id = if id>=sol.fresh_id then id+1 else sol.fresh_id}
-				       ) ids (empty())
-			 in
-			   (IntMap.add i {sol with 
-					    links = restrict_links ids sol_init.links 
-					 } cont,i+1)
-		      ) cc (IntMap.empty,0)
-    in
-      split_map
-  with exn -> (Printf.printf "in Solution.split: "; flush stdout ; raise exn)
-  
+  let map_cc,_,_ = 
+    AA.fold (fun id _ (map_cc,blacklist,fresh) -> 
+	       if IntSet.mem id blacklist then (map_cc,blacklist,fresh)
+	       else
+		 let cc,blacklist = cc_of_id id sol_init blacklist in
+		   (IntMap.add fresh cc map_cc,blacklist,fresh+1)
+	    ) sol_init.agents (IntMap.empty,IntSet.empty,0)
+  in
+    map_cc
 
 (*entries : pid which are roots of a connected component *)
 (*compil :  role -> (site -> inst_loc, site -> inst_rem) *)

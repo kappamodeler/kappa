@@ -108,10 +108,11 @@ val get_instructions :
   int -> cc_recognition -> int Mods2.IntMap.t -> int -> t 
   -> (cc_recognition * int Mods2.IntMap.t * int)
 
+(*
 (**[connected_component id sol] returns the set of identifiers which belong to the connected component of [id] in [sol]*)
 val connected_component : ?exclude:(Mods2.StringSet.t) -> int -> t -> Mods2.IntSet.t
 val connected_names : int -> t -> int -> Mods2.StringSet.t -> Mods2.StringSet.t
-
+*)
 (**[split sol] returns a map of solutions corresponding to the connected components of [sol]*)
 val split : t -> t Mods2.IntMap.t
 
