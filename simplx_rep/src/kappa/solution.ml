@@ -359,33 +359,34 @@ let cc_of_id id sol blacklist =
   let rec f todo_ids cc blacklist =
     match todo_ids with
 	id::tl -> 
-	  let ag = agent_of_id id sol in
+	  let ag = try agent_of_id id sol with Not_found -> Error.runtime "Solution.cc_of_id: malformed solution" in
 	  let cc = {cc with agents = AA.add id ag cc.agents; fresh_id = max cc.fresh_id (id+1)} in
 	  let todo,cc,blacklist = 
 	    Agent.fold_interface (fun x (_,lnk) (tl,cc,bl) -> 
 				    match lnk with
 					Agent.Bound ->
-					  let (id',y) = get_port (id,x) sol in
-					    if IntSet.mem id' bl then 
-					      (tl,{cc with 
-						     links = PA.add (id',y) (id,x) (PA.add (id,x) (id',y) cc.links) ;
-						  },bl)
-					    else 
-					      (id'::tl,{cc with 
-							  links = PA.add (id',y) (id,x) (PA.add (id,x) (id',y) cc.links) ;
-						       },IntSet.add id' bl)
+					  begin
+					    try
+					      let (id',y) = get_port (id,x) sol in
+						if IntSet.mem id' bl then 
+						  (tl,{cc with 
+							 links = PA.add (id',y) (id,x) (PA.add (id,x) (id',y) cc.links) ;
+						      },bl)
+						else 
+						  (id'::tl,{cc with 
+							      links = PA.add (id',y) (id,x) (PA.add (id,x) (id',y) cc.links) ;
+							   },IntSet.add id' bl)
+					    with
+						Not_found -> (tl,cc,bl) (*sol is a pattern*)
+					  end
 				      | _ -> (tl,cc,bl)
 				 ) ag (tl,cc,blacklist)
 	  in
 	    f todo cc blacklist
       | [] -> (cc,blacklist)
   in
-    try
-      f [id] (empty()) (IntSet.add id blacklist)
-    with
-	Not_found -> runtime "Solution.cc_of_id: mal formed solution"
-  
-
+    f [id] (empty()) (IntSet.add id blacklist)
+    
 let paths_of_id id sol = 
   let rec f todo_ids cc paths blacklist exiting_ports= 
     match todo_ids with
