@@ -40,11 +40,8 @@ let main =
     ("--no-measure", Arg.Unit (fun () -> ignore_obs:=true), "causes simplx to ignore observables") ;
     ("--quotient-refinements", Arg.Unit (fun () -> quotient_refs:=true), "replace each rule by the most general rule it is a refinement of when computing stories");
     ("--memory-limit",Arg.Int (fun i -> memory_limit:=i), "limit the usage of the memory (in Mb). Default is infinite (0)");
-    ("--cores",Arg.Int (fun i -> cores:=i), "(1) number of cores to use if multithreading is possible");
-    
     (*expert mode options*)
-    ("--max-clashes", Arg.Int (fun i -> if i=0 then max_clashes := -1 else max_clashes := i), 
-     "[expert] (100) max number of consecutive clashes before aborting (0=infinite)"); 
+    ("--max-clashes", Arg.Int (fun i -> max_clashes := i), "[expert] (infinite) max number of consecutive clashes before aborting"); 
     ("--key", Arg.String (fun s -> key := s), "[expert] name of the file containing the key for the crypted version");
     ("--save-map", Arg.String (fun s -> save_map:=true ; serialized_map_file := s), 
      "[expert] name of the file in which to save influence map");
@@ -346,54 +343,29 @@ let main =
 	  let log = Session.add_log_entry 0 msg log in
 	  let _ = Gc.compact() in (*collecting dead memory at the end of initialization*)
 	    (*end initialization*)
-	    
-	  let ref_log = ref log (*session log*)
-	  and ref_sd = ref sd (*simulation data*)
-	  and ref_p = ref p (*simulation parameters*)
-	  and ref_c = ref (Simulation2.empty_counters) (*simulation counters*)
-	  in
-	  let main_thread = 
-	    Thread.create (fun _ ->
-	    		     let log,sd,p,c = 
-			       if not !map_mode then
-				 begin
-				   let log = Session.add_log_entry 0 "-Simulation..." log in
-				   let t_sim = Mods2.gettime() in
-				   let (deadlocked,log,sd,p,c) = iter log sd p (Simulation2.init_counters ()) in
-				   let log,drawers,compress_log  = 
-				     Iso.compress_drawers log c.drawers p.iso_mode (fun a b c -> Session.add_log_entry a b c) 
-				   in 		 
-				   let c = 
-				     {c with drawers = drawers ;
-					compression_log = compress_log } in 
-				     
-				   let log = 
-				     if (deadlocked=1) then 
-				       (Session.add_log_entry 1 "-Simulation was interrupted because no rule could be applied anymore!" log)
-				     else 
-				       log
-				   in
-				     (Session.add_log_entry 0 (sprintf "-Simulation: %f sec. CPU" (Mods2.gettime() -. t_sim)) log,
-				      sd,p,c)
-				 end 
-			       else (log,sd,p,Simulation2.empty_counters)
-			     in
-			       ref_log:=log ;
-			       ref_sd:=sd ;
-			       ref_p:=p ;
-			       ref_c:=c
-			  ) ()
-	  in
-	  let _ = Thread.join main_thread in
-	  let log,sd,p,c = !ref_log,!ref_sd,!ref_p,!ref_c in
-	  let log = 
-	    if !cores>1 then
-	      let log = Session.add_log_entry 0 "-Collecting threads ..." log in
-	      let ref_log = ref log in
-		List.iter (fun th -> Thread.join th) !Data.threads_id ;
-		let log = !ref_log in
-		  Session.add_log_entry 0 "-Threads collected." log 
-	    else log
+	  let log,sd,p,c = 
+	    if not !map_mode then
+	      begin
+		let log = Session.add_log_entry 0 "-Simulation..." log in
+		let t_sim = Mods2.gettime() in
+		let (deadlocked,log,sd,p,c) = iter log sd p (Simulation2.init_counters ()) in
+		let log,drawers,compress_log  = 
+		  Iso.compress_drawers log c.drawers p.iso_mode (fun a b c -> Session.add_log_entry a b c) 
+		in 		 
+		let c = 
+		  {c with drawers = drawers ;
+		     compression_log = compress_log } in 
+		  
+		let log = 
+		  if (deadlocked=1) then 
+		    (Session.add_log_entry 1 "-Simulation was interrupted because no rule could be applied anymore!" log)
+		  else 
+		    log
+		in
+		  (Session.add_log_entry 0 (sprintf "-Simulation: %f sec. CPU" (Mods2.gettime() -. t_sim)) log,
+		   sd,p,c)
+	      end 
+	    else (log,sd,p,Simulation2.empty_counters)
 	  in
 	    if !Mods2.bench_mode then Bench.output() ;
 	    

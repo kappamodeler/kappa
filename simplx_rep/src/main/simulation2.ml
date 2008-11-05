@@ -1694,16 +1694,10 @@ let rec iter log sim_data p c =
 		  x::tl -> 
 		    if (x<=c.curr_time) then 
 		      let log =
-			if !cores>1 then (*distributing computation of snapshots*)
-			  let th = Thread.create Session.snapshot (Solution.copy sim_data.sol,c.curr_time,c.snapshot_counter)
-			  in
-			    threads_id:=th::(!threads_id) ;
-			    Session.add_log_entry (-1) (Printf.sprintf "Spawning a thread for snapshot at t=%f" c.curr_time) log 
-			else (*stoping process to compute snapshot*)
-			  (
-			    Session.snapshot (sim_data.sol,c.curr_time,c.snapshot_counter) ;
-			    Session.add_log_entry (-1) (Printf.sprintf "Taking snapshot at t=%f" c.curr_time) log 
-			  )
+			(
+			  Session.snapshot (sim_data.sol,c.curr_time,c.snapshot_counter) ;
+			  Session.add_log_entry (-1) (Printf.sprintf "Taking snapshot at t=%f" c.curr_time) log 
+			)
 		      in
 			({c with snapshot_time = tl ; snapshot_counter = c.snapshot_counter+1},log)
 		    else (c,log)

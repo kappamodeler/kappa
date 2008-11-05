@@ -1,7 +1,7 @@
 (**Data references*)
 
 let version_main = 3
-let version_cpt = 63 (*weak arrows in stories*) 
+let version_cpt = 641 (*bug thread mac os*) 
 let version_svn = Svn_number.svn_number
 let version_branch = ""
 let arch_type = string_of_int Sys.word_size
@@ -36,8 +36,6 @@ let quotient_refs = ref false (**set true to replace each rule by the most gener
 let closure = ref true
 let story_compression = ref true
 let story_compression_mode = ref FIRST
-let no_weak_arrow = ref true (*TODO do not consider weak arrows in story computation*)
-let short_intro_name = ref false (*Coarse intro label for stories*)
 
 (*let story_compression_granularity = ref WEAK*)
 let story_iteration_strategy = 2 (*1->follow causal order,2->follow linear order*) 
@@ -95,7 +93,7 @@ let init_time = ref 0.0
 let clock_precision = ref 60
 
 (**max number of successive clashes*)
-let max_clashes = ref 100
+let max_clashes = ref (-1) (**Infinite by default*)
 
 (**Deadlocked activity threshold (default 0.0)*)
 let deadlock_sensitivity = ref 0.0
@@ -104,9 +102,6 @@ let deadlock_sensitivity = ref 0.0
 
 (**Tick string (default '#')*)
 let tick_string = "#"
-
-(**Creates a dot file whenever a deadlock is encountered (default true)*)
-let dump_deadlock = ref true
 
 (**Creates a dot file containing the final state of the simulation (default false)*)
 let output_final = ref false
@@ -124,6 +119,7 @@ let merge_maps = ref false
 let gnuplot_plugin = ref false
 
 (**<h3> compilation/simulation modes </h3> *)
+let forward = ref false
 
 (**storification mode*)
 let story_mode = ref false      
@@ -137,16 +133,12 @@ let compile_mode = ref false
 (**influence map only mode*)
 let map_mode = ref false
 
-(**forward rules only (default false)*)
-let forward = ref false         
-
 (**seed random generator at each new run with given value (default None)*)
 let (seed:int option ref) = ref None             
 
 (**rescaling (default 1.0)*)
 let rescale = ref 1.0           
 
-let coef_unary = ref 1.0 (*unary rate n times faster than binary rate*)
 let p_intra_fic = ref ""
 let plot_p_intra = ref false
 let prob_desc:out_channel option ref = ref None
@@ -179,13 +171,6 @@ let gc_overhead = ref 80 (*ocaml default*)
 (**Verbose mode: output all warnings on standard error channel (default false)*)
 let verbose = ref false
 
-(**<h3>Multi threading</h3>*)
-
-(**Number of cores to use for multithreading*)
-let cores = ref 1
-(**List of all process ids used during the simulation*)
-let threads_id:Thread.t list ref = ref []
-
 (**<h3>parser results</h3>*)  
 
 (**List of rules*)
@@ -199,7 +184,7 @@ let (obs_l:Solution.observation list ref) = ref []
 let (init:(Solution.t*int) list ref) = ref [] 
 
 (**Do we take into account coefficients in initial states [JF]*)
-let parse_coef = ref true 
+let parse_coef = ref true
 
 (**Experiment*)
 let exp = ref Experiment.empty
