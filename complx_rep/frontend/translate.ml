@@ -119,6 +119,8 @@ let translate_init_elt t (agents,marks,markable_sites,linkable_sites,mark_site_r
 		let test,linkable_sites = 
 		  match m2 with Agent.Wildcard -> test,linkable_sites
 		    | Agent.Free -> 
+			if s = "_" then test,linkable_sites 
+			else
 			   (fadd_test i (Pb_sig.S_free s) test,
 			    fadd i s linkable_sites
 			   )
