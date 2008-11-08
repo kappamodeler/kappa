@@ -128,18 +128,54 @@ let string_of_exn x =
   | UnixLabels.Unix_error _ -> "UnixLabels.Unix_error"
   | Unix.Unix_error _ -> "Unix.Unix.error"
   | Failure x -> ("Failure "^x)
-  | _ -> "Not known"
+  | Error.Syntax (s,i) -> ("Error.Syntax("^s^","^(string_of_int i)^")")
+  | Error.Runtime s -> "Error.Runtime "^s
+  | Error.Runtime2 s -> "Error.Runtime2 "^s
+  | Error.Found s -> "Error.Found "^s
+  | Error.Too_expensive ->  "Error.Too expensive"
+  | Error.Not_handled_yet s -> "Error.Not handled yet "^s 
+  | _  -> "Not known"
+
 
 (** handle_errors app meth f a applies f with a,
     in case of exception it stores it in the error stack (filling the name of the application with app, and the name of the method with meth) throw an exception of the form Exception Error *)
+
+let g error = 
+  let _ = add_error error in 
+  raise (Exception error) 
+
+let compose x y = 
+  match x with None -> Some y
+  | Some a -> Some (a^y) 
+
 let handle_errors app meth f a = 
   try 
     f a
   with 
     Exception i -> raise (Exception i) 
+  | Error.Syntax (s,i) as exn -> 
+      g 
+	{application = Some "Simplx" ;
+	  method_name = meth ;
+	  function_name = !function_name ;
+	  file_name = Some (!Data.fic) ;
+          calling_stack = !calling_stack ;
+          message = compose (!message) s ;
+          key = compose (!ind) ("line "^(string_of_int i)) ;
+          exception_ = exn}
+  | Error.Runtime s | Error.Runtime2 s | Error.Found s | Error.Not_handled_yet s as exn ->
+      g 
+	{application = Some "Simplx"  ;
+	  method_name = meth ;
+	  function_name = !function_name ;
+	  file_name = !file_name;
+          calling_stack = !calling_stack ;
+          message = compose (!message) s ;
+          key = !ind ;
+          exception_ = exn}
   | exn -> 
       let error = 
-        {application = app  ;
+        {application = if exn=Error.Too_expensive then Some "Simplx" else app  ;
 	 method_name = meth ;
 	  function_name = !function_name ;
 	 file_name = !file_name ;
@@ -202,6 +238,7 @@ let string_of_error error =
   ^(string_of_option "Method" error.method_name)
   ^(string_of_option "Module" error.file_name)
   ^(string_of_option "Function" error.function_name)
+  ^(string_of_option "Message" error.message)
   ^(string_of_option "Key" error.key)
   ^(string_of_option "Exception" (Some (string_of_exn error.exception_)))
     
