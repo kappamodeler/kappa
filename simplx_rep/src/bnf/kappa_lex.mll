@@ -18,7 +18,7 @@
        (Some "kappa_lex.mll",
 	Some 19,
 	Some (full_msg^" line "^(string_of_int line)))
-     (full_msg,line(*+1*))
+     (full_msg,line)
 }
 
 let blank = [' ' '\t' '\r']
