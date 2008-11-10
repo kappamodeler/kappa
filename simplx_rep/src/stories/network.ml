@@ -40,7 +40,13 @@ struct
 
   let rec can_push_to_collapse w eid rm_id =
     match w with
-	[] -> Error.runtime "Wire.push_to_collapse: empty wire"
+	[] -> 
+	  let s = "Wire.push_to_collapse: empty wire" in
+	  Error.runtime
+	    (Some "network.ml",
+	     Some 47,
+	     Some s)
+	    s
       | (i,modif)::tl -> 
 	  if i=rm_id then can_push_to_collapse tl eid rm_id
 	  else 
@@ -63,8 +69,8 @@ struct
 	  match old_state with Rule.Before_After (_,y) -> aux y
 	    | _ -> old_state in
 	  aux old_state in 
-      let error () = 
-	let err = (*if !Data.sanity_check then*) Error.runtime (*else Error.warning*) in
+      let error b = 
+	let err x = (*if !Data.sanity_check then*) Error.runtime (Some "network.ml",Some b,Some x) x (*else Error.warning*) in
 	let add_msg = Printf.sprintf "\nIn rule %s\n" rule_str in
 	  err (
 	    (string_of_port (i,s))^": "
@@ -86,42 +92,42 @@ struct
 	  | Rule.Test_bound (i,s) -> (
 	      match old_state with
 		  (Rule.Bound (i',s') | Rule.Init_bound (_,i',s') | Rule.Test_bound (i',s')) -> 
-		    if (i'=i) && (s=s') then push node w else error() 
+		    if (i'=i) && (s=s') then push node w else error 95 
 		      
 	        | Rule.Test_any_bound -> push node w
-		| _ -> error()
+		| _ -> error 98
 	    )
 	  | Rule.Test_marked s -> (
 	      match old_state with
-		  (Rule.Test_marked s' | Rule.Marked (_,s') | Rule.Init_mark (_,s')) -> if s'=s then push node w else error()
-		| _ -> error()
+		  (Rule.Test_marked s' | Rule.Marked (_,s') | Rule.Init_mark (_,s')) -> if s'=s then push node w else error 102
+		| _ -> error 103 
 	    )
 	  | Rule.Test_any_bound -> (
 	      match old_state with
 		  (Rule.Before_After _ |Rule.Init_bound _ | Rule.Bound _ | Rule.Test_bound _ | Rule.Test_any_bound) -> push node w 
-		| _ -> error()
+		| _ -> error 108 
 	    )
 	  | Rule.Test_free -> (
 	      match old_state with
 		  (Rule.Before_After _ | Rule.Init_free _ | Rule.Test_free | Rule.Break _ | Rule.Side_break _) -> push node w 
-		| _ -> error()
+		| _ -> error 113
 	    )
 	  | Rule.Bound (i,s) -> (
 	      match old_state with 
 		| Rule.Init_free _ | Rule.Break _ | Rule.Test_free | Rule.Side_break _ -> push node w
-		| _ -> error()
+		| _ -> error 118 
 	    ) 
 	  | Rule.Break (i,s) -> 
 	      (match old_state with Rule.Before_After _ -> push node w 
 		 |	_ -> 
 			  if (old_state = Rule.Bound(i,s)) or (old_state = Rule.Test_bound(i,s)) or (old_state = Rule.Test_any_bound)
 			    or (match old_state with Rule.Init_bound (_,i',s') when i=i' && s=s' -> true | _ -> false) 
-			  then push node w else error())
+			  then push node w else error 125)
 	  | Rule.Marked (old_m,_) -> (
 	      match old_state with
 		  (Rule.Marked (_,s') | Rule.Init_mark (_,s') | Rule.Test_marked s') -> 
-		    if (old_m = s') then push node w else error()
-		| _ -> error()
+		    if (old_m = s') then push node w else error 129
+		| _ -> error 130
 	    )
 	  | Rule.Remove -> push node w (*remove action is always compatible*)
 	  | Rule.Side_break (i,s) -> 
@@ -129,15 +135,26 @@ struct
 		or (match old_state with Rule.Init_bound(_,i',s') when i=i' && s=s' -> true | _ -> false)
 		or (old_state = Rule.Test_bound(i,s)) 
 		or (old_state = Rule.Test_any_bound)
-	      then push node w else error()
+	      then push node w else error 138 
 	  | Rule.Init_bound _ -> 
 	      begin
 		match old_state with 
 		    Rule.Init_free _ -> push node w
-		  | _ -> Error.runtime "Network.plug: invalid sequence of modif on a single quark"
+		  | _ -> 
+		      let s = "Network.plug: invalid sequence of modif on a single quark" in
+		      Error.runtime 
+			(Some "network.ml",
+			 Some 147,
+			 Some s)
+			s
 	      end
 	  | Rule.Init_mark _ | Rule.Init_free _ -> 
-	      Error.runtime "Network.plug: adding an initial state to a non empty wire." in 
+	      let s = "Network.plug: adding an initial state to a non empty wire." in 
+	      Error.runtime 
+		(Some "network.ml",
+		 Some 155,
+		 Some s)
+		s in 
 	aux new_state
 	
   let rec rename_before_plugging sigma (i,s) node w = 
@@ -161,14 +178,19 @@ struct
 	  aux old_state in
       let old_state = Rule.subs_act sigma old_state in
       let new_state = Rule.subs_act sigma new_state in 
-      let error () = let s (*Error.runtime*) 
+      let error (b) = let s (*Error.runtime*) 
 	= (string_of_port (i',s))^": "
 	^"Consistency check failed, adding "
 	^(Rule.string_of_modif_type new_state)
 	^" when previous node was "
 	^(Rule.string_of_modif_type old_state)
-      in Error.runtime s
-      
+      in 
+      Error.runtime 
+	(Some "network.ml",
+	 Some b,
+	 Some s) 
+	s
+	
       in
       let unify i i' sigma = 
 	try (IntMap.find i sigma;None) 
@@ -185,33 +207,33 @@ struct
 		      begin
 			if s=s' then 
 			  match unify i i' sigma with 
-			      None -> error ()
+			      None -> error 210
 			    |Some sigma -> sigma 
 			else 
-			  error()
+			  error 213
 		      end
 		| Rule.Test_any_bound -> sigma 
-		| _ -> error()
+		| _ -> error 216
 	    )
 	  | Rule.Test_marked s -> (
 	      match old_state with
-		  (Rule.Test_marked s' | Rule.Marked (_,s') | Rule.Init_mark (_,s')) -> if s'=s then sigma  else error()
-	      | _ -> error()
+		  (Rule.Test_marked s' | Rule.Marked (_,s') | Rule.Init_mark (_,s')) -> if s'=s then sigma  else error 220
+	      | _ -> error 221
 	    )
 	  | Rule.Test_any_bound -> (
 	      match old_state with
 		  (Rule.Before_After _ |Rule.Init_bound _ | Rule.Bound _ | Rule.Test_bound _ | Rule.Test_any_bound) -> sigma 
-		| _ -> error()
+		| _ -> error 226
 	    )
 	  | Rule.Test_free -> (
 	      match old_state with
 		  (Rule.Before_After _ | Rule.Init_free _ | Rule.Test_free | Rule.Break _ | Rule.Side_break _) -> sigma  
-		| _ -> error()
+		| _ -> error 231
 	    )
 	  | Rule.Bound (i,s) -> (
 	      match old_state with 
 	      | Rule.Init_free _ | Rule.Break _ | Rule.Test_free | Rule.Side_break _ -> sigma 
-		| _ -> error()
+		| _ -> error 236 
 	    ) 
 	  | Rule.Break (i,s) -> 
 	      (match old_state with Rule.Before_After _ -> sigma  
@@ -224,16 +246,16 @@ struct
 			 else if s=s' then 
 			   match unify i i' sigma 
 			   with Some sigma' -> sigma'
-			     | None -> error ()
-			 else error ()
-		      | _ -> error ()
+			     | None -> error 249
+			 else error 250
+		      | _ -> error 251
 		  ))
 	  | Rule.Marked (old_m,_) -> 
 	      (
 	      match old_state with
 		  (Rule.Marked (_,s') | Rule.Init_mark (_,s') | Rule.Test_marked s') -> 
-		    if (old_m = s') then sigma  else error() 
-		| _ -> error()
+		    if (old_m = s') then sigma  else error 257
+		| _ -> error 258
 	      )
 	  | Rule.Remove -> sigma  (*remove action is always compatible*)
 	  | Rule.Side_break (i,s) -> 
@@ -243,15 +265,21 @@ struct
 		 |Rule.Init_bound(_,i',s') 
 		 | Rule.Test_bound(i',s') -> if i=i' && s=s' then sigma  else if s = s' then 
 		     match unify i i' sigma with 
-			 None -> error ()
+			 None -> error 268
 		       |Some sigma -> sigma
-		   else error () 
+		   else error 270
 		 |
 		     Rule.Test_any_bound -> sigma 
-		 | _ -> error ()) 
+		 | _ -> error 273) 
 		
 	  | (Rule.Init_bound _|Rule.Init_mark _|Rule.Init_free _) -> 
-	      Error.runtime "Network.plug: adding an initial state to a non empty wire." in 
+	      let s = "Network.plug: adding an initial state to a non empty wire." in
+	      Error.runtime 
+		(Some "network.ml",
+		 Some 279,
+		 Some s)
+		s
+	      in 
 	aux new_state
 
   exception Empty
@@ -263,7 +291,12 @@ struct
 	  else
 	    if (Rule.is_pure_test [state]) then (eid',state)::(backtrack tl eid) (*sanity check*)
 	    else
-	      Error.runtime "Network.Wire.backtrack: sanity check failed"
+	      let s = "Network.Wire.backtrack: sanity check failed" in
+	      Error.runtime
+		(Some "network.ml",
+		 Some 297,
+		 Some s)
+		s
       | [] -> raise Empty
 
   let rec last_mod w = 
@@ -368,7 +401,12 @@ let event_of_id i net =
   with 
       Not_found -> 
 	let error = Printf.sprintf "event_of_id: %d does not correspond to any event" i 
-	in Error.runtime error
+	in 
+	Error.runtime 
+	  (Some "network.ml",
+	   Some 407,
+	   Some error)
+	  error 
  
 let unsafe_add_wire (i,s) node (wires:Wire.t PortMap.t) = 
   let w = try PortMap.find (i,s) wires with Not_found -> Wire.empty in
@@ -439,7 +477,13 @@ let immediate_preds eid net =
 		   ) (event_of_id kept_id net).nodes () ; true
     with
 	False -> false
-      | _ -> Error.runtime "Network.immediate_preds: event or wire not found in network"
+      | _ -> 
+	  let s = "Network.immediate_preds: event or wire not found in network" in
+	  Error.runtime 
+	    (Some "network.ml",
+	     Some 484,
+	     Some s)
+	    s
   in
   let weak = weak_preds eid net
   and strong = strong_preds eid net
@@ -523,7 +567,14 @@ let add_event ?(replay=false) eid (r,modifs) add_wire net =
     if !Data.sanity_check then 
       let set = IntSet.inter weak strong in 
 	if IntSet.is_empty set then () 
-	else Error.runtime "QA failed in Network.event_add: weak and strong precedence should have an emtpy intersection"
+	else 
+	  let s = "QA failed in Network.event_add: weak and strong precedence should have an emtpy intersection" 
+	  in
+	  Error.runtime
+	    (Some "network.ml",
+	     Some 575,
+	     Some s)
+	    s
     else () 
   in
   let s_d,g_d,last = 
@@ -537,8 +588,14 @@ let add_event ?(replay=false) eid (r,modifs) add_wire net =
 		     in
 		       (s_mx,g_mx,last) (*weak preds does not change depth of events*)
 		   with Not_found -> 
-		     Error.runtime 
+		     let s = 
 		       ("Network.add: event "^(string_of_int i)^" not found in predecessors of "^(string_of_int eid))
+		     in
+		     Error.runtime 
+		       (Some "network.ml",
+			Some 596,
+			Some s)
+		       s
 		) (IntSet.union strong weak) (0,0,net.last)
   in
   let e = {r=r;
@@ -568,7 +625,13 @@ let add sol net (r,modifs) debug compress =
 			  if not (Rule.contains_modif states) or (Rule.is_creation states) or (Rule.is_deletion states) 
 			  then candidates (*if List.hd contains modif than so other actions in List.tl*)
 			  else
-			    let w_is = try PortMap.find (i,s) net.wires with Not_found -> Error.runtime (Printf.sprintf "Network.add: Wire (%d,%s) not found" i s)
+			    let w_is = try PortMap.find (i,s) net.wires with Not_found -> 
+			      let s = (Printf.sprintf "Network.add: Wire (%d,%s) not found" i s) in
+			      Error.runtime
+				(Some "network.ml",
+				 Some 632,
+				 Some s)
+				s
 			    in 
 			    let opt_eid_state = (try Some (Wire.top_event w_is) with Wire.Empty -> None) in
 			      match opt_eid_state with
@@ -589,13 +652,25 @@ let add sol net (r,modifs) debug compress =
 			     (*Printf.printf "%s\n%s\n" e.label r.Rule.input; flush stdout ; *)
 			     Rule.opposite modifs e.nodes sol
 			) candidates
-	  with Not_found -> Error.runtime "Network.add: event not found"
+	  with Not_found -> 
+	    let s = "Network.add: event not found" in
+	    Error.runtime 
+	      (Some "network.ml",
+	       Some 659,
+	       Some s)
+	      s
       else ()
     in
     let eid = net.fresh_id in
       (try
 	 add_event eid (r,modifs) (add_wire (Printf.sprintf "%s_%d" r.Rule.input eid)) net (*If there is no trivial compression*)
-       with Not_found -> Error.runtime "Network.add_event: not found raised")
+       with Not_found -> 
+	 let s = "Network.add_event: not found raised" in
+	 Error.runtime
+	   (Some "network.ml",
+	    Some 671,
+	    Some s)
+	   s)
   with
       Rule.Opposite nodes -> (**When added event can collapse nodes in [nodes]*)
 	begin
@@ -623,13 +698,36 @@ let add sol net (r,modifs) debug compress =
 						      Printf.sprintf "%d:%s\n%d:%s\n" eid event.label eid' event'.label
 						  in
 						    Printf.printf "last:%s\n" (string_of_set string_of_int IntSet.fold net.last) ; flush stdout ;
-						    Error.runtime (msg^"\n"^msg2) 
+						    let s = (msg^"\n"^msg2) in
+						    Error.runtime 
+						      (Some "network.ml",
+						       Some 704,
+						       Some s)
+						      s
 						end
 					  | None -> Some eid
 				 ) nodes None
 	  in
-	  let rm_eid = match opt with None -> Error.runtime "Network.add: invalid argument" | Some eid -> eid in
-	  let _ = if IntSet.mem rm_eid net.last then () else Error.runtime "Network.add: removed event is not maximal" in
+	  let rm_eid =
+	    match opt with 
+	      None -> 
+		let s = "Network.add: invalid argument" in
+		Error.runtime 
+		  (Some "network.ml",
+		   Some 715,
+		   Some s)
+		  s
+	    | Some eid -> eid in
+	  let _ = 
+	    if IntSet.mem rm_eid net.last then () 
+	    else 
+	      let s = "Network.add: removed event is not maximal" in
+	      Error.runtime 
+		(Some "network.ml",
+		 Some 727,
+		 Some s)
+		s
+	  in
 	  let preds_rm = immediate_preds rm_eid net in (*try IntMap.find rm_eid net.preds with Not_found -> IntSet.empty in*)
 	  let events,preds,w_preds =
 	    ( 
@@ -643,12 +741,23 @@ let add sol net (r,modifs) debug compress =
 	      (
 		IntMap.fold (fun eid set _ -> 
 			       if IntSet.mem rm_eid set then 
-				 Error.runtime (Printf.sprintf "QA failed in Network.add: removed eid is a weak predecessor of event %d" eid) 
+				 let s = (Printf.sprintf "QA failed in Network.add: removed eid is a weak predecessor of event %d" eid) in
+				 Error.runtime 
+				   (Some "network.ml",
+				    Some 747,
+				    Some s)
+				   s
 			       else ()
 			    ) net.w_preds () ;
 		IntMap.fold (fun eid set _ -> 
 			       if IntSet.mem rm_eid set then 
-				 Error.runtime (Printf.sprintf "QA failed in Network.add: removed eid is a strong predecessor of event %d" eid) 
+				 let s = (Printf.sprintf "QA failed in Network.add: removed eid is a strong predecessor of event %d" eid) in
+				 Error.runtime
+				   (Some "network.ml",
+				    Some 757,
+				    Some s)
+				   s
+				     
 			       else ()
 			    ) net.s_preds ()
 	      )
@@ -663,10 +772,18 @@ let add sol net (r,modifs) debug compress =
 			      with 
 				  Wire.Empty -> 
 				    let msg = Printf.sprintf "Wire (%d,%s) is empty" i s in
-				      Error.runtime msg
+				    Error.runtime 
+				      (Some "network.ml",
+				       Some 777,
+				       Some msg)
+				      msg 
 				| Not_found -> 
 				    let msg=Printf.sprintf "Wire (%d,%s) not found" i s in
-				      Error.runtime msg
+				      Error.runtime 
+				      (Some "network.ml",
+				       Some 784,
+				       Some msg) 
+				      msg
 			    in
 			      {net with wires=wires}
 			 ) nodes {net with events=events;s_preds=preds; w_preds=w_preds ; fresh_id=net.fresh_id+1}
@@ -676,7 +793,13 @@ let add sol net (r,modifs) debug compress =
 	  in
 	    {net with last = last}
 	end
-    | Not_found -> Error.runtime "Network.add: not found raised"
+    | Not_found -> 
+	let s = "Network.add: not found raised" in
+	Error.runtime
+	  (Some "network.ml",
+	   Some 800,
+	   Some s)
+	  s
 
 let re_add net (r,modifs) safe  =
   let add_wire = if safe then (add_wire r.Rule.input) else unsafe_add_wire in 
@@ -748,7 +871,14 @@ let cut net (*port_obs*) obs_str =
   let h =
     IntSet.fold (fun i h ->
 		   let e = 
-		     try EventArray.find i net.events with Not_found -> Error.runtime "Network.cut: event not bound"
+		     try EventArray.find i net.events 
+		     with Not_found -> 
+		       let s = "Network.cut: event not bound" in
+		       Error.runtime 
+			 (Some "network.ml",
+			  Some 879,
+			  Some s)
+			 s
 		   in 
 		     {h with 
 			events = EventArray.add i e h.events ;
@@ -773,17 +903,37 @@ let cut net (*port_obs*) obs_str =
   in
     (*if port_obs = [] then *)
   let id_obs = 
-    try IntSet.choose h.last with Not_found -> Error.runtime "Network.cut: empty story"
+    try IntSet.choose h.last with Not_found -> 
+      let s = "Network.cut: empty story" in
+      Error.runtime
+	(Some "network.ml",
+	 Some 910,
+	 Some s)
+	s
   in (*should be only one*)
   let e_obs = (*IntMap.find id_obs h.events *) 
-    try EventArray.find id_obs h.events with Not_found -> Error.runtime "Network.cut: empty story"
+    try EventArray.find id_obs h.events 
+    with Not_found -> 
+      let s = "Network.cut: empty story" in
+      Error.runtime 
+	(Some "network.ml",
+	 Some 920,
+	 Some s)
+	s
   in
     {h with events = EventArray.add id_obs {e_obs with kind=2} h.events}
       
 
 let obs_story h = 
   let rec find_obs last =
-    if IntSet.is_empty last then Error.runtime "No observable in story"
+    if IntSet.is_empty last 
+    then 
+      let s = "No observable in story" in
+      Error.runtime 
+	(Some "network.ml",
+	 Some 934,
+	 Some s)
+	s
     else
       let i = IntSet.choose last in
       let e = (*IntMap.find i h.events*) EventArray.find i h.events in
@@ -792,7 +942,13 @@ let obs_story h =
 	      None -> e.label
 	    | Some flg -> flg
 	else
-	  Error.runtime "No observable in story" (*find_obs (IntSet.remove i last)*)
+	  let s = "No observable in story" in
+	  Error.runtime 
+	    (Some "network.ml",
+	     Some 948,
+	     Some s)
+	    s
+(*find_obs (IntSet.remove i last)*)
   in
     find_obs h.last
 	

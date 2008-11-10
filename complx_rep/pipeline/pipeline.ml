@@ -8,6 +8,7 @@ open Config_complx
 open Share
 open Tools
 open Tools2
+open Error_handler_common 
 open Error_handler 
 open Var
 open Expr
@@ -1688,7 +1689,7 @@ module Pipeline =
 	 let _ = Latex.dump_dictionary x in
 	 pb,log 
        and print_error prefix = 
-	 match !Error_handler.error_list 
+	 match !Error_handler_common.error_list 
 	 with 
 	   [] -> ()
 	 | list -> 

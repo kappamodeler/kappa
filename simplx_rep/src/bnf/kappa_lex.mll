@@ -14,7 +14,11 @@
    let full_msg =
      Printf.sprintf "in %s: %s" pos.pos_fname msg
    in
-     Error.syntax (full_msg,line+1)
+     Error.syntax 
+       (Some "kappa_lex.mll",
+	Some 19,
+	Some (full_msg^" line "^(string_of_int line)))
+     (full_msg,line(*+1*))
 }
 
 let blank = [' ' '\t' '\r']
@@ -101,7 +105,13 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
 	      Kappa_parse.line token lexbuf 
 	    with 
 		Error.Found msg -> return_error lexbuf msg 
-	  done ; Error.runtime "Lexer.compile: unexpected end of loop"
+	  done ; 
+	let s = "Lexer.compile: unexpected end of loop" in
+	Error.runtime
+	  (Some "kappa_lex.mll",
+	   Some 112,
+	   Some s)
+	  s
       with End_of_file -> (close_in d ; (!rules,!init,!obs_l,!exp))
     
 	
@@ -114,7 +124,13 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
 	    Kappa_parse.line token lexbuf
 	  with 
 	      Error.Found msg -> return_error lexbuf msg 
-	done ; Error.runtime "Lexer.compile: unexpected end of loop"
+	done ; 
+      let s = "Lexer.compile: unexpected end of loop" in 
+      Error.runtime 
+	(Some "kappa_lex.mll",
+	 Some 131,
+	 Some s)
+	s
     with End_of_file -> (!rules)
 
   let make_init sol_str = 
@@ -126,7 +142,13 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
 	    Kappa_parse.line token lexbuf
 	  with 
 	      Error.Found msg -> return_error lexbuf msg 
-	done ; Error.runtime "Lexer.compile: unexpected end of loop"
+	done ; 
+      let s = "Lexer.compile: unexpected end of loop" in
+      Error.runtime 
+	(Some "kappa_lex.mll",
+	 Some 149,
+	 Some s)
+	s
     with End_of_file -> !init 
 
 }

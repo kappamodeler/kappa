@@ -79,7 +79,13 @@ let rec eval rescale ast rule_of_name rules =
   let op f val1 val2 = 
     match (val1,val2) with
 	(VAL v1,VAL v2) -> VAL (f v1 v2)
-      | _ -> runtime "Experiment.eval"
+      | _ -> 
+	  let s = "Experiment.eval" in
+	  runtime 
+	    (Some "experiment.ml",
+	     Some 86,
+	     Some s)
+	    s
   in
   match ast with
       Mult(ast1,ast2) ->
@@ -97,7 +103,14 @@ let rec eval rescale ast rule_of_name rules =
 	and v2 = eval rescale ast2 rule_of_name rules
 	in
 	  if (v1=INF) then
-	    if (v2=INF) then Error.runtime "Experiment.eval: undetermined form for rate inf/inf"
+	    if (v2=INF) then 
+	      let s = "Experiment.eval: undetermined form for rate inf/inf" in
+	      runtime
+		(Some "experiment.ml",
+		 Some 110,
+		 Some s)
+		s
+
 	    else INF
 	  else 
 	    if v2=INF then VAL 0.0
@@ -108,14 +121,26 @@ let rec eval rescale ast rule_of_name rules =
 	try
 	  let i = StringMap.find flag rule_of_name in
 	  let _,inst_i = Rule_of_int.find i rules in VAL (inst_i/.rescale)
-	with Not_found -> Error.runtime (flag^" is not a defined rule")
+	with Not_found -> 
+	  let s = (flag^" is not a defined rule") in
+	  runtime
+	    (Some "experiment.ml",
+	     Some 128,
+	     Some s)
+	    s
       )
     | Val_kin flag -> (
 	try
 	  let i = StringMap.find flag rule_of_name in
 	  let r_i,_ = Rule_of_int.find i rules in
 	    VAL r_i.kinetics
-	with Not_found -> Error.runtime (flag^" is not a defined rule")
+	with Not_found -> 
+	  let s = (flag^" is not a defined rule") in
+	  runtime 
+	    (Some "experiment.ml",
+	     Some 141,
+	     Some s)
+	    s
       )
 
 let rec extract_dep ast = 

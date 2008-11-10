@@ -138,7 +138,7 @@ module Input =
     let restore configuration stack = 
       let nback = (!back)+1 in
       let _ = if nback > !Data.max_backtrack or (not (test_time ()))
-              then (Error.too_expensive ()) 
+              then (Error.too_expensive (Some "story_compressor.ml",Some 141,Some "too expensive")) 
       in  
       let _ = 
 	if !Mods2.bench_mode && nback mod 1000 = 0 
@@ -886,7 +886,18 @@ module Convert =
 		  a.events 
 		  net'
 	      in
-	      let net = Network.cut net (match flag with Some f -> f | None ->  runtime "Simulation.iter: obs has no flag") in 
+	      let net = 
+		Network.cut net 
+		  (match flag with 
+		    Some f -> f 
+		  | None ->  
+		      let s = "Simulation.iter: obs has no flag" in
+		      runtime 
+			(Some "story_compressor.ml",
+			  Some 897,
+			 Some s)
+			s) 
+	      in 
 	      Some net 
 	     end
 	
@@ -1086,7 +1097,14 @@ module Convert =
 			 a.events 
 			 ((Network.empty (),None),sigma) in
 		       
-		     let net = Network.cut net (match flag with Some f -> f | None ->  runtime "Simulation.iter: obs has no flag") in 
+		     let net = Network.cut net (match flag with Some f -> f | None ->  let s = "Simulation.iter: obs has no flag"
+		     in
+		     Error.runtime
+		       (Some "story_compressor.ml",
+			Some 1104,
+			Some s)
+		       s
+		     ) in 
 		       (Some net)::sol with _ -> sol)
  		[] permutation 
 	  end
@@ -1434,7 +1452,17 @@ let compress net iter_mode granularity log add_log_entry =
 	    in 
 	    let net,flag = 
 	      A.fold_first_output add (Network.empty (),None) output in 
-	    let net = Network.cut net (match flag with Some f -> f | None ->  runtime "Simulation.iter: obs has no flag") in 
+	    let net = 
+	      Network.cut net 
+		(match flag with 
+		  Some f -> f 
+		| None ->  
+		    let s = "Simulation.iter: obs has no flag" in
+		    runtime 
+		      (Some "story_compressor.ml",
+		       Some 1463,
+		       Some s)
+		      s) in 
 	    let net = 
 	      if !Data.reorder_by_depth 
 	      then 
@@ -1458,7 +1486,16 @@ let compress net iter_mode granularity log add_log_entry =
 			net l)
 		    event_by_depth (Network.empty (),None) 
 		in
-		Network.cut net (match flag with Some f -> f | None ->  runtime "Simulation.iter: obs has no flag")
+		Network.cut net 
+		  (match flag 
+		  with Some f -> f 
+		  | None ->  
+		      let s = "Simulation.iter: obs has no flag" in
+		      runtime 
+			(Some "story_compressor.ml",
+			 Some 1496,
+			 Some s)
+			s)
 	      else
 		net 
 	    in

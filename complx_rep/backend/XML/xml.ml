@@ -9,13 +9,14 @@ open Pb_sig
 open Tools
 open Config_complx 
 open Output_contact_map 
+open Error_handler_common 
 open Error_handler 
 
  let set fic2 = 
    try Some (Neighborhood.good_vertice fic2)
    with a ->
      let _ = 
-       Error_handler.add_error 
+       add_error 
 	 {application=Some "Complx";
 	   method_name=Some "good_vertice";
 	   file_name=Some "Neighborhood";

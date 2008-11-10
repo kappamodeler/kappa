@@ -467,7 +467,13 @@ let apply r assoc_list sol = (*sol is imperative!*)
 	with Not_found -> 
 	  begin
 	    try IntMap.find id assoc_add 
-	    with Not_found -> runtime "Rule.apply: cannot find id in phi"
+	    with Not_found -> 
+	      let s = "Rule.apply: cannot find id in phi" in
+	      runtime 
+		(Some "rule.ml",
+		 Some 474,
+		 Some s)
+		s
 	  end
       in
       let mod_quarks,rm_quarks,sol',warn =
@@ -518,7 +524,14 @@ let apply r assoc_list sol = (*sol is imperative!*)
 				      match info with
 					  Agent.Wildcard -> "*"
 					| Agent.Marked s -> s
-					| _ -> runtime "Rule.apply: invalid info marker"
+					| _ -> 
+					    let s = "Rule.apply: invalid info marker"
+					    in 
+					    runtime 
+					      (Some "rule.ml",
+					       Some 532,
+					       Some s)
+					      s
 				    in
 				    let mod_quarks = PortMap.add (id_sol,inf site) [Marked (old_mk,mk)] mod_quarks in
 				      (mod_quarks,rm_quarks,sol',warn)
@@ -526,7 +539,13 @@ let apply r assoc_list sol = (*sol is imperative!*)
 				| Solution.Modify site ->
 				    let (id_sol',site') = 
 				      try Solution.get_port (id_sol,site) sol' 
-				      with Not_found -> runtime "Rule.apply: assoc invariant violation in Modify case"
+				      with Not_found -> 
+					let s = "Rule.apply: assoc invariant violation in Modify case" in 
+					runtime 
+					  (Some "rule.ml",
+					   Some 546,
+					   Some s)
+					  s
 				    in
 				    let sol' = Solution.unbind (id_sol,site) (id_sol',site') sol' in
 				    let mod_quarks = 
@@ -538,7 +557,13 @@ let apply r assoc_list sol = (*sol is imperative!*)
 				| Solution.Remove -> 
 				    let ag_sol = 
 				      try Solution.agent_of_id id_sol sol' 
-				      with Error.Runtime msg -> runtime ("Rule.apply:"^msg)
+				      with Error.Runtime msg -> 
+					let s = ("Rule.apply:"^msg) in
+					runtime 
+					  (Some "rule.ml",
+					   Some 564,
+					   Some s)
+					  s
 				    in
 				    let mod_quarks,rm_quarks =
 				      Agent.fold_interface  
@@ -607,7 +632,14 @@ let apply r assoc_list sol = (*sol is imperative!*)
 	  let mq2,rmq2,tq2,add2,sol2,warn2 = app phi2 sol1 mq1 add1 rmq1 tq1
 	  in
 	    (mq2,rmq2,tq2,add2,sol2,warn1 or warn2)
-      | _ -> Error.runtime "Rule.apply: invalid number of injections"
+      | _ -> 
+	  let s = "Rule.apply: invalid number of injections" in
+	  runtime
+	    (Some "rule.ml",
+	     Some 639,
+	     Some s)
+	    s
+	      
 	    
 
 let print r = 
@@ -670,7 +702,13 @@ let opposite modif_of_w modif_of_w' sol =
 					    Agent.Free -> () 
 					  | _ -> raise Not_opposite
 				    else raise Not_opposite
-				| _ -> Error.runtime "Not a valid test"
+				| _ -> 
+				    let s = "Not a valid test" in
+				    runtime
+				      (Some "rule.ml",
+				       Some 709,
+				       Some s)
+				      s
 		    else (*modif_list contains modification node*)
 		      let opp_state state state' =
 			match (state,state') with
@@ -698,7 +736,13 @@ let opposite modif_of_w modif_of_w' sol =
 					[state1';state2'] -> (opp_state state1 state2' ; opp_state state2 state1') 
 				      | _ -> raise Not_opposite (*multi action versus simple one*)
 				  end
-			      | _ -> Error.runtime "Rule.opposite: malformed modif_list"
+			      | _ -> 
+				  let s = "Rule.opposite: malformed modif_list" in
+				  runtime
+				    (Some "rule.ml",
+				     Some 743,
+				     Some s)
+				    s
 			with Not_found -> raise Not_opposite 
 		 ) map1
   in

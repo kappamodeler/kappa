@@ -297,7 +297,13 @@ let main =
 		  let log = Session.add_log_entry 0 "--Initial state successfully loaded." log in
 		    (log,Some(p,Simulation2.unmarshal f_sd))
 		with 
-		    _ -> Error.runtime (Printf.sprintf "Could not load %s" !serialized_sim_data_file)
+		    _ -> 
+		      let s = (Printf.sprintf "Could not load %s" !serialized_sim_data_file) in
+		      Error.runtime
+			(Some "main.ml",
+			 Some 304,
+			 Some s)
+			s
 	      end
 	    else
 	      (log,None) 

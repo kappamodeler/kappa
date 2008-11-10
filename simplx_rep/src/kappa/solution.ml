@@ -90,14 +90,24 @@ let kappa_of_solution ?(full=false) ?whitelist sol =
 					     Agent.Marked s -> ("~"^s) 
 					   | Agent.Wildcard -> ""
 					   | (Agent.Bound | Agent.Free) ->
-					       runtime "Solution.kappa_of_solution: not a valid mark for a state"
+					       let s = "Solution.kappa_of_solution: not a valid mark for a state" in 
+					       runtime 
+						 (Some "solution.ml",
+						  Some 96,
+						  Some s)
+						 s
 				       and s_lnk = 
 					 match lnk with
 					     Agent.Bound -> "!"
 					   | Agent.Free -> ""
 					   | Agent.Wildcard -> "?"
 					   | Agent.Marked _  ->
-					       runtime "Solution.kappa_of_solution: not a valid mark for a link"
+					       let s = "Solution.kappa_of_solution: not a valid mark for a link" in 
+					       runtime 
+						 (Some "solution.ml",
+						  Some 106,
+						  Some s)
+						 s
 				       in 
 				       let s_site = site^s_inf^s_lnk
 				       in
@@ -184,7 +194,12 @@ let bind (id,x) (id',x') sol =
   and (inf',lnk') = Agent.state ag' x'
   in
     if (lnk=Agent.Bound) or (lnk'=Agent.Bound) then 
-      Error.runtime ("Solution.bind: sites "^x^" and "^x'^" are already bound")
+      let s = "Solution.bind: sites "^x^" and "^x'^" are already bound" in 
+      Error.runtime 
+	(Some "solution.ml",
+	 Some 200,
+	 Some s) 
+	s
     else
       let ag1 = Agent.modif ag x 
       and ag2 = Agent.modif ag' x' 
@@ -210,9 +225,23 @@ let unbind (id,x) (id',x') sol =
 	     agents = AA.add id' ag2 (AA.add id ag1 sol.agents);
 	     links = PA.remove (id',x') (PA.remove (id,x) sol.links)
 	  }  
-      else Error.runtime ("Solution.unbind: cannot unbind agents which are not linked: "
-			  ^(string_of_int id)^","^x^"-"^(string_of_int id1)^","^x')
-  with Not_found -> Error.runtime "Solution.unbind: cannot unbind agents which are not linked"
+      else 
+	let s = 
+	  ("Solution.unbind: cannot unbind agents which are not linked: "
+	   ^(string_of_int id)^","^x^"-"^(string_of_int id1)^","^x') in 
+	Error.runtime 
+	  (Some "solution.ml",
+	   Some 234,
+	   Some s)
+	  s
+  with Not_found -> 
+    let s = "Solution.unbind: cannot unbind agents which are not linked" in 
+    Error.runtime
+      (Some "solution.ml",
+       Some 241,
+       Some s)
+      s
+	 
 
 (*Mark the site (id,x) with the string s which must contain only ascii characters*)
 let mark (id,x,s) sol =
@@ -233,7 +262,14 @@ let add ?(with_id=(-1)) ag sol =
 let remove id sol = 
   let warning = ref false in
   let sol =
-    let ag = try AA.find id sol.agents with Not_found -> Error.runtime "Solution.remove"
+    let ag = try AA.find id sol.agents with Not_found -> 
+      let s = "Solution.remove" in
+      Error.runtime 
+	(Some "solution.ml",
+	 Some 269,
+	 Some s)
+	s 
+	  
     in      
       Agent.fold_interface (fun site _ sol -> 
 			try
@@ -359,7 +395,17 @@ let cc_of_id id sol blacklist =
   let rec f todo_ids cc blacklist =
     match todo_ids with
 	id::tl -> 
-	  let ag = try agent_of_id id sol with Not_found -> Error.runtime "Solution.cc_of_id: malformed solution" in
+	  let ag = 
+	    try 
+	      agent_of_id id sol 
+	    with Not_found -> 
+	      let s = "Solution.cc_of_id: malformed solution" in
+	      Error.runtime 
+		(Some "solution.ml",
+		 Some 405,
+		 Some s)
+		s
+	  in
 	  let cc = {cc with agents = AA.add id ag cc.agents; fresh_id = max cc.fresh_id (id+1)} in
 	  let todo,cc,blacklist = 
 	    Agent.fold_interface (fun x (_,lnk) (tl,cc,bl) -> 
@@ -483,11 +529,23 @@ let match_id_with_role ?(pushout=false) id role compil sol =
 			    && (Agent.compatible_mark ~strict:true lnk lnk_p) 
 			  then b
 			  else raise Matching_failed
-		    | _ -> runtime "Solution.match_id_with_role: invalid instruction"
+		    | _ -> 
+			let s = "Solution.match_id_with_role: invalid instruction" in
+			runtime 
+			  (Some "solution.ml",
+			   Some 536,
+			   Some s)
+			  s
 		else 
 		  if pushout then b
 		  else raise Matching_failed
-	      with Not_found -> runtime "Solution.match_id_with_role: unexpected Not_found exception"
+	      with Not_found -> 
+		let s = "Solution.match_id_with_role: unexpected Not_found exception" in
+		runtime
+		  (Some "solution.ml",
+		   Some 546,
+		   Some s)
+		  s
 		(*raise Matching_failed*)
 	   ) inst_loc true
 	) 
@@ -562,7 +620,13 @@ let unify ?(rooted=false) ?(pushout=false) (list_compil,cc_pat) (array_ids,sol_i
 					    IntMap.fold (fun id_sol role assoc ->
 							   let id_p = 
 							     try IntMap.find role id_of_role
-							     with Not_found -> runtime "Solution.unify : Not_found"
+							     with Not_found -> 
+							       let s =  "Solution.unify : Not_found" in
+							       runtime 
+								 (Some "solution.ml",
+								  Some 627,
+								  Some s)
+								 s
 							   in
 							     IntMap.add id_p id_sol assoc
 							) map IntMap.empty
@@ -741,11 +805,21 @@ let diff sol1 sol2 =
 				    in
 				      (inst2@inst1,modif rate r_realloc)
 			      with Not_found ->  (*dangling link in sol1*)
-				Error.found "link on right hand side is a reallocation of a semi link in the left hand side"
+				let s = "link on right hand side is a reallocation of a semi link in the left hand side" in 
+				found 
+				  (Some "solution.ml",
+				   Some 811,
+				   Some s)
+				  s
 			  else 
 			    if PA.mem (id,site) sol1.links then (*not a dangling link in sol1*)
 			      (*but dangling in sol2*)
-			      raise (Found "cannot add semi-link on the right hand side")
+			      let s = "cannot add semi-link on the right hand side" in
+			      found 
+				(Some "solution.ml",
+				 Some 820,
+				 Some s)
+				s
 			    else ([],rate) (*link is dangling in both rhs and lhs*)
 			else (*lnk'=lnk=Free|Wildcard*)
 			  ([],rate) 
@@ -774,12 +848,25 @@ let diff sol1 sol2 =
 					       if id2<(assign id) then 
 						 IntMap.add (assign id) ((Bind(site,id2,site2),OK)::l) m
 					       else m
-					   with Not_found -> runtime "Solution.diff: trying to add an agent with a semi-link"
+					   with Not_found -> 
+					     let s = "Solution.diff: trying to add an agent with a semi-link" in
+					     runtime
+					       (Some "solution.ml",
+						Some 855,
+						Some s)
+					       s
 					 else m (*no action to do on added agent*)
 				      ) (agent_of_id id sol2) m
 	       in
 		 (m,IntMap.add (assign id) (Agent.detach (agent_of_id id sol2)) add_sol, modif rate r_add) 
-	     else Error.found ("adding an agent with a non instanciated link")
+	     else 
+	       let s= "adding an agent with a non instanciated link" 
+	       in 
+	       found
+		 (Some "solution.ml",
+		  Some 867,
+		  Some s)
+		 s
       ) sol2.agents (IntMap.empty,IntMap.empty,0)
   in
   let (map,rate,n_rm) =

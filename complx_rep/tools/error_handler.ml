@@ -1,113 +1,11 @@
-(* Error handlers for complx *)
+(* error_handler.ml for complx *)
 (* 08/07/2008 *)
 (* Jerome Feret for Plectix *)
 
-(** To module provide primitives to catch exceptions and store them (with contextal information) in a stack  *)
+(** This module provides primitives to catch exceptions and store them (with contextal information) in a stack  *)
 
-open Exceptions
-
-(** this reference should contain the name of the method that is currently run *)
-let method_name = ref (None:string option)
-
-(** this reference should contain the name of the ml file that is currently run*)
-let file_name = ref (None:string option)
-
-(** this reference should contain the name of the function that is currently computed*)
-let function_name = ref (None:string option)
-
-(** this reference should contain the list of method call in the pipeline *)
-let calling_stack = ref (None:string list option)
-
-(** this reference should contain a description of the error *)
-let message = ref (None:string option)
-
-(** this reference should contain a key (such as a line number) for the error  *)
-let ind = ref (None:string option)
-
-(****************************************)
-(* Function to update error description *)
-(****************************************)
-
-
-
-(** to update the name of the current ml file *)
-let set_file_name name = 
-  file_name:= Some name
-
-(** to reset the name of the current ml file *)
-let reset_file_name () = 
-  file_name:= None 
-
-(** to update the name of the computed function *)
-let set_function_name name = 
-  function_name:= Some name
-
-(** to reset the name of the computed function *)
-let reset_function_name name =
-  function_name:= None 
-
-(** to update the calling stack *)
-let set_calling_stack l = 
-  calling_stack:= Some l 
-
-(** to reset the calling stack *)
-let reset_calling_stack () = 
-  calling_stack:= None
-
-(** to update the prompted message *)
-let set_message m = 
-  message:= Some m 
-
-(** to reset the prompted message *)
-let reset_message () = 
-  message:= None
-
-(** to update the key of errors *)
-let set_key l = 
-  ind := Some l
-
-(** to reset the key for errors *)
-let reset_line () = 
-  ind := None 
-
-
-(*********************)
-(* Type declaration  *)   
-(*********************)
-
-(** type for errors *)
-type error = 
-    {application:string option ;
-     method_name:string option; 
-     file_name:string option ;
-     function_name:string option;
-     calling_stack:string list option ;
-     message:string option ;
-     key:string option ;
-     exception_:exn}
-
-(** this reference contains a stack of errors *)
-let error_list = ref ([]:error list) 
-
-(** this function adds an error to the list *)
-let add_error e = error_list:= (e::(!error_list))
-
-(** empty the stack of error *)
-let reset_error_list () = error_list:=[] 
-
-(** update the calling stack
-    prefix should contain a string (to be prompted before logging information)
-                  and a calling stack
-
-    suf contains the called method *)
-let add_suffix prefix suf = 
-  let pref = "-"^(fst prefix) in
-  let call = if suf = "" then snd prefix else suf::(snd prefix) in
-  let _ = set_calling_stack call in
-  (pref,call) 
-  
-(** Exception declaratiob for the exceptions that are caught by the error handlers *)
-exception Exception of error
+open Error_handler_common 
+open Exceptions 
 
 (** pretty print exceptions *)
 let string_of_exn x = 
@@ -153,29 +51,9 @@ let handle_errors app meth f a =
     f a
   with 
     Exception i -> raise (Exception i) 
-  | Error.Syntax (s,i) as exn -> 
-      g 
-	{application = Some "Simplx" ;
-	  method_name = meth ;
-	  function_name = !function_name ;
-	  file_name = Some (!Data.fic) ;
-          calling_stack = !calling_stack ;
-          message = compose (!message) s ;
-          key = compose (!ind) ("line "^(string_of_int i)) ;
-          exception_ = exn}
-  | Error.Runtime s | Error.Runtime2 s | Error.Found s | Error.Not_handled_yet s as exn ->
-      g 
-	{application = Some "Simplx"  ;
-	  method_name = meth ;
-	  function_name = !function_name ;
-	  file_name = !file_name;
-          calling_stack = !calling_stack ;
-          message = compose (!message) s ;
-          key = !ind ;
-          exception_ = exn}
   | exn -> 
       let error = 
-        {application = if exn=Error.Too_expensive then Some "Simplx" else app  ;
+        {application = if !application_name=None then app else !application_name ;
 	 method_name = meth ;
 	  function_name = !function_name ;
 	 file_name = !file_name ;
@@ -193,6 +71,7 @@ let handle_errors_return app meth f a b =
     handle_errors app meth f a 
   with 
     _ -> b 
+
 
 (** handle_errors_homo app meth f a works the same, but it returns a if an exception is raised *)
 let handle_errors_homo app meth f a = 

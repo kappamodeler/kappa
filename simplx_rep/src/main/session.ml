@@ -352,7 +352,13 @@ let xml_of_solution sol n =
     try
       Printf.sprintf "<Species Kappa=\"%s\" Number=\"%d\">\n</Species>\n" kappa_str n (*xml_nodes xml_bonds*)
     with
-	exn -> Error.runtime "Session.xml_of_solution"   
+	exn -> 
+	  let s= "Session.xml_of_solution" in
+	  Error.runtime 
+	    (Some "session.ml",
+	     Some 359,
+	     Some s)
+	    s
 
 (*Returns a triple of long stream (ls1,ls2,ls3) where ls1 is the header of the xml file, ls2 is the long strings corresponding to 
 the list of species in the solution, while ls3 is the closing tag of the xml tree*)
@@ -407,7 +413,7 @@ let finalize xml_file ?xml_content log code =
     List.fold_left 
       (fun log error -> 
         add_log_entry 2 (Error_handler.string_of_error error) log)
-      log (!Error_handler.error_list) 
+      log (!Error_handler_common.error_list) 
   in
   let rec dump_longstrings desc l =
     match l with
@@ -461,11 +467,26 @@ let output_data ?(with_gnuplot=false) data_file rules data_map obs_ind time_map 
   let d = open_out data_file in
   let entete =
     IntSet.fold (fun i cont -> 
-		   let r,_ = try Rule_of_int.find i rules with Not_found -> Error.runtime "Session.output_data" in
+		   let r,_ = 
+		     try Rule_of_int.find i rules 
+		     with Not_found -> 
+		       let s = "Session.output_data" in
+		       Error.runtime 
+			 (Some "session.ml",
+			  Some 476,
+			  Some s)
+			 s
+		   in
 		   let s = 
 		     match r.flag with 
 			 Some flg -> flg 
-		       | None -> Error.runtime "Session.output_data"
+		       | None -> 
+			   let s = "Session.output_data" in
+			   Error.runtime
+			     (Some "session.ml",
+			      Some 487,
+			      Some s)
+			     s
 		   in
 		     s::cont
 		) obs_ind [] 

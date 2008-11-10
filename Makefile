@@ -116,6 +116,7 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(COMPLXREP)/tools/memory_usage.cmo \
 	./$(COMPLXREP)/lib/$(KEY)/key.cmo \
 	./$(SIMPLXREP)/src/tools/float_pretty_printing.cmo \
+	./$(COMPLXREP)/tools/error_handler_common.cmo \
 	./$(SIMPLXREP)/src/tools/error.cmo \
 	./$(SIMPLXREP)/src/html_config/config.cmo \
 	./$(COMPLXREP)/tools/tools2.cmo \

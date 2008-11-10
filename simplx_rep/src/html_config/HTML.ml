@@ -173,12 +173,24 @@ let dot_of_conflict sim_data =
     IntMap.fold (fun i set cont ->
 		   let ri,_ = 
 		     try Rule_of_int.find i sim_data.rules 
-		     with Not_found -> runtime "Simulation2.dot_of_flow: rule indice not valid"
+		     with Not_found -> 
+		       let s = "Simulation2.dot_of_flow: rule indice not valid" in
+		       runtime
+			 (Some "HTML.ml",
+			  Some 180,
+			  Some s)
+			 s
 		   in
 		     IntSet.fold (fun j cont ->
 				    let rj,_ = 
 				      try Rule_of_int.find j sim_data.rules 
-				      with Not_found -> runtime "Simulation2.dot_of_flow: rule indice not valid"
+				      with Not_found -> 
+					let s= "Simulation2.dot_of_flow: rule indice not valid" in
+					runtime
+					  (Some "HTML.ml",
+					   Some 191,
+					   Some s)
+					  s
 				    in
 				    let flag_i = match ri.flag with Some s -> s | _ -> ri.input 
 				    and flag_j = match rj.flag with Some s -> s | _ -> rj.input 
@@ -211,12 +223,24 @@ let dot_of_flow ?(merge=false) sim_data =
     IntMap.fold (fun i set cont ->
 		   let ri,_ = 
 		     try Rule_of_int.find i sim_data.rules 
-		     with Not_found -> runtime "Simulation2.dot_of_flow: rule indice not valid"
+		     with Not_found -> 
+		       let s = "Simulation2.dot_of_flow: rule indice not valid" in
+		       runtime
+			 (Some "HTML.ml",
+			  Some 230,
+			  Some s)
+			 s
 		   in
 		     IntSet.fold (fun j cont ->
 				    let rj,_ = 
 				      try Rule_of_int.find j sim_data.rules 
-				      with Not_found -> runtime "Simulation2.dot_of_flow: rule indice not valid"
+				      with Not_found -> 
+					let s = "Simulation2.dot_of_flow: rule indice not valid" in
+					runtime 
+					  (Some "HTML.ml",
+					   Some 241,
+					   Some s)
+					  s
 				    in
 				    let flag_i = match ri.flag with Some s -> s | _ -> ri.input 
 				    and flag_j = match rj.flag with Some s -> s | _ -> rj.input 
@@ -233,12 +257,25 @@ let dot_of_flow ?(merge=false) sim_data =
       IntMap.fold (fun i set cont ->
 		     let ri,_ = 
 		       try Rule_of_int.find i sim_data.rules 
-		       with Not_found -> runtime "Simulation.dot_of_flow: rule indice not valid"
+		       with Not_found -> 
+			 let s = "Simulation.dot_of_flow: rule indice not valid" in
+			 runtime 
+			   (Some "HTML.ml",
+			    Some 264,
+			    Some s)
+			   s
+			 
 		     in
 		       IntSet.fold (fun j cont ->
 				      let rj,_ = 
 					try Rule_of_int.find j sim_data.rules 
-					with Not_found -> runtime "Simulation.dot_of_flow: rule indice not valid"
+					with Not_found -> 
+					  let s = "Simulation.dot_of_flow: rule indice not valid" in
+					  runtime
+					    (Some "HTML.ml",
+					     Some 276,
+					     Some s)
+					    s
 				      in
 				      let flag_i = match ri.flag with Some s -> s | _ -> ri.input 
 				      and flag_j = match rj.flag with Some s -> s | _ -> rj.input 
@@ -257,11 +294,22 @@ let print_data data_file rules data_map obs_ind time_map (*concentrations*) =
   let d = open_out data_file in
   let entete =
     IntSet.fold (fun i cont -> 
-		   let r,_ = try Rule_of_int.find i rules with Not_found -> Error.runtime "Session.output_data" in
+		   let r,_ = try Rule_of_int.find i rules with Not_found -> 
+		     let s= "Session.output_data" in
+		     Error.runtime 
+		       (Some "HTML.ml",
+			Some 301,
+			Some s)
+		       s in 
 		   let s = 
 		     match r.flag with 
 			 Some flg -> flg 
-		       | None -> Error.runtime "HTML.print_data"
+		       | None -> let s = "HTML.print_data" in
+			 runtime
+			   (Some "HTML.ml",
+			    Some 304,
+			    Some s)
+			   s
 		   in
 		     s::cont
 		) obs_ind [] 
@@ -339,7 +387,13 @@ let print_data data_file rules data_map obs_ind time_map (*concentrations*) =
 	    in 
 	      match error_code with
 		  0 -> ()
-		| _ -> Error.runtime "HTML.print_data: gnuplot error"
+		| _ -> 
+		    let s = "HTML.print_data: gnuplot error" in
+		    runtime
+		      (Some "HTML.ml",
+		       Some 394,
+		       Some s)
+		      s
 
   
 (* Stories to html *)

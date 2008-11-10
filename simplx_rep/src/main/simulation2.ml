@@ -3,6 +3,7 @@ open Error
 open Rule
 open Data
 open Experiment
+open Error_handler_common
 open Error_handler 
 
 
@@ -132,7 +133,13 @@ let unmarshal f_sd =
       inf_list = f_sd.f_inf_list ;
       oo = f_sd.f_oo
     }
-  with _ -> runtime "Simulation.unmarshal: uncaught exception"
+  with _ -> 
+    let s = "Simulation.unmarshal: uncaught exception" in
+    runtime
+      (Some "simulation2.ml",
+       Some 140,
+       Some s)
+      s
 
 let solution_AA_create = ((Solution.AA.create 5:Agent.t Solution.AA.t))
 
@@ -305,7 +312,13 @@ let add_rule is_obs r sim_data =
 		  let coord_assoc = (Coord.of_pair (indice_r,indice_cc),indice_assoc) in (*coordinate of injection*)
 		  let phi id_p =
 		    try IntMap.find id_p assoc_i 
-		    with Not_found -> Error.runtime "Simulation.add_rule: assoc invariant violation"
+		    with Not_found -> 
+		      let s = "Simulation.add_rule: assoc invariant violation" in
+		      runtime
+			(Some "simulation2.ml",
+			 Some 319,
+			 Some s)
+			s
 		  and lnk s = s^"!"
 		  and inf s = s^"~"
 		  in
@@ -441,16 +454,34 @@ let init_net net (sol_init:Solution.t) = (*linear in the size of sol_init*)
 				     let state_inf = match inf with
 					 Agent.Marked mk -> Rule.Init_mark (Agent.name ag,mk)
 				       | Agent.Wildcard -> Rule.Init_mark (Agent.name ag,"undef")
-				       | _ -> Error.runtime "Not a valid initial internal state"
+				       | _ -> 
+					   let s = "Not a valid initial internal state" in
+					   runtime
+					     (Some "simulation2.ml",
+					      Some 461,
+					      Some s)
+					     s
 				     and state_lnk = match lnk with
 					 Agent.Bound -> (
 					   try
 					     let (j,s') = Solution.get_port (i,s) sol_init in
 					       Rule.Init_bound (Agent.name ag,j,s'^"!")
-					   with Not_found -> Error.runtime "Simulation.init_net: not a valid initial link state"
+					   with Not_found -> 
+					     let s= "Simulation.init_net: not a valid initial link state" in
+					     runtime 
+					       (Some "simulation2.ml",
+						Some 473,
+						Some s)
+					       s
 					 )
 				       | Agent.Free -> Rule.Init_free (Agent.name ag)
-				       | _ -> Error.runtime "Simulation.init_net: not a valid initial link state"
+				       | _ -> 
+					   let s = "Simulation.init_net: not a valid initial link state" in
+					   runtime 
+					     (Some "simulation2.ml",
+					      Some 482,
+					      Some s)
+					     s
 				     in
 				       PortMap.add (i,s^"~") [state_inf] (PortMap.add (i,s^"!") [state_lnk] pmap)
 				  ) ag modif
@@ -472,14 +503,26 @@ let concretize sim_data abs_pos_map abs_neg_map log =
     Data_structures.IntMap.fold (fun i cplx_set (m,log) ->
 				   let r_i,_ = 
 				     try Rule_of_int.find i sim_data.rules 
-				     with Not_found -> runtime "Simulation.concretize: incompatible rule indices"
+				     with Not_found -> 
+				       let s = "Simulation.concretize: incompatible rule indices" in
+				       runtime
+					 (Some "simulation2.ml",
+					  Some 510,
+					  Some s)
+					 s
 				   in
 				   let splx_set,log =
 				     Data_structures.IntSet.fold 
 				       (fun j (splx_set,log) -> 
 					  let r_j,_ = 
 					    try Rule_of_int.find j sim_data.rules 
-					    with Not_found -> runtime "Simulation.concretize: incompatible rule indices"
+					    with Not_found -> 
+					      let s="Simulation.concretize: incompatible rule indices" in
+					      runtime
+						(Some "simulation2.ml",
+						 Some 523,
+						 Some s)
+						s
 					  in
 					    if (Rule.contains_deletion r_i) or (r_i << r_j)  
 					    then (Mods2.IntSet.add j splx_set,log)
@@ -499,7 +542,13 @@ let concretize sim_data abs_pos_map abs_neg_map log =
     Data_structures.IntMap.fold (fun i cplx_set (m,log) ->
 				   let r_i,_ = 
 				     try Rule_of_int.find i sim_data.rules 
-				     with Not_found -> runtime "Simulation.concretize: incompatible rule indices"
+				     with Not_found -> 
+				       let s="Simulation.concretize: incompatible rule indices" in
+				       runtime
+					 (Some "simulation2.ml",
+					  Some 549,
+					  Some s)
+					 s
 				   in
 				   let splx_set,log =
 				     Data_structures.IntSet.fold 
@@ -508,7 +557,13 @@ let concretize sim_data abs_pos_map abs_neg_map log =
 					  else
 					    let r_j,_ = 
 					      try Rule_of_int.find j sim_data.rules 
-					      with Not_found -> runtime "Simulation.concretize: incompatible rule indices"
+					      with Not_found -> 
+						let s="Simulation.concretize: incompatible rule indices" in
+						runtime
+						  (Some "simulation2.ml",
+						   Some 564,
+						   Some s)
+						  s
 					    in
 					      if (Rule.contains_deletion r_i) or (r_i %> r_j) 
 					      then (Mods2.IntSet.add j splx_set,log)
@@ -610,12 +665,24 @@ let init log (rules,init,(sol_init:Solution.t),obs_l,exp) =
       let t' = pt.Unix.tms_utime +. pt.Unix.tms_stime +. pt.Unix.tms_cutime +. pt.Unix.tms_cstime in
       let log = Session.add_log_entry 0 (Printf.sprintf "--Abstraction: %f sec. CPU" (t'-.t)) log in
 	match pb with 
-	    None -> Error.runtime "Simulation.init: complx did not return any maps, aborting"
+	    None -> 
+	      let s="Simulation.init: complx did not return any maps, aborting" in
+	      runtime
+		(Some "simulation2.ml",
+		 Some 672,
+		 Some s)
+		s
 	  | Some pb' -> 
 	      let pos_map = 
 		match pb'.Pb_sig.wake_up_map with 
 		    Some map -> map  
-		  | None -> Error.runtime "Simulation.init: no positive map, aborting"
+		  | None -> 
+		      let s="Simulation.init: no positive map, aborting" in
+		      runtime
+			(Some "simulation2.ml",
+			 Some 683,
+			 Some s)
+			s
 	      and neg_map = 
 		match pb'.Pb_sig.inhibition_map with
 		    Some map -> map  
@@ -645,7 +712,12 @@ let init log (rules,init,(sol_init:Solution.t),obs_l,exp) =
     let rules = (*replacing rules with enriched ones if computed*)
       match enriched_rules with
 	  Some en_rules -> en_rules
-	| None -> Error.runtime "Simulation.init: failed to compute automorphisms for rules"
+	| None -> let s="Simulation.init: failed to compute automorphisms for rules" in
+	  Error.runtime
+	    (Some "simulation2.ml",
+	     Some 718,
+	     Some s)
+	    s
     in
     let log = Session.convert_cplx_log cplx_log log in
       (rules,log,pb)
@@ -672,7 +744,13 @@ let init log (rules,init,(sol_init:Solution.t),obs_l,exp) =
     let fake_rules = (*replacing rules with enriched ones if computed*)
       match enriched_rules with
 	  Some en_rules -> en_rules
-	| None -> Error.runtime "Simulation.init: failed to compute automorphisms for observables"
+	| None -> 
+	    let s="Simulation.init: failed to compute automorphisms for observables" in
+	    Error.runtime
+	      (Some "simulation2.ml",
+	       Some 751,
+	       Some s)
+	      s
     in
     let log = Session.convert_cplx_log cplx_log log in
       (fake_rules,log,pb)
@@ -730,7 +808,13 @@ let mult_kinetics flg mult sim_data =
     let r_i,inst_i = Rule_of_int.find i sim_data.rules in
     let r_i'={r_i with kinetics = r_i.kinetics *. mult} in
       {sim_data with rules = Rule_of_int.add i (r_i',inst_i) sim_data.rules}
-  with Not_found -> Error.runtime ("Simulation.mult_kinetics: label "^flg^" does not match any rule.")
+  with Not_found -> 
+    let s=("Simulation.mult_kinetics: label "^flg^" does not match any rule.") in
+    Error.runtime 
+      (Some "simulation2.ml",
+       Some 815,
+       Some s)
+      s
 
 exception Intra of assoc
 exception Unary
@@ -762,7 +846,14 @@ let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log =
   in (*u=coef_unary*beta and p = u/beta.(|phi|+|psi|-1)*)
   let log,p_intra,boost = 
     if try_intra then
-      let u = match r.intra with Some u -> u | None -> Error.runtime "Simulation.bologna: intra rate not specified" in
+      let u = match r.intra with Some u -> u | None -> 
+	let s= "Simulation.bologna: intra rate not specified" in
+	Error.runtime 
+	  (Some "simulation2.ml",
+	   Some 853,
+	   Some s)
+	  s
+      in
       let boost = u /. n_inj in
 	if (p_intra > 1.0) then
 	  let log = Session.add_log_entry 4 (Printf.sprintf "Rule %s: boosting binary rate to catch up" (Rule.name r)) log 
@@ -824,12 +915,23 @@ let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log =
 			 let id',i = 
 			   try (IntMap.find id phi,0)
 			   with Not_found -> 
-			     try (IntMap.find id psi,1) with Not_found -> Error.runtime "Simulation.bologna: Agent is not in the image of any injections!"
+			     try (IntMap.find id psi,1) with Not_found -> 
+			       let s = "Simulation.bologna: Agent is not in the image of any injections!" in
+			       Error.runtime 
+				 (Some "simulation2.ml",
+				  Some 922,
+				  Some s)
+				 s
 			 in
 			 let name = Agent.name (Solution.agent_of_id id' sim_data.sol) in
 			   List.fold_left (fun (paths_phi,paths_psi) (site,id2,site2) -> 
 					     if i=0 (*action on the phi side*) then
-					       let id2 = try IntMap.find id2 psi with Not_found -> Error.runtime "Simulation.bologna: malformed injection"
+					       let id2 = try IntMap.find id2 psi with Not_found -> let s="Simulation.bologna: malformed injection" in
+					       Error.runtime
+						 (Some "simulation2.ml",
+						  Some 932,
+						  Some s)
+						 s
 					       in
 					       let name' = Agent.name (Solution.agent_of_id id2 sim_data.sol) in
 					       let paths_phi = Paths.add name id site paths_phi
@@ -837,7 +939,13 @@ let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log =
 					       in
 						 (paths_phi,paths_psi)  
 					     else (*action on the psi side*)
-					       let id2 = try IntMap.find id2 phi with Not_found -> Error.runtime "Simulation.bologna: malformed injection"
+					       let id2 = try IntMap.find id2 phi with Not_found -> 
+						 let s = "Simulation.bologna: malformed injection" in
+						 Error.runtime
+						   (Some "simulation2.ml",
+						    Some 946,
+						    Some s)
+						   s
 					       in
 					       let name' = Agent.name (Solution.agent_of_id id2 sim_data.sol) in
 					       let paths_psi = Paths.add name id site paths_psi
@@ -883,7 +991,12 @@ let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log =
 			      ([],log,None,boost)
 		      else
 			([inj],log,None,boost)
-		| None -> Error.runtime "Simulation.bologna: injections are not clashing but cannot be composed!" 
+		| None -> let s="Simulation.bologna: injections are not clashing but cannot be composed!" in
+		  Error.runtime
+		    (Some "simulation2.ml",
+		     Some 997,
+		     Some s)
+		    s
 	    else (*not clashing and unary!*)
 	      begin
 		let _ =
@@ -893,7 +1006,13 @@ let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log =
 		  if dice < p_intra then
 		    match phi_psi_opt with
 			Some inj -> ([inj],log,Some p_intra,boost)
-		      | None -> Error.runtime "Simulation.bologna: injections are not clashing but cannot be composed!" 
+		      | None -> 
+			  let s="Simulation.bologna: injections are not clashing but cannot be composed!"  in
+			  Error.runtime 
+			    (Some "simulation2.ml",
+			     Some 1013,
+			     Some s)
+			    s
 		  else ([],log,Some p_intra,boost)
 	      end
 	  else
@@ -956,7 +1075,12 @@ let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log =
 		  if dice<p_intra then 
 		    match phi_psi_opt with
 			Some inj -> ([inj],log,Some p_intra,boost)
-		      | None -> Error.runtime "Simulation.bologna: rule should not be clashing" 
+		      | None -> let s=  "Simulation.bologna: rule should not be clashing" in
+			Error.runtime
+			  (Some "simulation2.ml",
+			   Some 1081,
+			   Some s)
+			  s
 		  else 
 		    let _ = if !debug_mode then (Printf.printf "Reject (p_intra = %f)\n" p_intra ; flush stdout) else () 
 		    in
@@ -1046,7 +1170,12 @@ let select log sim_data p c =
 	  begin
 	    let ind_r,(r,inst) = 
 	      try Rule_of_int.random_val sim_data.rules 
-	      with exn -> Error.runtime ("Simulation.select: from Rule_of_int.random_val, received "^(Printexc.to_string exn))
+	      with exn -> let s = ("Simulation.select: from Rule_of_int.random_val, received "^(Printexc.to_string exn)) in
+	      Error.runtime
+		(Some "simulation2.ml",
+		 Some 1176,
+		 Some s)
+		s
 	    in
 	    let r,log =
 	      if !Data.quotient_refs then 
@@ -1074,16 +1203,35 @@ let select log sim_data p c =
 		let abst_ind = StringMap.find (Rule.name r) sim_data.rule_of_name in
 		  (abst_ind,ind_r,(r,inst),log)
 	      with
-		  Not_found -> Error.runtime ("Simulation.select: Rule "^(Rule.name r)^" not found")
+		  Not_found -> 
+		    let s=("Simulation.select: Rule "^(Rule.name r)^" not found") in 
+		    Error.runtime 
+		      (Some "simulation2.ml",
+		       Some 1210,
+		       Some s)
+		      s
 	  end
       in
-	if r.input = "" then Error.runtime "Simulation.select: cannot apply fake rule";
-	if r.infinite then (*selection of an instance of an infinitely fast rule*)
+      let _ = 
+	if r.input = "" then 
+	  let s="Simulation.select: cannot apply fake rule" in 
+	  Error.runtime 
+	    (Some "simulation2.ml",
+	     Some 1218,
+	     Some s) 
+	    s 
+      in  
+      if r.infinite then (*selection of an instance of an infinitely fast rule*)
 	  let assoc_map_list = 
 	    IntMap.fold (fun i lhs_i cont ->
 			   let _,_,assoc_map_i = InjArray.find (Coord.of_pair (abst_ind,i)) sim_data.injections in
 			     if AssocArray.size assoc_map_i = 0 then 
-			       Error.runtime "Simulation.select: rule has an infinite activity but the image of a cc is empty"
+			       let s="Simulation.select: rule has an infinite activity but the image of a cc is empty" in
+			       Error.runtime
+				 (Some "simulation2.ml",
+				  Some 1229,
+				  Some s)
+				 s
 			     else
 			       assoc_map_i::cont
 			) r.lhs []
@@ -1141,16 +1289,33 @@ let select log sim_data p c =
 			  ) (r.lhs) ([],0) (*IntMap.empty,IntMap.empty*)
 	    in
 	    let inj_list,log,opt_intra,boost = 
-	      if inj_list = [] then Error.runtime "Simulation2.select: empty injection list!"
+	      if inj_list = [] then 
+		let s= "Simulation2.select: empty injection list!" in
+		Error.runtime 
+		  (Some "simulation2.ml",
+		   Some 1294,
+		   Some s)
+		  s
+		     
 	      else
 		if arity = 1 then 
 		  match inj_list with 
 		      [(_,_,phi)] -> ([phi],log,None,r.boost) 
-		    | _ -> Error.runtime "Simulation2.select: invalid argument"
+		    | _ -> let s= "Simulation2.select: invalid argument" in
+		      Error.runtime 
+			(Some "simulation2.ml",
+			 Some 1305,
+			 Some s)
+			s
 		else
 		  match inj_list with
 		      [(psi_nb,cc_psi,psi);(phi_nb,cc_phi,phi)] -> bologna ind_r (cc_psi,psi_nb,psi) (cc_phi,phi_nb,phi) sim_data log
-		    | _ -> Error.runtime "Simulation2.select: invalid number of injections"
+		    | _ -> let s="Simulation2.select: invalid number of injections" in
+		      Error.runtime 
+			(Some "simulation2.ml",
+			 Some 1314,
+			 Some s)
+			s
 	    in
 	      if !plot_p_intra then 
 		begin
@@ -1189,10 +1354,25 @@ let select log sim_data p c =
 			  let sd = {sim_data with rules = rules} in
 			    (log,Some (abst_ind,ind_r,[ga0]),sd,cpt)
 			end
-		| _ -> Error.runtime "Simulation.selec: invalid argument"
+		| _ -> let s="Simulation.selec: invalid argument" in
+		  Error.runtime
+		    (Some "simulation2.ml",
+		     Some 1355,
+		     Some s)
+		    s
 	  with 
-	      Not_applicable (-1,r) -> runtime "Simulation.select: selected rule has no injection (error -1)"
-	    | Not_applicable (0,r) -> runtime (Printf.sprintf "Simulation.select: selected rule %s has no injection (error 0)" (r.Rule.input))
+	      Not_applicable (-1,r) -> let s="Simulation.select: selected rule has no injection (error -1)" in
+	      runtime
+		(Some "simulation2.ml",
+		 Some 1365,
+		 Some s) 
+		s
+	    | Not_applicable (0,r) -> let s=(Printf.sprintf "Simulation.select: selected rule %s has no injection (error 0)" (r.Rule.input)) in
+	      runtime
+		(Some "simulation2.ml",
+		 Some 1371,
+		 Some s)
+		s
 	    | Not_applicable (1,r) -> 
 		let log = Session.add_log_entry 4 (Printf.sprintf "Clash in rule %s" (Rule.name r)) log in
 		  if max_failure < 0 then choose_rule log sim_data max_failure (cpt+1)
@@ -1262,7 +1442,16 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 			       InjArray.find (Coord.of_pair (rule_ind,cc_ind)) injs 
 			     in
 			     let size =  AssocArray.size map in
-			       if size = 0 then Error.runtime "Simulation.update: map size error" ;
+			       if size = 0 then 
+				 begin 
+				   let s="Simulation.update: map size error" in
+				   Error.runtime 
+				     (Some "simulation2.ml",
+				      Some 1450,
+				      Some s)
+				     s
+				       
+				 end;
 			       let length = float_of_int size
 			       and length'= float_of_int (size - 1) 
 			       in
@@ -1300,7 +1489,12 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 				 if IntSet.mem rule_ind sim_data.obs_ind then 
 				   match r.flag with 
 				       Some s -> StringSet.add s mod_obs
-				     | None -> Error.runtime "Rule.update: obs invariant violation"
+				     | None -> let s="Rule.update: obs invariant violation" in
+				       Error.runtime
+					 (Some "simulation2.ml",
+					  Some 1495,
+					  Some s)
+					 s
 				 else mod_obs
 				   (*FIN CORRECTION BUG 11 dec 2007*)
 			       in
@@ -1372,7 +1566,12 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 						    ) ag lift
 			  with Not_found -> lift (*agent has been removed so all its quarks were modified*)
 		       ) assoc lift
-	 with Not_found -> runtime "Simulation.update: rm_coord invariant violation"
+	 with Not_found -> let s="Simulation.update: rm_coord invariant violation" in
+	 Error.runtime 
+	   (Some "simulation2.ml",
+	    Some 1572,
+	    Some s)
+	   s
       ) rm_coord lift
   in
   let _ = if !bench_mode then Bench.neg_upd := !Bench.neg_upd +. (chrono t_neg) in
@@ -1393,7 +1592,12 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 	 let t0 = chrono 0.0 in
 	 let r_i,_ = 
 	   try Rule_of_int.find rule_ind sim_data.rules 
-	   with Not_found -> runtime "Simulation.update: invalid rule indice"
+	   with Not_found -> let s="Simulation.update: invalid rule indice" in
+	   runtime
+	     (Some "simulation2.ml",
+	      Some 1598,
+	      Some s)
+	     s
 	 in
 	 let _ = if !bench_mode then Bench.t_upd_rules:=!Bench.t_upd_rules +. (chrono t0) in
 	   if !debug_mode then Printf.printf "waking up r[%d]\n" rule_ind ; 
@@ -1421,7 +1625,12 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 						       | _ -> PortSet.add (j_sol,site^"!") set
 						) ag_i set
 					  with Not_found -> 
-					    runtime "Simulation.update: assoc_lhs_sol invariant violation"
+					    let s="Simulation.update: assoc_lhs_sol invariant violation" in
+					    Error.runtime
+					      (Some "simulation2.ml",
+					       Some 1631,
+					       Some s)
+					      s
 				       ) assoc_lhs_sol PortSet.empty
 				   in
 				   let contains_modif = 
@@ -1498,7 +1707,13 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 			     if IntSet.mem r_i sim_data.obs_ind then 
 			       match r.flag with 
 				   Some s -> StringSet.add s mod_obs
-				 | None -> Error.runtime "Rule.update: obs invariant violation"
+				 | None -> 
+				     let s = "Rule.update: obs invariant violation" in
+				     Error.runtime
+				       (Some "simulation2.ml",
+					Some 1714,
+					Some s) 
+				       s
 			     else mod_obs
 			   in
 			     (*boosting rule kinetics if necessary*)
@@ -1533,7 +1748,13 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 			   in
 			   let _ = if !bench_mode then Bench.t_upd_rules:=!Bench.t_upd_rules +. (chrono t0) in
 			     (rules,mod_obs,inf_list)
-			 with Not_found -> runtime "Simulation.update: invalid rule indice"
+			 with Not_found -> 
+			   let s = "Simulation.update: invalid rule indice" in
+			   Error.runtime
+			     (Some "simulation2.ml",
+			      Some 1755,
+			      Some s)
+			     s
 		       in
 			 (injs,lift,rules,mod_obs,inf_list)
 		    ) assoc_list (injs,lift,rules,mod_obs,inf_list)
@@ -1753,13 +1974,23 @@ let rec iter log sim_data p c =
 		      [phi] -> phi
 		    | [phi1;phi2] -> 
 			let union,_ = IntMap.fold (fun i j (union,image) ->
-						     if IntSet.mem j image then Error.runtime "Simulation2.iter: intras are clashing!"
+						     if IntSet.mem j image then let s = "Simulation2.iter: intras are clashing!" in
+						     Error.runtime 
+						       (Some "simulation2.ml",
+							Some 1980,
+							Some s)
+						       s
 						     else
 						       (IntMap.add i j union,IntSet.add j image)
 						  ) phi1 (phi2,IntSet.empty)
 			in
 			  union
-		    | _ -> Error.runtime "Simulation2.iter: invalid number of intras"
+		    | _ -> let s = "Simulation2.iter: invalid number of intras" in
+		      Error.runtime 
+			(Some "simulation2.ml",
+			 Some 1991,
+			 Some s)
+			s
 		in
 		let sim_data,mod_obs = update warn abst_ind assoc upd_q assoc_add sol' sim_data p
 		in
@@ -1782,7 +2013,13 @@ let rec iter log sim_data p c =
 			  (Network.add sol' sim_data.net (r_abst,modifs) !debug_mode p.compress_mode, modifs)
 		    in
 		      if (IntSet.mem r_ind sim_data.obs_ind) then (*if applied rule triggers storification*)
-			let flg = match r_ref.flag with Some flg -> flg | _ -> runtime "Simulation.iter: obs has no flag"
+			let flg = match r_ref.flag with Some flg -> flg | _ -> 
+			  let s = "Simulation.iter: obs has no flag" in
+			  runtime
+			    (Some "simulation2.ml",
+			     Some 2020,
+			     Some s)
+			    s
 			in
 			let h = Network.cut net' flg in
 			let h = {h with Network.name_of_agent = 
@@ -1864,7 +2101,13 @@ let rec iter log sim_data p c =
 				IntSet.fold (fun i cont -> 
 					       let r_obs,_ = Rule_of_int.find i sim_data.rules in
 						 match r_obs.flag with
-						     None -> runtime "Simulation.iter: rule has no name"
+						     None -> 
+						       let s="Simulation.iter: rule has no name" in
+						       runtime
+							 (Some "simulation2.ml",
+							  Some 2108,
+							  Some s)
+							 s
 						   | Some flg -> (*Printf.printf "init %s\n" flg ;*) StringSet.add flg cont
 					    ) sim_data.obs_ind StringSet.empty
 			      else mod_obs
@@ -1874,7 +2117,13 @@ let rec iter log sim_data p c =
 						let i = StringMap.find flg sim_data.rule_of_name in
 						let r_obs,inst_obs = 
 						  try Rule_of_int.find i sim_data.rules 
-						  with Not_found -> runtime "Simulation.iter: obs not found" 
+						  with Not_found -> 
+						    let s = "Simulation.iter: obs not found"  in
+						    runtime
+						      (Some "simulation2.ml",
+						       Some 2124,
+						       Some s)
+						      s
 						in
 						  (*automorphism correction for obs and activity for rules*)
 						let automorphisms = 
