@@ -188,4 +188,4 @@ val marshal_obs : observation -> marshalized_obs
 val unmarshal_obs : marshalized_obs -> observation 
 val paths_of_id : int -> t -> (Mods2.IntSet.t * Paths.t)
 val get_binding : (action * msg) list -> (string * int * string) list
-val sol_of_init: (t * int) list -> t
+val sol_of_init: bool -> (t * int) list -> t

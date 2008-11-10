@@ -1157,9 +1157,13 @@ let str_of_obs obs =
     | Story s -> s
 
 
-let sol_of_init init = 
+let sol_of_init no_mult init = 
   List.fold_left (fun acc (sol,n) -> 
-		    let sol' = multiply (copy sol) n in
+		    let sol' = 
+		      if no_mult then sol
+		      else
+			multiply (copy sol) n 
+		    in
 		    let acc = compose sol' acc in (*compose folds on first argument*)
 		      acc
 		 ) (empty()) init

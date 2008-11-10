@@ -206,7 +206,7 @@ let main =
 		begin
 		  try
 		    let (r,i,o,e) = Kappa_lex.compile (!fic) in
-		    let s = Solution.sol_of_init i in
+		    let s = Solution.sol_of_init !compile_mode i in
 		    let log = 
 		      Session.add_log_entry 0 (sprintf "-Compilation: %f sec. CPU" (Mods2.gettime()-.t_compil)) log 
 		    in

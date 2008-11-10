@@ -1,7 +1,7 @@
 (**Data references*)
 
 let version_main = 3
-let version_cpt = 641 (*bug thread mac os*) 
+let version_cpt = 642 (*parser modification*) 
 let version_svn = Svn_number.svn_number
 let version_branch = ""
 let arch_type = string_of_int Sys.word_size
