@@ -203,7 +203,6 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(SIMPLXREP)/src/main/simulation2.cmo \
 	./$(SIMPLXREP)/src/html_config/HTML.cmo
 
-
 SIMPLX_MAIN = ./$(SIMPLXREP)/src/main/main.ml
 COMPLX_MAIN = ./$(COMPLXREP)/main.ml 
 INTERPLX_MAIN = ./$(INTERPLXREP)/shell.ml
@@ -228,7 +227,7 @@ CMA = unix.cma threads.cma str.cma nums.cma
 CMXA = unix.cmxa threads.cmxa str.cmxa nums.cmxa
 
 SIMPLX_OUT = simplx
-INTERPLX_OUT = interplx
+COMPLX_OUT = complx
 
 LIB_OPT = $(SIMPLX_OUT).cmxa
 LIB_BYTE = $(SIMPLX_OUT).cma
@@ -256,10 +255,6 @@ byte :  $(MLI) $(CMI) $(LIBSC_CMA) $(LIB_BYTE) $(SIMPLX_MAIN) $(BIN)
 dep :  
 	ocamldep $(OCAMLINCLUDES) $(MLFILES)
 
-
-interplx :$(MLI) $(CMI) $(LIBSC_CMXA) $(LIB_OPT) $(INTERPLX_MAIN) $(BIN)
-	$(OCAMLOPT) $(OCAMLFLAGS) $(CMXA) $(TK_CMXA) $(LIBSC_CMXA) $(LIB_OPT)  $(INTERPLX_MAIN) -o $(BIN)/$(INTERPLX_OUT)
-
 $(SIMPLX_OUT).cmxa: $(MLI) $(CMI) $(LIBSC_CMXA) $(NATIVE_OBJS) 
 	$(OCAMLOPT) $(OCAMLFLAGS) -a $(NATIVE_OBJS)  -o $(SIMPLXREP)/lib/$(SIMPLX_OUT).cmxa
 
@@ -269,7 +264,7 @@ $(SIMPLX_OUT).cma: $(MLI) $(CMI) $(LIBSC_CMA) $(OBJS)
 LINE = $(OCAMLOPT) $(OCAMLFLAGS) $(TKINCLUDES) $(CMXA) $(TK_CMXA) $(LIBSC_CMXA)  $(NATIVE_OBJS) 
 
 complx: $(LIBSC_CMXA) $(NATIVE_OBJS) $(COMPLX_MAIN)
-	$(LINE) $(COMPLX_MAIN) -o $(BIN)/complx
+	$(LINE) $(COMPLX_MAIN) -o $(BIN)/$(COMPLX_OUT)
 
 influence_map: $(COMPLXREP)/influence_pipeline.cmx 
 	$(LINE) $(COMPLXREP)/influence_pipeline.cmx -o $(BIN)/bd_influence_map
