@@ -11,7 +11,7 @@ type marshalized_t = {f_agents:Agent.t IntMap.t ; f_links:(int*string) PortMap.t
 
 type t = {agents:int AA.t ; links:(int*string) PA.t; fresh_id:int} (*partager agents --hash des vues--*)
 
-let empty() = {agents = AA.create 100 ; links = PA.create 100 ; fresh_id = 0}
+let empty() = {agents = Agent.empty AA.create 100 ; links = PA.create 100 ; fresh_id = 0}
 
 (***********************************)
 (*converts imperative type into functional one -for marshalization purpose-*)

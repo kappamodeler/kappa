@@ -1171,11 +1171,11 @@ let select log sim_data p c =
 	    let ind_r,(r,inst) = 
 	      try Rule_of_int.random_val sim_data.rules 
 	      with exn -> let s = ("Simulation.select: from Rule_of_int.random_val, received "^(Printexc.to_string exn)) in
-	      Error.runtime
-		(Some "simulation2.ml",
-		 Some 1176,
-		 Some s)
-		s
+		Error.runtime
+		  (Some "simulation2.ml",
+		   Some 1176,
+		   Some s)
+		  s
 	    in
 	    let r,log =
 	      if !Data.quotient_refs then 
@@ -1205,33 +1205,33 @@ let select log sim_data p c =
 	      with
 		  Not_found -> 
 		    let s=("Simulation.select: Rule "^(Rule.name r)^" not found") in 
-		    Error.runtime 
-		      (Some "simulation2.ml",
-		       Some 1210,
-		       Some s)
-		      s
+		      Error.runtime 
+			(Some "simulation2.ml",
+			 Some 1210,
+			 Some s)
+			s
 	  end
       in
       let _ = 
 	if r.input = "" then 
 	  let s="Simulation.select: cannot apply fake rule" in 
-	  Error.runtime 
-	    (Some "simulation2.ml",
-	     Some 1218,
-	     Some s) 
-	    s 
+	    Error.runtime 
+	      (Some "simulation2.ml",
+	       Some 1218,
+	       Some s) 
+	      s 
       in  
-      if r.infinite then (*selection of an instance of an infinitely fast rule*)
+	if r.infinite then (*selection of an instance of an infinitely fast rule*)
 	  let assoc_map_list = 
 	    IntMap.fold (fun i lhs_i cont ->
 			   let _,_,assoc_map_i = InjArray.find (Coord.of_pair (abst_ind,i)) sim_data.injections in
 			     if AssocArray.size assoc_map_i = 0 then 
 			       let s="Simulation.select: rule has an infinite activity but the image of a cc is empty" in
-			       Error.runtime
-				 (Some "simulation2.ml",
-				  Some 1229,
-				  Some s)
-				 s
+				 Error.runtime
+				   (Some "simulation2.ml",
+				    Some 1229,
+				    Some s)
+				   s
 			     else
 			       assoc_map_i::cont
 			) r.lhs []
@@ -1289,33 +1289,33 @@ let select log sim_data p c =
 			  ) (r.lhs) ([],0) (*IntMap.empty,IntMap.empty*)
 	    in
 	    let inj_list,log,opt_intra,boost = 
+	      (* JK inj_list is empty if rule has no left hand side*)
 	      if inj_list = [] then 
-		let s= "Simulation2.select: empty injection list!" in
-		Error.runtime 
-		  (Some "simulation2.ml",
-		   Some 1294,
-		   Some s)
-		  s
-		     
+		let s= "Simulation2.select: this version of the simulator does not accept rules with no left hand side!" in
+		  Error.runtime 
+		    (Some "simulation2.ml",
+		     Some 1294,
+		     Some s)
+		    s
 	      else
 		if arity = 1 then 
 		  match inj_list with 
 		      [(_,_,phi)] -> ([phi],log,None,r.boost) 
 		    | _ -> let s= "Simulation2.select: invalid argument" in
-		      Error.runtime 
-			(Some "simulation2.ml",
-			 Some 1305,
-			 Some s)
-			s
+			Error.runtime 
+			  (Some "simulation2.ml",
+			   Some 1305,
+			   Some s)
+			  s
 		else
 		  match inj_list with
 		      [(psi_nb,cc_psi,psi);(phi_nb,cc_phi,phi)] -> bologna ind_r (cc_psi,psi_nb,psi) (cc_phi,phi_nb,phi) sim_data log
 		    | _ -> let s="Simulation2.select: invalid number of injections" in
-		      Error.runtime 
-			(Some "simulation2.ml",
-			 Some 1314,
-			 Some s)
-			s
+			Error.runtime 
+			  (Some "simulation2.ml",
+			   Some 1314,
+			   Some s)
+			  s
 	    in
 	      if !plot_p_intra then 
 		begin
@@ -1355,24 +1355,24 @@ let select log sim_data p c =
 			    (log,Some (abst_ind,ind_r,[ga0]),sd,cpt)
 			end
 		| _ -> let s="Simulation.selec: invalid argument" in
-		  Error.runtime
-		    (Some "simulation2.ml",
-		     Some 1355,
-		     Some s)
-		    s
+		    Error.runtime
+		      (Some "simulation2.ml",
+		       Some 1355,
+		       Some s)
+		      s
 	  with 
 	      Not_applicable (-1,r) -> let s="Simulation.select: selected rule has no injection (error -1)" in
-	      runtime
-		(Some "simulation2.ml",
-		 Some 1365,
-		 Some s) 
-		s
+		runtime
+		  (Some "simulation2.ml",
+		   Some 1365,
+		   Some s) 
+		  s
 	    | Not_applicable (0,r) -> let s=(Printf.sprintf "Simulation.select: selected rule %s has no injection (error 0)" (r.Rule.input)) in
-	      runtime
-		(Some "simulation2.ml",
-		 Some 1371,
-		 Some s)
-		s
+		runtime
+		  (Some "simulation2.ml",
+		   Some 1371,
+		   Some s)
+		  s
 	    | Not_applicable (1,r) -> 
 		let log = Session.add_log_entry 4 (Printf.sprintf "Clash in rule %s" (Rule.name r)) log in
 		  if max_failure < 0 then choose_rule log sim_data max_failure (cpt+1)
@@ -2131,7 +2131,7 @@ let rec iter log sim_data p c =
 						      None -> (failwith "Automorphisms not computed") 
 						    | Some i -> float_of_int i 
 						in
-						let act_obs = inst_obs /. (automorphisms *. (!rescale)) in 
+						let act_obs = inst_obs /. (automorphisms (**. (!rescale) Correction after Walter's class*)) in 
 						  IntMap.add i act_obs obs_map
 
 					     ) mod_obs obs_map

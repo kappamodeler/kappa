@@ -157,7 +157,7 @@
 				     let oo = IntSet.remove i oo
 				     and inf_list = IntSet.remove i inf_list
 				     in
-				       (oo,inf_list,Rule.Rule_of_int.add i ({r_i with Rule.kinetics = kin'}, inst_i) rules)
+				       (oo,inf_list,Rule.Rule_of_int.add i ({r_i with Rule.kinetics = kin' ; Rule.boost = kin'}, inst_i) rules)
 			   in 
 			   let str = "kin("^flag^"):="^(Experiment.string_of_ast assgn) in 
 			     (modif,str)
