@@ -181,6 +181,23 @@ let translate_init t sol  messages logn =
      
     
 let translate_rule t flags fset (agents,marks,markable_sites,linkable_sites,mark_site_rel,cpt,contact) messages logn = 
+  let mods_handler = 
+    (Mods2.IntMap.fold,
+     Mods2.IntMap.add,
+     Mods2.IntMap.empty) in
+  let lhs' = 
+    Tools2.generic_map 
+      Solution.remove_empty_agents
+      t.Rule.lhs
+      mods_handler 
+  in 
+  let t = 
+    {t with Rule.lhs = 
+      Tools2.generic_filter 
+	(fun sol -> not (Solution.AA.is_empty sol.Solution.agents))
+	lhs'
+	mods_handler 
+    } in
   let speciemap,maxi =     
     Mods2.IntMap.fold
       (fun _ cc -> 

@@ -191,3 +191,4 @@ val get_binding : (action * msg) list -> (string * int * string) list
 val sol_of_init: bool -> (t * int) list -> t
 val insert_empty_agent : t -> t
 
+val remove_empty_agents : t -> t

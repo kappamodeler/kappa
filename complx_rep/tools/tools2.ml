@@ -34,3 +34,15 @@ let close_file chan =
    | Some a -> close_out a
    
   
+let generic_filter p x (fold,add,empty) = (* not efficient should be implemented in the data_structure *)
+   fold 
+     (fun a x map -> 
+       if p x 
+       then add a x map
+       else map)
+     x empty 
+ 
+let generic_map f x (fold,add,empty) = (* not efficient should be implemented in the data_structure *)
+  fold
+    (fun a x map -> add a (f x) map)
+    x empty 

@@ -1181,3 +1181,14 @@ let insert_empty_agent sol = (*size of the link map but just used for rules*)
     {sol with agents = AA.add 0 Agent.empty sol.agents} 
   in
     sol
+
+let remove_empty_agents sol =
+  {sol 
+  with agents = 
+    Tools2.generic_filter 
+      (fun ag -> not (Agent.factice ag))
+      sol.agents
+      (AA.fold,
+       AA.add,
+       (AA.create 1))
+  } 

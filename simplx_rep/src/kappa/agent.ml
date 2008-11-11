@@ -124,3 +124,5 @@ let detach ag =
   fold_interface (fun site (_,lnk) ag -> 
 		    if lnk = Bound then modif ag site else ag
 		 ) ag ag
+
+let factice ag = ag.name = "%NIL%"

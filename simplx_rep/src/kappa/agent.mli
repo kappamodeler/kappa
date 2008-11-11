@@ -58,3 +58,6 @@ val empty_environment: environment
 val mem_environment: string -> environment -> bool 
 val mem_interface: string -> t -> bool 
 val detach: t -> t
+
+(** Is the agent fictitious (e.g.%NIL%) *)
+val factice: t -> bool 
