@@ -32,6 +32,16 @@
   let (flag_env:(string,int) Hashtbl.t) = Hashtbl.create 100 (** flag->0 (type rule) 1 (type obs)*)
 
   let make_rule (lhs:Solution.t) (rhs:Solution.t) (beta,u_opt) (constraints:Rule.constraints list) = 
+    let cc_map = Solution.split lhs in
+    let n_cc = IntMap.size cc_map in
+    let lhs,cc_map,empty_lhs = 
+      if n_cc = 0 then 
+	let sol_empty = Solution.add Agent.empty (Solution.empty()) in 
+	  (sol_empty,IntMap.add 0 sol_empty cc_map,true)
+      else
+	(lhs,cc_map,false)
+    in
+    let rhs = if empty_lhs then Solution.insert_empty_agent rhs else rhs in
     let (diffs,add,rate,corr) = Solution.diff lhs rhs in
     let arrow = 
       match rate with
@@ -40,14 +50,16 @@
 	| _ -> "=>"
     in
     let input_str = (Solution.kappa_of_solution lhs)^arrow^(Solution.kappa_of_solution rhs) in
-    let cc_map = Solution.split lhs in
-    let n_cc = IntMap.size cc_map in
-    let _ = if n_cc > 2 then Error.warning (Printf.sprintf "Rule %s has more than 2 possibly disconnected component in the left hand side" input_str)
+    let _ = if empty_lhs then Error.warning (Printf.sprintf "Rule %s has no left hand side" input_str) else ()
+    and _ = if n_cc > 2 then
+      Error.warning 
+	(Printf.sprintf "Rule %s has more than 2 possibly disconnected component in the left hand side" input_str)
     and _ = 
       match u_opt with 
 	  None -> () 
 	| Some _ -> 
-	    if n_cc < 2 then Error.warning (Printf.sprintf "Unary exception rate defined for rule %s that is already unary" input_str) 
+	    if n_cc < 2 then 
+	      Error.warning (Printf.sprintf "Unary exception rate defined for rule %s that is already unary" input_str) 
 	    else ()
     in
     let precompil = 

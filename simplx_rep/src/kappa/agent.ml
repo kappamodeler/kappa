@@ -27,12 +27,12 @@ type environment = (mark*mark) SharedStringMap.t
 type t = {name:string;(*interface:StringSet.t;*)
 	  state_of_site: environment  } (*nom,interface,(site->etat)*)
 
-let empty = {name="";state_of_site=(*SharedStringMap.int_of_tree*)  SharedStringMap.empty}
+let empty = {name="%NIL%";state_of_site= SharedStringMap.add "_" (Wildcard,Free) SharedStringMap.empty}
 
 let environment a = (*SharedStringMap.tree_of_int*) a.state_of_site
 
-let is_empty ag = (ag.name = "") && (SharedStringMap.is_empty (environment ag))
-let name ag = if is_empty ag then "()" else ag.name  
+let is_empty ag = (ag.name = "%NIL%")
+let name ag = if is_empty ag then "%NIL%" else ag.name  
 
 let state ag x = 
   try 
@@ -40,7 +40,6 @@ let state ag x =
   with Not_found -> 
     let error = Printf.sprintf "Agent.state: site %s not found in agent %s" x (name ag) in
       raise (Runtime error)
-
 
 let mark ag x s = 
   let (inf,lnk) = state ag x in

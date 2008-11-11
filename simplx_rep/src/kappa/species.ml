@@ -30,28 +30,31 @@ let iso spec1 spec2 = (*tests whether spec1 embeds in spec2*)
 let of_sol sol = 
   let _,spec_map =
     Solution.AA.fold (fun id _ (blacklist,spec_map) -> 
-			if IntSet.mem id blacklist then (blacklist,spec_map) 
-			else
-			  let sol_cc,blacklist = Solution.cc_of_id id sol blacklist in
-			  let new_spec = spec_of_cc sol_cc in
-			  let spec_list = try StringMap.find new_spec.signature spec_map with Not_found -> [] in (*may raise Not_found*)
-			  let spec_list = 
-			    let spec_list',already_added = (*TODO: resolving clashes by a list is NOT efficient!*)
-			      List.fold_left (fun (spec_list,already_added) (old_spec,n) -> 
-						let is_equal = iso old_spec new_spec in
-						  if already_added then ((old_spec,n)::spec_list,true) 
-						  else 
-						    if is_equal then 
-						      ((old_spec,n+1)::spec_list,true)
-						    else 
-						      ((old_spec,n)::spec_list,false)
-					     ) ([],false) spec_list 
-			    in
-			      if already_added then spec_list'
-			      else 
-				(new_spec,1)::spec_list'
-			  in
-			    (blacklist,StringMap.add new_spec.signature spec_list spec_map) 
+			let ag = Solution.agent_of_id id sol in
+			  if Agent.is_empty ag then (IntSet.add id blacklist,spec_map)
+			  else
+			    if IntSet.mem id blacklist then (blacklist,spec_map) 
+			    else
+			      let sol_cc,blacklist = Solution.cc_of_id id sol blacklist in
+			      let new_spec = spec_of_cc sol_cc in
+			      let spec_list = try StringMap.find new_spec.signature spec_map with Not_found -> [] in (*may raise Not_found*)
+			      let spec_list = 
+				let spec_list',already_added = (*TODO: resolving clashes by a list is NOT efficient!*)
+				  List.fold_left (fun (spec_list,already_added) (old_spec,n) -> 
+						    let is_equal = iso old_spec new_spec in
+						      if already_added then ((old_spec,n)::spec_list,true) 
+						      else 
+							if is_equal then 
+							  ((old_spec,n+1)::spec_list,true)
+							else 
+							  ((old_spec,n)::spec_list,false)
+						 ) ([],false) spec_list 
+				in
+				  if already_added then spec_list'
+				  else 
+				    (new_spec,1)::spec_list'
+			      in
+				(blacklist,StringMap.add new_spec.signature spec_list spec_map) 
     		     ) sol.Solution.agents (IntSet.empty,StringMap.empty)
   in
     spec_map

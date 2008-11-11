@@ -189,3 +189,5 @@ val unmarshal_obs : marshalized_obs -> observation
 val paths_of_id : int -> t -> (Mods2.IntSet.t * Paths.t)
 val get_binding : (action * msg) list -> (string * int * string) list
 val sol_of_init: bool -> (t * int) list -> t
+val insert_empty_agent : t -> t
+

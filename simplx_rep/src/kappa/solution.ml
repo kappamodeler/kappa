@@ -11,7 +11,7 @@ type marshalized_t = {f_agents:Agent.t IntMap.t ; f_links:(int*string) PortMap.t
 
 type t = {agents:int AA.t ; links:(int*string) PA.t; fresh_id:int} (*partager agents --hash des vues--*)
 
-let empty() = {agents = Agent.empty AA.create 100 ; links = PA.create 100 ; fresh_id = 0}
+let empty() = {agents = AA.create 100 ; links = PA.create 100 ; fresh_id = 0}
 
 (***********************************)
 (*converts imperative type into functional one -for marshalization purpose-*)
@@ -73,7 +73,7 @@ let kappa_of_solution ?(full=false) ?whitelist sol =
       in
       let longstr_of_agents agents =
 	AA.fold (fun id ag ls ->
-		   if with_whitelist && not (IntSet.mem id wl) then ls
+		   if Agent.is_empty ag or (with_whitelist && not (IntSet.mem id wl)) then ls
 		   else
 		     let name = if full then Printf.sprintf "%s#%d" (Agent.name ag) id else Agent.name ag 
 		     in
@@ -91,11 +91,11 @@ let kappa_of_solution ?(full=false) ?whitelist sol =
 					   | Agent.Wildcard -> ""
 					   | (Agent.Bound | Agent.Free) ->
 					       let s = "Solution.kappa_of_solution: not a valid mark for a state" in 
-					       runtime 
-						 (Some "solution.ml",
-						  Some 96,
-						  Some s)
-						 s
+						 runtime 
+						   (Some "solution.ml",
+						    Some 96,
+						    Some s)
+						   s
 				       and s_lnk = 
 					 match lnk with
 					     Agent.Bound -> "!"
@@ -103,11 +103,11 @@ let kappa_of_solution ?(full=false) ?whitelist sol =
 					   | Agent.Wildcard -> "?"
 					   | Agent.Marked _  ->
 					       let s = "Solution.kappa_of_solution: not a valid mark for a link" in 
-					       runtime 
-						 (Some "solution.ml",
-						  Some 106,
-						  Some s)
-						 s
+						 runtime 
+						   (Some "solution.ml",
+						    Some 106,
+						    Some s)
+						   s
 				       in 
 				       let s_site = site^s_inf^s_lnk
 				       in
@@ -249,14 +249,12 @@ let mark (id,x,s) sol =
 
 (*Adds a new agent in the solution*)
 let add ?(with_id=(-1)) ag sol =
-  if Agent.is_empty ag then sol 
+  if with_id<0 then
+    let agents = AA.add sol.fresh_id ag sol.agents in
+      {sol with agents=agents;fresh_id=sol.fresh_id+1}
   else
-    if with_id<0 then
-      let agents = AA.add sol.fresh_id ag sol.agents in
-	{sol with agents=agents;fresh_id=sol.fresh_id+1}
-    else
-      let agents = AA.add with_id ag sol.agents in
-	{sol with agents=agents}
+    let agents = AA.add with_id ag sol.agents in
+      {sol with agents=agents}
 
 (*Removes the agent id from the solution*)
 let remove id sol = 
@@ -400,11 +398,11 @@ let cc_of_id id sol blacklist =
 	      agent_of_id id sol 
 	    with Not_found -> 
 	      let s = "Solution.cc_of_id: malformed solution" in
-	      Error.runtime 
-		(Some "solution.ml",
-		 Some 405,
-		 Some s)
-		s
+		Error.runtime 
+		  (Some "solution.ml",
+		   Some 405,
+		   Some s)
+		  s
 	  in
 	  let cc = {cc with agents = AA.add id ag cc.agents; fresh_id = max cc.fresh_id (id+1)} in
 	  let todo,cc,blacklist = 
@@ -601,7 +599,7 @@ let unify ?(rooted=false) ?(pushout=false) (list_compil,cc_pat) (array_ids,sol_i
   let length,assoc_map = 
     AA.fold (fun id_sol ag_sol (n,assoc_map) ->
 	       let list_compil = 
-		 if list_compil = [] then (print_string "Warning: empty compilation" ; []) (*should not happen*)
+		 if list_compil = [] then (print_string "Warning: empty pre-compilation list\n" ; []) (*should not happen*)
 		 else 
 		   if rooted then [List.hd list_compil]
 		   else list_compil
@@ -731,7 +729,7 @@ let diff sol1 sol2 =
   let map,add_sol,rate = 
     AA.fold
       (fun id ag2 (m,add_sol,rate) ->
-	 if Agent.is_empty ag2 then (m,add_sol,rate) else
+	 (*if Agent.is_empty ag2 then (m,add_sol,rate) else*)
 	   (*let interface' = Agent.interface ag2 in*)
 	   if IntSet.mem id kept then 
 	     let ag = agent_of_id id sol1 in 
@@ -871,7 +869,7 @@ let diff sol1 sol2 =
   in
   let (map,rate,n_rm) =
     AA.fold (fun id ag (m,rate,n_rm) -> (*listing agents to be removed*)
-	       if not (IntSet.mem id kept) && not (Agent.is_empty ag) then 
+	       if not (IntSet.mem id kept) (*&& not (Agent.is_empty ag)*) then 
 		 let add_warn = 
 		   if not (add_sol = IntMap.empty) then 
 		     "\nBoth removing and adding agents..."
@@ -1156,14 +1154,30 @@ let str_of_obs obs =
     | Occurrence s -> s
     | Story s -> s
 
-
 let sol_of_init no_mult init = 
-  List.fold_left (fun acc (sol,n) -> 
-		    let sol' = 
-		      if no_mult then sol
-		      else
-			multiply (copy sol) n 
-		    in
-		    let acc = compose sol' acc in (*compose folds on first argument*)
-		      acc
-		 ) (empty()) init
+  let sol =
+    List.fold_left (fun acc (sol,n) -> 
+		      let sol' = 
+			if no_mult then sol
+			else
+			  multiply (copy sol) n 
+		      in
+		      let acc = compose sol' acc in (*compose folds on first argument*)
+			acc
+		   ) (empty()) init 
+  in
+    add Agent.empty sol (*adding the NIL agent to the initial solution*)
+
+let insert_empty_agent sol = (*size of the link map but just used for rules*)
+  let shift sol = 
+    let agents = AA.fold (fun id ag agents -> AA.add (id+1) ag agents) sol.agents (AA.create (AA.size sol.agents))
+    and links = PA.fold (fun (id,s) (id',s') links -> PA.add (id+1,s) (id'+1,s') links) sol.links (PA.create (PA.size sol.links))
+    and fresh_id = sol.fresh_id+1 
+    in
+      {agents=agents ; links = links ; fresh_id = fresh_id}
+  in
+  let sol = shift sol in
+  let sol = 
+    {sol with agents = AA.add 0 Agent.empty sol.agents} 
+  in
+    sol
