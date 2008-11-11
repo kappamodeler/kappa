@@ -693,13 +693,7 @@ let init log (rules,init,(sol_init:Solution.t),obs_l,exp) =
 
   (*computing refinement quotient and automorphisms for real rules*)
   let (cplx_simplx:Pipeline.simplx_encoding) = 
-    Some (rules,
-	  (*[sol_init,1]*) [] (*JF : 
-				to prevent parsing all ininital condition,
-				to be impoved in the case when we want to take into account reachables
-				the improvment will consist in passing the list of initial agents without repetitions
-			      *)
-	 )  
+    Some (rules,init)  
   in
   let pb = pipeline_methods.Pipeline.build_pb cplx_simplx (add_suffix (add_suffix Tools.empty_prefix "") "")  
   in 
@@ -725,13 +719,7 @@ let init log (rules,init,(sol_init:Solution.t),obs_l,exp) =
 
 (*computing automorphism for observables (fake rules)*)
   let (cplx_simplx:Pipeline.simplx_encoding) = 
-    Some (fake_rules,
-	  (*[sol_init,1]*) [] (*JF : 
-				to prevent parsing all ininital condition,
-				to be impoved in the case when we want to take into account reachables
-				the improvment will consist in passing the list of initial agents without repetitions
-			      *)
-	 )  
+    Some (fake_rules,init)
   in
   let pb = pipeline_methods.Pipeline.build_pb cplx_simplx (add_suffix (add_suffix Tools.empty_prefix "") "")  
   in 
