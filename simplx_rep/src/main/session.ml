@@ -25,7 +25,7 @@ let add_log_entry t msg ?line ?code log =
   in
   let _ = 
     match t with
-	0 -> (prerr_string (msg^"\n") ; flush stderr)
+	0 -> (print_string (msg^"\n") ; flush stdout)
       | 1 -> if new_msg then (prerr_string ("*Warning* "^msg^"\n") ; flush stderr) 
       | 2 -> (
 	  let line_info = match line with Some i -> (" line "^(string_of_int i)) | None -> "" in

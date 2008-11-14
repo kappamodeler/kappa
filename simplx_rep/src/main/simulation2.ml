@@ -1829,7 +1829,7 @@ let rec apply_exp p curr_time sim_data =
 let rec ticking clock c = 
   if IntSet.mem clock c.ticks then 
     begin
-      prerr_string Data.tick_string ; flush stderr ; 
+      print_string Data.tick_string ; flush stdout ; 
       ticking (clock-1) {c with ticks = IntSet.remove clock c.ticks}
     end
   else (flush stderr ; c)
@@ -1840,10 +1840,14 @@ let rec iter log sim_data p c =
     match !gc_mode with
 	Some HIGH -> 
 	  if p.gc_alarm_high then p 
-	  else (Printf.fprintf stderr "H" ; flush stdout ; {p with gc_alarm_high=true ; gc_alarm_low=false})
+	  else 
+	    (Printf.fprintf stderr "Free memory is low, shifting to strong garbage collection\n" ; flush stdout ; 
+	     {p with gc_alarm_high=true ; gc_alarm_low=false})
       | Some LOW ->
 	  if p.gc_alarm_low then p 
-	  else (Printf.fprintf stderr "L" ; flush stdout ; {p with gc_alarm_high=false ; gc_alarm_low=true})
+	  else 
+	    (Printf.fprintf stderr "Using low garbage collection\n" ; flush stdout ; 
+	     {p with gc_alarm_high=false ; gc_alarm_low=true})
       | None -> p
   in
   let clock =
@@ -1871,18 +1875,17 @@ let rec iter log sim_data p c =
   let _ = if !debug_mode then print sim_data else () in
     if !story_mode && (c.curr_iteration = !max_iter) then (*testing stop conditions for story mode*)
       begin (*exiting event loop*)
-	Printf.fprintf stderr "\n";
-	flush stderr; 
-	let log = Session.add_log_entry 1 (Printf.sprintf "-Exiting storification after %d iteration(s)" c.curr_iteration) log in
+	Printf.printf "\n"; flush stdout ;
+	let log = Session.add_log_entry 0 (Printf.sprintf "-Exiting storification after %d iteration(s)" c.curr_iteration) log in
 	  (0 (*termination*),log,sim_data,p,c)
       end
     else       
       (*Testing stop conditions for simulation mode*)
       if ((!max_time >= 0.0) && (c.curr_time > !max_time)) or ((!max_step >= 0) && (c.curr_step > !max_step)) then 
 	begin (*exiting event loop*)
-	  Printf.fprintf stderr "\n";
-	  flush stderr; 
-	  let log = Session.add_log_entry 1 (Printf.sprintf "-Event loop terminated at t=%f (%d events)" c.curr_time c.curr_step) log in
+	  Printf.printf "\n";
+	  flush stdout; 
+	  let log = Session.add_log_entry 0 (Printf.sprintf "-Event loop terminated at t=%f (%d events)" c.curr_time c.curr_step) log in
 	    (0 (*termination*),log,sim_data,p,c)
 	end
       else
