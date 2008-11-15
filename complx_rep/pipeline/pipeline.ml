@@ -250,7 +250,7 @@ module Pipeline =
 	   if s = "" 
 	   then None,(l,m)
 	   else 
-	     let _ = print_option prefix (Some stderr) "Compilation(simplx)\n" in 
+	     let _ = print_option prefix (Some stdout) "Compilation(simplx)\n" in 
 	     let _ = add_suffix prefix "Compilation(simplx)\n" in
 	     let (a,b,c,d) = Kappa_lex.compile s  in 
 	     let b = !Data.init in
@@ -302,7 +302,7 @@ module Pipeline =
 	     | _,Some (a,b) -> 
 		 (
 		 let _ = add_suffix prefix  "Translation(simplx->ckappa) \n" in
-		 let _ = print_option prefix (Some stderr) "Translation(simplx->ckappa)\n" in 
+		 let _ = print_option prefix (Some stdout) "Translation(simplx->ckappa)\n" in 
                	 let rep',messages = Translate.translate_rule_list (List.rev a) b interface m in 
 		 let _ = trace_print "TRANSLATE DONE" in
 		 let l = chrono prefix "Translation" l in 
@@ -324,7 +324,7 @@ module Pipeline =
 	     (match rep0.gathered_intermediate_encoding with
 	       Some _ -> (pb,(l,m))
 	     | None -> 
-		 (let _ = print_option prefix (Some stderr)  "Quotienting rules\n"  in
+		 (let _ = print_option prefix (Some stdout)  "Quotienting rules\n"  in
 		 let pb,(l,m),rep = get_first_encoding interface prefix pb (l,m) in 
 		 match pb with None -> None ,(l,m)
 		 | Some rep0 -> 
@@ -334,8 +334,8 @@ module Pipeline =
 		 let n1 =  (List.length (CBnG.divide_list true rep rep.cpb_rules)) in 
 		 let s = "Number of rules   : "^(string_of_int n0)^"\n" in
 		 let s2 = "Number of classes: "^(string_of_int n1)^"\n" in
-		 let _ = print_option prefix (Some stderr) s in
-		 let _ = print_option prefix (Some stderr) s2 in
+		 let _ = print_option prefix (Some stdout) s in
+		 let _ = print_option prefix (Some stdout) s2 in
 		 let l = chrono prefix "Quotienting rules" l in 
 		 Some {rep0 with gathered_intermediate_encoding  = Some cpb ;
                         n_rules = Some n0 ; 
@@ -347,7 +347,7 @@ module Pipeline =
 	     (match rep0.intermediate_encoding with
 	       Some _ -> (pb,(l,m))
 	     | None -> 
-		 (let _ = print_option prefix (Some stderr)  "Renaming\n"  in
+		 (let _ = print_option prefix (Some stdout)  "Renaming\n"  in
 		 let pb,(l,m),rep = get_first_encoding interface prefix' pb (l,m) in 
 		 match pb with None -> None ,(l,m)
 		 | Some rep0 ->
@@ -386,7 +386,7 @@ module Pipeline =
 	 match rep with None -> (None,(l,m))
 	 | Some rep0 -> 
 	     let prefix' = add_suffix prefix  title in
-	     let _ = print_option prefix (Some stderr) (title^"\n") in 
+	     let _ = print_option prefix (Some stdout) (title^"\n") in 
 	     if mode = Smashed 
 	     then 
 	       match rep0.gathered_boolean_encoding
@@ -471,7 +471,7 @@ module Pipeline =
 	     | None -> 
 		 
 		 (
-		  let _ = print_option  prefix (Some stderr) "Low-res contact map\n" in 
+		  let _ = print_option  prefix (Some stdout) "Low-res contact map\n" in 
 		 let rep',(l,m),a = get_intermediate_encoding None prefix' rep' (l,m) in 
 		 (
 		 match a.cpb_contact 
@@ -610,7 +610,7 @@ module Pipeline =
        and parse_line_by_line file prefix rep (l,m) = 
 	 match rep with None -> (None,(l,m))
 	 | Some rep -> 
-	     let _ = print_option prefix (Some stderr) "Second compilation (pretty printing)\n" in 
+	     let _ = print_option prefix (Some stdout) "Second compilation (pretty printing)\n" in 
 
 	     try ( let txt = 
 	       let canal = 
@@ -634,7 +634,7 @@ module Pipeline =
 	     with 
 	       Some _ -> pb',(l,m) 
 	     | None -> 
-		 let _ = print_option prefix (Some stderr) "Reachability analysis \n" in
+		 let _ = print_option prefix (Some stdout) "Reachability analysis \n" in
 		 let _ = flush stdout in 
 		 let pb,(l,m),_ = get_boolean_encoding  None prefix' pb (l,m) in 
 		 let pb,(l,m),_ = get_gathered_boolean_encoding None prefix' pb (l,m) in 
@@ -678,7 +678,7 @@ module Pipeline =
 	       let a,(l,m)=reachability_analysis prefix' (Some pb) (l,m) in
 	       refine_subviews prefix' a (l,m)
 	   | Some bdd,Some bdd2,Some contact ->
-	            let _ = print_option prefix (Some stderr) "Abstract lenses computation\n" in
+	            let _ = print_option prefix (Some stdout) "Abstract lenses computation\n" in
 
 		    let rep1 = StringMap.map A.restore_subviews bdd  in 
 		    let sp   = StringMap.map A.restore_subviews bdd2 in
@@ -698,7 +698,7 @@ module Pipeline =
 	     match pb  with
 	       None -> None,(l,m)
 	     | Some pb -> 
-		 let _ = print_option prefix (Some stderr) "View computation\n" in
+		 let _ = print_option prefix (Some stdout) "View computation\n" in
 		 match pb.bdd_sub_views,pb.bdd_false,pb.contact_map 
 		 with None,_,_ | _,_,None | _,None,_ -> 
 		   let a,(l,m)=reachability_analysis prefix' (Some pb) (l,m) in
@@ -893,7 +893,7 @@ module Pipeline =
 	 match pb' with 
 	   None -> (pb',(l,m))
 	 | Some pb -> 
-	     let _ = print_option prefix (Some stderr) "Quark computation\n" in
+	     let _ = print_option prefix (Some stdout) "Quark computation\n" in
 	     let pb,(l,m),contact = get_best_res_contact_map prefix' pb (l,m) in 
 	     let pb,(l,m),cpb = get_intermediate_encoding None prefix' pb (l,m) in
 	   
@@ -914,7 +914,7 @@ module Pipeline =
 	       Some _,Some _ -> (pb',(l,m))
 	     | _ ->
 	
-		 let _ = print_option prefix (Some stderr) "Influence map \n" in  
+		 let _ = print_option prefix (Some stdout) "Influence map \n" in  
 		 let pb,(l,m),cpb = get_intermediate_encoding None prefix' pb  (l,m) in 
 	     let pb,(l,m) = 
 	       if pb.quarks 
@@ -975,8 +975,8 @@ module Pipeline =
 	 match pb,file1,file2   
 	 with None,_,_   -> pb,(l,m)
        | Some pb',_,_ -> 
-	   let _ = print_option prefix (Some stderr)  (title^"\n") in
-	   let _ = flush stderr in
+	   let _ = print_option prefix (Some stdout)  (title^"\n") in
+	   let _ = flush stdout in
 	   let pb',(l,m) = 
 	     match mode with 
 	       Full -> 
@@ -1023,7 +1023,7 @@ module Pipeline =
 		 if Acyclicity.is_acyclic pb' then 
 		   
 		   let _ = trace_print "START NUMBERING" in 
-		   let _ = print_option prefix (Some stderr) "Counting complexes\n" in
+		   let _ = print_option prefix (Some stdout) "Counting complexes\n" in
 		   let rep3,(l,m) = build_pieces prefix' (Some pb') (l,m) in 
 		   let n = 
 		     match rep3 with None -> frozen_error "line 971" "Cannot build pieces" "count_complexe" (fun () -> raise Exit) | Some rep3 -> count rep3 in 
@@ -1042,7 +1042,7 @@ module Pipeline =
 	   | Some conc -> 
 	       let print s = print_option prefix output s in 
 	       let _ = trace_print "START ENUMERATION" in 
-	       let _ = print_option prefix (Some stderr) "Enumerating complexes\n"  in 
+	       let _ = print_option prefix (Some stdout) "Enumerating complexes\n"  in 
 	       if not (Acyclicity.is_acyclic pb') 
 	       then 
 	         let rep = "There are too many complexes so that we can enumerate them."
@@ -1141,7 +1141,7 @@ module Pipeline =
        and refine_system_to_avoid_polymeres =
 	 (fun file subsystem mode k kin_coef prefix pb (l,m) -> 
 	   let prefix'= add_suffix prefix "Refine_system to avoid polymers"  in
-	   let _ = print_option prefix (Some stderr) "Refine system to avoid polymers\n" in 
+	   let _ = print_option prefix (Some stdout) "Refine system to avoid polymers\n" in 
 	   match pb with None -> [],None,(l,m)
 	   | Some pb -> 
 	       let pb,(l,m),cpb = 
@@ -1215,7 +1215,7 @@ module Pipeline =
      and template = 
 	 (fun file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 prefix pb (l,m) ->
 	   let prefix' = add_suffix prefix "template" in 
-	   let _ = print_option prefix (Some stderr) "Starting ODE generation\n" in
+	   let _ = print_option prefix (Some stdout) "Starting ODE generation\n" in
 	   
 	   let print_sb  sb pb (log:out_channel option) = 
 	     let hash = Hashtbl.create 13  in
@@ -1361,7 +1361,7 @@ module Pipeline =
 	     None -> None,(l,m) 
 	   | Some a -> 
 	       let prefix'=add_suffix prefix "count automorphisms in lhs" in
-	       let _ = print_option prefix (Some stderr) "count automorphism in lhs\n"  in 
+	       let _ = print_option prefix (Some stdout) "count automorphism in lhs\n"  in 
 
 	       let a,(l,m),boolean = get_boolean_encoding None prefix' a (l,m) in 
 	       let rep,(l,m) = 
@@ -1375,7 +1375,7 @@ module Pipeline =
 	     None -> None,(l,m)
 	   | Some a -> 
 	       let prefix' = add_suffix prefix "compute refinement relation closure" in 
-	       let _ = print_option prefix (Some stderr) "compute refinement relation closure\n" in 
+	       let _ = print_option prefix (Some stdout) "compute refinement relation closure\n" in 
 	       let a,(l,m),boolean = get_gathered_boolean_encoding None prefix' a (l,m) in 
 	       
 	       let rep = Refinements.compute_refinement boolean in
@@ -1389,7 +1389,7 @@ module Pipeline =
 	   with None -> None,(l,m)
 	   |  Some a -> 
 	       let prefix' = add_suffix prefix "compute maximal refinement relation" in
-	       let _ = print_option prefix (Some stderr) "compute maximal refinement relation\n" in 
+	       let _ = print_option prefix (Some stdout) "compute maximal refinement relation\n" in 
 	       let pb,(l,m),rep =
 		 match 
 		   a.refinement_relation_closure 
@@ -1629,7 +1629,7 @@ module Pipeline =
 	   with None -> None,(l,m)
 	   |  Some a -> 
 	       let prefix' = add_suffix prefix "compute dag-like refinement relation" in
-	       let _ = print_option prefix (Some stderr) "compute dag-like refinement relation\n" in 
+	       let _ = print_option prefix (Some stdout) "compute dag-like refinement relation\n" in 
 	       let pb,(l,m),rep =
 		 match 
 		   a.refinement_relation_closure 
@@ -1693,14 +1693,13 @@ module Pipeline =
 	 with 
 	   [] -> ()
 	 | list -> 
-	     let _ = print_string "Errors:" in
-	     let _ = print_newline () in 
+	     let _ = Printf.fprintf stderr "Errors:" in
+	     let _ = Printf.fprintf stderr "\n" in
 	     let _ = 
 	       List.iter 
-		 (fun error -> print_string (Error_handler.string_of_error error);
-		    print_newline ())
+		 (fun error -> Printf.fprintf stderr "%s\n" (Error_handler.string_of_error error))
 		 list 
-	     in ()
+	     in (flush stderr)
        and
 	   dump_latex_rule_system file prefix pb log = 
 	 match pb with 

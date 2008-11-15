@@ -347,12 +347,12 @@ let justify s =
      
 
 let chrono prefix s l = 
-  let print_string x = Printf.fprintf stderr "%s" x in
+  let print_string x = Printf.fprintf stdout "%s" x in
   let rep = justify s  in 
   let _ = 
     if (!Config_complx.dump_chrono) && s<>""
     then (print_string (fst prefix); print_string s;print_string " is completed...\n";
-	  flush stderr)
+	  flush stdout)
   in
   (rep,(full_time (Unix.times ())))::l
 
@@ -398,10 +398,10 @@ let empty_prefix = ("",[])
 let init_counters ()  = 
   let rec init_ticks n = 
     if n > !Data.clock_precision 
-    then (prerr_string "\n"; flush stderr ; IntSet.empty)
+    then (Printf.fprintf stdout "\n";flush stdout ; IntSet.empty)
     else 
       begin
-	prerr_string "_" ; flush stderr ;
+	Printf.fprintf stdout "_" ; flush stdout ;
 	IntSet.add n (init_ticks (n+1))
       end
   in
@@ -412,14 +412,14 @@ let rec ticking clock c =
   let c = 
     if IntSet.mem clock c then 
       begin
-	prerr_string Data.tick_string ; 
-	flush stderr ; 
+	Printf.fprintf stdout "%s" Data.tick_string ; 
+	flush stdout ; 
 	ticking (clock-1) (IntSet.remove clock c)
       end
-    else (flush stderr ; c)
+    else (flush stdout ; c)
   in c 
 
-let end_ticking () = (prerr_string "\n";flush stderr)
+let end_ticking () = (Printf.fprintf stdout "\n";flush stdout)
 
 let get_option ()  =
   let _ = SuperargTk.parse options input_file  in 
