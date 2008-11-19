@@ -353,7 +353,7 @@ clean:
 
 
 clean_all: clean 
-	rm $(AUTOGENML) 
+	rm -f $(AUTOGENML) 
 	rm -f simplx_rep/sim complx_rep/compress complx_rep/compress_light  simplx complx_light bd_influence_map bd_influence_map_light complx *.options* 
 
 grab_svn_version_number:
