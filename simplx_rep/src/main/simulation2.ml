@@ -1298,12 +1298,18 @@ let select log sim_data p c =
 		else
 		  match inj_list with
 		      [(psi_nb,cc_psi,psi);(phi_nb,cc_phi,phi)] -> bologna ind_r (cc_psi,psi_nb,psi) (cc_phi,phi_nb,phi) sim_data log
-		    | _ -> let s="Simulation2.select: invalid number of injections" in
-			Error.runtime 
-			  (Some "simulation2.ml",
-			   Some 1314,
-			   Some s)
-			  s
+		    | l -> 
+			let phi = 
+			  List.fold_left (fun phi (_,_,psi) -> 
+					    let opt = 
+					      try Some (merge_injections phi psi) with Not_found -> None
+					    in
+					      match opt with
+						  None -> raise (Not_applicable (2,r)) 
+						| Some ga -> ga
+					 ) IntMap.empty l
+			in
+			  ([phi],log,None,r.boost) 
 	    in
 	      if !plot_p_intra then 
 		begin
