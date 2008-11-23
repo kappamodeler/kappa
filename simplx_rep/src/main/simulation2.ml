@@ -2128,7 +2128,10 @@ let rec iter log sim_data p c =
 						      None -> (failwith "Automorphisms not computed") 
 						    | Some i -> float_of_int i 
 						in
-						let act_obs = inst_obs /. (automorphisms (**. (!rescale) Correction after Walter's class*)) in 
+						let act_obs = (inst_obs *. r_obs.kinetics) /. automorphisms
+									     (**. (!rescale) Correction after Walter's class*)
+						in 
+						  (*Printf.printf "%s -> %f\n" flg act_obs ; flush stdout ;*)
 						  IntMap.add i act_obs obs_map
 
 					     ) mod_obs obs_map
