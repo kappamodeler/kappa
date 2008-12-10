@@ -2001,7 +2001,12 @@ let rec iter log sim_data p c =
 						) tq mq
 		      in
 		      let modifs = PortSet.fold (fun quark pmap ->
-						   PortMap.add quark [Rule.Remove] pmap
+			let old = 
+			  try 
+			    PortMap.find quark pmap 
+			  with 
+			    Not_found -> [] in
+			PortMap.add quark (Rule.Remove::old) pmap
 						) rmq modifs 
 		      in 
 			if (IntSet.mem r_ind sim_data.obs_ind) then (*rule is to be observed, so don't backtrack it!*)
