@@ -133,8 +133,24 @@ module Input =
     let event_after_step i = i 
 
    
-	
-	
+    let string_of_cell (w,(b,a),s) = "WIRE: "^(string_of_int w)^
+(match (b,a) with 
+  Some b,None ->" AFTER EVENT "^(string_of_int b)
+| None, Some a -> " BEFORE EVENT "^(string_of_int a)
+| Some b,Some a-> " BETWEEN EVENT "^(string_of_int b)^" AND EVENT "^(string_of_int a)
+|  _ -> "")^" STATE: "^(match s with None -> "None" | Some s ->  s)
+			  
+    let compute_before_after i wire configuration = 
+      (try  Some (configuration.network.sparse_matrix.(wire).(i).eid) 
+      with _ -> None),
+      (try  Some (configuration.network.sparse_matrix.(wire).(i+1).eid) 
+      with _ -> None)
+
+    let string_of_choice (a,_) = 
+      match a with 
+	None -> ""
+      |	Some a -> "Branch on event "^(string_of_int a)
+
     let restore configuration stack = 
       let nback = (!back)+1 in
       let _ = if nback > !Data.max_backtrack or (not (test_time ()))
@@ -149,9 +165,14 @@ module Input =
       let _ = trace_print "RESTORE" in
       let _ =  
 	List.iter 
-	  (fun (i,j,k)  -> configuration.status.(j).(i) <- k)
+	  (fun (i,j,k)  -> 
+	    let _ = trace_print (string_of_cell (j,
+						 compute_before_after i j configuration,
+						 k)) in 
+	    configuration.status.(j).(i) <- k)
 	  stack 
       in 
+      let _ = trace_print "END RESTORE" in 
       let _ = back:=nback in
       configuration  
 
@@ -171,10 +192,10 @@ module Input =
 	    status.(k)<- Array.make (nevents+1)  None;
 	    status.(k).(0)<-Some "_";
 	    let _ = if trace then 
-	      (print_string "INIT\n ";
-	       print_int k;print_newline ();
-	       print_int nevents;print_newline ();
-	       print_string (network.sparse_matrix.(k).(nevents-1).state_before)) in
+	      (print_string ("INIT "^(string_of_cell 
+				       (k,
+					(None,Some (network.sparse_matrix.(k).(0).eid )),
+					Some "_"))^"\n")) in 
 	    ())
 	  list_wire in 
       let selected = IntMap.empty in
@@ -222,6 +243,14 @@ module Input =
       else
 	raise Too_expensive 
 	 
+    let best_choice = 
+      if trace 
+      then 
+	(fun x -> let rep = best_choice x in 
+	          let _ = print_string (string_of_choice rep) in 
+		  let _ = print_newline () in 
+		  rep)
+      else best_choice 
 
     let network_after_short configuration event wire = 
       configuration.network.sparse_matrix.(wire).(event).state_after
@@ -371,7 +400,7 @@ module Input =
  			 then let _ = restore configuration stack in None 
 			 else (Some (q,configuration,stack)))
 		       with Not_found -> 
-			 let _ = trace_print ("SELECT_EVENT"^(string_of_int event)) in 
+			 let _ = trace_print ("SELECT_EVENT "^(string_of_int event)) in 
 			 let configuration = 
 			  {configuration with 
 			    selected_event_map = IntMap.add event true configuration.selected_event_map ;
@@ -414,7 +443,7 @@ module Input =
 			else Some (q,configuration,stack)
 		      with
 			Not_found -> 
-			   let _ = trace_print ("ERASE_EVENT"^(string_of_int event)) in
+			   let _ = trace_print ("ERASE_EVENT "^(string_of_int event)) in
 		    	   let configuration = 
 			     {configuration with 
 			       selected_event_map = IntMap.add event false configuration.selected_event_map ;
@@ -430,34 +459,12 @@ module Input =
 				 let l = 
 				match a with None -> l 
 				| Some a -> 
-				    let _ = 
-				      if trace 
-				      then 
-					(trace_print "PROPAGATE FORWARD\n";
-					 print_int wire;
-					 print_newline ();
-					 print_int short_event;
-					 print_newline ();
-					 print_string a;
-				       print_newline ()) in
-				    
 				    Select_value (step_after_event short_event,wire,a)::l
 			      in
 			      let l = 
 				match b with None -> l 
 				| Some b -> 
-				    let _ = 
-				      if trace 
-				      then 
-					(trace_print "PROPAGATE BACKWARD\n";
-					 print_int wire;
-					 print_newline ();
-					 print_int short_event;
-					 print_newline ();
-					 print_string b ;
-					 print_newline ()) in
-				    
-				 Select_value (step_before_event short_event,wire,b)::l in
+				    Select_value (step_before_event short_event,wire,b)::l in
 			      l
 				)
 			   list_wire q in
@@ -465,7 +472,8 @@ module Input =
 			Some(working_list,configuration,stack) 
 		  ) end
 	      | Select_value (step,wire,s) ->
-		 let _ = trace_print ("Select_value"^(string_of_int step)^"."^(string_of_int wire)^"."^s) in
+		  let _ = trace_print ("Select_value: "^(string_of_cell (wire,
+									 compute_before_after (step-1) wire configuration,Some s))) in 
 		  begin
 		    if step<0 or step >= configuration.network.nevents_by_wire.(wire) then Some(q,configuration,stack)
 		    else 
@@ -585,9 +593,7 @@ module Solve =
 	    else if mode = Data.FIRST then visit_first
 	    else raise Exit in
 	  
-	  let _ = trace_print "MAIN" in 
 	  let init = I.sol_init network in
-	  let _ = trace_print "INIT" in 
 	  let properties = 
 	    (List.rev_map I.upgrade_neg erased)@(List.rev_map I.upgrade_pos mandatory) in
 	  match propagate properties init (I.init_stack) forbid 
@@ -617,18 +623,20 @@ type quark = (int*string)*quark_type
     module QuarkMap = Map.Make (struct type t = quark let compare = compare end)
 
     let print_network network = 
-      let adjust i = i (*String.sub i 0 (min 1 (String.length i))*) in
+      let adjust i = i in 
+      let _ = print_string "CONSTRAINTS \n" in
+      let _ = print_string "A wire is described as n::(eid:before,after;)*, where 'n' is the wire index, 'eid' is the event index, 'before' is the state of the wire 'wire' before event 'eid' (if the event 'eid' is selected), 'after' is the state of the wire 'wire' after the event 'eid' (if the event 'eid' is selected).\n" in   
       Array.iteri 
 	(fun port r -> 
 	  let _ = print_int port in
-	  let _ = print_string " " in 
+	  let _ = print_string ":: " in 
 	  let _ = 
 	    Array.iteri (
 	    fun a i -> 
 	      print_int i.eid;
 	      print_string ":"; 
 	      match i with 
-		case -> print_string ((adjust case.state_before)^","^(adjust case.state_after)^";")
+		case -> print_string ((adjust case.state_before)^","^(adjust case.state_after)^" ; ")
 		    ) r 
 	  in print_newline ())
 	network.sparse_matrix    
@@ -776,7 +784,7 @@ module Convert =
 	    let old = try StringMap.find a map with Not_found -> IntSet.empty in
 	    StringMap.add a (IntSet.add i old) map)
 	    id_to_name StringMap.empty in
-	let _ = 
+(*	let _ = 
 	  if trace then 
 	    let _ = 
 	      print_string "AGENT_TO_WIRE\n" in 
@@ -785,7 +793,7 @@ module Convert =
 		(fun i x -> print_string i;
 		  IntSet.iter (fun x -> print_int x;print_string ";") x;print_newline ())
 		agent_to_wire in 
-	    () in 
+	    () in *)
 	let agent_to_wire = StringMap.map (fun y -> IntSet.fold (fun x a -> x::a) y []) agent_to_wire in 
 	
 	let net' = (Network.empty (),None,IntMap.empty) in
@@ -1426,7 +1434,7 @@ let compress net iter_mode granularity log add_log_entry =
 	let network,a,forbid  = Convert.convert net granularity in 
 	let _ = if trace then 
 	  let _ = print_network network in 
-	  let _ = print_string "ADD" in
+	  let _ = print_string "SELECT_EVENT(observable) " in
 	  let _ = List.iter (fun x -> print_int x;print_newline ()) (snd a) in
 	  () in 
 	let _,output = 
