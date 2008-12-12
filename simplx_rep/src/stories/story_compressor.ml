@@ -652,7 +652,7 @@ module Solve =
 	print_string "(Agent ";
 	print_int i;
 	if x="_!"
-	then print_string "is present"
+	then print_string ",is present?)"
 	else 
 	  begin 
 	    print_string ",site ";
@@ -660,9 +660,9 @@ module Solve =
 	    print_string ",";
 	    print_string 
 	      (match s with 
-		State -> "internal state"
-	      | Binding -> "to which site"
-	      | AnyBound -> "free/bound");
+		State ->   "internal state"
+	      | Binding -> "to which site?"
+	      | AnyBound ->"free / bound? ");
 	    print_string ")" 
 	  end 
       in 
