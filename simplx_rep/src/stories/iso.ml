@@ -253,7 +253,7 @@ let compress_drawers log drawers test_iso_mode add_log_entry =
 	      drawers.hsh 
 	      (log,(drawers',0,0,0,0,counter),[]) in
 	  let drawers' = {drawers' with nb = tot} in 
-	  let _ = Printf.fprintf stderr "\n" in 
+	  let _ = Printf.fprintf stdout "\n" in 
 	  let log = add_log_entry 0 ("--compression "^(string_of_int kold)^" into "^(string_of_int knew)) log in 
 	  let log = 
 	    if  kfail > 0 
