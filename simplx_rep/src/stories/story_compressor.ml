@@ -16,6 +16,10 @@ type eventid = int
 module PortIdSet = Set.Make (struct type t = int let compare = compare end)
 module EidMap = Map.Make (struct type t = int let compare = compare end)
 
+type quark_type = State | Binding | AnyBound
+type quark = (int*string)*quark_type 
+module QuarkMap = Map.Make (struct type t = quark let compare = compare end)
+
 let back = ref 0 
 let init_time = ref 0. 
 let set_init_time () = init_time := Mods2.gettime () 
@@ -34,18 +38,19 @@ type case =
 
 
 let empty_case = 
-{port_id = -1;
-  eid = -1;
-  e_shortid = -1;
-  state_before = "";
-  state_after = ""}
-
+  {port_id = -1;
+    eid = -1;
+    e_shortid = -1;
+    state_before = "";
+    state_after = ""}
+    
 type network  = 
     {sparse_matrix:case array array;
      nevents_by_wire: int array; 
      nevents:int;
      nwires:int;
-     eid_to_ports: PortIdSet.t array;
+     wire_map: int QuarkMap.t;
+      eid_to_ports: PortIdSet.t array;
       short_events:int EidMap.t array} (*port -> eid -> shorteid*)
 
  
@@ -525,11 +530,19 @@ module Solve =
     ->
       struct 
 	let check configuration  output = 
-	  let _ = trace_print "CHECK" in
 	  if I.is_solution configuration
 	  then 
 	    let o = I.store_solution configuration  output
-	    in true,o 
+	    in 
+	    let _ = 
+	      if trace then 
+		begin 
+		  let _ = print_string "SUCCESS\n We keep events: " in
+		  let _ = I.dump_output o in ()
+
+		end
+	    in 
+	    true,o 
 	  else 
 	    false,output
 	let rec propagate workinglist configuration stack forbid =
@@ -619,17 +632,46 @@ module Solve =
 
       end
 
-type quark_type = State | Binding | AnyBound
-type quark = (int*string)*quark_type 
-    module QuarkMap = Map.Make (struct type t = quark let compare = compare end)
+ 
 
     let print_network network = 
       let adjust i = i in 
       let _ = print_string "CONSTRAINTS \n" in
-      let _ = print_string "A wire is described as n::(eid:before,after;)*, where 'n' is the wire index, 'eid' is the event index, 'before' is the state of the wire 'wire' before event 'eid' (if the event 'eid' is selected), 'after' is the state of the wire 'wire' after the event 'eid' (if the event 'eid' is selected).\n" in   
+      let _ = print_string "A wire is described as WIRE: n(desc)::(eid:before,after;)*, where 'n' is the wire index, 'eid' is the event index, 'before' is the state of the wire 'wire' before event 'eid' (if the event 'eid' is selected), 'after' is the state of the wire 'wire' after the event 'eid' (if the event 'eid' is selected).\n" in   
+      let decode_map = 
+	let map = 
+	  QuarkMap.fold 
+	    (fun quark i map -> IntMap.add i quark map)
+	    network.wire_map IntMap.empty  
+	in 
+	(fun i -> 
+	  try IntMap.find i map
+	  with Not_found -> raise Exit)
+      in 
+      let print_port ((i,x),s) = 
+	print_string "(Agent ";
+	print_int i;
+	if x="_!"
+	then print_string "is present"
+	else 
+	  begin 
+	    print_string ",site ";
+	    print_string (String.sub x 0 ((String.length x)-1));
+	    print_string ",";
+	    print_string 
+	      (match s with 
+		State -> "internal state"
+	      | Binding -> "to which site"
+	      | AnyBound -> "free/bound");
+	    print_string ")" 
+	  end 
+      in 
+	  
       Array.iteri 
 	(fun port r -> 
+	  let _ = print_string "WIRE: " in 
 	  let _ = print_int port in
+	  let _ = print_port (decode_map port) in 
 	  let _ = print_string ":: " in 
 	  let _ = 
 	    Array.iteri (
@@ -976,7 +1018,7 @@ module Convert =
 		 let old = try StringMap.find a map with Not_found -> IntSet.empty in
 		   StringMap.add a (IntSet.add i old) map)
 	    id_to_name StringMap.empty in
-	  let _ = 
+(*	  let _ = 
 	    if trace then 
 	      let _ = 
 		print_string "AGENT_TO_WIRE\n" in 
@@ -985,7 +1027,7 @@ module Convert =
 		(fun i x -> print_string i;
 		   IntSet.iter (fun x -> print_int x;print_string ";") x;print_newline ())
 		  agent_to_wire in 
-		() in 
+		() in *)
 	  let agent_to_wire = StringMap.map (fun y -> IntSet.fold (fun x a -> x::a) y []) agent_to_wire in 
 	  let permutation  = 
 	    let arg = 
@@ -1164,10 +1206,7 @@ module Convert =
 	  end  )
 	  a.Network.wires  (0,QuarkMap.empty) in
     
-      
-
-
-      
+      let wire_qmap = wire_map in 
       let wire_map i = QuarkMap.find i wire_map in
       let (erased,mandatory)  = 
 	let rec aux k (erased,mandatory) = 
@@ -1383,6 +1422,7 @@ module Convert =
 	    in 
 	    
       {nevents = n_event;
+	wire_map = wire_qmap;
 	nwires = n_wire;
 	nevents_by_wire = nevents_by_wire ;
 	sparse_matrix = sparse_matrix;
