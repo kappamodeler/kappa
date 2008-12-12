@@ -3,7 +3,7 @@ open Network
 open Mods2
 
 
-let trace = false
+let trace = false (*true for dumping compression log*)
 let trace_print s = 
   if trace then
     begin
@@ -267,23 +267,25 @@ module Input =
         Some s -> s
 	| None -> raise Exit in
       let working_list =
-	if event_before = (-1) then working_list
+	if event_before = (-1) 
+	then 
+	  working_list
 	else 
 	  let event_before_long = configuration.network.sparse_matrix.(wire).(event_before).eid in
-	  if (try (not (IntMap.find event_before_long configuration.selected_event_map))with Not_found -> false) 
-	      or (try network_before_short configuration event_before wire = state with _ -> false)
-	  then (Select_value (shortstep-1,wire,state))::working_list
-	   else if 
-	     network_after_short configuration event_before wire
-	       <> state 
-	   then Erase_event (event_before_long)::working_list
-	   else 
-	     Stuck_event(event_before_long)::
-	     (
-	     let working_list =
-	       if Data.story_propagation_strategy = 1
-	       then working_list 
-	       else 
+	  if (try (not (IntMap.find event_before_long configuration.selected_event_map)) with Not_found -> false) 
+	  then 
+	    (Select_value (shortstep-1,wire,state))::working_list
+	  else if 
+	    network_after_short configuration event_before wire<> state 
+	  then 
+	    Erase_event (event_before_long)::working_list
+	  else 
+	    Stuck_event(event_before_long)::
+	    (
+	    let working_list =
+	      if Data.story_propagation_strategy = 1
+	      then working_list 
+	      else 
 	       if state = "_" then working_list 
 	       else 
 		 let rec aux short_step old = 
@@ -329,11 +331,11 @@ module Input =
 	else 
 	  let event_after_long = configuration.network.sparse_matrix.(wire).(event_after).eid in 
 	  if (try (not (IntMap.find event_after_long configuration.selected_event_map))with Not_found -> false)
-	    or (try network_after_short configuration event_after wire = state with Not_found -> false)
+	    (*or (try network_after_short configuration event_after wire = state with Not_found -> false)*)
 	    
 	  then (Select_value (shortstep+1,wire,state))::working_list
 	  else if network_before_short configuration event_after wire <> state 
-	  then Erase_event (event_after_long)::working_list
+	  then (print_string "ERASE2\n";Erase_event (event_after_long)::working_list)
 	  else Stuck_event (event_after_long)::
 	  (
 	  let working_list =
@@ -433,7 +435,6 @@ module Input =
 		  end
 	      | Erase_event event -> 
 		  begin
-		   
 		    if event<0 or event >= configuration.n_event 
 		    then Some (q,configuration,stack) 
 		    else
@@ -448,8 +449,7 @@ module Input =
 			     {configuration with 
 			       selected_event_map = IntMap.add event false configuration.selected_event_map ;
 			       remaining_event = IntSet.remove event configuration.remaining_event} in
-			   let list_wire = 
-			  configuration.network.eid_to_ports.(event) in 
+			   let list_wire = configuration.network.eid_to_ports.(event) in 
 			   let working_list = 
 			     PortIdSet.fold
 			       (fun wire l ->
@@ -475,7 +475,8 @@ module Input =
 		  let _ = trace_print ("Select_value: "^(string_of_cell (wire,
 									 compute_before_after (step-1) wire configuration,Some s))) in 
 		  begin
-		    if step<0 or step >= configuration.network.nevents_by_wire.(wire) then Some(q,configuration,stack)
+		    if step<0 or step >= configuration.network.nevents_by_wire.(wire) 
+		    then Some(q,configuration,stack)
 		    else 
 		      let old = configuration.status.(wire).(step) in
 		      match old with 
