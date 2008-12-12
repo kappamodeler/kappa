@@ -3,7 +3,7 @@ open Network
 open Mods2
 
 
-let trace = false (*true for dumping compression log*)
+let trace = false  (*true for dumping compression log*)
 let trace_print s = 
   if trace then
     begin
