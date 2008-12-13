@@ -15,8 +15,8 @@ let time_stamp =
     tm.Unix.tm_mday tm.Unix.tm_mon (tm.Unix.tm_year + 1900) 
     tm.Unix.tm_hour tm.Unix.tm_min tm.Unix.tm_sec
 
-let version = "3.40.."^(string_of_int Svn_number.svn_number) 
-let date = "2008.08.26"
+let version = "3.66.."^(string_of_int Svn_number.svn_number) 
+let date = "2008.12.13"
 let input_marshalling = ref "" 
 let input_file = ref [""] 
 let input_focus_on = ref ""
@@ -360,7 +360,7 @@ let options = List.rev
 "--output-ODE-data","_plx_foot.data";
 "--output-marshalling","_plx.marshalling";
 "--output-influence-map-txt","_plx_influence_map.txt";
-"--output-influence-map-dot","_plx_influence_map.txt";
+"--output-influence-map-dot","_plx_influence_map.dot";
 "--output-quantitative-compression","_plx_compressed_quantitative.ka";
 "--output-qualitative-compression","_plx_compressed_qualitative.ka";
 "--output-low-res-contact-map-dot","_plx_low_res_contact.dot";

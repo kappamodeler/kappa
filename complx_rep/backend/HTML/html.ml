@@ -321,6 +321,11 @@ let dump_html pb channel (l,m)  =
       print_pack pb channel ;
       print_species_map pb channel; 
       print_reachables pb channel]@
+     (if !Config_complx.do_influence && (!Config_complx.output_influence_map_txt_file<>"" or  !Config_complx.output_influence_map_dot_file<>"")
+     then 
+       [menutitle channel "Influence_map";
+       precomputed_data channel (!Config_complx.output_influence_map_txt_file) "Influence map in txt";
+       precomputed_data channel (!Config_complx.output_influence_map_dot_file) "Influence map in dot"] else [])@
      (if !Config_complx.do_qualitative_compression or !do_quantitative_compression 
      then [menutitle channel "Compression";
 	    print_pretty_compression Full pb channel; 

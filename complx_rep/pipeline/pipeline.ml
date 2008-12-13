@@ -916,56 +916,99 @@ module Pipeline =
 	
 		 let _ = print_option prefix (Some stdout) "Influence map \n" in  
 		 let pb,(l,m),cpb = get_intermediate_encoding None prefix' pb  (l,m) in 
-	     let pb,(l,m) = 
-	       if pb.quarks 
-	       then Some pb,(l,m)
-	       else quarkification prefix' (Some pb) (l,m) in 
-	       
-	       match pb with 
+		 let pb,(l,m) = 
+		   if pb.quarks 
+		   then Some pb,(l,m)
+		   else quarkification prefix' (Some pb) (l,m) 
+		 in 
+		 
+		 match pb with 
 		   None -> (pb,(l,m))
 		 | Some pb -> 
-		    
+		     
 		     let _ = flush stdout in 
 		     let pb,(l,m),cpb = get_intermediate_encoding None prefix' pb  (l,m) in 
 		     let rep = Influence_map.compute_influence_map cpb in 
-		     let _ = if file <> "" or file2 <> "" then 
-		       let f = 
-			 let map = 
-		   List.fold_left 
-		     (fun sol rc -> 
-			List.fold_left 
-			  (fun sol (a,b,c) -> 
+		     let _ = 
+		       if file <> "" or file2 <> "" then 
+			 let f = 
+			   let map = 
 			     List.fold_left 
-			       (fun sol id -> 
-				  let kid = id.Pb_sig.r_simplx.Rule.id in
-				    IntMap.add kid id sol)
-			      sol a)
-			  sol rc.cpb_guard)
-		     IntMap.empty cpb.cpb_rules in
-		   (fun x -> try (IntMap.find x map) with _ -> 
-		      frozen_error "line 893" "" "build_influence_map"  (fun () -> raise Exit)) in
-		 Tools2.log_in_file file 
-		   (fun x -> 
-		      let _ =  
-			IntMap.iter
-			  (fun a b -> 
-			     (IntSet.iter 
-			     (fun b -> Printf.fprintf x "%s->%s\n" 
-				(name_of_rule (f a)) 
-				(name_of_rule (f b))) b))
-			  (fst rep),
-			IntMap.iter 
-			  (fun a b -> 
-			     (IntSet.iter 
-				(fun b -> Printf.fprintf x "%s-|%s\n" 
-				   (name_of_rule (f a)) 
-				   (name_of_rule (f b)))
-				b)) (snd rep)
-		      in rep) in 
-	     let l=chrono prefix "Influence map" l in 
-	       (Some {pb 
-		      with wake_up_map = Some (fst rep) ;
-			inhibition_map = Some (snd rep)},(l,m)))
+			       (fun sol rc -> 
+				 List.fold_left 
+				   (fun sol (a,b,c) -> 
+				     List.fold_left 
+				       (fun sol id -> 
+					 let kid = id.Pb_sig.r_simplx.Rule.id in
+					 IntMap.add kid id sol)
+				       sol a)
+				   sol rc.cpb_guard)
+			       IntMap.empty cpb.cpb_rules in
+			   (fun x -> try (IntMap.find x map) with _ -> 
+			     frozen_error "line 893" "" "build_influence_map"  (fun () -> raise Exit)) 
+			 in
+			 let _ = 
+			   Tools2.log_in_file file 
+			     (fun x -> 
+			       let _ =  
+				 IntMap.iter
+				   (fun a b -> 
+				     (IntSet.iter 
+					(fun b -> Printf.fprintf x "%s->%s\n" 
+					    (name_of_rule (f a)) 
+					    (name_of_rule (f b))) b))
+				   (fst rep),
+				 IntMap.iter 
+				   (fun a b -> 
+				     (IntSet.iter 
+					(fun b -> Printf.fprintf x "%s->%s\n" 
+					    (name_of_rule (f a)) 
+					    (name_of_rule (f b)))
+					b)) (snd rep)
+			       in ()) 
+			 in 
+			 let _ = 
+			   Tools2.log_in_file file2
+			     (fun x -> 
+			       let set = 
+				 IntMap.fold 
+				   (fun a b c -> IntSet.union b (IntSet.add a c))
+				   (fst rep)
+				   (IntMap.fold 
+				      (fun a b c -> IntSet.union b (IntSet.add a c))
+				      (snd rep)
+				      (IntSet.empty)) in 
+			       let _ = Printf.fprintf x "DiGraph G {\n" in
+			       let _ = 
+				 IntSet.iter 
+				   (fun r -> Printf.fprintf x "\"%s\" \n" (name_of_rule (f r)))
+				   set in
+			       let _ =  
+				 IntMap.iter
+				   (fun a b -> 
+				     (IntSet.iter 
+					(fun b -> Printf.fprintf x "\"%s\"->\"%s\" [color=green]\n" 
+					    (name_of_rule (f a)) 
+					    (name_of_rule (f b))) b))
+				   (fst rep),
+				 IntMap.iter 
+				   (fun a b -> 
+				     (IntSet.iter 
+					(fun b -> Printf.fprintf x "\"%s\"-|\"%s\" [color=red] \n" 
+					    (name_of_rule (f a)) 
+					    (name_of_rule (f b)))
+					b)) (snd rep)
+			       in 
+			       let _ = Printf.fprintf x "}\n" in 
+			 ())
+			 in 
+			 let l=chrono prefix "Influence map" l 
+			 in () 
+		     in 
+			 (Some {pb 
+			       with wake_up_map = Some (fst rep) ;
+				 inhibition_map = Some (snd rep)},(l,m))) 
+
        and build_compression mode file1 file2 prefix pb (l,m) =  
 	 let prefix' = add_suffix prefix "build_compression" in
 	 let title = 
