@@ -16,7 +16,7 @@ let trace = false
 let debug = false
 let cannonical_debug = false
 let merge_debug = false
-let map_debug = false 
+let map_debug = false
 let complete_debug = false
 let split_debug = false
 let apply_blist_debug = false
@@ -742,7 +742,9 @@ let get_denum_with_recursive_memoization
 	  print_string ag1;
 	  print_string s1;
 	  print_string ag2;
-	  print_string s2
+	  print_string s2;
+	  print_string " ";
+	  print_string (if bool then "TRUE\n" else "FALSE\n");
 	end in 
     let tp_list = (*here is the list of all template piece for agent a containing site s*)
       try 
@@ -751,6 +753,17 @@ let get_denum_with_recursive_memoization
 	  (StringMap.find a agent_to_int_to_nlist)
       with Not_found -> error 544 None 
     in
+    let _ = 
+      if get_denum_debug 
+      then 
+	begin 
+	  print_string "ALL POTENTIAL PARTNER\n";
+	  List.iter 
+	    (fun i -> print_int i;print_string " ")
+	    tp_list;
+	  print_newline ();
+	end
+    in 
     let tp_list = 
       if bool (*dealing with compatibility *)
       then 

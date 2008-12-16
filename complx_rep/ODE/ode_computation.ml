@@ -16,7 +16,7 @@ open Ode_print
 open Views 
 open Error_handler 
 
-let explicit = false 
+let explicit = false
 let debug = false
 let log_step = false
 let memory = true
@@ -677,33 +677,63 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	    sol)
 	views_data_structures.interface_map StringMap.empty in
 
-  (* this map associates each agent/site sets to the list of ids of the views of that agent with that contains at least these sites *)
-  let agent_to_int_to_nlist = 
+  (* this map associates each agent/site sets to the list of ids of a maximal family of compatible views of that agent with that contains at least these sites *)
+  let agent_to_int_to_nlist_compatibility = 
       StringMap.map 
 	(fun map -> 
 	  let add l n map = 
 	    try 
-	      let _ =
-		StringListMap.find l map in
-	      map 
+	      StringListMap.find l map;map 
 	    with 
 	      Not_found -> 
-		StringListMap.add l n map in
+		StringListMap.add l n map in 
 	  StringListMap.fold 
 	    (fun l n map -> 
 	      List.fold_left
 		(fun map l' -> add l' n map)
 		map 
 		(sublist l))
-	    map map )
+	    map StringListMap.empty  )
+	pre_agent_to_int_to_nlist  in 
+
+  let pre_agent_to_int_to_nlist = 
+      StringMap.map 
+	(fun map -> 
+	  let add l n map = 
+	    StringListMap.add 
+	      l 
+	      (let old = 
+		try 
+		  StringListMap.find l map
+		with Not_found -> IntSet.empty in 
+	      List.fold_left
+		(fun set a -> IntSet.add a set)
+	        old n)
+	      map
+	  in
+
+	  StringListMap.fold 
+	    (fun l n map -> 
+	      List.fold_left
+		(fun map l' -> add l' n map)
+		map 
+		(sublist l))
+	    map StringListMap.empty  )
 	pre_agent_to_int_to_nlist in
+
+
+(* this map associates each agent/site sets to the list of ids of the compatible views of that agent with that contains at least these sites *)
+  let agent_to_int_to_nlist = 
+    StringMap.map 
+      (StringListMap.map IntSet.elements)
+      pre_agent_to_int_to_nlist  in 
 
   (****************************************************************)
   (* WE DUMP WHICH VIEWS CAN BE PLUGGED TO COVER A GIVEN SITE SET *)
   (****************************************************************)
 
    let _ =
-     if false then 
+     if debug then 
        let _ = 
 	 print_string "AGENT_to_INT_to_nlist\n" in
        StringMap.iter 
@@ -719,7 +749,23 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	     map)
 	 agent_to_int_to_nlist 
     in 
-
+   let _ =
+     if debug then 
+       let _ = 
+	 print_string "AGENT_to_INT_to_nlist_compatibility\n" in
+       StringMap.iter 
+	 (fun s map ->
+	   print_string s;
+	   print_newline ();
+	   StringListMap.iter 
+	     (fun s n -> 
+	       List.iter (fun x->print_string x;print_string ",") s;
+	       print_newline ();
+	       List.iter (fun n -> print_int n;print_string ",") n;
+	       print_newline ())
+	     map)
+	 agent_to_int_to_nlist_compatibility 
+    in 
 
    
  
@@ -796,14 +842,14 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	      let _ = print_string rule_id in 
 	      let _ = print_newline () in () 
 	  in 
-	  let fadd i k expr coef prod = 
+	  let fadd (i,aut) k expr coef prod = 
 	    let  old = 
 	      try 
 		Intmap.find i prod
 	      with Not_found -> ([]) 
 	    in
 	    
-	    Intmap.add i ((k,Mult(coef,expr))::old) prod 
+	    Intmap.add i ((k,Mult(Const aut,Mult(coef,expr)))::old) prod 
 	  in 
 	  
 	  
@@ -900,10 +946,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			  let prod = 
 			    List.fold_left 
 			      (fun prod consumed_species -> 
-				let (conskey,aut) = 
-				  hash_subspecies consumed_species
-				in 
-				let (prod_key,aut') = 
+				let cons_key = hash_subspecies consumed_species in 
+				let prod_key = 
 				  hash_subspecies 
 				    (apply_blist_with_species  
 				       ode_handler 
@@ -914,8 +958,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				       [AL((target_type,target_type,target_site),(origin_type,origin_site)),false;B(target_type,target_type,target_site),false]
 				       )
 				in 
-				fadd conskey (-1) kyn (Mult(Const aut,Var conskey)) 
-				  (fadd prod_key (1) kyn (Mult(Const aut,(Var conskey))) prod))
+				fadd cons_key (-1) kyn (Var (fst (cons_key)))
+				  (fadd prod_key (1) kyn (Var (fst cons_key)) prod))
 			      prod 
 			      extended_list
 			   in prod )
@@ -1165,7 +1209,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					      restricted_blist 
 					      bmap 
 					      a 
-					      (specie_of_id,agent_to_int_to_nlist,view_of_tp_i,ode_handler)  in 
+					      (specie_of_id,agent_to_int_to_nlist_compatibility,view_of_tp_i,ode_handler)  in 
 					  let _ = 
 					    if debug
 					    then 
@@ -1882,6 +1926,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					       (fun a i -> 
 						 pprint_string print_debug a;
 						 pprint_string print_debug (string_of_int i);
+						 pprint_string print_debug ": ";
 						 pprint_newline print_debug)
 					       a;
 					     List.iter
@@ -2424,8 +2469,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 						  rp_target
 						  rp_origin
 						  ) in 
-					   let conskey,_ = hash_subspecies subspecies' in 
-		                     	   let prodkey,_ = 
+					   let conskey = hash_subspecies subspecies' in 
+		                     	   let prodkey = 
 					     hash_subspecies 
 					       (release_bond 
 						  (build_species agent_of_tp_i  
@@ -2443,7 +2488,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 						 let _ = pprint_string print_ODE ":" in
 						 let _ = pprint_int print_ODE (-1) in
 						 let _ = print_expr print_ODE  true true (simplify_expr expr) in
-						 let _ = pprint_int print_ODE prodkey in
+						 let _ = pprint_int print_ODE (fst prodkey) in
 						 let _ = pprint_string print_ODE ":" in
 						 let _ = pprint_int print_ODE  (1) in
 						 let _ = print_expr print_ODE  true true   (simplify_expr expr) in
@@ -2487,7 +2532,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			       let _ = print_expr print_debug true true   (simplify_expr expr) in
 			       let _ = pprint_newline print_debug  in () 
 			     in 
-			     fadd (fst (hash_fragment c))  k1 kyn_factor expr prod)
+			     fadd (hash_fragment c)  k1 kyn_factor expr prod)
 			   prod 
 			   consume_list 
 		       in 
@@ -2515,7 +2560,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				 let _ = print_expr print_debug  true  true (simplify_expr expr) in
 				 let _ = pprint_newline print_debug  in () in 
 			     fadd  
-			       (fst (hash_subspecies c))
+			       (hash_subspecies c)
 			       k1 
 			       kyn_factor 
 			       expr   

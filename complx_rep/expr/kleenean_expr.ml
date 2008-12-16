@@ -183,7 +183,7 @@ module Kleenean_expr =
 				  (rid)::l,true
 				end )
 			    r ([],false) in 
-			(id,["Cannot be applied"])::sol)
+			(id,["#Cannot be applied"])::sol)
 		      
 		  else
 		    let id,real_id,b = 

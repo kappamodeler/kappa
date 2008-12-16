@@ -11,9 +11,9 @@ open Ode_print_sig
 open Ode_print 
 open Error_handler 
 
-let explicit = false 
+let explicit = false
 let debug = false
-let log_step = false 
+let log_step = false
 let memory = true
 
 let print_debug = 
