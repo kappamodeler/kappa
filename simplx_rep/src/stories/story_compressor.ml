@@ -340,7 +340,7 @@ module Input =
 	    
 	  then (Select_value (shortstep+1,wire,state))::working_list
 	  else if network_before_short configuration event_after wire <> state 
-	  then (print_string "ERASE2\n";Erase_event (event_after_long)::working_list)
+	  then (Erase_event (event_after_long)::working_list)
 	  else Stuck_event (event_after_long)::
 	  (
 	  let working_list =
@@ -1018,16 +1018,6 @@ module Convert =
 		 let old = try StringMap.find a map with Not_found -> IntSet.empty in
 		   StringMap.add a (IntSet.add i old) map)
 	    id_to_name StringMap.empty in
-(*	  let _ = 
-	    if trace then 
-	      let _ = 
-		print_string "AGENT_TO_WIRE\n" in 
-	      let _ = 
-		StringMap.iter 
-		(fun i x -> print_string i;
-		   IntSet.iter (fun x -> print_int x;print_string ";") x;print_newline ())
-		  agent_to_wire in 
-		() in *)
 	  let agent_to_wire = StringMap.map (fun y -> IntSet.fold (fun x a -> x::a) y []) agent_to_wire in 
 	  let permutation  = 
 	    let arg = 
@@ -1055,8 +1045,8 @@ module Convert =
 			 if j=try (Mods2.IntMap.find i rho) with Not_found -> i
 			 then (rho,codomain)::sol
 			 else
-			 if IntSet.mem j codomain then sol
-			else ((*Mods.IntMap.add j i*) (Mods2.IntMap.add i j rho),(*IntSet.add i*) (IntSet.add j codomain))::sol)
+			 if IntSet.mem j codomain (* or IntSet.mem i codomain *) then sol
+			else ((*Mods2.IntMap.add j i *)(Mods2.IntMap.add i j rho),(*IntSet.add i*) (IntSet.add j codomain))::sol)
 		      extended_perm_list partial_perm_list)
 		  (try (StringMap.find 
 		     (IntMap.find i id_to_name) agent_to_wire) with Not_found -> print_string "BUG STORY COMPRESSOR 1068 (when introduced species are not atomic)";print_int i ;(try (print_string (IntMap.find i id_to_name)) with Not_found -> ()); [i]) [])
@@ -1097,18 +1087,18 @@ module Convert =
 		else
 		  PortMap.fold 
 		    (fun ((i,_)) a sol -> 
-		       let rec aux a sol =  
-			 match a with 
-			     Rule.Bound (j,_)  | Rule.Test_bound (j,_) | Rule.Side_break (j,_) | Rule.Break (j,_) | Rule.Init_bound (_,j,_) -> 
-			       IntSet.add j sol
-			       
-			   | Rule.Test_marked _ | Rule.Test_any_bound | Rule.Test_free | Rule.Remove | Rule.Marked _ | Rule.Init_mark _  | Rule.Init_free _  -> sol
-			   | Rule.Before_After (x,y) -> aux x (aux y sol)
-		       in 
-		       List.fold_left 
-			 (fun sol a -> aux a sol)
-			 (IntSet.add i sol)
-			 a)
+		      let rec aux a sol =  
+			match a with 
+			  Rule.Bound (j,_)  | Rule.Test_bound (j,_) | Rule.Side_break (j,_) | Rule.Break (j,_) | Rule.Init_bound (_,j,_) -> 
+			    IntSet.add j sol
+			      
+			| Rule.Test_marked _ | Rule.Test_any_bound | Rule.Test_free | Rule.Remove | Rule.Marked _ | Rule.Init_mark _  | Rule.Init_free _  -> sol
+			| Rule.Before_After (x,y) -> aux x (aux y sol)
+		      in 
+		      List.fold_left 
+			(fun sol a -> aux a sol)
+			(IntSet.add i sol)
+			a)
 		    modifs IntSet.empty in
 	      let sigma0 = sigma in 
 	      let sigma = if j<eid then Mods2.IntMap.empty else sigma in 
@@ -1116,8 +1106,8 @@ module Convert =
 	      let _ = 
 		IntSet.fold 
 		  (fun i sol -> let j = f i in
-		     if IntSet.mem j sol then raise Exit
-		     else IntSet.add j sol)
+		  if IntSet.mem j sol then raise Exit
+		  else IntSet.add j sol)
 		  arg IntSet.empty in 
 	      let new_event = 
 		if j<eid 
@@ -1128,36 +1118,36 @@ module Convert =
 	      in
 	      let (net',sigma),flg = 
 		match event.Network.kind with 
-		    0 -> (add_intro (event.label,snd new_event) false net',sigma),flg
-
-		  | 1 -> 
-		      let a,b,c = re_add_rename sigma net' new_event  false in (a,b),flg
-		  | _ -> let a,b,c = re_add_rename sigma net' new_event false in if c then (a,b),event.Network.r.Rule.flag else (raise Exit)
+		  0 -> (add_intro (event.label,snd new_event) false net',sigma),flg
+		      
+		| 1 -> 
+		    let a,b,c = re_add_rename sigma net' new_event  false in (a,b),flg
+		| _ -> let a,b,c = re_add_rename sigma net' new_event false in if c then (a,b),event.Network.r.Rule.flag else (raise Exit)
 	      in (net',if j<eid then sigma0 else sigma),flg
 	    in
-	      List.fold_left
-		(fun sol sigma ->
-		   try 
-		     let (net,flag),sigma  = 
-		       EventArray.fold
-			 (fun j _ (sol,sigma) -> 
-			    let (a,b),c = add 
-			      j 
-			      sigma 
-			      sol in (a,c),b)
-			 a.events 
-			 ((Network.empty (),None),sigma) in
-		       
-		     let net = Network.cut net (match flag with Some f -> f | None ->  let s = "Simulation.iter: obs has no flag"
-		     in
-		     Error.runtime
-		       (Some "story_compressor.ml",
-			Some 1104,
-			Some s)
-		       s
-		     ) in 
-		       (Some net)::sol with _ -> sol)
- 		[] permutation 
+	    List.fold_left
+	      (fun sol sigma ->
+		try 
+		  let (net,flag),sigma  = 
+		    EventArray.fold
+		      (fun j _ (sol,sigma) -> 
+			let (a,b),c = add 
+			    j 
+			    sigma 
+			    sol in (a,c),b)
+		      a.events 
+		      ((Network.empty (),None),sigma) in
+		  
+		  let net = Network.cut net (match flag with Some f -> f | None ->  let s = "Simulation.iter: obs has no flag"
+		  in
+		  Error.runtime
+		    (Some "story_compressor.ml",
+		     Some 1104,
+		     Some s)
+		    s
+		    ) in 
+		  (Some (net,sigma))::sol with _ -> sol)
+ 	      [] permutation 
 	  end
 	
   
