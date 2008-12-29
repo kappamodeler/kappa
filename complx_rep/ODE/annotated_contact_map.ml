@@ -201,11 +201,17 @@ let trivial_rule rs =
 	let rec aux context rep = 
 	  match context with 
 	    (AL(_),_)::q | (B(_),_)::q-> aux q rep
-	    | (L((a,b,c),(d,e,f)),true)::q  -> 
+	    | (L((a,b,c),(d,e,f)),false)::q  -> 
 		begin
 		  match rep with 
 		    None -> aux q (Some((a,b,c),(d,e,f)))
 		  | Some _ -> false,None
+		end
+	    | [] -> 
+		begin
+		  match rep with 
+		    None -> false,None
+		  | x -> true,x 
 		end
 	    | _ -> false,None
 	  in 
@@ -220,6 +226,8 @@ let trivial_rule rs =
 		    (fun (bb,bool) -> 
 		      match bb,bool  with 
 			B(x,y,z),true when (x=a && y=b && z=c) or (x=d && y=e && z=f) -> true 
+		      |	AL((x,y,z),(xx,yy)),true when (x=a && y=b && z=c && xx=e && yy=f) or (x=d && y=e && z=f && xx=b & yy=c) -> true 
+		      |	L((x,y,z),(xx,yy,zz)),true when (x=a && y=b && z=c && xx=d && yy=e && zz=f) or (xx=a && yy=b && zz=c && x=d && y=e && z=f) -> true 
 		      | H(_),_ -> true 
 		      | _ -> false
 			    )
@@ -244,7 +252,7 @@ let which_trivial_rule rs =
 	let rec aux context rep = 
 	  match context with 
 	    (AL(_),_)::q | (B(_),_)::q-> aux q rep
-	    | (L((a,b,c),(d,e,f)),true)::q  -> 
+	    | (L((a,b,c),(d,e,f)),false)::q  -> 
 		begin
 		  match rep with 
 		    None -> Some (Unbind(b,c,e,f))
