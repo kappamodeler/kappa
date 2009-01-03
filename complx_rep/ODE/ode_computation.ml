@@ -64,8 +64,10 @@ let print_species = F.print_species
 let add_bond_to_subspecies = F.add_bond_to_subspecies 
 let release_bond = F.release_bond_from_subspecies 
 let print_fragment = F.pretty_print 
+let root_of_species = F.root_of_species
 
 module FragmentMap = F.FragMap 
+module RootedFragmentMap = F.RootedFragMap
 (* End of temporary linking *)
 
 
@@ -2209,9 +2211,10 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				 List.fold_left 
 				   (fun (product_list,hash) a -> 
 				     let (a_frag,_) = canonical_form a in
+				     let key = (root_of_species a,a_frag) in 
 				     let old_hash = 
 				       try 
-					 FragmentMap.find a_frag hash 
+					 RootedFragmentMap.find key  hash 
 				       with
 					 Not_found -> 
 					   empty_hash 
@@ -2225,12 +2228,12 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				     if bool 
 				     then 
 				       (a,k1,k2)::product_list,
-				       FragmentMap.add a_frag old_hash' hash
+				       RootedFragmentMap.add key old_hash' hash
 				     else
 				       product_list,hash)
 				   (product_list,hash) 
 				   connected_components)
-			       ([],FragmentMap.empty) 
+			       ([],RootedFragmentMap.empty) 
 			       product_list 
 			   end
 		       in 

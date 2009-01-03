@@ -108,6 +108,17 @@ module type Fragments =
 	    val fold: (fragment -> 'a -> 'b -> 'b) -> 'a t -> 'b -> 'b
 	  end) 
 
+      module RootedFragMap:
+	    (sig 
+	    type 'a t 
+	    val is_empty: 'a t -> bool 
+	    val empty: 'a t 
+	    val find: rooted_path*fragment -> 'a t -> 'a
+	    val add: rooted_path*fragment -> 'a -> 'a t -> 'a t 
+	    val fold: (rooted_path*fragment -> 'a -> 'b -> 'b) -> 'a t -> 'b -> 'b
+	  end)
+
+      val root_of_species: subspecies -> rooted_path 
       val pretty_print: print_desc -> fragment -> Tools.string_handler -> ('a,'b,'c,'d,'e,'f,'g) Views.ode_handler -> 'b Views.view_data_structure  -> 
 	(string*string -> string*string -> bool) -> string option -> bool -> unit 
 end

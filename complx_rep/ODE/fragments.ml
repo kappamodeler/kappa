@@ -1425,6 +1425,7 @@ let add_bond_to_subspecies sp (a,s) (a',s') =
   add_bond_to_subspecies sp (build_empty_path a,s) (build_empty_path a',s') 
 
 module FragMap = Map2.Make (struct type t = fragment let compare = compare end) 
+module RootedFragMap = Map2.Make (struct type t = rooted_path * fragment let compare = compare end) 
 
 module BondSet = Set.Make (struct type t = (int*string) * (int*string) let compare = compare end) 
 
@@ -1646,5 +1647,17 @@ let pretty_print
       tuple_map false in
   () 
       
-      
+let root_of_species x = 
+  match 
+    RPathMap.fold
+      (fun rp _ sol ->
+	match sol with None -> Some rp 
+	| Some rp' when compare rp rp'>0 -> Some rp 
+	| _ -> sol)
+      x.subspecies_views
+      None 
+  with 
+    None -> error 1660 None 
+  | Some i -> i
+
 end:Fragments)
