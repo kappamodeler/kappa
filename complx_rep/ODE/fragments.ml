@@ -568,7 +568,7 @@ let get_denum_without_recursive_memoisation (agent_to_int_to_nlist,view_of_tp_i,
 	      in 
 	      aux q compatibility' (subspecies::sol) 
 	  | (((a,s,a',s'),black,rpath)::b,subspecies)::q ->
-             (* a species to be extend *)
+             (* a species to be extended *)
 	      let _ = 
 		if StringSet.mem a black 
 		then 
@@ -946,19 +946,20 @@ let complete_subspecies (pending_edges,view_of_tp_i,keep_this_link,get_denum) su
 	      (target,map)
 	    else
 	      (
-	      String2Set.add y2 target,
-	      String2Map.add y2 (rp,y1,get_denum (fst y2,snd y2,fst y1,snd y1)) map))
+	      String2Set.add y1 target,
+	      (*String2Map.add y1 (rp,y2,get_denum (fst y2,snd y2,fst y1,snd y1)) map*)
+               (y1,rp,y2,get_denum (fst y2,snd y2,fst y1,snd y1))::map))
 	  pending_edges 
 	  (target,map))
       subspecies.subspecies_views 
-      (String2Set.empty,String2Map.empty) in 
+      (String2Set.empty,(*String2Map.empty*)[]) in 
   let _ = 
     if map_debug
     then
       begin 
 	print_string "MAP:\n";
-	String2Map.iter 
-	  (fun y2 (rp,y1,ext_list) -> 
+	(*String2Map.*)List.iter 
+	  (fun  (y1,rp,y2,ext_list) -> 
 	    print_string (fst y2);
 	    print_string ".";
 	    print_string (snd y2);
@@ -973,8 +974,8 @@ let complete_subspecies (pending_edges,view_of_tp_i,keep_this_link,get_denum) su
   in 
   
   let sol = 
-    String2Map.fold 
-      (fun y2 (rp,y1,extension_list) sol_list -> 
+    (*String2Map.fold*) List.fold_left  
+      (fun sol_list (y1,rp,y2,extension_list) (*sol_list*) -> 
 	let rp' = {rp with path = (*(y2,y1)::*)rp.path} in 
 	List.fold_left 
 	  (fun pre_sol_list extension -> 
@@ -995,7 +996,7 @@ let complete_subspecies (pending_edges,view_of_tp_i,keep_this_link,get_denum) su
 	  []  extension_list 
 	  
 	  ) 
-      map [subspecies] in 
+       [subspecies] map in 
   let _ = 
     if complete_debug 
     then 
@@ -1163,6 +1164,17 @@ let is_agent_in_species x s =
 	
 type hash = string list RPathMap.t
 
+let dump_hash x = 
+  let _ = 
+  RPathMap.iter 
+    (fun rp l -> 
+      print_rpath rp ;
+      print_string " : ";
+      List.iter print_string l;
+      print_newline ())
+    x in 
+  print_newline () 
+
 let empty_hash = RPathMap.empty 
 
 let check_compatibility data_structure hash subspecies = 
@@ -1191,7 +1203,7 @@ let check_compatibility data_structure hash subspecies =
 	with 
 	  Not_found -> 
 	    aux 
-	      (RPathMap.add rpath int hash)
+	      (RPathMap.add rpath int hash')
 	      q 
   in
   aux hash l
@@ -1425,7 +1437,7 @@ let add_bond_to_subspecies sp (a,s) (a',s') =
   add_bond_to_subspecies sp (build_empty_path a,s) (build_empty_path a',s') 
 
 module FragMap = Map2.Make (struct type t = fragment let compare = compare end) 
-module RootedFragMap = Map2.Make (struct type t = rooted_path * fragment let compare = compare end) 
+module RootedFragMap = Map2.Make (struct type t = (rooted_path * view_id) * fragment let compare = compare end) 
 
 module BondSet = Set.Make (struct type t = (int*string) * (int*string) let compare = compare end) 
 
@@ -1650,9 +1662,9 @@ let pretty_print
 let root_of_species x = 
   match 
     RPathMap.fold
-      (fun rp _ sol ->
-	match sol with None -> Some rp 
-	| Some rp' when compare rp rp'>0 -> Some rp 
+      (fun rp i sol ->
+	match sol with None -> Some (rp,i) 
+	| Some (rp',_) when compare rp rp'>0 -> Some (rp,i) 
 	| _ -> sol)
       x.subspecies_views
       None 

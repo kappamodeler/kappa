@@ -1,4 +1,7 @@
 let debug = false
+let count_embedding = true
+    (* TRUE -> count embedding 
+       FALSE -> count embedding / automaorphism *)
 
 type expr = 
     Letter of string 
@@ -231,9 +234,13 @@ type ('subclass,'subspecies) expr_handler =
 let expr_of_var expr_handler d = 
   match expr_handler.hash_subspecies d 
   with 
-    (i,1) -> Var(i) 
-  | (i,n) -> Mult(Const n,Var i)
-
+    (i,1) -> Var i
+  | (i,n) -> 
+      if count_embedding 
+      then Var i 
+      else
+	Mult(Const n,Var i)
+     
 let expr_of_denum expr_handler d = 
   let _ = 
     if debug

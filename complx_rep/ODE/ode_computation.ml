@@ -515,10 +515,21 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	with Not_found -> 
 	  let rep = (!n) in
 	  let _ = if debug then 
-            let _ = print_log ("NEW FRAGMENT: "^(string_of_int (!n))) in
+            let _ = print_log ("NEW FRAGMENT: "^(string_of_int (!n))^"\n VIEWS:\n") in
    	    let _ = iter_views
-		(fun i -> print_log (string_of_int i))
-		x' in () in 
+		(fun i -> 
+		  let _ = print_log (string_of_int i) in 
+		  (*let view = view_of_tp_i i in
+		  let _ = 
+		    List.iter 
+		      (fun (b,bool) ->
+			print_string (string_of_b  (ode_handler.b_of_var b));
+			print_string (if bool then "TRUE" else "FALSE");
+			print_newline ())
+		      (valuation_of_view view) 
+		  in*) ())
+		x' in 
+	    let _ = print_log "\n" in () in 
 	  let _ = n:= (!n)+1 in
 	  let _ = map:=FragmentMap.add x' (rep,aut) (!map) in
 	  (rep,aut)
@@ -844,16 +855,19 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 	      let _ = print_string rule_id in 
 	      let _ = print_newline () in () 
 	  in 
-	  let fadd (i,aut) k expr coef prod = 
+	  let fadd_contrib (i,aut) k expr coef prod = 
 	    let  old = 
 	      try 
 		Intmap.find i prod
 	      with Not_found -> ([]) 
 	    in
-	    
-	    Intmap.add i ((k,Mult(Const aut,Mult(coef,expr)))::old) prod 
+	    Intmap.add i 
+	    ((if Arithmetics.count_embedding 
+	    then 
+	      (k,Mult(Const aut,Mult(coef,expr)))
+	    else
+	      (k,Mult(coef,expr)))::old) prod 
 	  in 
-	  
 	  
 	  let control = x.Pb_sig.control in 
 	  let passives = x.Pb_sig.passive_species in 
@@ -886,6 +900,13 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		  print_string " fragments so far";
 		  print_newline ();
 		end  in
+	     let expr_handler = 
+		 {hash_subspecies=hash_subspecies;
+		   get_denum_handling_compatibility=get_denum_handling_compatibility;
+		   get_bond=(fun x -> x.bond);
+		   get_fragment_extension=get_fragment_extension} in 
+	       
+
 	    if trivial_rule2 (contact,keep_this_link) x
 	    then 
 	      begin
@@ -960,8 +981,17 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				       [AL((target_type,target_type,target_site),(origin_type,origin_site)),false;B(target_type,target_type,target_site),false]
 				       )
 				in 
-				fadd cons_key (-1) kyn (Var (fst (cons_key)))
-				  (fadd prod_key (1) kyn (Var (fst cons_key)) prod))
+				fadd_contrib 
+				  cons_key 
+				  (-1) 
+				  kyn 
+				  (expr_of_var expr_handler consumed_species)
+				  (fadd_contrib 
+				     prod_key 
+				     1 
+				     kyn 
+				     (expr_of_var expr_handler consumed_species)  
+				     prod))
 			      prod 
 			      extended_list
 			   in prod )
@@ -1038,7 +1068,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		     match print_ODE.matlab with 
 		       None -> ()
 		     |	Some a -> 
-			 a.print_string "(y) \n global e \n z "
+			 a.print_string "(y) \n  z "
 		   in
 		   let _ = pprint_vart print_ODE in 
 		   let _ = pprint_assign print_ODE in 
@@ -1305,12 +1335,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 		   classes in 
 	       
 	       
-	       let expr_handler = 
-		 {hash_subspecies=hash_subspecies;
-		   get_denum_handling_compatibility=get_denum_handling_compatibility;
-		   get_bond=(fun x -> x.bond);
-		   get_fragment_extension=get_fragment_extension} in 
-	       
+	      
 	       
 	       let _ = dump_line 842 in 
 	       let classes = 
@@ -2144,18 +2169,24 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
       					 let product = 
 					   apply_blist_with_species ode_handler views_data_structures keep_this_link rule_id consumed_species context_update  in 
 					 let _ = if debug then 
-					   let _ = print_string "PRODUCT \n " in
+					 (*  let pkey = hash_subspecies product in *)
+					   let _ = print_string "PRODUCT " in
+	(*				   let _ = print_int (fst pkey) in *)
+(*					   let _ = print_string "#" in*)
+					 (*  let _ = print_int (snd pkey) in *)
+					   let _ = print_newline () in 
+					   
 					   let _ = print_species product in 
 					   ()
 					 in
 					 let expra = expr_of_var expr_handler consumed_species in 
 					 
-					 ((consumed_fragment,-1,[i,Mult(expra,kyn_mod)])::c_list),
-					 ((product,1,[i,Mult(expra,kyn_mod)])::p_list),
+					 ((consumed_fragment,-1,[i,consumed_species,kyn_mod])::c_list),
+					 ((product,1,[i,consumed_species,kyn_mod])::p_list),
 					 (List.fold_left 
 					    (fun l (target_type,target_site,
 						    origin_type,origin_site) -> 
-						      (consumed_fragment,[i,Mult(expra,kyn_mod)],(target_type,target_site,origin_type,origin_site))::l)
+						      (consumed_fragment,[i,consumed_species,kyn_mod],(target_type,target_site,origin_type,origin_site))::l)
 					    sl_list res))
 				       (c_list,p_list,sl_list)
 				       consumed_species_list in
@@ -2212,6 +2243,16 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				   (fun (product_list,hash) a -> 
 				     let (a_frag,_) = canonical_form a in
 				     let key = (root_of_species a,a_frag) in 
+				     let _ = 
+				       if debug 
+				       then 
+					 let _ = print_rpath (fst (root_of_species a)) in
+					 let _ = print_int (snd (root_of_species a)) in 
+					 let _ = print_newline () in
+					 let _ = print_string "FRAGMENT \n" in 
+					 let _ = F.print_fragment   a_frag in
+					 let _ = print_newline () in
+					 () in 
 				     let old_hash = 
 				       try 
 					 RootedFragmentMap.find key  hash 
@@ -2219,12 +2260,27 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					 Not_found -> 
 					   empty_hash 
 				     in
+				     let _ = 
+				       if debug 
+				       then 
+					 let _ = print_string "BEFORE\n" in
+					 let _ = F.dump_hash old_hash in () 
+				     in
 				     let (old_hash',bool) = 
 				       check_compatibility 
 					 views_data_structures 
 					 old_hash 
-					 species 
+					     species 
 				     in
+				     let _ = 
+				       if debug 
+				       then 
+					 let _ = print_string "AFTER\n" in 
+					 let _ = F.dump_hash old_hash' in 
+					 let _ = F.print_species species in
+					 let _ = print_string (if bool then "TRUE\n\n" else "FALSE\n\n") in 
+					 () 
+				     in 
 				     if bool 
 				     then 
 				       (a,k1,k2)::product_list,
@@ -2285,11 +2341,13 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				   other a_cand)
 			   p_list 
 			   new_binding in 
+		       let _ = if sl_list <> [] then error 2298 () in 
 		       let sl_list = 
 			 List.filter  
 			   (fun (_,l,_) -> 
-			     match l with [i,Mult(Var a,kyn_mod)] -> 
-			       let rec aux expr = 
+			     match l with [i,a,kyn_mod] -> 
+			       let a = fst (expr_handler.hash_subspecies a) in
+ 			       let rec aux expr = 
 				 match expr with
 				   Plus(expr1,expr2) | Mult(expr1,expr2) -> 
 				     aux expr1 or aux expr2 
@@ -2316,7 +2374,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			 List.fold_left
 			   (fun prod ((a',l,(target_type,target_site,origin_type,origin_site))) -> 
 			     match l with 
-			       [i,Mult(Var a,kyn_mod)] -> 
+			       [i,a,kyn_mod] -> 
 				 begin 
 				   let rp_target,rp_origin = 
 				     build_rp_bond_from_half_bond 
@@ -2328,7 +2386,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				     List.map 
 				       (fun x -> release_bond x rp_target rp_origin)
 				       d in 
-				   let expr = IntMap.add i (Some (Mult(Var a,kyn_mod))) rate_map in 
+				   let expr = IntMap.add i (Some (Mult(expr_of_var expr_handler a,kyn_mod))) rate_map in 
 				   let expr = 
 				     IntMap.fold 
 				       (fun _ e sol -> 
@@ -2486,22 +2544,22 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 					   let _ = 
 					     if debug then 
 					       begin
-						 let conskey,_ = hash_subspecies subspecies' in 
-						 let _ = pprint_int print_ODE conskey in
-						 let _ = pprint_string print_ODE ":" in
-						 let _ = pprint_int print_ODE (-1) in
-						 let _ = print_expr print_ODE  true true (simplify_expr expr) in
-						 let _ = pprint_int print_ODE (fst prodkey) in
-						 let _ = pprint_string print_ODE ":" in
-						 let _ = pprint_int print_ODE  (1) in
-						 let _ = print_expr print_ODE  true true   (simplify_expr expr) in
-						 let _ = pprint_newline print_ODE  in 
+						 let _ = print_string "2500->" in 
+						 let _ = print_int (fst conskey) in
+						 let _ = print_string ":" in
+						 let _ = print_int (-1) in
+						 let _ = print_expr print_debug  true true (simplify_expr expr) in
+						 let _ = print_int (fst prodkey) in
+						 let _ = print_string ":" in
+						 let _ = print_int (1) in
+						 let _ = print_expr print_debug  true true   (simplify_expr expr) in
+						 let _ = pprint_newline print_debug  in 
 						 () 
 						   
 						   
 					       end in 
-					   fadd conskey (-1) kyn_factor  expr 
-					     (fadd prodkey (1) kyn_factor expr prod)
+					   fadd_contrib conskey (-1) kyn_factor  expr 
+					     (fadd_contrib prodkey (1) kyn_factor expr prod)
 					     
 					     ) 
 					 prod 
@@ -2517,8 +2575,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			   (fun prod (c,k1,k2) ->
 			     let expr = 
 			       List.fold_left 
-				 (fun map (i,e)
-				   -> IntMap.add i (Some e) map)
+				 (fun map (i,a,e)
+				   -> IntMap.add i (Some (Mult(expr_of_var expr_handler a,e))) map)
 				 rate_map k2 in
 			     let expr = 
 			       IntMap.fold
@@ -2528,6 +2586,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				       Mult(sol,e))
 				 expr (Const 1) in
 			     let _ = if debug then 
+			       let _ = pprint_string print_debug "2541->" in 
 			       let _ = pprint_int print_debug (fst (hash_fragment c)) in
 			       let _ = pprint_string print_debug ":" in
 			       let _ = pprint_int print_debug k1 in
@@ -2535,7 +2594,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			       let _ = print_expr print_debug true true   (simplify_expr expr) in
 			       let _ = pprint_newline print_debug  in () 
 			     in 
-			     fadd (hash_fragment c)  k1 kyn_factor expr prod)
+			     fadd_contrib (hash_fragment c)  k1 kyn_factor expr prod)
 			   prod 
 			   consume_list 
 		       in 
@@ -2544,8 +2603,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 			   (fun prod (c,k1,k2) -> 
 			     let expr = 
 			       List.fold_left 
-				 (fun map (i,e)
-				   -> IntMap.add i (Some e) map)
+				 (fun map (i,a,e)
+				   -> IntMap.add i (Some (Mult(expr_of_var expr_handler a,e))) map)
 				 rate_map k2 in
 			     let expr = 
 			       IntMap.fold
@@ -2556,13 +2615,14 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
 				 expr (Const 1) in
 			     let _ = 
 			       if debug then 
+				 let _ = print_string "2604->" in 
 				 let _ = pprint_int print_debug (fst (hash_subspecies c)) in
 				 let _ = pprint_string print_debug ":" in
 				 let _ = pprint_int print_debug k1 in
 				 let _ = pprint_string print_debug ";" in 
 				 let _ = print_expr print_debug  true  true (simplify_expr expr) in
 				 let _ = pprint_newline print_debug  in () in 
-			     fadd  
+			     fadd_contrib  
 			       (hash_subspecies c)
 			       k1 
 			       kyn_factor 

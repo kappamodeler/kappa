@@ -90,6 +90,7 @@ module type Fragments =
       val merge:subspecies -> subspecies -> subspecies 
 
       val empty_hash: hash 
+      val dump_hash: hash -> unit 
       val check_compatibility: 'a Views.view_data_structure -> hash -> subspecies -> hash*bool 
 
       val is_agent_in_species: string -> subspecies -> bool 
@@ -113,12 +114,12 @@ module type Fragments =
 	    type 'a t 
 	    val is_empty: 'a t -> bool 
 	    val empty: 'a t 
-	    val find: rooted_path*fragment -> 'a t -> 'a
-	    val add: rooted_path*fragment -> 'a -> 'a t -> 'a t 
-	    val fold: (rooted_path*fragment -> 'a -> 'b -> 'b) -> 'a t -> 'b -> 'b
+	    val find: (rooted_path*int)*fragment -> 'a t -> 'a
+	    val add: (rooted_path*int)*fragment -> 'a -> 'a t -> 'a t 
+	    val fold: ((rooted_path*int)*fragment -> 'a -> 'b -> 'b) -> 'a t -> 'b -> 'b
 	  end)
 
-      val root_of_species: subspecies -> rooted_path 
+      val root_of_species: subspecies -> (rooted_path * int)
       val pretty_print: print_desc -> fragment -> Tools.string_handler -> ('a,'b,'c,'d,'e,'f,'g) Views.ode_handler -> 'b Views.view_data_structure  -> 
 	(string*string -> string*string -> bool) -> string option -> bool -> unit 
 end
