@@ -257,3 +257,51 @@ let dump file pb  handler =
   in
   let _ = match chan with None -> () | Some a -> close_out a in 
 	()
+
+let dump_version file = 
+    if file = "" then () 
+    else 
+      let chan = open_out file in 
+      let _ = Printf.fprintf chan "Computed by Complx Version %s at %s " (Config_complx.version) (Config_complx.time_stamp) in
+      let _ = close_out chan 
+      in () 
+
+
+let dump_stat file name time = 
+     if file = "" then () 
+    else 
+      let chan = open_out file in 
+      let _ = Printf.fprintf chan "%s  & %s \cr " name time  in
+      let _ = close_out chan in 
+      () 
+
+let dump_nfrag file pb = 
+  if file = "" then ()
+  else
+    match pb with 
+      None -> ()
+    | Some pb -> 
+	match pb.nfrag with None -> ()
+	| Some n -> 
+	    let chan = open_out file in 
+	    let _ = Printf.fprintf chan "$%d$" n in 
+	    let _ = close_out chan in 
+	    () 
+
+let dump_nspecies file pb = 
+    if file = "" then ()
+  else
+    match pb with 
+      None -> ()
+    | Some pb -> 
+	match pb.n_complex with None -> ()
+	| Some Unbounded  -> 
+	    let chan = open_out file in 
+	    let _ = Printf.fprintf chan "Unbounder number of"  in 
+	    let _ = close_out chan in 
+	    () 
+	| Some (Bounded n) -> 
+	    let chan = open_out file in 
+	    let _ = Printf.fprintf chan "$%s$" n in 
+	    let _ = close_out chan in 
+	    () 

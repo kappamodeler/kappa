@@ -241,6 +241,10 @@ let main ()  =
    let _ = 
      methods.dump_latex_dictionary (!Config_complx.output_latex_sty) prefix pb log 
    in 
+   let _ = 
+     methods.dump_latex_version (!Config_complx.output_latex_version) prefix pb log in 
+   let _ = 
+     methods.dump_latex_stat (!Config_complx.output_latex_stat) prefix pb log in 
   let pb,log  = 
     if !Config_complx.do_XML_session
     then methods.dump_session  (!Config_complx.output_xml) prefix pb  log 

@@ -2924,6 +2924,6 @@ init
     let chanset = 
       CSet.remove stdout chanset in 
     let _ = CSet.iter  close_out chanset in
-    Some (annotated_contact_map,activity),(l,m)
+    Some (annotated_contact_map,activity,size ()),(l,m)
       
       

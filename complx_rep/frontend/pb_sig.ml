@@ -336,6 +336,7 @@ type 'a intinf = Unbounded | Bounded of 'a
 
 type 'a pb = 
     {options:options option;
+      nfrag:int option;
      quarks:bool;
       txt_lines: Comment_sig.commented_line  list option;
       simplx_encoding: (Rule.t list * (Solution.t*int)list ) option;
@@ -381,6 +382,7 @@ let pb_init =
   {
   drawers = None;
   connected_components=None;
+  nfrag = None;
   n_rules = None;
   n_classes = None;
   unreachable_rules=None;

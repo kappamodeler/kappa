@@ -429,7 +429,7 @@ let channel_set print set =
 
 
 let rec print_expr  print bool bool2  x = 
-   match x with
+  match x with
      Constf f -> pprint_float print f
    | Letter s -> pprint_string print  s 
    | Const i ->  pprint_int print i 
@@ -475,9 +475,18 @@ let print_expr_no_latex = print_expr
 
 let rec print_expr  print bool bool2  x = 
    match x with
-     Constf f -> pprint_float print f
+     Constf f -> 
+       let _ = pprint_string print "{" in 
+       let _ = pprint_float print f in 
+       let _ = pprint_string print "}" in 
+       ()
    | Letter s -> pprint_string print  s 
-   | Const i ->  pprint_int print i 
+   | Const i ->  
+       let _ = pprint_string print "{" in 
+       let _ = pprint_int print i in 
+       let _ = pprint_string print "}" in 
+       ()
+
    | Vari (v,r) -> (print_intermediar_var print r (string_of_int v);(if bool then pprint_ty print else if bool2 then pprint_zero print else ())) 
    | Vark i ->   pprint_var print "k" i 
    | Var i ->  (pprint_var print "y" (string_of_int i);(if bool then pprint_t print else if bool2 then pprint_zero print else ()))
@@ -559,7 +568,11 @@ let print_expr print bool bool2 x =
 	  let _ = List.fold_left 
 	      (fun bool (a,b) ->
 		let _ = 
-		  if bool then pprint_string print_ODE "+"
+		  if bool then 
+		    let _ = pprint_string print_latex " " in 
+		    let _ = pprint_string print_ODE "+" in 
+		    let _ = pprint_string print_latex " " in 
+		    ()
 		  else 
 		    () in
 		print_expr print_ODE true false (simplify_expr (Mult(Const a,b)));
@@ -584,6 +597,7 @@ let print_expr print bool bool2 x =
 	    with Not_found -> 
 	      let _ = if bool then pprint_eq_separator print_ODE in 
 	      let _ = pprint_newline print_ODE in 
+	      let _ = pprint_string print_latex "\\odeequ{" in 
 	      let _ = pprint_derivate print_ODE k in
 	      let _ = pprint_equal print_ODE in 
 	      let _ = print_expr print_ODE true false  (Const 0) in () in  

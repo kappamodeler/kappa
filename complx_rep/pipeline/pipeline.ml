@@ -114,7 +114,11 @@ compute_refinement_relation_dag: 'a step;
     dump_dag_refinement_relation:file_name -> file_name -> 'a step;
     count_automorphisms:'a step;
     dump_latex_dictionary:file_name -> 'a step;
-    dump_latex_rule_system:file_name -> 'a step} 
+    dump_latex_rule_system:file_name -> 'a step;  
+    dump_latex_version:file_name -> 'a step;
+    dump_latex_stat:file_name -> 'a step;
+    dump_latex_species_number:file_name -> 'a step;
+    dump_latex_fragments_number:file_name -> 'a step} 
 
 
       
@@ -1332,7 +1336,7 @@ module Pipeline =
 		     (match pb.bdd_sub_views with None -> Some pb,(l,m)
 		     | Some sub ->
 			 
-			 let _,(l,m)  = 
+			 let opt,(l,m)  = 
 			   Ode_computation.compute_ode
 			     file0 
 			     file1 
@@ -1370,9 +1374,12 @@ module Pipeline =
 			     | _ -> Annotated_contact_map.Compressed)
 
 			     (l,m) in  
-
+			 let nfrag = 
+			   match opt with None -> None 
+			   | Some(_,_,n) -> Some n 
+			 in 
 			 let l = chrono prefix "dumping fragments" l in 
-			 Some pb,(l,m))
+			 Some {pb with nfrag = nfrag},(l,m))
 		       ))
 	   
        and 
@@ -1773,6 +1780,22 @@ module Pipeline =
 			  log))in 
 		 (Some pb'),log
 	     end
+       and
+	   dump_latex_version file prefix pb log = 
+	 let _ = Latex.dump_version file in 
+	 pb,log 
+       and
+	   dump_latex_stat file prefix pb log = 
+	 let _ = Latex.dump_stat file (!Config_complx.latex_session_title) ((string_of_float (full_time (Unix.times ())))^" s.") in 
+	 pb,log 
+       and 
+	   dump_latex_species_number file prefix pb log = 
+	 let _ = Latex.dump_nspecies file pb in 
+	 pb,log
+       and 
+	   dump_latex_fragments_number file prefix pb log = 
+	 let _ = Latex.dump_nfrag file pb in 
+	 pb,log
        in
        {
        
@@ -1859,7 +1882,11 @@ module Pipeline =
               handle_errors_def (Some "Complx") (Some "compute_both_refinement_relation_and_automorphism_numbers")  export_refinement_relation_and_automorphisms  None ;
        print_errors = print_error ;
        dump_latex_rule_system = 
-       (fun file -> handle_errors_step (Some "Complx") (Some "dump_latex_rule_system") (dump_latex_rule_system file))
+       (fun file -> handle_errors_step (Some "Complx") (Some "dump_latex_rule_system") (dump_latex_rule_system file));
+       dump_latex_version =  (fun file -> handle_errors_step (Some "Complx") (Some "dump_latex_version") (dump_latex_version file));
+        dump_latex_stat =  (fun file -> handle_errors_step (Some "Complx") (Some "dump_latex_stat") (dump_latex_stat file));
+        dump_latex_fragments_number =  (fun file -> handle_errors_step (Some "Complx") (Some "dump_latex_fragment_number") (dump_latex_fragments_number file));
+        dump_latex_species_number =  (fun file -> handle_errors_step (Some "Complx") (Some "dump_latex_species_numberer") (dump_latex_species_number file));
      } 
 	 
 	 

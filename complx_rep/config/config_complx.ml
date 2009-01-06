@@ -185,6 +185,8 @@ let correct_contact_map () =
        !output_high_res_contact_jpg_file <> "")
     then output_high_res_contact_dot_file := ".high_res_tmp.dot" in
   ()
+let output_latex_version = ref ""
+let output_latex_stat = ref ""
 let output_dag_ref_dot = ref ""
 let output_dag_ref_jpg = ref ""
 let output_maximal_ref_dot = ref ""
@@ -206,6 +208,7 @@ let solution_separator = ref ","
 let solution_complex = ref "."
 let created_species = ref ""
 let mark_symbol = ref "~"
+let latex_session_title = ref "Session"
 let bound_symbol = ref "!"
 
 let free = ref ""                (* to be printed when a site is free *) 
@@ -346,6 +349,8 @@ let options = List.rev
 (*2_Output*)
 
 									"--output-scheme",MultiExt [
+"--output-latex-version","_plx_version.tex";
+"--output-latex-stat","_plx_stat.tex";
 "--output-latex-rule-system","_plx.tex";
 "--output-latex-sty","_plx.sty";
 "--output-ODE-obs-latex","_plx_ODE_obs.tex";
@@ -493,6 +498,12 @@ let options = List.rev
 "--output-latex-rule-system",String output_latex_rule_system,
 "dump the rules in latex format",
 ["2_Output'";"LATEX"],Normal;
+"--output-latex-version",String output_latex_version,
+"dump the version information in latex format",
+["2_Output'";"LATEX"],Normal;
+"--output-latex-stat",String output_latex_stat,
+"dump the computation stat in latex format",
+["2_Output'";"LATEX"],Normal;
 "--output-xml",String output_xml,
     "write an xml file",["2_Output'";"XML"],Normal;
 "--output-html",String output_html,
@@ -502,16 +513,6 @@ let options = List.rev
 
 "--truc3",Void,"",["Compression";"Contact map";"Intermediar encoding";"Boolean encoding";"Reachability analysis";"Marshalling";"Influence map"],Normal;
 
-
-(*
-(*Abstract expression*)
-"--efficient", Bool efficient,"use optimization in bdd library",["Abstract expression"],Expert;
-"--hashinit", Int hashinit,"Init number for hashtbl",["Data structures"],Expert;
-"--hash_cons", Bool hash_cons,"Use hash-consing",["Data structures"],Expert;
-"--memoisation",Bool memoisation,"Use memoisation",["Data structures"],Expert;
-"--memory-limit",Int memory_limit,"Limit the usage of the memory in (Mb), more than 4Gb will be considered as 4Gb",["Data_structures"],Expert;
-"--local-memoisation",Bool local_memoisation,"Use local-memoisation for recursive functions",["Data structures"],Expert;
-*)
 
 "--memory-limit",Int memory_limit,"Limit the usage of the memory in (Mb)",["Memory usage"],Normal;
 
@@ -551,6 +552,10 @@ let options = List.rev
 (*Influence map*)
   "--wake-up-map",Bool wake_up,"build wake up relations",["Influence map"],Normal;  
   "--inhibition-map",Bool inhibition,"build inhibition map",["Influence map"],Normal;
+
+(*Latex*)
+
+  "--latex-session-title",String latex_session_title,"Name of the session for computation log output in latex",["LATEX"],Normal;
 
 (*ODE*)
 
