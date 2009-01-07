@@ -118,13 +118,13 @@ let main ()  =
     then 
      methods.build_enumeration (!Config_complx.output_reachable_complexes) prefix pb  log 
   else pb,log in 
-  
   let pb,log = 
     if !Config_complx.find_potential_cycles 
     then 
       methods.find_potential_cycles High prefix pb log 
     else
       pb,log in
+  
   let pb,log = 
     if !Config_complx.dump_potential_cycles 
     then
@@ -153,12 +153,10 @@ let main ()  =
 
   let pb,log = methods.dump_boolean_encoding (!Config_complx.output_gathered_boolean_encoding) Smashed prefix pb log in 
   let pb,log = methods.dump_ckappa (!Config_complx.output_gathered_cbng) Smashed prefix pb log in 
-  
-  
 
   let pb,log = methods.save_options prefix pb log in 
   
-  let _,log = 
+  let pb,log = 
     if !Config_complx.do_ODE then 
       methods.template 
 	(!Config_complx.output_ODE_contact) 
@@ -176,7 +174,7 @@ let main ()  =
 	pb 
 	log 
     else 
-      None,log in 
+      pb,log in 
   let pb,log = 
     if !Config_complx.do_dump_latex then 
       methods.dump_latex_rule_system 
@@ -245,6 +243,14 @@ let main ()  =
      methods.dump_latex_version (!Config_complx.output_latex_version) prefix pb log in 
    let _ = 
      methods.dump_latex_stat (!Config_complx.output_latex_stat) prefix pb log in 
+   let _ = 
+     methods.dump_latex_fragments_number (!Config_complx.output_latex_fragment) prefix pb log in 
+  
+    let _ = 
+     methods.dump_latex_rules_number (!Config_complx.output_latex_rules) prefix pb log in 
+   
+    let _ = 
+     methods.dump_latex_species_number (!Config_complx.output_latex_species) prefix pb log in 
   let pb,log  = 
     if !Config_complx.do_XML_session
     then methods.dump_session  (!Config_complx.output_xml) prefix pb  log 

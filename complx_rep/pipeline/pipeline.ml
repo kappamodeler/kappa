@@ -118,7 +118,8 @@ compute_refinement_relation_dag: 'a step;
     dump_latex_version:file_name -> 'a step;
     dump_latex_stat:file_name -> 'a step;
     dump_latex_species_number:file_name -> 'a step;
-    dump_latex_fragments_number:file_name -> 'a step} 
+    dump_latex_fragments_number:file_name -> 'a step;
+      dump_latex_rules_number:file_name -> 'a step} 
 
 
       
@@ -1097,7 +1098,8 @@ module Pipeline =
 		 let sol  = (print rep;print "\n";[[[rep]],0]) in 
 		 let _ = close_file output in
 		 let l = chrono prefix "Enumerating complexes" l in 
-		 (Some {pb' with reachable_complexes = Some (Unbounded,sol,sol)}),(l,m)
+		 (Some {pb' with reachable_complexes = Some (Unbounded,sol,sol) ; 
+		       n_complex = Some Unbounded}),(l,m)
 	    
 	       else
 	       let rep3,(l,m) = build_pieces prefix' (Some pb') (l,m) in 
@@ -1163,7 +1165,8 @@ module Pipeline =
 		 with Not_found -> None in 
 	       let _ = close_file output in
 	       let l = chrono prefix "Enumerating complexes" l in 
-	       (Some {pb' with reachable_complexes = rep}),(l,m)
+	       (Some {pb' with reachable_complexes = rep ; 
+		      n_complex = Some rep6 }),(l,m)
 	    
        and dump_session b prefix a c  = 
 	   (
@@ -1796,6 +1799,10 @@ module Pipeline =
 	   dump_latex_fragments_number file prefix pb log = 
 	 let _ = Latex.dump_nfrag file pb in 
 	 pb,log
+       and 
+	   dump_latex_rules_number file prefix pb log = 
+	 let _ = Latex.dump_nrule file pb in 
+	 pb,log
        in
        {
        
@@ -1886,7 +1893,8 @@ module Pipeline =
        dump_latex_version =  (fun file -> handle_errors_step (Some "Complx") (Some "dump_latex_version") (dump_latex_version file));
         dump_latex_stat =  (fun file -> handle_errors_step (Some "Complx") (Some "dump_latex_stat") (dump_latex_stat file));
         dump_latex_fragments_number =  (fun file -> handle_errors_step (Some "Complx") (Some "dump_latex_fragment_number") (dump_latex_fragments_number file));
-        dump_latex_species_number =  (fun file -> handle_errors_step (Some "Complx") (Some "dump_latex_species_numberer") (dump_latex_species_number file));
+        dump_latex_species_number =  (fun file -> handle_errors_step (Some "Complx") (Some "dump_latex_species_number") (dump_latex_species_number file));
+         dump_latex_rules_number =  (fun file -> handle_errors_step (Some "Complx") (Some "dump_latex_rules_number") (dump_latex_rules_number file));
      } 
 	 
 	 

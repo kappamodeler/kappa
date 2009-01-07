@@ -276,32 +276,51 @@ let dump_stat file name time =
       () 
 
 let dump_nfrag file pb = 
-  if file = "" then ()
+  let _ = print_string "FRAGMENTS" in 
+  let _ = print_string file in 
+  if file = "" then (print_string "CAS1\n")
   else
     match pb with 
-      None -> ()
+      None -> (print_string "CAS2\n")
     | Some pb -> 
-	match pb.nfrag with None -> ()
+	match pb.nfrag with None -> (print_string "CAS3\n")
 	| Some n -> 
 	    let chan = open_out file in 
 	    let _ = Printf.fprintf chan "$%d$" n in 
 	    let _ = close_out chan in 
-	    () 
+	    (print_string "CAS4\n") 
 
 let dump_nspecies file pb = 
+  let _ = print_string "SPECIES" in
+  let _ = print_string file in 
+  if file = "" then ()
+  else
+    begin
+      match pb with 
+	None -> (print_string "CAS1\n")
+      | Some pb -> 
+	  match pb.n_complex with None -> (print_string "CAS2\n")
+	| Some Unbounded  -> 
+	    let chan = open_out file in 
+	    let _ = Printf.fprintf chan "Unbounder number of"  in 
+	    let _ = close_out chan in 
+	    (print_string "CAS3\n") 
+	| Some (Bounded n) -> 
+	    let chan = open_out file in 
+	    let _ = Printf.fprintf chan "$%s$" n in 
+	    let _ = close_out chan in 
+	    (print_string "CAS4\n") 
+    end
+
+let dump_nrule file pb = 
     if file = "" then ()
   else
     match pb with 
       None -> ()
     | Some pb -> 
-	match pb.n_complex with None -> ()
-	| Some Unbounded  -> 
+	match pb.n_rules with None -> ()
+	| Some n  -> 
 	    let chan = open_out file in 
-	    let _ = Printf.fprintf chan "Unbounder number of"  in 
-	    let _ = close_out chan in 
-	    () 
-	| Some (Bounded n) -> 
-	    let chan = open_out file in 
-	    let _ = Printf.fprintf chan "$%s$" n in 
+	    let _ = Printf.fprintf chan "$%d$" n in 
 	    let _ = close_out chan in 
 	    () 

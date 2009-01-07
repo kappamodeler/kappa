@@ -1,5 +1,5 @@
 let debug = false
-let count_embedding = true
+let count_embedding = false
     (* TRUE -> count embedding 
        FALSE -> count embedding / automaorphism *)
 

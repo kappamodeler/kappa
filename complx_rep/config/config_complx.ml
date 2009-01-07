@@ -8,15 +8,23 @@ open Data_structures
 open Superarg
 open SuperargTk
 
+let ad2 d = 
+  if d>= 0 && d<=9 then "0"^(string_of_int d)
+  else string_of_int d
+    
 let time_stamp = 
   let tm = Unix.localtime (Unix.time ()) 
   in
-  Printf.sprintf "%d/%d/%d (%d:%d:%d)" 
-    tm.Unix.tm_mday tm.Unix.tm_mon (tm.Unix.tm_year + 1900) 
-    tm.Unix.tm_hour tm.Unix.tm_min tm.Unix.tm_sec
+  Printf.sprintf "%s/%s/%d (%s:%s:%s)" 
+    (ad2 (tm.Unix.tm_mon+1)) 
+    (ad2 tm.Unix.tm_mday) 
+    (tm.Unix.tm_year + 1900)
+    (ad2 tm.Unix.tm_hour) 
+    (ad2 tm.Unix.tm_min) 
+    (ad2 tm.Unix.tm_sec)
 
-let version = "3.66.."^(string_of_int Svn_number.svn_number) 
-let date = "2008.12.13"
+let version = "3.67.."^(string_of_int Svn_number.svn_number) 
+let date = "2009.01.06"
 let input_marshalling = ref "" 
 let input_file = ref [""] 
 let input_focus_on = ref ""
@@ -187,6 +195,9 @@ let correct_contact_map () =
   ()
 let output_latex_version = ref ""
 let output_latex_stat = ref ""
+let output_latex_fragment = ref ""
+let output_latex_rules = ref ""
+let output_latex_species = ref ""
 let output_dag_ref_dot = ref ""
 let output_dag_ref_jpg = ref ""
 let output_maximal_ref_dot = ref ""
@@ -351,6 +362,9 @@ let options = List.rev
 									"--output-scheme",MultiExt [
 "--output-latex-version","_plx_version.tex";
 "--output-latex-stat","_plx_stat.tex";
+"--output-latex-species","_plx_species.tex";
+"--output-latex-fragment","_plx_fragments.tex";
+"--output-latex-rules","_plx_rules.tex";
 "--output-latex-rule-system","_plx.tex";
 "--output-latex-sty","_plx.sty";
 "--output-ODE-obs-latex","_plx_ODE_obs.tex";
@@ -503,6 +517,15 @@ let options = List.rev
 ["2_Output'";"LATEX"],Normal;
 "--output-latex-stat",String output_latex_stat,
 "dump the computation stat in latex format",
+["2_Output'";"LATEX"],Normal;
+"--output-latex-fragment",String output_latex_fragment,
+"dump the number of fragments in latex format",
+["2_Output'";"LATEX"],Normal;
+"--output-latex-rules",String output_latex_rules,
+"dump the number of rules in latex format",
+["2_Output'";"LATEX"],Normal;
+"--output-latex-species",String output_latex_species,
+"dump the number of species in latex format",
 ["2_Output'";"LATEX"],Normal;
 "--output-xml",String output_xml,
     "write an xml file",["2_Output'";"XML"],Normal;
