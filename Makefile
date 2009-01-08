@@ -1,6 +1,6 @@
 all: simplx_light complx_light metaplx_light
 
-meta_light: 
+metaplx_light: 
 	make TKREP=light TKINCLUDES="" TK_CMXA="" KEY="without_key" metaplx
 simplx_light:
 	make TKREP=light TKINCLUDES="" TK_CMXA=""  KEY="without_key" simplx
