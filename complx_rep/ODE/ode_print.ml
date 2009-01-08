@@ -534,9 +534,9 @@ and print_atom print  bool bool2 x =
   then print_expr print  bool  bool2 x 
   else 
     begin
-      pprint_string print  "\\left(";
+      pprint_string print  "(";
       print_expr print bool bool2 x;
-      pprint_string print  "\\right)"
+      pprint_string print  ")"
     end
 
 let print_expr print bool bool2 x = 
