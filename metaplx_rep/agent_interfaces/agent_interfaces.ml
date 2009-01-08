@@ -1,0 +1,79 @@
+(* 2009/01/08*)
+(* Meta language for Kappa *)
+(* Jerome Feret*)
+(* Agent interface*)
+(* agent_interfaces.ml *)
+
+open Error_handler 
+
+type site = string 
+module SiteSet = Set.Make (struct type t=site let compare=compare end)
+module SiteMap = Map2.Make (struct type t=site let compare=compare end)
+
+let error i = 
+  unsafe_frozen None (Some "agent_interfaces.ml") None (Some ("line "^(string_of_int i))) (fun () -> raise Exit) 
+
+type action = 
+    Add_site of site 
+  | Delete_site of site
+  | Mutate_site of site*site
+  | Rename of site*(site list)
+
+let convert_action action res = 
+  match action with 
+    Add_site _ | Rename _ -> action::res
+  | Delete_site site -> (Rename (site,[]))::res
+  | Mutate_site (site1,site2) -> (Rename (site1,[]))::(Add_site site2)::res
+
+let compute_interface starting_interface directives = 
+  let map = 
+    List.fold_left 
+      (fun map x -> SiteMap.add x [x] map)
+      SiteMap.empty 
+      starting_interface 
+  in
+  let map,sources,targets = 
+    List.fold_left 
+      (fun (map,sources,targets) d -> 
+	match d with 
+	  Add_site (site) -> 
+	    if 
+	      SiteSet.mem site targets 
+	    then 
+	      failwith ("Site "^site^" occurs several time as a new site")
+	    else
+	      (map,sources,SiteSet.add site targets)
+	| Rename (site,l) -> 
+	    if 
+	      SiteSet.mem site sources 
+	    then 
+	      failwith ("Site "^site^" occurs several time as a modified site")
+	    else if 
+	      try 
+		let _ = 
+		  SiteMap.find site map
+		in false
+	      with 
+		Not_found -> true 
+	    then 
+	      failwith ("Site "^site^" is not defined")
+	    else 
+	      SiteMap.add site l map,
+	      SiteSet.add site sources,
+	      List.fold_left
+		(fun targets site -> 
+		  if SiteSet.mem site targets 
+		  then 
+		    failwith ("Site "^site^" occurs several time as a new site")
+		  else
+		    SiteSet.add site targets)
+		targets l
+	| _ -> error 34)
+      (map,SiteSet.empty,SiteSet.empty) directives
+  in 
+  (fun x -> 
+    try 
+      SiteMap.find x map
+    with 
+      Not_found -> error 76)
+  
