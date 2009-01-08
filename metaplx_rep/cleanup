@@ -1,0 +1,5 @@
+CLEANUP=rm -f *.cm* *.o *~ *.a
+
+clean:
+	cd config ; $(CLEANUP) ;
+	$(CLEANUP)

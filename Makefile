@@ -1,4 +1,7 @@
-all: simplx_light complx_light 
+all: simplx_light complx_light metaplx_light
+
+meta_light: 
+	make TKREP=light TKINCLUDES="" TK_CMXA="" KEY="without_key" metaplx
 simplx_light:
 	make TKREP=light TKINCLUDES="" TK_CMXA=""  KEY="without_key" simplx
 complx_light:
@@ -6,7 +9,7 @@ complx_light:
 shell:
 	make TKREP=light TKINCLUDES="" TK_CMXA="" KEY="without_key" interplx
 
-full: simplx_full complx_full 
+full: simplx_full complx_full metaplx_full
 
 simplx_full: 
 	make simplx TKREP=full TKINCLUDES="-I +labltk" TK_CMXA="labltk.cmxa jpflib.cmxa frxlib.cmxa -cclib -lpthread -cclib -lXau -cclib -lXdmcp" KEY="without_key"
@@ -14,9 +17,13 @@ simplx_full:
 complx_full: 
 	make complx TKREP=full TKINCLUDES="-I +labltk" TK_CMXA="labltk.cmxa jpflib.cmxa frxlib.cmxa -cclib -lpthread -cclib -lXau -cclib -lXdmcp" KEY="without_key"
 
+metaplx_full: 
+	make metaplx TKREP=full TKINCLUDES="-I +labltk" TK_CMXA="labltk.cmxa jpflib.cmxa frxlib.cmxa -cclib -lpthread -cclib -lXau -cclib -lXdmcp" KEY="without_key" 
+
 with_key:
 	make TKREP=light TKINCLUDES="" TK_CMXQ="" KEY="with_key" simplx
 	make TKREP=light TKINCLUDES="" TK_CMXQ="" KEY="with_key" complx
+	make TKREP=light TKINCLUDES="" TK_CMXQ="" KEY="with_key" metaplx 
 
 top:
 	make toplevel KEY=without_key 
@@ -31,6 +38,8 @@ TKREP?=light
 SIMPLXREP?=simplx_rep
 COMPLXREP?=complx_rep
 INTERPLXREP?=interplx_rep
+METAPLXREP?=metaplx_rep
+
 BIN = ./bin
 KEY?=without_key
 
@@ -79,6 +88,7 @@ OCAMLINCLUDES= -I $(COMPLXREP)/lib/$(TKREP) \
 		-I $(COMPLXREP)/cyclical_complexes \
 		-I $(COMPLXREP)/refinements \
 		-I $(COMPLXREP)/isomorphism_detection \
+		-I $(METAPLXREP)/config \
 		$(TKINCLUDES) 
 
 OCAMLFLAGS=	$(OCAMLINCLUDES)
@@ -201,11 +211,14 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(SIMPLXREP)/src/main/memory_control.cmo \
 	./$(SIMPLXREP)/src/tools/bench.cmo \
 	./$(SIMPLXREP)/src/main/simulation2.cmo \
-	./$(SIMPLXREP)/src/html_config/HTML.cmo
+	./$(SIMPLXREP)/src/html_config/HTML.cmo \
+	./$(METAPLXREP)/config/config_metaplx.cmo
 
 SIMPLX_MAIN = ./$(SIMPLXREP)/src/main/main.ml
 COMPLX_MAIN = ./$(COMPLXREP)/main.ml 
+METAPLX_MAIN = ./$(METAPLXREP)/main.ml 
 INTERPLX_MAIN = ./$(INTERPLXREP)/shell.ml
+
 
 NATIVE_OBJS = $(OBJS:cmo=cmx) 
 MLFILES = $(OBJS:cmo=ml) $(SIMPLX_MAIN) $(COMPLX_MAIN)
@@ -228,6 +241,8 @@ CMXA = unix.cmxa threads.cmxa str.cmxa nums.cmxa
 
 SIMPLX_OUT = simplx
 COMPLX_OUT = complx
+METAPLX_OUT = metaplx
+OUTPUT = $(SIMPLX_OUT) $(COMPLX_OUT) $(METAPLX_OUT) 
 
 LIB_OPT = $(SIMPLX_OUT).cmxa
 LIB_BYTE = $(SIMPLX_OUT).cma
@@ -266,8 +281,9 @@ LINE = $(OCAMLOPT) $(OCAMLFLAGS) $(TKINCLUDES) $(CMXA) $(TK_CMXA) $(LIBSC_CMXA) 
 complx: $(LIBSC_CMXA) $(NATIVE_OBJS) $(COMPLX_MAIN)
 	$(LINE) $(COMPLX_MAIN) -o $(BIN)/$(COMPLX_OUT)
 
-influence_map: $(COMPLXREP)/influence_pipeline.cmx 
-	$(LINE) $(COMPLXREP)/influence_pipeline.cmx -o $(BIN)/bd_influence_map
+metaplx: $(LIBSC_CMXA) $(NATIVE_OBJS) $(METAPLX_MAIN)
+	$(LINE) $(METAPLX_MAIN) -o $(BIN)/$(METAPLX_OUT)
+
 
 toplevel: $(MLI) $(CMI) $(LIBSC_CMA) $(LIB_BYTE)
 	ocaml -I +threads $(OCAMLINCLUDES) $(CMA) $(OBJS)
@@ -320,10 +336,10 @@ install_in_local: bin/simplx bin/complx
 	 ln -sf $(PWD)/bin/* $(LOCAL_DIR) 
 
 uninstall_of_local: clean
-	cd $(LOCAL_DIR) ; rm -f complx simplx 
+	cd $(LOCAL_DIR) ; rm -f $(OUTPUT)
 
 uninstall: clean
-	cd $(INSTALL_DIR) ; sudo rm -f complx simplx bd_influence_map
+	cd $(INSTALL_DIR) ; sudo rm -f $(OUTPUT)
 
 $(HOME)/tmp: 
 	mkdir $(HOME)/tmp 
@@ -341,20 +357,22 @@ tar_prorep: $(HOME)/tmp
 
 
 install_light:
-	cd simplx_rep ; make install
-	cd complx_rep ; make install_light
-
+	cd $(SIMPLXREP) ; make install
+	cd $(COMPLXREP) ; make install_light
+	cd $(INTERPLXREP) ; make install_light
+	cd $(METAPLXREP) ; make install_light
 
 clean:
 	rm -f *~ ; 
 	cd $(SIMPLXREP) ; make -f cleanup ;
 	cd $(COMPLXREP) ; make -f cleanup ; 
-	cd $(INTERPLXREP) ; make -f cleanup
+	cd $(INTERPLXREP) ; make -f cleanup ;
+	cd $(METAPLXREP) ; make -f cleanup
 
 
 clean_all: clean 
 	rm -f $(AUTOGENML) 
-	rm -f simplx_rep/sim complx_rep/compress complx_rep/compress_light  simplx complx_light bd_influence_map bd_influence_map_light complx *.options* 
+	rm -f simplx_rep/sim complx_rep/compress complx_rep/compress_light  simplx complx_light bd_influence_map bd_influence_map_light complx *.options* $(OUTPUT)
 
 grab_svn_version_number:
 	svn up --username hudson --password bu1ldme --no-auth-cache | tail -n 1 | sed -e "s/\([^0-9]*\)\([0-9]*\)\./let svn_number = \2 +1/" > complx_rep/automatically_generated/svn_number.ml 
@@ -364,16 +382,18 @@ commit:
 	svn commit 
 
 help: 
-	echo Usage: ;\
-	echo make all: create the simulator sim and the compressor compress ;\
+	@echo Usage: ;\
+	echo make all: create the simulator sim and the compressor compress and the meta-language preprocessor ;\
 	echo make sim: create the simulator ;\
 	echo make complx_full: create the compressor;\
 	echo make complx_light: create the light version of the compressor without labltk;\
-	echo make VERSION=X.YY tar: create all tarballs in your home directory
-	echo make VERSION=X.YY tar_sim: create the tarball of simplx in your home directory
-	echo make VERSION=X.YY tar_com: create the tarball of complx in your home directory
-	echo make VERSION=X.YY tar_prorep: create the tarball of ProRepPlx in your home directory
-	echo make commit: update config file with the svn number before doing a commit 
+	echo make metaplx_full: create the meta-language preprocessor ;\
+	echo make metaplx_light: create the light version of the meta-language preprocessor;\
+	echo make VERSION=X.YY tar: create all tarballs in your home directory;\
+	echo make VERSION=X.YY tar_sim: create the tarball of simplx in your home directory;\
+	echo make VERSION=X.YY tar_com: create the tarball of complx in your home directory;\
+	echo make VERSION=X.YY tar_prorep: create the tarball of ProRepPlx in your home directory;\
+	echo make commit: update config file with the svn number before doing a commit;\
 	echo make clean: clean compiled files;\
 	echo make clean_data: clean analysis results;\
 	echo make clean_all: clean all	
