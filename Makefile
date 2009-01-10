@@ -90,6 +90,7 @@ OCAMLINCLUDES= -I $(COMPLXREP)/lib/$(TKREP) \
 		-I $(COMPLXREP)/isomorphism_detection \
 		-I $(METAPLXREP)/config \
 		-I $(METAPLXREP)/agent_interfaces \
+		-I $(METAPLXREP)/data_structures \
 		$(TKINCLUDES) 
 
 OCAMLFLAGS=	$(OCAMLINCLUDES)
@@ -214,6 +215,7 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(SIMPLXREP)/src/main/simulation2.cmo \
 	./$(SIMPLXREP)/src/html_config/HTML.cmo \
 	./$(METAPLXREP)/config/config_metaplx.cmo \
+	./$(METAPLXREP)/data_structures/data_structures_metaplx.cmo \
 	./$(METAPLXREP)/agent_interfaces/agent_interfaces.cmo 
 
 SIMPLX_MAIN = ./$(SIMPLXREP)/src/main/main.ml

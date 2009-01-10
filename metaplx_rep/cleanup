@@ -3,4 +3,5 @@ CLEANUP=rm -f *.cm* *.o *~ *.a
 clean:
 	cd config ; $(CLEANUP) ;
 	cd agent_interfaces ; $(CLEANUP) ; 
+	cd data_structures ; $(CLEANUP) ;
 	$(CLEANUP)

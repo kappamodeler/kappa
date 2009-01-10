@@ -5,19 +5,13 @@
 (* agent_interfaces.ml *)
 
 open Error_handler 
+open Data_structures_metaplx 
 
-type site = string 
-module SiteSet = Set.Make (struct type t=site let compare=compare end)
-module SiteMap = Map2.Make (struct type t=site let compare=compare end)
 
 let error i = 
   unsafe_frozen None (Some "agent_interfaces.ml") None (Some ("line "^(string_of_int i))) (fun () -> raise Exit) 
 
-type action = 
-    Add_site of site 
-  | Delete_site of site
-  | Mutate_site of site*site
-  | Rename of site*(site list)
+
 
 let convert_action action res = 
   match action with 
