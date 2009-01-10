@@ -91,6 +91,7 @@ OCAMLINCLUDES= -I $(COMPLXREP)/lib/$(TKREP) \
 		-I $(METAPLXREP)/config \
 		-I $(METAPLXREP)/agent_interfaces \
 		-I $(METAPLXREP)/data_structures \
+		-I $(METAPLXREP)/agent_tree \
 		$(TKINCLUDES) 
 
 OCAMLFLAGS=	$(OCAMLINCLUDES)
@@ -216,7 +217,9 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(SIMPLXREP)/src/html_config/HTML.cmo \
 	./$(METAPLXREP)/config/config_metaplx.cmo \
 	./$(METAPLXREP)/data_structures/data_structures_metaplx.cmo \
-	./$(METAPLXREP)/agent_interfaces/agent_interfaces.cmo 
+	./$(METAPLXREP)/agent_interfaces/agent_interfaces.cmo \
+	./$(METAPLXREP)/agent_tree/agent_tree.cmo 
+ 
 
 SIMPLX_MAIN = ./$(SIMPLXREP)/src/main/main.ml
 COMPLX_MAIN = ./$(COMPLXREP)/main.ml 

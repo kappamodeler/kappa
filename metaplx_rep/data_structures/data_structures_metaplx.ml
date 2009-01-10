@@ -31,13 +31,13 @@ type agent_definition =
   | Variant of agent*(action list)
 
 type declaration = 
-    { concrete_names: (concrete_interface option*line option) AgentMap.t;
+    { concrete_names: (concrete_interface option*line list) AgentMap.t;
       definitions: (agent_definition*line option) AgentMap.t} 
 
 type rewriting_case = 
     {target_name:agent;
      forbidden_sites:StringSet.t; 
-     subsitution:site list SiteMap.t}
+     subsitutions:site list SiteMap.t}
      
 type solved_definition = (rewriting_case list) AgentMap.t
 

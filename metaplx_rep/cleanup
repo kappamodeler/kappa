@@ -4,4 +4,5 @@ clean:
 	cd config ; $(CLEANUP) ;
 	cd agent_interfaces ; $(CLEANUP) ; 
 	cd data_structures ; $(CLEANUP) ;
+	cd agent_tree ; $(CLEANUP) ;
 	$(CLEANUP)
