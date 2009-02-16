@@ -1154,7 +1154,8 @@ let str_of_obs obs =
     | Occurrence s -> s
     | Story s -> s
 
-let sol_of_init no_mult init = 
+let sol_of_init no_mult init_list = 
+  let sol = empty() in
   let sol =
     List.fold_left (fun acc (sol,n) -> 
 		      let sol' = 
@@ -1164,7 +1165,7 @@ let sol_of_init no_mult init =
 		      in
 		      let acc = compose sol' acc in (*compose folds on first argument*)
 			acc
-		   ) (empty()) init 
+		   ) sol init_list 
   in
     add Agent.empty sol (*adding the NIL agent to the initial solution*)
 

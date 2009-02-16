@@ -91,7 +91,8 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
 	rule_id:=0;
 	rules:=[]; 
 	init:=[];
-	obs_l:=[]
+	obs_l:=[] ;
+	env := Hashtbl.create 100 
       end
 	
   let compile fic =
@@ -116,7 +117,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     
 	
   let make_rule rule_str = 
-    rules:=[] ;
+    init_val() ;
     try
       let lexbuf = Lexing.from_string (rule_str^"\n") in
 	while true do
@@ -134,7 +135,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     with End_of_file -> (!rules)
 
   let make_init sol_str = 
-    init:=[] ;
+    init_val() ;
     try
       let lexbuf = Lexing.from_string ("%init:"^sol_str^"\n") in
 	while true do
@@ -149,6 +150,5 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
 	 Some 149,
 	 Some s)
 	s
-    with End_of_file -> !init 
-
+    with End_of_file -> (!init)
 }

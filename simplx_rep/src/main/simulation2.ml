@@ -219,7 +219,7 @@ let init_counters () =
      skipped = 0;
      drawers = Iso.empty_drawers !max_iter ;
      compression_log = [] ; 
-     concentrations = IntMap.empty ;
+     concentrations = IntMap.empty ; (*put initial concentration here!*)
      time_map = IntMap.empty ;
      ticks = init_ticks 1 ;
      clock_precision = !clock_precision ;
@@ -1842,19 +1842,19 @@ let rec ticking clock c =
       
   
 let rec iter log sim_data p c =
-  let p = 
+  let p,log = 
     match !gc_mode with
 	Some HIGH -> 
-	  if p.gc_alarm_high then p 
+	  if p.gc_alarm_high then (p,log) 
 	  else 
-	    (Printf.fprintf stderr "Free memory is low, shifting to strong garbage collection\n" ; flush stdout ; 
-	     {p with gc_alarm_high=true ; gc_alarm_low=false})
+	    let log = Session.add_log_entry 1 "Free memory is low, shifting to strong garbage collection" log in
+	      ({p with gc_alarm_high=true ; gc_alarm_low=false},log)
       | Some LOW ->
-	  if p.gc_alarm_low then p 
+	  if p.gc_alarm_low then (p,log) 
 	  else 
-	    (Printf.fprintf stderr "Using low garbage collection\n" ; flush stdout ; 
-	     {p with gc_alarm_high=false ; gc_alarm_low=true})
-      | None -> p
+	    let log = Session.add_log_entry 4 "Using low garbage collection" log in
+	      ({p with gc_alarm_high=false ; gc_alarm_low=true},log)
+      | None -> (p,log)
   in
   let clock =
     let c_story = 
@@ -2005,8 +2005,9 @@ let rec iter log sim_data p c =
 			  try 
 			    PortMap.find quark pmap 
 			  with 
-			    Not_found -> [] in
-			PortMap.add quark (Rule.Remove::old) pmap
+			    Not_found -> [] 
+			in
+			  PortMap.add quark (Rule.Remove::old) pmap
 						) rmq modifs 
 		      in 
 			if (IntSet.mem r_ind sim_data.obs_ind) then (*rule is to be observed, so don't backtrack it!*)

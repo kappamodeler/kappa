@@ -3,9 +3,7 @@
   open Agent
   open Rule
   open Data
-  
-  let env = Hashtbl.create 100
-  
+
   let error error i s = 
     error 
       (Some "kappa_parse.mly",
@@ -120,13 +118,13 @@
 %% /*Grammar rules*/
 
   line: 
-| INIT_LINE init_expr {hsh_add env $2}
+| INIT_LINE init_expr {hsh_add !env $2}
 | OBS_LINE obs_expr {obs_l := $2::(!obs_l)}
 | STORY_LINE story_expr {obs_l := $2::(!obs_l)}
 | MODIF_LINE modif_expr {exp := Experiment.add $2 (!exp)}
 | NEWLINE {()}
 | named_rule_expr {rules := (List.fold_left (fun rules r -> r::rules) (!rules) $1)} 
-| EOF {let sol = sol_of_hsh env in
+| EOF {let sol = sol_of_hsh !env in
          init := sol ;
 	 raise End_of_file}
 | error {raise (error_found 119 "syntax error")}
