@@ -287,7 +287,7 @@ let ls_of_simulation rules obs_ind time_map data_map curr_step curr_time =
 				 Printf.sprintf "%s,%s\n" (Float_pretty_printing.string_of_float  time)
 				   (String.concat ","
 				      (IntMap.fold (fun _ v cont -> 
-						      (string_of_int (int_of_float v))::cont
+						      (string_of_float (*int_of_float v*)v)::cont
 						   ) map []
 				      )
 				   )
