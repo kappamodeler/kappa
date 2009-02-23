@@ -18,7 +18,28 @@ module Site = struct type t=site let compare=compare end
 module SiteSet = Set.Make(Site)
 module SiteMap = Map2.Make(Site)
 
+type print_handler = 
+    {string:string -> unit;
+     line: unit -> unit;
+     site: site -> unit;
+     agent: agent -> unit}
+
+let print_handler = 
+  {string=print_string;
+   line=print_newline;
+   site=print_string;
+   agent=print_string}
+
 type concrete_interface=site list 
+
+let print_interface print_string l = 
+  let _ = 
+    List.fold_left
+      (fun bool x -> 
+	(if bool then print_string.string ",");
+	let _ = print_string.site x in true )
+      false l 
+  in () 
 
 type action = 
     Add_site of site 
@@ -26,19 +47,76 @@ type action =
   | Mutate_site of site*site
   | Rename of site*(site list)
 
+let print_action print_string act = 
+  match act with 
+    Add_site s -> (print_string.string "add_site ";
+		   print_string.site s;
+		   print_string.string ";")
+  | Delete_site s -> (print_string.string "remove_site ";print_string.site s;print_string.string ";")
+  | Mutate_site (s1,s2) -> (print_string.string "mutate_site ";print_string.site s1;print_string.string "-";print_string.site s2;print_string.string ";")
+  | Rename (s,sl) -> 
+      (print_string.string "rename_site ";
+       print_string.site s;
+       print_string.string "\\{";
+       let _ = 
+	 List.fold_left  
+	 (fun bool s -> 
+	   ((if bool then print_string.string ",");
+	    let _ = print_string.string s in true )) 
+	   false sl
+	in print_string.string "\\}")
+
+
 type agent_definition = 
     Root of concrete_interface 
   | Variant of agent*(action list)
+
+
+let print_agent_def print_string x = 
+  match x with 
+    Root x -> (print_string.string "ROOT: ";
+	       print_interface print_string x)
+  | Variant (a,actl) -> 
+      (print_string.string "VARIANT: ";print_string.agent a;print_string.string " ";List.iter (print_action print_string) actl)
 
 type declaration = 
     { concrete_names: (concrete_interface option*line list) AgentMap.t;
       definitions: (agent_definition*line option) AgentMap.t} 
 
+let print_declaration print_string x = 
+  let _  = 
+    AgentMap.iter
+      (fun ag (a,b) -> 
+	print_string.string "CONCRETE NAME: ";
+	print_string.agent ag;
+	print_string.string ": ";
+	match a with None -> ()
+	| Some a -> 
+	      print_interface print_string a;print_string.line ())
+      x.concrete_names 
+  in
+  let _ = 
+    AgentMap.iter 
+      (fun ag (a,b) -> 
+	print_string.string "VARIANT: ";
+	print_string.agent ag;
+	print_string.string ": ";
+	print_agent_def  print_string a;
+	print_string.line ()
+	)
+      x.definitions 
+  in 
+  () 
+    
 type rewriting_case = 
     {target_name:agent;
-     forbidden_sites:StringSet.t; 
-     subsitutions:site list SiteMap.t}
+     forbidden_sites:SiteSet.t; 
+     substitutions:site list SiteMap.t}
      
 type solved_definition = (rewriting_case list) AgentMap.t
 
-    
+type 'a agent_metaplx = 
+    {agent_name:agent;
+     interface:(site*'a) list}
+
+ 

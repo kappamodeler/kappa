@@ -163,6 +163,7 @@ let output_ODE_obs_head = ref ""
 let output_ODE_data = ref ""
 let output_ODE_obs_latex = ref ""
 let output_ODE_covering = ref ""
+let output_ODE_covering_latex = ref "" 
 let output_ODE_contact = ref ""
 let output_ODE_mathematica = ref ""
 let output_ODE_matlab = ref "" 
@@ -248,11 +249,11 @@ let keep_comments = ref true
 let boolean_site_color = ref "yellow" 
 let boundable_site_color = ref "cyan" 
 let both_site_color = ref "green" 
-let agent0 = ref "floralwhite"
-let agent1 = ref "skyblue1"
-let agent2 = ref "deeppink"
-let agent3 = ref "darkorchid"
-let agentn = ref "red"
+let agent0 = ref "lightgrey"
+let agent1 = ref "lightgrey"
+let agent2 = ref "lightgrey"
+let agent3 = ref "lightgrey"
+let agentn = ref "lightgrey"
 
 let only_detect_cycles = ref false 
 
@@ -374,6 +375,7 @@ let options = List.rev
 "--output-ODE-matlab","_plx_ODE_system.m";
 "--output-ODE-alphabet","_plx_ODE_alphabet";
 "--output-ODE-covering","_plx_ODE_covering";
+"--output-ODE-covering-latex","_plx_ODE_covering.tex";
 "--output-ODE-obs","_plx_ODE_obs";
 "--output-ODE-obs-head","_plx_head.data";
 "--output-ODE-data","_plx_foot.data";
@@ -478,6 +480,10 @@ let options = List.rev
   String output_ODE_covering,
   "dump the covering classes for each agent type",
   ["2_Output'";"ODE"],Normal;
+"--output-ODE-covering-latex",
+  String output_ODE_covering_latex,
+  "dump the covering classes for each agent type",
+  ["2_Output'";"ODE";"LATEX"],Normal;
 "--output-ODE-obs",
   String output_ODE_obs,
   "write the set of obervables tracked in the ODE",

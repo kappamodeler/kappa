@@ -5,4 +5,5 @@ clean:
 	cd agent_interfaces ; $(CLEANUP) ; 
 	cd data_structures ; $(CLEANUP) ;
 	cd agent_tree ; $(CLEANUP) ;
+	cd rename_agent ; $(CLEANUP) ;
 	$(CLEANUP)

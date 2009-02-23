@@ -347,7 +347,7 @@ module Kleenean_expr =
 			(k,bool,n,olds,compt,map) -> 
 			  let b,string,n = 
 			    print_pretty 
-			      string_txt 
+			      handler 
 			      a 
 			      (fun x -> 
 				(try 

@@ -139,7 +139,7 @@ let print_log s =
 
 
 
-let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matlab file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode (l,m) = 
+let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode (l,m) = 
   
   let prefix' = "-"^(fst prefix) in 
   let do_latex = !Config_complx.do_dump_latex in 
@@ -460,6 +460,42 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_latex file_ODE_matl
       let _ = close_out chan in 
       () in
   
+  (***************************************)
+  (* WE DUMP THE COVERINGS IN LATEX FORMAT *)
+  (***************************************)
+  
+
+    let _ = 
+    if file_ODE_covering_latex <> "" 
+    then 
+      let chan = open_out file_ODE_covering_latex in 
+      let print_string x = Printf.fprintf chan "%s" x in
+      let _ = print_string "\\begin{enumerate}\n" in 
+      let _ = 
+	  StringMap.iter 
+	  (fun a l -> 
+	    print_string "\item agent: ";
+	    print_string (Latex.string_of_agent_name a);
+	    print_string "{}";
+	    print_string "\\begin{itemize}";
+	    List.iter 
+	      (fun s -> 
+		print_string "\item \{";
+		let _ = 
+		  StringSet.fold
+		    (fun a bool -> 
+		      let _ = if bool then print_string Latex.site_sep in
+		      let _ = print_string (Latex.string_of_site_name a) in
+		      let _ = print_string "{}{}" in 
+		      true)
+		    s.kept_sites  false in
+		print_string "\}";
+		()) l;
+	    print_string "\\end{itemize}\n")
+	  annotated_contact_map.subviews in
+      let _ = print_string "\\end{enumerate}\n" in 
+      let _ = close_out chan in 
+      () in
 
 	
   let _ = print_log "COMPUTE FRAGMENTS" in
