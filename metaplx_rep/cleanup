@@ -7,4 +7,5 @@ clean:
 	cd agent_tree ; $(CLEANUP) ;
 	cd rename_agent ; $(CLEANUP) ;
 	cd rename_rule ; $(CLEANUP) ; 
+	cd pretty_printing ; $(CLEANUP) ; 
 	$(CLEANUP)
