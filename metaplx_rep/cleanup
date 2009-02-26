@@ -6,4 +6,5 @@ clean:
 	cd data_structures ; $(CLEANUP) ;
 	cd agent_tree ; $(CLEANUP) ;
 	cd rename_agent ; $(CLEANUP) ;
+	cd rename_rule ; $(CLEANUP) ; 
 	$(CLEANUP)

@@ -93,6 +93,8 @@ OCAMLINCLUDES= -I $(COMPLXREP)/lib/$(TKREP) \
 		-I $(METAPLXREP)/data_structures \
 		-I $(METAPLXREP)/agent_tree \
 		-I $(METAPLXREP)/rename_agent \
+		-I $(METAPLXREP)/rename_rule \
+		-I $(METAPLXREP)/pretty_printing \
 		$(TKINCLUDES) 
 
 OCAMLFLAGS=	$(OCAMLINCLUDES)
@@ -218,9 +220,12 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(SIMPLXREP)/src/html_config/HTML.cmo \
 	./$(METAPLXREP)/config/config_metaplx.cmo \
 	./$(METAPLXREP)/data_structures/data_structures_metaplx.cmo \
+	./$(METAPLXREP)/pretty_printing/pretty_printing.cmo \
 	./$(METAPLXREP)/agent_interfaces/agent_interfaces.cmo \
 	./$(METAPLXREP)/agent_tree/agent_tree.cmo \
-	./$(METAPLXREP)/rename_agent/rename_agent.cmo 
+	./$(METAPLXREP)/rename_agent/rename_agent.cmo \
+	./$(METAPLXREP)/rename_rule/rename_rule.cmo \
+
  
 
 SIMPLX_MAIN = ./$(SIMPLXREP)/src/main/main.ml

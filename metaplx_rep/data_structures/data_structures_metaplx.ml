@@ -6,7 +6,12 @@
 
 open Data_structures 
 
-type line = int 
+type line = Rule of string | Decl 
+
+let string_of_line x = 
+  match x with 
+    Decl -> "Declarations"
+  | Rule x -> x 
 
 type agent = string 
 module Agent = struct type t=agent let compare=compare end
@@ -30,15 +35,15 @@ let print_handler =
    site=print_string;
    agent=print_string}
 
-type concrete_interface=site list 
+type concrete_interface = SiteSet.t
 
 let print_interface print_string l = 
   let _ = 
-    List.fold_left
-      (fun bool x -> 
+    SiteSet.fold 
+      (fun x bool  -> 
 	(if bool then print_string.string ",");
 	let _ = print_string.site x in true )
-      false l 
+      l false 
   in () 
 
 type action = 
@@ -120,3 +125,14 @@ type 'a agent_metaplx =
      interface:(site*'a) list}
 
  
+type 'a rule_metaplx = 
+    {flag:string;
+     hand_side_common:('a * 'a) agent_metaplx list;
+     mod_left_hand_side:'a agent_metaplx list;
+     mod_right_hand_side:'a agent_metaplx list;
+     fixed_left_hand_side:'a agent_metaplx list;
+     fixed_right_hand_side:'a agent_metaplx list;
+     sign: string;
+     lhs_annotation: string;
+     rhs_annotation: string;
+     rule_annotation:string}

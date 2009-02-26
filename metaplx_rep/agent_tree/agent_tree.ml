@@ -63,7 +63,7 @@ let convert_declaration_into_solved_definition  x =
 	    else
 	      failwith 
 		(
-	      (match line with None -> "" | Some i -> "Line: "^(string_of_int i)^" ")
+	      (match line with None -> "" | Some i -> "Line: "^(string_of_line i)^" ")
 	      ^agent_target^" is introduced as a variant of "^agent_source^" that is not defined"
 									      )
 		)
@@ -117,24 +117,23 @@ let convert_declaration_into_solved_definition  x =
 	  in 
 	  let subs = Agent_interfaces.compute_interface old_interface decl in 
 	  let new_interface = 
-	    fst 
-	      (List.fold_left 
-		 (fun (interface,black) s -> 
-		   List.fold_left 
-		     (fun (interface,black) s -> 
-		       if SiteSet.mem s black 
-		       then 
-			 failwith 
-			   ("Site "^s^" is defined several time in variant "^t)
+	    SiteSet.fold 
+	      (fun s interface  -> 
+		List.fold_left 
+		  (fun interface s -> 
+		    if SiteSet.mem s interface
+		    then 
+		      failwith 
+			("Site "^s^" is defined several time in variant "^t)
 		       else 
-			 s::interface,SiteSet.add s black)
-		     (interface,black) 
-		     ((Agent_interfaces.abstract subs) s))
-		 ([],SiteSet.empty)
-		 old_interface)
+		      SiteSet.add s interface)
+		  interface
+		  ((Agent_interfaces.abstract subs) s))
+	      old_interface 
+	      SiteSet.empty
 	  in
 	  aux 
-	    (AgentMap.add t (new_interface:site list) interface_map)
+	    (AgentMap.add t new_interface interface_map)
 	    (deal_with t (q,npred))
     in
     aux interface_map (working_list,npred)
@@ -159,7 +158,7 @@ let convert_declaration_into_solved_definition  x =
 	  match d with 
 	    None,_ -> check q q' 
 	  | Some c,_ -> 
-	      if List.sort compare b = List.sort compare c 
+	      if SiteSet.equal b c 
 	      then check q q'
 	      else 
 		failwith ("Pb with Agent "^a^" interface")
@@ -182,10 +181,11 @@ let convert_declaration_into_solved_definition  x =
     in 
     let sol = 
       aux [agent,[],
-	    List.fold_left 
-	      (fun q a -> SiteMap.add a [a] q)
+	    SiteSet.fold 
+	      (fun a -> SiteMap.add a [a])
+	      (AgentMap.find agent interface)
 	      SiteMap.empty 
-	      (AgentMap.find agent interface)] [] in
+	  ] [] in
     AgentMap.add 
       agent 
       (List.map 
@@ -216,7 +216,7 @@ let convert_declaration_into_solved_definition  x =
 	AgentMap.iter 
 	  (fun a b -> 
 	    print_string a;
-	    List.iter print_string b;
+	    SiteSet.iter print_string b;
 	    print_newline ())
 	  interface in 
       () in 

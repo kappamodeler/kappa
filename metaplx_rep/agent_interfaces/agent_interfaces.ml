@@ -21,10 +21,10 @@ let convert_action action res =
 
 let compute_interface starting_interface directives = 
   let map = 
-    List.fold_left 
-      (fun map x -> SiteMap.add x [x] map)
-      SiteMap.empty 
+    SiteSet.fold
+      (fun x map  -> SiteMap.add x [x] map)
       starting_interface 
+      SiteMap.empty 
   in
   let map,sources,targets = 
     List.fold_left 
