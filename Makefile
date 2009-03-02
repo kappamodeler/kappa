@@ -95,6 +95,7 @@ OCAMLINCLUDES= -I $(COMPLXREP)/lib/$(TKREP) \
 		-I $(METAPLXREP)/rename_agent \
 		-I $(METAPLXREP)/rename_rule \
 		-I $(METAPLXREP)/pretty_printing \
+		-I $(METAPLXREP)/frontend \
 		$(TKINCLUDES) 
 
 OCAMLFLAGS=	$(OCAMLINCLUDES)
@@ -137,13 +138,13 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(SIMPLXREP)/src/html_config/config.cmo \
 	./$(COMPLXREP)/tools/tools2.cmo \
 	./$(COMPLXREP)/tools/map2.cmo \
-	./$(METAPLXREP)/data_structures/data_structures_metaplx.cmo \
 	./$(COMPLXREP)/tools/map_random.cmo \
 	./$(COMPLXREP)/tools/map_with_sharing.cmo \
 	./$(COMPLXREP)/tools/unbounded_array.cmo \
 	./$(COMPLXREP)/backend/parse_comment/comment_sig.cmo \
 	./$(COMPLXREP)/frontend/pb_sig.cmo \
 	./$(COMPLXREP)/data_structures/data_structures.cmo \
+	./$(METAPLXREP)/data_structures/data_structures_metaplx.cmo \
 	./$(COMPLXREP)/lib/superarg.cmo \
 	./$(COMPLXREP)/lib/$(TKREP)/superargTk.cmo \
 	./$(COMPLXREP)/data_structures/big_array.cmo \
@@ -225,6 +226,7 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(METAPLXREP)/agent_tree/agent_tree.cmo \
 	./$(METAPLXREP)/rename_agent/rename_agent.cmo \
 	./$(METAPLXREP)/rename_rule/rename_rule.cmo \
+	./$(METAPLXREP)/frontend/meta_parse.cmo 
 
  
 
@@ -247,7 +249,8 @@ MLI =  ./$(SIMPLXREP)/src/tools/error.mli \
         ./$(SIMPLXREP)/src/kappa/agent.mli \
 	./$(SIMPLXREP)/src/kappa/solution.mli \
 	./$(SIMPLXREP)/src/kappa/rule.mli\
-	./$(SIMPLXREP)/src/bnf/kappa_parse.mli 
+	./$(SIMPLXREP)/src/bnf/kappa_parse.mli \
+	./$(METAPLXREP)/frontend/meta_parse.mli 
 
 CMI = $(MLI:mli=cmi)
 CMA = unix.cma threads.cma str.cma nums.cma
@@ -307,6 +310,9 @@ toplx: $(MLI) $(CMI) $(LIBSC_CMA) $(LIB_BYTE)
 
 ./$(SIMPLXREP)/src/bnf/kappa_parse.ml ./$(SIMPLXREP)/src/bnf/kappa_parse.mli : ./$(SIMPLXREP)/src/bnf/kappa_parse.mly
 	ocamlyacc ./$(SIMPLXREP)/src/bnf/kappa_parse.mly 
+
+./$(METAPLXREP)/frontend/meta_parse.ml ./$(METAPLXREP)/frontend/meta_parse.mli : ./$(METAPLXREP)/frontend/meta_parse.mly 
+	ocamlyacc ./$(METAPLXREP)/frontend/meta_parse.mly 
 
 ./$(COMPLXREP)/automatically_generated/svn_number.ml:
 	make grab_svn_version_number

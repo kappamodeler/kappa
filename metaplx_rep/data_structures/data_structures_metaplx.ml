@@ -137,3 +137,14 @@ type 'a rule_metaplx =
      rhs_annotation: string;
      rule_annotation:string}
 
+type parsed_agent = (string * (string*string) list) 
+type parsed_gen =  (parsed_agent * string) option * string option * string option * action  list
+
+type parsed_conc = parsed_gen
+type parsed_rule = string * (((parsed_agent list * string) * string * (parsed_agent list * string) * string * string))
+
+type parse = INIT_L of  (parsed_agent list *string)
+  | DONT_CARE_L of string 
+  | GEN_L of parsed_gen 
+  | CONC_L of parsed_conc
+  | RULE_L of parsed_rule 
