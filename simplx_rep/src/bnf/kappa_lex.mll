@@ -35,6 +35,8 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     | "%obs:"  {OBS_LINE}
     | "%story:" {STORY_LINE}
     | "%mod:" {MODIF_LINE}
+    | "%gen:" {GEN_LINE}
+    | "%conc:" {CONC_LINE}
     | "do" {DO}
     | "\\\n" {incr_line lexbuf ; token lexbuf} 
     | '\n' {incr_line lexbuf ; NEWLINE}
@@ -65,6 +67,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     | '<' {SMALLER}
     | "$T" {TIME}
     | ":=" {SET}
+    | "=" {EQUAL} 
     | '$' (integer as i) {REF(int_of_string i)}
     | "$INF" {flush stdout ; INFINITY}
     | blank  {token lexbuf}

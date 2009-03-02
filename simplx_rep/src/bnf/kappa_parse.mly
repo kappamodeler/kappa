@@ -100,8 +100,8 @@
       if flg_type > 0 then 
 	error_found 90 (flag^" is an observation name, expecting a rule name")
 %}
-%token INIT_LINE  OBS_LINE  STORY_LINE NEWLINE MODIF_LINE EOF
-%token MULT DIVIDE PLUS MINUS COMMA SEMICOLON GREATER SMALLER SET INFINITY SEP
+%token INIT_LINE  OBS_LINE  STORY_LINE NEWLINE MODIF_LINE GEN_LINE CONC_LINE EOF
+%token MULT DIVIDE PLUS MINUS COMMA SEMICOLON GREATER SMALLER SET EQUAL INFINITY SEP
 %token DO AT TIME
 %token KAPPA_LNK KAPPA_WLD KAPPA_SEMI KAPPA_LRAR KAPPA_RAR
 %token OP_PAR CL_PAR OP_CONC CL_CONC OP_ACC CL_ACC
@@ -122,6 +122,8 @@
 | OBS_LINE obs_expr {obs_l := $2::(!obs_l)}
 | STORY_LINE story_expr {obs_l := $2::(!obs_l)}
 | MODIF_LINE modif_expr {exp := Experiment.add $2 (!exp)}
+| GEN_LINE gen_expr {gen := $2::(!gen)}
+| CONC_LINE gen_expr {conc := $2::(!conc)}
 | NEWLINE {()}
 | named_rule_expr {rules := (List.fold_left (fun rules r -> r::rules) (!rules) $1)} 
 | EOF {let sol = sol_of_hsh !env in
@@ -509,4 +511,22 @@
 | OP_PAR INT CL_PAR {Some (float_of_int $2)}
 | OP_PAR INFINITY CL_PAR {error_found 499 "infinite rate for implicit unary rule is not allowed"}
 
-%%
+  gen_expr : 
+    agent_expr NEWLINE {Some $1,None,None,[]}
+|   ID EQUAL ID NEWLINE {None,Some $1,Some $3,[]}
+|   ID EQUAL ID OP_CONC instruction_list CL_CONC NEWLINE {None,Some $1,Some $3,$5}
+
+  instruction_list: 
+    /*empty*/ {[]}
+| instruction instruction_list {$1::$2}
+
+  instruction:
+| PLUS ID {Data_structures_metaplx.Add_site $2}
+| MINUS ID {Data_structures_metaplx.Delete_site $2}
+| ID DIVIDE OP_ACC id_list CL_ACC {Data_structures_metaplx.Rename ($1,$4)}
+| ID DIVIDE ID {Data_structures_metaplx.Mutate_site($1,$3)}
+
+  id_list: 
+    /*empty*/ {[]}
+| ID id_list {$1::$2} 
+

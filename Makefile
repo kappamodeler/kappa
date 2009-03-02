@@ -137,6 +137,7 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(SIMPLXREP)/src/html_config/config.cmo \
 	./$(COMPLXREP)/tools/tools2.cmo \
 	./$(COMPLXREP)/tools/map2.cmo \
+	./$(METAPLXREP)/data_structures/data_structures_metaplx.cmo \
 	./$(COMPLXREP)/tools/map_random.cmo \
 	./$(COMPLXREP)/tools/map_with_sharing.cmo \
 	./$(COMPLXREP)/tools/unbounded_array.cmo \
@@ -219,7 +220,6 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(SIMPLXREP)/src/main/simulation2.cmo \
 	./$(SIMPLXREP)/src/html_config/HTML.cmo \
 	./$(METAPLXREP)/config/config_metaplx.cmo \
-	./$(METAPLXREP)/data_structures/data_structures_metaplx.cmo \
 	./$(METAPLXREP)/pretty_printing/pretty_printing.cmo \
 	./$(METAPLXREP)/agent_interfaces/agent_interfaces.cmo \
 	./$(METAPLXREP)/agent_tree/agent_tree.cmo \
