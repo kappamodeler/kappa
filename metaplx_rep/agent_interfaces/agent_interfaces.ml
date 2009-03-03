@@ -22,7 +22,7 @@ let convert_action action res =
 let compute_interface starting_interface directives = 
   let map = 
     SiteSet.fold
-      (fun x map  -> SiteMap.add x [x] map)
+      (fun (x:site) map  -> SiteMap.add x [x] map)
       starting_interface 
       SiteMap.empty 
   in

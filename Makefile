@@ -226,7 +226,8 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(METAPLXREP)/agent_tree/agent_tree.cmo \
 	./$(METAPLXREP)/rename_agent/rename_agent.cmo \
 	./$(METAPLXREP)/rename_rule/rename_rule.cmo \
-	./$(METAPLXREP)/frontend/meta_parse.cmo 
+	./$(METAPLXREP)/frontend/meta_parse.cmo \
+	./$(METAPLXREP)/frontend/meta_lex.cmo 
 
  
 
@@ -250,6 +251,7 @@ MLI =  ./$(SIMPLXREP)/src/tools/error.mli \
 	./$(SIMPLXREP)/src/kappa/solution.mli \
 	./$(SIMPLXREP)/src/kappa/rule.mli\
 	./$(SIMPLXREP)/src/bnf/kappa_parse.mli \
+	./$(METAPLXREP)/data_structures/data_structures_metaplx.mli \
 	./$(METAPLXREP)/frontend/meta_parse.mli 
 
 CMI = $(MLI:mli=cmi)
@@ -320,8 +322,14 @@ toplx: $(MLI) $(CMI) $(LIBSC_CMA) $(LIB_BYTE)
 ./$(SIMPLXREP)/src/bnf/kappa_parse.cmo: ./$(SIMPLXREP)/src/bnf/kappa_parse.mli ./$(SIMPLXREP)/src/bnf/kappa_parse.ml
 	$(OCAMLC) $(OCAMLFLAGS) -c ./$(SIMPLXREP)/src/bnf/kappa_parse.mli ./$(SIMPLXREP)/src/bnf/kappa_parse.ml
 
+./$(METAPLXREP)/frontend/meta_parse.cmo: ./$(METAPLXREP)/frontend/meta_parse.mli ./$(METAPLXREP)/frontend/meta_parse.ml 
+	$(OCAMLC) $(OCAMLFLAGS) -c ./$(METAPLXREP)/frontend/meta_parse.mli ./$(METAPLXREP)/frontend/meta_parse.ml 
+
 ./$(SIMPLXREP)/src/bnf/kappa_lex.ml: ./$(SIMPLXREP)/src/bnf/kappa_lex.mll
 	ocamllex ./$(SIMPLXREP)/src/bnf/kappa_lex.mll
+
+./$(METAPLXREP)/frontend/meta_lex.ml: ./$(METAPLXREP)/frontend/meta_lex.mll
+	ocamllex ./$(METAPLXREP)/frontend/meta_lex.mll
 
 ./$(COMPLXREP)/backend/parse_comment/yacc.ml: ./$(COMPLXREP)/backend/parse_comment ./$(COMPLXREP)/backend/parse_comment/yacc.mly 
 	ocamlyacc ./$(COMPLXREP)/backend/parse_comment/yacc.mly

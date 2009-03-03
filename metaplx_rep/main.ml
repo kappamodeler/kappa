@@ -4,6 +4,16 @@
 
 open Data_structures_metaplx 
 open Rename_agent 
+open Lexing 
+open Meta_lex
+
+let compile fic =
+    let d = open_in fic in
+    let lexbuf = Lexing.from_channel d in
+    let rep = Meta_parse.main token lexbuf in 
+    rep 
+    
+
 let x = 
   {
   concrete_names = 
@@ -75,3 +85,4 @@ let _ = deal_with_rule rule1
 let _ = deal_with_rule rule2 
 
 
+let r = compile "essai.ka"

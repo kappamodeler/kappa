@@ -40,11 +40,14 @@
 %left COMMA
 %left MULT DIVIDE
 
-%start line
-%type <Data_structures_metaplx.parse> line 
+%start main
+%type <Data_structures_metaplx.parse list> main
 
 %% /*Grammar rules*/
-
+main: 
+  EOF {[]}
+| line main {$1::$2}
+  
   line: 
 | INIT_LINE init_expr {INIT_L($2)}
 | OBS_LINE obs_expr   {DONT_CARE_L($2)}
