@@ -148,3 +148,4 @@ type parse = INIT_L of  (parsed_agent list *string)
   | GEN_L of parsed_gen 
   | CONC_L of parsed_conc
   | RULE_L of parsed_rule 
+  | PREPROCESSED_RULE of parsed_rule * string rule_metaplx

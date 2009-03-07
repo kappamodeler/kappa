@@ -47,7 +47,7 @@ let check_rule rule interface_database =
     rule.fixed_right_hand_side
 
 
-let rename_rule rule interface_database = 
+let rename_rule rule interface_database  = 
   let sol = {rule 
 	    with hand_side_common = [] ; 
 	      mod_left_hand_side = [] ;
@@ -102,4 +102,24 @@ let print_agent_list log l bool =
     bool l 
 
 
-      
+let check_model line (interface_database:declaration) = 
+  match line with 
+    INIT_L _   
+  | DONT_CARE_L _ 
+  | GEN_L _ 
+  | CONC_L _ -> interface_database
+  | RULE_L _ -> failwith "INTERNAL ERROR"
+  | PREPROCESSED_RULE (_,y) -> check_rule y interface_database
+
+let transform_model line interface_database tail = 
+  match line with 
+    INIT_L _   
+  | DONT_CARE_L _ 
+  | GEN_L _ 
+  | CONC_L _ -> line::tail 
+  | PREPROCESSED_RULE (x, rule) -> 
+      List.fold_left 
+	(fun sol l -> PREPROCESSED_RULE (x,l)::sol)
+	tail 
+	(rename_rule rule  interface_database)
+  | RULE_L _  -> failwith "INTERNAL ERROR"

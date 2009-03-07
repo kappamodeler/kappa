@@ -14,7 +14,7 @@ let compile fic =
     rep 
     
 
-let x = 
+(*let x = 
   {
   concrete_names = 
   AgentMap.add "A1" (Some (SiteSet.add "s" SiteSet.empty),[]) 
@@ -34,55 +34,32 @@ let x =
       )
    )
 } 
-    
-let subs = Agent_tree.convert_declaration_into_solved_definition x
-let x = 
-  {agent_name = "A3" ;
-      interface = ["s",("~a","~b");"y",("~c","~d")]}
-  
-let y = 
-    {agent_name = "A3" ;
-     interface = ["y","~a"]}
-
-let z = 
-    {agent_name = "A2" ;
-      interface = ["s1","~b"]}
+  *)  
 
 
-let rule1 = 
-  {flag = "essai"; 
-    hand_side_common=[x];
-    mod_left_hand_side=[y];
-    mod_right_hand_side=[z];
-    fixed_left_hand_side=[];
-    fixed_right_hand_side=[];
-    sign="-->";
-    lhs_annotation="";
-    rhs_annotation="";
-    rule_annotation="";} 
-
-let rule2 = 
-  {flag = "essai2"; 
-    hand_side_common=[x];
-    mod_left_hand_side=[y];
-    mod_right_hand_side=[y];
-    fixed_left_hand_side=[];
-    fixed_right_hand_side=[];
-    sign="-->";
-    lhs_annotation="";
-    rhs_annotation="";
-    rule_annotation="";} 
-
-let deal_with_rule rule = 
-  let rep = Rename_rule.rename_rule rule subs in
-  let _ = Printf.fprintf stdout "BEFORE\n" in
-  let _ = Pretty_printing.print_rule stdout rule in
-  let _ = Printf.fprintf stdout "AFTER\n" in 
-  let _ = List.iter (Pretty_printing.print_rule stdout) rep in 
-  ()
-
-let _ = deal_with_rule rule1
-let _ = deal_with_rule rule2 
 
 
 let r = compile "essai.ka"
+let (decl:declaration)  = Compile_directives.convert r 
+let rules = List.map Compile_rule.convert r 
+let decl = 
+  List.fold_left 
+    (fun decl x -> 
+      Rename_rule.check_model 
+	x decl)
+    decl 
+    rules 
+let subs = Agent_tree.convert_declaration_into_solved_definition decl
+let rules = 
+  List.fold_left 
+    (fun model rule -> 
+      Rename_rule.transform_model 
+	rule
+	subs
+	model)
+    [] 
+    rules 
+let _ = Pretty_printing.print_model stdout (List.rev rules)
+
+
+

@@ -49,15 +49,14 @@ main:
 | line main {$1::$2}
   
   line: 
-| INIT_LINE init_expr {INIT_L($2)}
-| OBS_LINE obs_expr   {DONT_CARE_L($2)}
-| STORY_LINE story_expr {DONT_CARE_L($2)}
-| MODIF_LINE modif_expr {DONT_CARE_L($2)}
+| INIT_LINE init_expr {let a,b = $2 in INIT_L(a,"%init:"^b)}
+| OBS_LINE obs_expr   {DONT_CARE_L("%obs:"^$2)}
+| STORY_LINE story_expr {DONT_CARE_L("%story:"^$2)}
+| MODIF_LINE modif_expr {DONT_CARE_L("%mod"^$2)}
 | GEN_LINE gen_expr {GEN_L($2)}
 | CONC_LINE gen_expr {CONC_L($2)}
 | NEWLINE {DONT_CARE_L("\n")}
 | named_rule_expr {RULE_L($1)}
-| EOF {raise End_of_file}
 | error {raise (error_found 119 "syntax error")}
   ;
 
@@ -68,7 +67,7 @@ main:
   ;
 
   assignement: 
-| LABEL SET assign_expr {$1^" := "^$3}
+| LABEL SET assign_expr {"'"^$1^"' := "^$3}
 | LABEL SET error {error_found 165 "invalid assignement"}
   ;
 
@@ -85,7 +84,7 @@ main:
 | INT {string_of_int $1}
 | INFINITY {"$INF"}
 
-| LABEL {$1}
+| LABEL {"'$1' "}
   ;
   
   concentration_ineq:
@@ -158,15 +157,15 @@ main:
 
   
   obs_expr: 
-| LABEL NEWLINE {$1^"\n"}
+| LABEL NEWLINE {"'"^$1^"'\n"}
 | ne_sol_expr NEWLINE {(snd $1)^"\n"}
-| LABEL ne_sol_expr NEWLINE {$1^(snd $2)^"\n"}
+| LABEL ne_sol_expr NEWLINE {"'"^$1^"' "^(snd $2)^"\n"}
 | LABEL EOF {error_found 414 "missing end of line"}
 | ne_sol_expr EOF {error_found 415 "missing end of line"}
   ;
 
   story_expr: 
-| LABEL NEWLINE {$1^"\n"}
+| LABEL NEWLINE {"'"^$1^"'\n"}
 | LABEL EOF {error_found 420 "missing end of line"}
   ;
   

@@ -227,7 +227,9 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(METAPLXREP)/rename_agent/rename_agent.cmo \
 	./$(METAPLXREP)/rename_rule/rename_rule.cmo \
 	./$(METAPLXREP)/frontend/meta_parse.cmo \
-	./$(METAPLXREP)/frontend/meta_lex.cmo 
+	./$(METAPLXREP)/frontend/meta_lex.cmo \
+	./$(METAPLXREP)/frontend/compile_rule.cmo \
+	./$(METAPLXREP)/frontend/compile_directives.cmo 
 
  
 

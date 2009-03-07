@@ -7,7 +7,7 @@
 open Error_handler 
 open Data_structures_metaplx 
 
-let trace = true
+let trace = false
 
 let error i = 
   unsafe_frozen None (Some "agent_interfaces.ml") None (Some ("line "^(string_of_int i))) (fun () -> raise Exit) 
@@ -202,12 +202,9 @@ let convert_declaration_into_solved_definition  x =
 	    substitutions=sol})
 	 
 	 (List.filter 
-	 (fun (t,sol) -> 
-	   (*(try let _ = AgentMap.find t x.concrete_names in true
-	   with Not_found ->false)
-	       && *)
-	     ((try let _ = AgentMap.find t succ in false with Not_found -> true)))
-	 sol)) map in
+	    (fun (t,sol) -> 
+	      ((try let _ = AgentMap.find t succ in false with Not_found -> true)))
+		sol)) map in
   let _ = 
     if trace 
     then 

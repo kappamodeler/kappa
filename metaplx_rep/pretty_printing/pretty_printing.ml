@@ -41,3 +41,15 @@ let print_rule log rule =
   let _ = Printf.fprintf log "%s %s" rule.lhs_annotation rule.rule_annotation in 
   let _ = Printf.fprintf log "\n" in 
   () 
+
+let print_model log model = 
+  List.iter 
+    (fun line -> 
+      match line with 
+	INIT_L (_,x) 
+      | DONT_CARE_L x -> Printf.fprintf log "%s" x 
+      | GEN_L _ 
+      | CONC_L _ -> () 
+      | RULE_L _ -> ()
+      | PREPROCESSED_RULE (_,y) -> print_rule log  y)
+    model 
