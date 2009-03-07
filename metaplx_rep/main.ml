@@ -7,6 +7,7 @@ open Rename_agent
 open Lexing 
 open Meta_lex
 
+
 let compile fic =
     let d = open_in fic in
     let lexbuf = Lexing.from_channel d in
@@ -38,7 +39,7 @@ let compile fic =
 
 
 
-
+let file = Sys.argv.(1)
 let r = compile "essai.ka"
 let (decl:declaration)  = Compile_directives.convert r 
 let rules = List.map Compile_rule.convert r 
@@ -49,6 +50,7 @@ let decl =
 	x decl)
     decl 
     rules 
+let decl = Agent_tree.complete decl 
 let subs = Agent_tree.convert_declaration_into_solved_definition decl
 let rules = 
   List.fold_left 

@@ -184,9 +184,9 @@ main:
 
   rule_expr:
 | sol_expr KAPPA_RAR sol_expr kin_expr1 constraint_expr
-      {$1,"<->",$3,$4,$5}
+      {$1,"->",$3,$4,$5}
 | sol_expr KAPPA_LRAR sol_expr kin_expr2 constraint_expr
-    {$1,"->",$3,$4,$5}
+    {$1,"<->",$3,$4,$5}
   ;
 
   constraint_expr: /*empty*/ {""}

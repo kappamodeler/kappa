@@ -9,7 +9,7 @@ open Data_structures_metaplx
 
 
 let error i = 
-  unsafe_frozen None (Some "agent_interfaces.ml") None (Some ("line "^(string_of_int i))) (fun () -> raise Exit) 
+  unsafe_frozen None (Some "agent_interfaces.ml") None (Some ("line "^(string_of_int i))) (fun () -> (failwith ("ERROR"^(string_of_int i)))) 
 
 
 

@@ -10,7 +10,9 @@ open Data_structures_metaplx
 let trace = false
 
 let error i = 
-  unsafe_frozen None (Some "agent_interfaces.ml") None (Some ("line "^(string_of_int i))) (fun () -> raise Exit) 
+  let _ = print_string (string_of_int i) in 
+  let _ = print_newline () in 
+  unsafe_frozen None (Some "agent_interfaces.ml") None (Some ("line "^(string_of_int i))) (fun () -> failwith ("error"^(string_of_int i)))
 
 let convert_declaration_into_solved_definition  x = 
   let add_count agent k map = 
@@ -93,6 +95,10 @@ let convert_declaration_into_solved_definition  x =
       ([],npred)
       roots 
   in
+  let faiwith s = 
+    let _ = print_string s in 
+    let _ = print_newline () in 
+    failwith s in 
   let interface = 
     let rec aux interface_map (working_list,npred) = 
       match working_list with 
@@ -104,6 +110,7 @@ let convert_declaration_into_solved_definition  x =
 	    with 
 	      Not_found -> error 102 
 	  in 
+	 
 	  let agent,decl = 
 	    match def with 
 	      Variant(a,decl),_ -> a,decl
@@ -138,6 +145,8 @@ let convert_declaration_into_solved_definition  x =
     in
     aux interface_map (working_list,npred)
   in
+  let _ = if trace then print_string "C8\n" in 
+
   let interface_list = 
     AgentMap.fold 
       (fun a b l -> (a,b)::l)
@@ -261,3 +270,15 @@ let convert_declaration_into_solved_definition x =
     convert_declaration_into_solved_definition x
 
 
+let complete subs = 
+  AgentMap.fold 
+    (fun a (b,c) subs ->
+	  match b with None -> subs
+	  | Some interface -> 
+	      try let _ = AgentMap.find a subs.definitions in subs 
+	      with Not_found -> 
+		{subs with 
+		  definitions = 
+		  AgentMap.add a (Root interface,None) subs.definitions})
+    subs.concrete_names 
+    subs 
