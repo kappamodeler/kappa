@@ -6,7 +6,7 @@
 
 
 
-type line = Rule of string | Decl 
+type line = int
 
 type agent = string 
 
@@ -76,14 +76,14 @@ type parsed_gen =  (parsed_agent * string) option * string option * string optio
 type parsed_conc = parsed_gen
 type parsed_rule = string * (((parsed_agent list * string) * string * (parsed_agent list * string) * string * string))
 
-type parse = INIT_L of  (parsed_agent list *string)
-  | DONT_CARE_L of string 
-  | OBS_L of string*string
-  | STORY_L of string*string 
-  | GEN_L of parsed_gen 
-  | CONC_L of parsed_conc
-  | RULE_L of parsed_rule 
-  | PREPROCESSED_RULE of parsed_rule * string rule_metaplx
+type parse = INIT_L of  (parsed_agent list *string*int)
+  | DONT_CARE_L of string*int 
+  | OBS_L of string*string*int
+  | STORY_L of string*string*int
+  | GEN_L of parsed_gen*int
+  | CONC_L of parsed_conc*int
+  | RULE_L of parsed_rule*int 
+  | PREPROCESSED_RULE of parsed_rule * string rule_metaplx*int
 
 
 val print_interface: print_handler -> concrete_interface  ->unit

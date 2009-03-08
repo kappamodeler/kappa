@@ -51,14 +51,14 @@ main:
   
   line: 
 | INIT_LINE init_expr {let _ = line:=(!line)+1 in 
-                       let a,b = $2 in INIT_L(a,"%init:"^b)}
+                       let a,b = $2 in INIT_L(a,"%init:"^b,!line)}
 | OBS_LINE obs_expr   {let _ = line:=(!line)+1 in $2}
 | STORY_LINE story_expr {let _ = line:=(!line)+1 in $2}
-| MODIF_LINE modif_expr {let _ = line:=(!line)+1 in DONT_CARE_L("%mod"^$2)}
-| GEN_LINE gen_expr {let _ = line:=(!line)+1 in GEN_L($2)}
-| CONC_LINE gen_expr {let _ = line:=(!line)+1 in CONC_L($2)}
-| NEWLINE {let _ = line:=(!line)+1 in DONT_CARE_L("\n")}
-| named_rule_expr {let _ = line:=(!line)+1 in RULE_L($1)}
+| MODIF_LINE modif_expr {let _ = line:=(!line)+1 in DONT_CARE_L("%mod"^$2,!line)}
+| GEN_LINE gen_expr {let _ = line:=(!line)+1 in GEN_L($2,!line)}
+| CONC_LINE gen_expr {let _ = line:=(!line)+1 in CONC_L($2,!line)}
+| NEWLINE {let _ = line:=(!line)+1 in DONT_CARE_L("\n",!line)}
+| named_rule_expr {let _ = line:=(!line)+1 in RULE_L($1,!line)}
 | error {raise (error_found 119 "syntax error")}
   ;
 
@@ -159,15 +159,15 @@ main:
 
   
   obs_expr: 
-| LABEL NEWLINE {OBS_L($1,"%obs: '"^$1^"'\n")}
-| ne_sol_expr NEWLINE {DONT_CARE_L("%obs: "^(snd $1)^"\n")}
-| LABEL ne_sol_expr NEWLINE {DONT_CARE_L("%obs: '"^$1^"' "^(snd $2)^"\n")}
+| LABEL NEWLINE {OBS_L($1,"%obs: '"^$1^"'\n",!line)}
+| ne_sol_expr NEWLINE {DONT_CARE_L("%obs: "^(snd $1)^"\n",!line)}
+| LABEL ne_sol_expr NEWLINE {DONT_CARE_L("%obs: '"^$1^"' "^(snd $2)^"\n",!line)}
 | LABEL EOF {error_found 414 "missing end of line"}
 | ne_sol_expr EOF {error_found 415 "missing end of line"}
   ;
 
   story_expr: 
-| LABEL NEWLINE {STORY_L($1,"%story: '"^$1^"'\n")}
+| LABEL NEWLINE {STORY_L($1,"%story: '"^$1^"'\n",!line)}
 | LABEL EOF {error_found 420 "missing end of line"}
   ;
   

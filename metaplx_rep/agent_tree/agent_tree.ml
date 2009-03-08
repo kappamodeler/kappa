@@ -14,7 +14,7 @@ let error i =
   let _ = print_newline () in 
   unsafe_frozen None (Some "agent_interfaces.ml") None (Some ("line "^(string_of_int i))) (fun () -> failwith ("error"^(string_of_int i)))
 
-let convert_declaration_into_solved_definition  x = 
+let convert_declaration_into_solved_definition  x  = 
   let add_count agent k map = 
     let old = 
       try 
@@ -65,7 +65,7 @@ let convert_declaration_into_solved_definition  x =
 	    else
 	      failwith 
 		(
-	      (match line with None -> "" | Some i -> "Line: "^(string_of_line i)^" ")
+	      (match line with None -> "" | Some i -> (string_of_line i)^": ")
 	      ^agent_target^" is introduced as a variant of "^agent_source^" that is not defined"
 									      )
 		)
@@ -95,7 +95,7 @@ let convert_declaration_into_solved_definition  x =
       ([],npred)
       roots 
   in
-  let faiwith s = 
+  let failwith s = 
     let _ = print_string s in 
     let _ = print_newline () in 
     failwith s in 
@@ -111,11 +111,13 @@ let convert_declaration_into_solved_definition  x =
 	      Not_found -> error 102 
 	  in 
 	 
-	  let agent,decl = 
+	  let agent,decl,line = 
 	    match def with 
-	      Variant(a,decl),_ -> a,decl
+	      Variant(a,decl),line -> a,decl,line
 	    | _ -> error 107 
 	  in
+	  let line = 
+	    match line with None -> "" | Some i -> (string_of_line i) in 
 	  let old_interface = 
 	    try 
 	      AgentMap.find agent interface_map 
@@ -131,7 +133,7 @@ let convert_declaration_into_solved_definition  x =
 		    if SiteSet.mem s interface
 		    then 
 		      failwith 
-			("Site "^s^" is defined several time in variant "^t)
+			(line^": site "^s^" is defined several time in variant "^t)
 		       else 
 		      SiteSet.add s interface)
 		  interface

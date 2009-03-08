@@ -14,48 +14,51 @@ let get_interface parsed_agent =
   match parsed_agent with 
     (a,b) -> (a,List.fold_left (fun set (a,_) -> SiteSet.add a set) SiteSet.empty b)
       
-let add_concrete a b subs = 
+let add_concrete a b subs i = 
   try 
+    let x,y=AgentMap.find a subs.concrete_names in 
     if SiteSet.equal 
-	(match AgentMap.find a subs.concrete_names
-	with Some a,_ -> a | _ -> raise Not_found)
+	(match x
+	with Some a -> a | _ -> raise Not_found)
 	b 
-    then subs
+    then {subs with concrete_names = AgentMap.add a (x,i::y) subs.concrete_names}
     else
       failwith "add_concrete"
   with 
     Not_found -> 
-      {subs with concrete_names = AgentMap.add a (Some b,[]) subs.concrete_names}
+      {subs with concrete_names = AgentMap.add a (Some b,[i]) subs.concrete_names}
 
-let add_gen (a,b,c,d) subs = 
+let add_gen (a,b,c,d) subs i = 
   let agent = 
     match a,b with _,Some e -> e
     | Some ((a,_),_),_-> a in
   try 
-    let _ = AgentMap.find agent subs.definitions in failwith "add_gen" 
+    let (a,b) = AgentMap.find agent subs.definitions in 
+    match b with None -> failwith ("Line "^(string_of_line i)^" generic agent "^agent^" is already defined")
+    | Some a -> failwith ("Generic agent "^agent^" is defined in "^(string_of_line i)^" and in "^(string_of_line a))
   with 
     Not_found -> 
       let def = 
 	match (a,b,c,d) with 
 	  Some ((a,b),_),_,_,_ -> 
 	    let _ = trace_print "root\n" in
-	    Root(List.fold_left (fun sol (a,_) -> SiteSet.add a sol) SiteSet.empty b),None 
+	    Root(List.fold_left (fun sol (a,_) -> SiteSet.add a sol) SiteSet.empty b),Some i
 	| _,_,Some agent',list -> 
 	    let _ = trace_print "variant\n" in 
-	    Variant(agent',get_instr list),None 
+	    Variant(agent',get_instr list),Some i 
       in
       {subs with definitions = 
 	AgentMap.add agent def  subs.definitions}
 
 
-let add_conc (a,b,c,d) subs = 
-  let subs = add_gen (a,b,c,d) subs in 
+let add_conc (a,b,c,d) subs i = 
+  let subs = add_gen (a,b,c,d) subs i in 
   match a,b with 
     Some ((a,b),_),_ -> 
       begin
 	let interface = List.fold_left (fun sol (a,_) -> SiteSet.add a sol) SiteSet.empty b in 
 	let _ = trace_print "CONC\n" in 
-	add_concrete a interface subs 
+	add_concrete a interface subs i 
       end
   | _, Some e -> 
       begin
@@ -73,15 +76,15 @@ let convert lines =
       sol x -> 
 	match x 
 	with 
-	  INIT_L (a,_) -> 
+	  INIT_L (a,_,i) -> 
 	    List.fold_left 
 	      (fun sol a -> 
 		let ag,site = get_interface a in 
-		add_concrete ag site sol)
+		add_concrete ag site sol i)
 	      sol a 
 	| DONT_CARE_L _ -> sol 
-	| GEN_L p -> add_gen p sol
-	| CONC_L p -> add_conc p sol 
+	| GEN_L (p,i) -> add_gen p sol i
+	| CONC_L (p,i) -> add_conc p sol i 
 	| RULE_L _ -> sol 
 	| PREPROCESSED_RULE _ -> sol
 	| OBS_L _ | STORY_L _ -> sol )

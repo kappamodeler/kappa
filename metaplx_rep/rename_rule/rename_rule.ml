@@ -4,7 +4,7 @@ open Rename_agent
 
 let add_decl a l = a::l 
 
-let declare_full flag agent interface_database =
+let declare_full agent interface_database i =
   let interface = 
     List.fold_left 
       (fun set (a,_) -> SiteSet.add a set)
@@ -24,22 +24,26 @@ let declare_full flag agent interface_database =
 		  concrete_names = 
 		  AgentMap.add 
 		    agent.agent_name 
-		    (Some interface,add_decl flag line) 
+		    (Some interface,add_decl i  line) 
 		    interface_database.concrete_names}
 	else 
-	  failwith "Incombatible interfaces"
+	  failwith 
+	    (List.fold_left 
+	       (fun string i -> string^(string_of_int i)^";")
+	       ("Incombatible interfaces between line "^(string_of_line i))
+	       line)
   with 
     Not_found -> 
       Some {interface_database 
 	       with 
-	     concrete_names = AgentMap.add agent.agent_name (Some interface,add_decl flag []) interface_database.concrete_names}
+	     concrete_names = AgentMap.add agent.agent_name (Some interface,add_decl i []) interface_database.concrete_names}
 
-let check_rule rule interface_database = 
+let check_rule rule interface_database i = 
   let f = 
     List.fold_left 
       (fun database ag -> 
-	match declare_full (Rule rule.flag) ag database 
-	with None -> failwith ("Problem with rule "^rule.flag)
+	match declare_full ag database i
+	with None -> failwith ("Problem with rule "^rule.flag^" at line "^(string_of_int i))
 	| Some a -> a)
   in
   f (f interface_database 
@@ -120,7 +124,7 @@ let check_model line (interface_database:declaration) =
   | GEN_L _ 
   | CONC_L _ -> interface_database
   | RULE_L _ -> failwith "INTERNAL ERROR"
-  | PREPROCESSED_RULE (_,y) -> check_rule y interface_database
+  | PREPROCESSED_RULE (_,y,i) -> check_rule y interface_database i 
 
 let transform_model line interface_database (tail,flagset) = 
   match line with 
@@ -130,10 +134,10 @@ let transform_model line interface_database (tail,flagset) =
   | DONT_CARE_L _ 
   | GEN_L _ 
   | CONC_L _ -> line::tail,flagset
-  | PREPROCESSED_RULE (x, rule) -> 
+  | PREPROCESSED_RULE (x, rule,i) -> 
       let a,b = rename_rule rule interface_database flagset in 
       List.fold_left 
-	(fun sol l -> PREPROCESSED_RULE (x,l)::sol)
+	(fun sol l -> PREPROCESSED_RULE (x,l,i)::sol)
 	tail 
 	(a),b
   | RULE_L _  -> failwith "INTERNAL ERROR"
@@ -141,17 +145,17 @@ let transform_model line interface_database (tail,flagset) =
 let rename_obs rule flagset list = 
   match rule with 
     INIT_L _ | DONT_CARE_L _ | GEN_L _ | CONC_L _ | RULE_L _ | PREPROCESSED_RULE _ -> rule::list
-  | OBS_L (s,a) ->
+  | OBS_L (s,a,i) ->
       (try 
 	let l = StringMap.find s flagset in
 	List.fold_left 
-	  (fun sol l -> (OBS_L(l,a))::sol)
+	  (fun sol l -> (OBS_L(l,a,i))::sol)
 	  list l 
       with Not_found -> (rule::list))
-  | STORY_L (s,a) ->  
+  | STORY_L (s,a,i) ->  
       (try 
 	let l = StringMap.find s flagset in
 	List.fold_left 
-	  (fun sol l -> STORY_L(l,a)::sol)
+	  (fun sol l -> STORY_L(l,a,i)::sol)
 	  list l 
       with Not_found -> rule::list)

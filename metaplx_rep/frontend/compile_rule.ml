@@ -20,7 +20,7 @@ let smash b d =
 let convert lines = 
     (fun x -> 
       match x with 
-	RULE_L x -> 
+	RULE_L (x,i) -> 
 	  begin
 	    let flag,((lhs,lhs_annotation),sign,(rhs,rhs_annotation),rule_annotation1,rule_annotation2) = x in 
 	    let common,left,right = 
@@ -59,7 +59,7 @@ let convert lines =
 			  rhs_annotation=rhs_annotation;
 			  rule_annotation=rule_annotation1^rule_annotation2} 
 	    in 
-	    PREPROCESSED_RULE (x,rule)
+	    PREPROCESSED_RULE (x,rule,i)
 	  end
       |	_ -> x)
     lines 
