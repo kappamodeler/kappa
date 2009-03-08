@@ -51,5 +51,7 @@ let print_model log model =
       | GEN_L _ 
       | CONC_L _ -> () 
       | RULE_L _ -> ()
-      | PREPROCESSED_RULE (_,y) -> print_rule log  y)
+      | PREPROCESSED_RULE (_,y) -> print_rule log  y
+      |	OBS_L (x,_) -> Printf.fprintf log "%sobs: '%s'\n" "%" x
+      |	STORY_L (x,_) -> Printf.fprintf log "%sstory:  '%s'\n" "%" x)
     model 

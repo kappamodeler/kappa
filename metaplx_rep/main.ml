@@ -52,16 +52,21 @@ let decl =
     rules 
 let decl = Agent_tree.complete decl 
 let subs = Agent_tree.convert_declaration_into_solved_definition decl
-let rules = 
+let rules,flags  = 
   List.fold_left 
     (fun model rule -> 
       Rename_rule.transform_model 
 	rule
 	subs
 	model)
-    [] 
+    ([],StringMap.empty) 
     rules 
-let _ = Pretty_printing.print_model stdout (List.rev rules)
+let rules = 
+  List.fold_left 
+    (fun model rule -> Rename_rule.rename_obs rule flags model)
+    []
+    rules
+let _ = Pretty_printing.print_model stdout rules
 
 
 

@@ -83,7 +83,8 @@ let convert lines =
 	| GEN_L p -> add_gen p sol
 	| CONC_L p -> add_conc p sol 
 	| RULE_L _ -> sol 
-	| PREPROCESSED_RULE _ -> sol)
+	| PREPROCESSED_RULE _ -> sol
+	| OBS_L _ | STORY_L _ -> sol )
     { concrete_names=AgentMap.empty;
       definitions=AgentMap.empty}
     lines 

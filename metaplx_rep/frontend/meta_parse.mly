@@ -14,7 +14,8 @@
 
   let error_runtime = error Error.runtime  
   let error_found = error Error.found 
-    
+      
+let line = ref 0
   
   let sol_of_hsh hsh = 
     Hashtbl.fold (fun _ (sol,n) init -> 
@@ -49,14 +50,15 @@ main:
 | line main {$1::$2}
   
   line: 
-| INIT_LINE init_expr {let a,b = $2 in INIT_L(a,"%init:"^b)}
-| OBS_LINE obs_expr   {DONT_CARE_L("%obs:"^$2)}
-| STORY_LINE story_expr {DONT_CARE_L("%story:"^$2)}
-| MODIF_LINE modif_expr {DONT_CARE_L("%mod"^$2)}
-| GEN_LINE gen_expr {GEN_L($2)}
-| CONC_LINE gen_expr {CONC_L($2)}
-| NEWLINE {DONT_CARE_L("\n")}
-| named_rule_expr {RULE_L($1)}
+| INIT_LINE init_expr {let _ = line:=(!line)+1 in 
+                       let a,b = $2 in INIT_L(a,"%init:"^b)}
+| OBS_LINE obs_expr   {let _ = line:=(!line)+1 in $2}
+| STORY_LINE story_expr {let _ = line:=(!line)+1 in $2}
+| MODIF_LINE modif_expr {let _ = line:=(!line)+1 in DONT_CARE_L("%mod"^$2)}
+| GEN_LINE gen_expr {let _ = line:=(!line)+1 in GEN_L($2)}
+| CONC_LINE gen_expr {let _ = line:=(!line)+1 in CONC_L($2)}
+| NEWLINE {let _ = line:=(!line)+1 in DONT_CARE_L("\n")}
+| named_rule_expr {let _ = line:=(!line)+1 in RULE_L($1)}
 | error {raise (error_found 119 "syntax error")}
   ;
 
@@ -157,21 +159,21 @@ main:
 
   
   obs_expr: 
-| LABEL NEWLINE {"'"^$1^"'\n"}
-| ne_sol_expr NEWLINE {(snd $1)^"\n"}
-| LABEL ne_sol_expr NEWLINE {"'"^$1^"' "^(snd $2)^"\n"}
+| LABEL NEWLINE {OBS_L($1,"%obs: '"^$1^"'\n")}
+| ne_sol_expr NEWLINE {DONT_CARE_L("%obs: "^(snd $1)^"\n")}
+| LABEL ne_sol_expr NEWLINE {DONT_CARE_L("%obs: '"^$1^"' "^(snd $2)^"\n")}
 | LABEL EOF {error_found 414 "missing end of line"}
 | ne_sol_expr EOF {error_found 415 "missing end of line"}
   ;
 
   story_expr: 
-| LABEL NEWLINE {"'"^$1^"'\n"}
+| LABEL NEWLINE {STORY_L($1,"%story: '"^$1^"'\n")}
 | LABEL EOF {error_found 420 "missing end of line"}
   ;
   
   named_rule_expr:
 | LABEL rule_expr NEWLINE {$1,$2}
-| rule_expr NEWLINE {"",$1}
+| rule_expr NEWLINE {"Auto"^(string_of_int (!line)) ,$1}
 | LABEL rule_expr EOF {error_found 434 "missing end of line"}
 | rule_expr EOF {error_found 435 "missing end of line"}
   ;

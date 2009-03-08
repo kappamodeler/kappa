@@ -14,6 +14,7 @@ type agent = string
 
 type site = string 
 
+module StringMap : (Map.S with type key = string)
 module SiteSet : (Set.S with type elt = site)
 module SiteMap : (Map.S with type key = site)
 module AgentMap : (Map.S with type key = agent)
@@ -77,6 +78,8 @@ type parsed_rule = string * (((parsed_agent list * string) * string * (parsed_ag
 
 type parse = INIT_L of  (parsed_agent list *string)
   | DONT_CARE_L of string 
+  | OBS_L of string*string
+  | STORY_L of string*string 
   | GEN_L of parsed_gen 
   | CONC_L of parsed_conc
   | RULE_L of parsed_rule 

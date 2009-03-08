@@ -14,6 +14,9 @@ let string_of_line x =
   | Rule x -> x 
 
 type agent = string 
+
+module StringMap = Map2.Make(struct type t = string let compare = compare end)
+
 module Agent = struct type t=agent let compare=compare end
 module AgentSet = Set.Make(Agent)
 module AgentMap = Map2.Make(Agent)
@@ -145,6 +148,8 @@ type parsed_rule = string * (((parsed_agent list * string) * string * (parsed_ag
 
 type parse = INIT_L of  (parsed_agent list *string)
   | DONT_CARE_L of string 
+  | OBS_L of string*string
+  | STORY_L of string*string 
   | GEN_L of parsed_gen 
   | CONC_L of parsed_conc
   | RULE_L of parsed_rule 

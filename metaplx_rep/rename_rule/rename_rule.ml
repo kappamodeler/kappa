@@ -47,7 +47,14 @@ let check_rule rule interface_database =
     rule.fixed_right_hand_side
 
 
-let rename_rule rule interface_database  = 
+let rename_rule rule interface_database flagmap  = 
+  let fadd x y map = 
+    let old = 
+      try 
+	StringMap.find x map 
+      with 
+	Not_found -> [] in 
+    StringMap.add x (y::old) map in 
   let sol = {rule 
 	    with hand_side_common = [] ; 
 	      mod_left_hand_side = [] ;
@@ -74,21 +81,23 @@ let rename_rule rule interface_database  =
 	List.fold_left 
 	  (fun liste (left,left') -> 
 	    List.fold_left 
-	      (fun liste (right,right') -> 
+	      (fun (liste,flags) (right,right') -> 
 		let add_flag = 
 		  List.fold_left 
 		    (List.fold_left (fun flag (a,b)-> flag^"."^b^"/"^a))
 		in 
+		let flag' = add_flag (add_flag (add_flag rule.flag hs') left') right' in 
 		{rule with 
-		  flag = add_flag (add_flag (add_flag rule.flag hs') left') right' ;
+		  flag = flag' ;
 		  hand_side_common = hs ; 
 		  mod_left_hand_side = left ;
-		  mod_right_hand_side = right }::liste)
+		  mod_right_hand_side = right }::liste,
+		fadd rule.flag flag' flags)
 	      liste 
 	      mod_right_hand_side')
 	  liste 
 	  mod_left_hand_side')
-      [] 
+      ([],flagmap) 
       hand_side_common' 
   in 
   rule_list 
@@ -105,21 +114,44 @@ let print_agent_list log l bool =
 let check_model line (interface_database:declaration) = 
   match line with 
     INIT_L _   
+  | OBS_L _
+  | STORY_L _ 
   | DONT_CARE_L _ 
   | GEN_L _ 
   | CONC_L _ -> interface_database
   | RULE_L _ -> failwith "INTERNAL ERROR"
   | PREPROCESSED_RULE (_,y) -> check_rule y interface_database
 
-let transform_model line interface_database tail = 
+let transform_model line interface_database (tail,flagset) = 
   match line with 
-    INIT_L _   
+    INIT_L _  
+  | OBS_L _ 
+  | STORY_L _ 
   | DONT_CARE_L _ 
   | GEN_L _ 
-  | CONC_L _ -> line::tail 
+  | CONC_L _ -> line::tail,flagset
   | PREPROCESSED_RULE (x, rule) -> 
+      let a,b = rename_rule rule interface_database flagset in 
       List.fold_left 
 	(fun sol l -> PREPROCESSED_RULE (x,l)::sol)
 	tail 
-	(rename_rule rule  interface_database)
+	(a),b
   | RULE_L _  -> failwith "INTERNAL ERROR"
+
+let rename_obs rule flagset list = 
+  match rule with 
+    INIT_L _ | DONT_CARE_L _ | GEN_L _ | CONC_L _ | RULE_L _ | PREPROCESSED_RULE _ -> rule::list
+  | OBS_L (s,a) ->
+      (try 
+	let l = StringMap.find s flagset in
+	List.fold_left 
+	  (fun sol l -> (OBS_L(l,a))::sol)
+	  list l 
+      with Not_found -> (rule::list))
+  | STORY_L (s,a) ->  
+      (try 
+	let l = StringMap.find s flagset in
+	List.fold_left 
+	  (fun sol l -> STORY_L(l,a)::sol)
+	  list l 
+      with Not_found -> rule::list)
