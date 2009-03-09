@@ -12,10 +12,15 @@
        Some s)
       s
 
-  let error_runtime = error Error.runtime  
-  let error_found = error Error.found 
-      
 let line = ref 0
+    
+let error_runtime = error Error.runtime  
+let error_found x y = 
+    let y = "Line: "^(string_of_int ((!line)+1))^": "^y in 
+    error Error.found x y 
+
+      
+
   
   let sol_of_hsh hsh = 
     Hashtbl.fold (fun _ (sol,n) init -> 
