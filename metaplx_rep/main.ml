@@ -40,7 +40,7 @@ let compile fic =
 
 
 let file = Sys.argv.(1)
-let r = compile "essai.ka"
+let r = compile file
 let (decl:declaration)  = Compile_directives.convert r 
 let rules = List.map Compile_rule.convert r 
 let decl = 
