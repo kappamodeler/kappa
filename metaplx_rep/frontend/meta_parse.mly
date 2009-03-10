@@ -41,7 +41,8 @@ let error_found x y =
 %token OP_PAR CL_PAR OP_CONC CL_CONC OP_ACC CL_ACC
 %token <int> INT REF
 %token <float> FLOAT 
-%token <string> ID KAPPA_MRK LABEL
+%token <string> ID KAPPA_MRK LABEL 
+%token <string> COMMENT
 %left PLUS MINUS
 %left COMMA
 %left MULT DIVIDE
@@ -51,8 +52,9 @@ let error_found x y =
 
 %% /*Grammar rules*/
 main: 
-  EOF {[]}
-| line main {$1::$2}
+  line main {$1::$2}
+| line {[$1]}
+| EOF {[]}
   
   line: 
 | INIT_LINE init_expr {let _ = line:=(!line)+1 in 
@@ -60,16 +62,20 @@ main:
 | OBS_LINE obs_expr   {let _ = line:=(!line)+1 in $2}
 | STORY_LINE story_expr {let _ = line:=(!line)+1 in $2}
 | MODIF_LINE modif_expr {let _ = line:=(!line)+1 in DONT_CARE_L("%mod"^$2,!line)}
-| GEN_LINE gen_expr {let _ = line:=(!line)+1 in GEN_L($2,!line)}
-| CONC_LINE gen_expr {let _ = line:=(!line)+1 in CONC_L($2,!line)}
-| NEWLINE {let _ = line:=(!line)+1 in DONT_CARE_L("\n",!line)}
+| GEN_LINE gen_expr {let _ = line:=(!line)+1 in 
+                     let (a,b,c,d,e) = $2 in 
+		     GEN_L((a,b,c,d,"#%gen: "^e),!line)}
+| CONC_LINE gen_expr {let _ = line:=(!line)+1 in 
+                      let (a,b,c,d,e) = $2 in 
+		      CONC_L((a,b,c,d,"#%conc: "^e),!line)}
+| newline2 {let _ = line:=(!line)+1 in DONT_CARE_L($1,!line)}
 | named_rule_expr {let _ = line:=(!line)+1 in RULE_L($1,!line)}
 | error {raise (error_found 119 "syntax error")}
   ;
 
   modif_expr:
-| concentration_ineq DO assignement NEWLINE {$1^" do "^$3^"\n"}
-| time_ineq DO assignement NEWLINE {$1^" do "^$3^"\n"}
+| concentration_ineq DO assignement newline {$1^" do "^$3^$4}
+| time_ineq DO assignement newline {$1^" do "^$3^$4}
 | error {error_found 137 "invalid modification"}
   ;
 
@@ -121,9 +127,8 @@ main:
   ;
 
   init_expr:
-| NEWLINE {[],"\n"}
-| mult_sol_expr NEWLINE {let a,b = $1 in (a,b^"\n")}
-| mult_sol_expr EOF {error_found 253 "missing end of line"}
+| newline {[],$1}
+| mult_sol_expr newline {let a,b = $1 in (a,b^($2))}
   ;
 
 
@@ -164,23 +169,18 @@ main:
 
   
   obs_expr: 
-| LABEL NEWLINE {OBS_L($1,"%obs: '"^$1^"'\n",!line)}
-| ne_sol_expr NEWLINE {DONT_CARE_L("%obs: "^(snd $1)^"\n",!line)}
-| LABEL ne_sol_expr NEWLINE {DONT_CARE_L("%obs: '"^$1^"' "^(snd $2)^"\n",!line)}
-| LABEL EOF {error_found 414 "missing end of line"}
-| ne_sol_expr EOF {error_found 415 "missing end of line"}
+| LABEL newline {OBS_L($1,"%obs: '"^$1^"'"^$2,!line)}
+| ne_sol_expr newline {DONT_CARE_L("%obs: "^(snd $1)^$2,!line)}
+| LABEL ne_sol_expr newline {DONT_CARE_L("%obs: '"^$1^"' "^(snd $2)^$3,!line)}
   ;
 
   story_expr: 
-| LABEL NEWLINE {STORY_L($1,"%story: '"^$1^"'\n",!line)}
-| LABEL EOF {error_found 420 "missing end of line"}
+| LABEL newline {STORY_L($1,"%story: '"^$1^"'"^$2,!line)}
   ;
   
   named_rule_expr:
-| LABEL rule_expr NEWLINE {$1,$2}
-| rule_expr NEWLINE {"Auto"^(string_of_int (!line)) ,$1}
-| LABEL rule_expr EOF {error_found 434 "missing end of line"}
-| rule_expr EOF {error_found 435 "missing end of line"}
+| LABEL rule_expr newline {$1,let (a,b,c,d,e)=$2 in (a,b,c,d,e^$3)}
+| rule_expr newline {"Auto"^(string_of_int (!line)) ,let (a,b,c,d,e)=$1 in (a,b,c,d,e^$2)}
   ;
 
 
@@ -227,21 +227,40 @@ main:
 | OP_PAR INFINITY CL_PAR {error_found 499 "infinite rate for implicit unary rule is not allowed"}
 
   gen_expr : 
-    agent_expr NEWLINE {Some $1,None,None,[]}
-|   ID EQUAL ID NEWLINE {None,Some $1,Some $3,[]}
-|   ID EQUAL ID OP_CONC instruction_list CL_CONC NEWLINE {None,Some $1,Some $3,$5}
+    agent_expr newline {Some $1,None,None,[],(snd $1)^$2}
+|   ID EQUAL ID newline {None,Some $1,Some $3,[],($1^" = "^$3^$4)}
+|   ID EQUAL ID OP_CONC instruction_list CL_CONC newline 
+    {None,Some $1,Some $3,(fst $5),($1^" = "^$3^"["^(snd $5)^"]"^$7)}
 
   instruction_list: 
-    /*empty*/ {[]}
-| instruction instruction_list {$1::$2}
+    /*empty*/ {[],""}
+| instruction_ne_list {$1}
+
+
+ instruction_ne_list: 
+    instruction {[fst $1],snd $1}
+| instruction instruction_ne_list {(fst $1)::(fst $2),(snd $1)^" "^(snd $2)}
 
   instruction:
-| PLUS ID {Data_structures_metaplx.Add_site $2}
-| MINUS ID {Data_structures_metaplx.Delete_site $2}
-| ID DIVIDE OP_ACC id_list CL_ACC {Data_structures_metaplx.Rename ($1,$4)}
-| ID SET ID {Data_structures_metaplx.Mutate_site($1,$3)}
+| PLUS ID {Data_structures_metaplx.Add_site $2,"+ "^$2}
+| MINUS ID {Data_structures_metaplx.Delete_site $2,"- "^$2}
+| ID DIVIDE OP_ACC id_list CL_ACC {Data_structures_metaplx.Rename ($1,fst $4),$1^"\\{"^(snd $4)^"\\}"}
+| ID SET ID {Data_structures_metaplx.Mutate_site($1,$3),$1^" := "^$3}
 
   id_list: 
-    /*empty*/ {[]}
-| ID id_list {$1::$2} 
+    /*empty*/ {[],""}
+| id_non_empty_list {$1} 
 
+id_non_empty_list:
+   ID {[$1],$1}
+| ID id_non_empty_list {$1::(fst $2),$1^" "^(snd $2)} 
+
+
+newline: 
+  NEWLINE {"\n"}
+| COMMENT {$1}
+| EOF {"\n"}
+
+newline2: 
+    NEWLINE {"\n"}
+| COMMENT {$1}

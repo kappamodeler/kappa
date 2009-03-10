@@ -155,9 +155,6 @@ let dump_rs_latex chan rs bool  (var_of_b,b_of_var,varset_add,varset_empty,fold_
   let print_string = 
     match chan with None -> print_string 
     | Some a -> (fun x -> Printf.fprintf a "%s" x) in
-  let print_newline  = 
-    match chan with None -> print_newline 
-    | Some a -> (fun x -> Printf.fprintf a "\n") in 
   let rs = 
     List.rev_map 
       (fun (a,a',b) -> 
@@ -205,9 +202,6 @@ let dump_rs_latex chan rs bool  (var_of_b,b_of_var,varset_add,varset_empty,fold_
       (fun bool (a,b)  -> 
 	  match a with 
 	    [r] -> 
-	      let rid = r.Pb_sig.r_id in 
-	      let old = name_of_rule r in 
-	      let flag = rid in 
 	      let kynetic = kynetic_of_rule r in
 	      if r.Pb_sig.r_clone  then bool 
 	      else 
@@ -271,7 +265,7 @@ let dump_stat file name time =
      if file = "" then () 
     else 
       let chan = open_out file in 
-      let _ = Printf.fprintf chan "%s  & %s \cr " name time  in
+      let _ = Printf.fprintf chan "%s  & %s \\cr " name time  in
       let _ = close_out chan in 
       () 
 

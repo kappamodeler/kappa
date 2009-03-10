@@ -128,9 +128,6 @@ let dump_error_in_XML channel  error_list =
     List.iter 
       (fun a -> 
 	let _ = print "<Entry Type=\"ERROR\" " in 
-	let string_of_int i = 
-	      match i with None -> None
-	      |	Some a -> Some (string_of_int a) in 
 	let print_option (s1:string) (s2:string option) = 
 	  match s2 with 
 		None -> () 

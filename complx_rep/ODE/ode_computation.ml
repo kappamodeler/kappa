@@ -474,13 +474,13 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       let _ = 
 	  StringMap.iter 
 	  (fun a l -> 
-	    print_string "\item agent: ";
+	    print_string "\\item agent: ";
 	    print_string (Latex.string_of_agent_name a);
 	    print_string "{}";
 	    print_string "\\begin{itemize}";
 	    List.iter 
 	      (fun s -> 
-		print_string "\item \{";
+		print_string "\\item \\{";
 		let _ = 
 		  StringSet.fold
 		    (fun a bool -> 
@@ -489,7 +489,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		      let _ = print_string "{}{}" in 
 		      true)
 		    s.kept_sites  false in
-		print_string "\}";
+		print_string "\\}";
 		()) l;
 	    print_string "\\end{itemize}\n")
 	  annotated_contact_map.subviews in
@@ -2215,8 +2215,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					   let _ = print_species product in 
 					   ()
 					 in
-					 let expra = expr_of_var expr_handler consumed_species in 
-					 
 					 ((consumed_fragment,-1,[i,consumed_species,kyn_mod])::c_list),
 					 ((product,1,[i,consumed_species,kyn_mod])::p_list),
 					 (List.fold_left 
@@ -2377,7 +2375,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				   other a_cand)
 			   p_list 
 			   new_binding in 
-		       let _ = if sl_list <> [] then error 2298 () in 
+		       let _ = if sl_list <> [] then error 2298  in 
 		       let sl_list = 
 			 List.filter  
 			   (fun (_,l,_) -> 

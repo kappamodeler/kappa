@@ -934,7 +934,7 @@ module Pipeline =
 		     let _ = flush stdout in 
 		     let pb,(l,m),cpb = get_intermediate_encoding None prefix' pb  (l,m) in 
 		     let rep = Influence_map.compute_influence_map cpb in 
-		     let _ = 
+		     let l = 
 		       if file <> "" or file2 <> "" then 
 			 let f = 
 			   let map = 
@@ -1008,7 +1008,8 @@ module Pipeline =
 			 ())
 			 in 
 			 let l=chrono prefix "Influence map" l 
-			 in () 
+			 in l 
+		       else l
 		     in 
 			 (Some {pb 
 			       with wake_up_map = Some (fst rep) ;

@@ -316,7 +316,7 @@ toplx: $(MLI) $(CMI) $(LIBSC_CMA) $(LIB_BYTE)
 	ocamlyacc ./$(SIMPLXREP)/src/bnf/kappa_parse.mly 
 
 ./$(METAPLXREP)/frontend/meta_parse.ml ./$(METAPLXREP)/frontend/meta_parse.mli : ./$(METAPLXREP)/frontend/meta_parse.mly 
-	ocamlyacc ./$(METAPLXREP)/frontend/meta_parse.mly 
+	ocamlyacc -v ./$(METAPLXREP)/frontend/meta_parse.mly 
 
 ./$(COMPLXREP)/automatically_generated/svn_number.ml:
 	make grab_svn_version_number

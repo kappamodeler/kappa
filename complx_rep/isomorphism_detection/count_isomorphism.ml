@@ -445,23 +445,11 @@ let dump_automorphisms_in_XML channel rules rel =
     let print_string s = Printf.fprintf channel "%s" s in
     let print_int i = Printf.fprintf channel "%i" i in
     let _ = print_string "<Automorphisms>\n "  in 
-    let string_of_rule s = string_of_int s.Rule.id in 
     let print_rule s = 
       let _ = print_string "\"" in 
       let _ = print_string (string_of_int s.Rule.id) in
       let _ = print_string "\"" in () 
     in
-    let print_rule_id a = 
-      try 
-	let s = 
-	  try 
-	    IntMap.find a rule_map
-	  with 
-	    Not_found -> raise Exit in
-	print_rule s 
-      with _ -> error "232"  (fun () -> ())  
-    in
-    let is_diag (x,y) = x=y in 
     let _ = 
       IntMap.iter 
 	(fun i n -> 

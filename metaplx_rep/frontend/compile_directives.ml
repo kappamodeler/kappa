@@ -28,10 +28,12 @@ let add_concrete a b subs i =
     Not_found -> 
       {subs with concrete_names = AgentMap.add a (Some b,[i]) subs.concrete_names}
 
-let add_gen (a,b,c,d) subs i = 
+let add_gen (a,b,c,d,_) subs i = 
   let agent = 
     match a,b with _,Some e -> e
-    | Some ((a,_),_),_-> a in
+    | Some ((a,_),_),_-> a 
+    | None,None -> raise Exit 
+  in
   try 
     let (a,b) = AgentMap.find agent subs.definitions in 
     match b with None -> failwith ("Line "^(string_of_line i)^" generic agent "^agent^" is already defined")
@@ -46,13 +48,14 @@ let add_gen (a,b,c,d) subs i =
 	| _,_,Some agent',list -> 
 	    let _ = trace_print "variant\n" in 
 	    Variant(agent',get_instr list),Some i 
+	| _ -> raise Exit 
       in
       {subs with definitions = 
 	AgentMap.add agent def  subs.definitions}
 
 
-let add_conc (a,b,c,d) subs i = 
-  let subs = add_gen (a,b,c,d) subs i in 
+let add_conc (a,b,c,d,e) subs i = 
+  let subs = add_gen (a,b,c,d,e) subs i in 
   match a,b with 
     Some ((a,b),_),_ -> 
       begin
@@ -69,6 +72,7 @@ let add_conc (a,b,c,d) subs i =
 	    let _ = trace_print "NEWCONC\n" in 
 	  {subs with concrete_names = AgentMap.add e (None,[]) subs.concrete_names}
       end
+  | _ -> raise Exit 
  
 let convert lines = 
   List.fold_left 

@@ -40,7 +40,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     | "do" {DO}
     | "\\\n" {incr_line lexbuf ; token lexbuf} 
     | '\n' {incr_line lexbuf ; NEWLINE}
-    | '#' {comment lexbuf}
+    | '#' {let comment = comment "#" lexbuf in COMMENT comment}
     | integer as n {INT(int_of_string n)}
     | real as f {FLOAT(float_of_string f)}
     | '\'' {let lab = read_label "" lexbuf in LABEL lab}
@@ -81,11 +81,17 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     | '\'' {acc}
     | _ as c {read_label (Printf.sprintf "%s%c" acc c) lexbuf}
 
-  and comment = parse
-    | '\n' {incr_line lexbuf ; NEWLINE}
-    | "\\\n" {incr_line lexbuf ; comment lexbuf} 
-    | eof {EOF}
-    | _ {comment lexbuf}
+  and comment acc = parse
+    | '\n' {incr_line lexbuf ; (Printf.sprintf "%s%c" acc '\n')}
+    | "\\\n" {incr_line lexbuf ; comment 
+		 (Printf.sprintf 
+		    "%s%s" 
+		    acc 
+		    "\\\n"
+		    ) 
+		 lexbuf}
+    | eof {incr_line lexbuf ; (Printf.sprintf "%s%c" acc '\n')}
+    | _ as c {comment (Printf.sprintf "%s%c" acc c) lexbuf}
 
 {
   let init_val = 

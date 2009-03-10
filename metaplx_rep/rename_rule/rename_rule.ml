@@ -89,10 +89,6 @@ let rename_rule rule interface_database flagmap  =
       with 
 	Not_found -> [] in 
     StringMap.add x (y::old) map in 
-  let sol = {rule 
-	    with hand_side_common = [] ; 
-	      mod_left_hand_side = [] ;
-	      mod_right_hand_side = []} in
   let rename l = 
     List.fold_left 
       (fun prefix_list a -> 

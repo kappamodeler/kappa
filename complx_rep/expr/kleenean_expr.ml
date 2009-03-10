@@ -472,8 +472,7 @@ module Kleenean_expr =
 		  | _ -> string 
 		in
 		let _ = if ret then print_option empty_prefix log  "\n"  else () in 
-		((let l = 
-		  List.sort compare real_id in
+		((
 		let vide l = 
 		  let rec aux residue last rep = 
 		    match residue with 
