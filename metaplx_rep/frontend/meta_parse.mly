@@ -239,7 +239,7 @@ main:
 | PLUS ID {Data_structures_metaplx.Add_site $2}
 | MINUS ID {Data_structures_metaplx.Delete_site $2}
 | ID DIVIDE OP_ACC id_list CL_ACC {Data_structures_metaplx.Rename ($1,$4)}
-| ID DIVIDE ID {Data_structures_metaplx.Mutate_site($1,$3)}
+| ID SET ID {Data_structures_metaplx.Mutate_site($1,$3)}
 
   id_list: 
     /*empty*/ {[]}

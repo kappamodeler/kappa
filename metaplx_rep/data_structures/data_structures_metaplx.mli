@@ -38,12 +38,14 @@ type action =
 
 type agent_definition = 
     Root of concrete_interface 
+  | Unspecified 
   | Variant of agent*(action list)
 
 
 type declaration =   
     { concrete_names: (concrete_interface option*line list) AgentMap.t;
-      definitions: (agent_definition*line option) AgentMap.t} 
+      definitions: (agent_definition*line option) AgentMap.t; 
+      agents: AgentSet.t } 
 
 
 type rewriting_case = 

@@ -89,6 +89,7 @@ let convert lines =
 	| PREPROCESSED_RULE _ -> sol
 	| OBS_L _ | STORY_L _ -> sol )
     { concrete_names=AgentMap.empty;
-      definitions=AgentMap.empty}
+      definitions=AgentMap.empty;
+      agents=AgentSet.empty}
     lines 
 

@@ -74,6 +74,7 @@ let print_action print_string act =
 
 type agent_definition = 
     Root of concrete_interface 
+  | Unspecified
   | Variant of agent*(action list)
 
 
@@ -86,7 +87,8 @@ let print_agent_def print_string x =
 
 type declaration = 
     { concrete_names: (concrete_interface option*line list) AgentMap.t;
-      definitions: (agent_definition*line option) AgentMap.t} 
+      definitions: (agent_definition*line option) AgentMap.t; 
+      agents: AgentSet.t } 
 
 let print_declaration print_string x = 
   let _  = 

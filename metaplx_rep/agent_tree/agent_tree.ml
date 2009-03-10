@@ -53,7 +53,9 @@ let convert_declaration_into_solved_definition  x  =
   let succ,npred,nsucc,interface_map,roots = 
     AgentMap.fold 
       (fun agent_target (def,line) (succ,npred,nsucc,interface_map,roots) -> 
-	match def with Root l -> (succ,npred,nsucc,AgentMap.add agent_target l interface_map,agent_target::roots)
+	match def 
+	with Root l -> (succ,npred,nsucc,AgentMap.add agent_target l interface_map,agent_target::roots)
+	| Unspecified -> (succ,npred,nsucc,interface_map,agent_target::roots)
 	| Variant (agent_source,d) -> 
 	    if AgentSet.mem agent_source agentset 
 	    then 
@@ -273,14 +275,28 @@ let convert_declaration_into_solved_definition x =
 
 
 let complete subs = 
-  AgentMap.fold 
-    (fun a (b,c) subs ->
-	  match b with None -> subs
-	  | Some interface -> 
-	      try let _ = AgentMap.find a subs.definitions in subs 
-	      with Not_found -> 
-		{subs with 
-		  definitions = 
+  let subs = 
+    AgentMap.fold 
+      (fun a (b,c) subs ->
+	match b with None -> subs
+	| Some interface -> 
+	    try let _ = AgentMap.find a subs.definitions in subs 
+	    with Not_found -> 
+	      {subs with 
+		definitions = 
 		  AgentMap.add a (Root interface,None) subs.definitions})
-    subs.concrete_names 
-    subs 
+      subs.concrete_names 
+      subs 
+  in 
+  let subs = 
+    AgentSet.fold 
+      (fun a subs -> 
+	  try let _ = AgentMap.find a subs.definitions in subs 
+	    with Not_found -> 
+	      {subs with 
+		definitions = 
+		  AgentMap.add a (Unspecified,None) subs.definitions})
+      subs.agents 
+      subs 
+  in subs 
+	

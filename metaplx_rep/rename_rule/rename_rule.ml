@@ -46,10 +46,40 @@ let check_rule rule interface_database i =
 	with None -> failwith ("Problem with rule "^rule.flag^" at line "^(string_of_int i))
 	| Some a -> a)
   in
-  f (f interface_database 
-       rule.fixed_left_hand_side) 
-    rule.fixed_right_hand_side
-
+  let g1 = 
+    List.fold_left 
+      (fun database ag -> 
+	let set = AgentSet.add ag.agent_name database.agents in 
+	if AgentSet.equal set database.agents 
+	then 
+	  database
+	else
+	  {database with agents = set}
+	  )
+  in 
+  let g2 = 
+    List.fold_left 
+      (fun database ag -> 
+	let set = AgentSet.add ag.agent_name database.agents in 
+	if AgentSet.equal set database.agents 
+	then 
+	  database
+	else
+	  {database with agents = set}
+	  )
+  in 
+  g2 
+    (g2 
+       (g1 
+	  (f 
+	     (f 
+		interface_database 
+		rule.fixed_left_hand_side)
+	     rule.fixed_right_hand_side)
+	  rule.hand_side_common)
+       rule.mod_left_hand_side)
+    rule.mod_right_hand_side 
+    
 
 let rename_rule rule interface_database flagmap  = 
   let fadd x y map = 
