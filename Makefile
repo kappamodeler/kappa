@@ -91,6 +91,7 @@ OCAMLINCLUDES= -I $(COMPLXREP)/lib/$(TKREP) \
 		-I $(METAPLXREP)/config \
 		-I $(METAPLXREP)/agent_interfaces \
 		-I $(METAPLXREP)/data_structures \
+		-I $(METAPLXREP)/macro_processing \
 		-I $(METAPLXREP)/agent_tree \
 		-I $(METAPLXREP)/rename_agent \
 		-I $(METAPLXREP)/rename_rule \
@@ -220,6 +221,7 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(SIMPLXREP)/src/tools/bench.cmo \
 	./$(SIMPLXREP)/src/main/simulation2.cmo \
 	./$(SIMPLXREP)/src/html_config/HTML.cmo \
+	./$(METAPLXREP)/macro_processing/macro_processing.cmo \
 	./$(METAPLXREP)/config/config_metaplx.cmo \
 	./$(METAPLXREP)/pretty_printing/pretty_printing.cmo \
 	./$(METAPLXREP)/agent_interfaces/agent_interfaces.cmo \

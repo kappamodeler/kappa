@@ -41,6 +41,7 @@ let compile fic =
 
 let file = Sys.argv.(1)
 let r = compile file
+let r = Macro_processing.macro_expanse r 
 let (decl:declaration)  = Compile_directives.convert r 
 let rules = List.map Compile_rule.convert r 
 let decl = 

@@ -9,4 +9,5 @@ clean:
 	cd rename_rule ; $(CLEANUP) ; 
 	cd pretty_printing ; $(CLEANUP) ; 
 	cd frontend ; $(CLEANUP) ; rm -f meta_parse.ml ; rm -f meta_lex.ml 
+	cd macro_processing ; #(CLEANUP) 
 	$(CLEANUP)
