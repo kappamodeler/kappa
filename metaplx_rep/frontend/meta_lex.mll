@@ -37,6 +37,9 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     | "%mod:" {MODIF_LINE}
     | "%gen:" {GEN_LINE}
     | "%conc:" {CONC_LINE}
+    | "%begin_macro:" {BEGIN_MAC_LINE}
+    | "%end_macro:" {END_MAC_LINE}
+    | "%expand:" {EXPAND_MAC_LINE}
     | "do" {DO}
     | "\\\n" {incr_line lexbuf ; token lexbuf} 
     | '\n' {incr_line lexbuf ; NEWLINE}

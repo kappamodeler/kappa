@@ -96,6 +96,9 @@ type pp_parse = PP_INIT_L of  (((string->string) -> (parsed_agent list *string))
   | PP_CONC_L of ((string->string) -> parsed_conc)*int
   | PP_RULE_L of ((string->string)->parsed_rule)*int 
   | PP_PREPROCESSED_RULE of ((string->string)->(parsed_rule * string rule_metaplx))*int
+  | PP_BMAC_L of ((string->string) -> string * string list * string)* int 
+  | PP_EMAC_L of ((string->string) -> string)*int 
+  | PP_CMAC_L of ((string->string) -> string * string list list * string)*int 
 
 val print_interface: print_handler -> concrete_interface  ->unit
 val print_action: print_handler -> action -> unit

@@ -34,7 +34,7 @@ let error_found x y =
 
 
 %}
-%token INIT_LINE  OBS_LINE  STORY_LINE NEWLINE MODIF_LINE GEN_LINE CONC_LINE EOF
+%token INIT_LINE  OBS_LINE  STORY_LINE NEWLINE MODIF_LINE GEN_LINE CONC_LINE BEGIN_MAC_LINE END_MAC_LINE EXPAND_MAC_LINE EOF
 %token MULT DIVIDE PLUS MINUS COMMA SEMICOLON GREATER SMALLER SET EQUAL INFINITY SEP
 %token DO AT TIME
 %token KAPPA_LNK KAPPA_WLD KAPPA_SEMI KAPPA_LRAR KAPPA_RAR
@@ -70,6 +70,14 @@ main:
 | CONC_LINE gen_expr {let _ = line:=(!line)+1 in 
                       let (a,b,c,d,e) = $2 in 
 		      PP_CONC_L((fun f -> a f,b f,c f,d f,"#%conc: "^(e f)),!line)}
+| BEGIN_MAC_LINE macro_def {let _ = line:=(!line)+1 in 
+                            let a,b,c = $2 in 
+			    PP_BMAC_L((fun f -> a f, b f,"#%begin_macro: "^(c f)),!line)}
+| END_MAC_LINE newline {let _ = line:=(!line)+1 in PP_EMAC_L((fun f -> "#%end_macro: "^($2 f)),!line)}
+    
+| EXPAND_MAC_LINE macro_call {let _ = line:=(!line)+1 in 
+                                let a,b,c = $2 in 
+			    PP_CMAC_L((fun f -> a f, b f,"#%expand: "^(c f)),!line)}
 | newline2 {let _ = line:=(!line)+1 in PP_DONT_CARE_L($1,!line)}
 | named_rule_expr {let _ = line:=(!line)+1 in PP_RULE_L($1,!line)}
 | error {raise (error_found 119 "syntax error")}
@@ -264,8 +272,8 @@ main:
     {fun f -> (fst ($1 f))::(fst ($2 f)),(snd ($1 f))^" "^(snd ($2 f))}
 
   instruction:
-| PLUS id {fun f -> Data_structures_metaplx.Add_site ($2 f),"+ "^($2 f)}
-| MINUS id {fun f -> Data_structures_metaplx.Delete_site ($2 f),"- "^($2 f)}
+| PLUS id {fun f -> Data_structures_metaplx.Add_site ($2 f),"+"^($2 f)}
+| MINUS id {fun f -> Data_structures_metaplx.Delete_site ($2 f),"-"^($2 f)}
 | id DIVIDE OP_ACC id_list CL_ACC {fun f -> Data_structures_metaplx.Rename ($1 f,fst ($4 f)),($1 f)^"\\{"^(snd ($4 f))^"\\}"}
 | id SET id {fun f -> Data_structures_metaplx.Mutate_site($1 f,$3 f),($1 f)^" := "^($3 f)}
 
@@ -289,3 +297,42 @@ newline2:
 
 id:
     ID {fun f -> f $1}
+
+macro_def: 
+    id OP_PAR idlistcomma CL_PAR newline {(fun f -> ($1 f)),
+					   (fun f -> fst ($3 f)),
+					   fun f -> ($1 f)^"("^(snd ($3 f))^")"}
+
+macro_call: 
+    id OP_PAR idlistlist CL_PAR newline  {(fun f -> ($1 f)),
+					   (fun f -> fst ($3 f)),
+					   (fun f -> ($1 f)^"("^(snd ($3 f))^")")}
+
+idlistcomma: 
+    /*empty*/ {fun f -> [],""}
+|   ne_idlistcomma {$1} 
+
+ne_idlistcomma:
+    id {fun f -> [$1 f],$1 f}
+| id COMMA ne_idlistcomma {fun f -> ($1 f)::(fst ($3 f)),($1 f)^" , "^(snd ($3 f))}
+
+
+idlist: 
+    /*empty*/ {fun f -> [],""}
+|   ne_idlist {$1}
+
+ne_idlist:
+    id {fun f -> [$1 f],$1 f}
+| id ne_idlist {fun f -> ($1 f)::(fst ($2 f)),($1 f)^(snd ($2 f))}
+
+
+
+
+idlistlist:
+    /*empty*/ {fun f -> [],""}
+| ne_idlistlist {$1}
+
+ne_idlistlist:
+    ne_idlist {fun f -> [fst ($1 f)],snd ($1 f) }
+| idlist COMMA idlistlist {fun f -> (fst ($1 f))::(fst ($3 f)),(snd ($1 f))^" , "^(snd ($3 f))}
+
