@@ -39,7 +39,6 @@ let print_rule log rule =
   let bool = print_agent_list log rule.mod_right_hand_side bool in 
   let _ = print_agent_list log rule.fixed_right_hand_side bool in 
   let _ = Printf.fprintf log " %s" rule.rule_annotation in 
-  let _ = Printf.fprintf log "\n" in 
   () 
 
 let print_model log model = 
