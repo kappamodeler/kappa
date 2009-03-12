@@ -77,7 +77,7 @@ let sub_template a b = StringSet.subset a.kept_sites b.kept_sites
   
 let compute_annotated_contact_map_init cpb  = 
   List.fold_left 
-    (fun local_map (a,b,c) -> 
+    (fun (local_map,site_map) (a,b,c) -> 
       let set = 
 	List.fold_left
 	  (fun set a -> StringSet.add a set)
@@ -86,19 +86,22 @@ let compute_annotated_contact_map_init cpb  =
 	     StringSet.empty 
 	     b)
 	  c in
-      let list = 
+      let list,list2 = 
 	StringSet.fold 
-	  (fun x l -> 
-	    {kept_sites = StringSet.singleton x}::l)
+	  (fun x (l,l2) -> 
+	    {kept_sites = StringSet.singleton x}::l,x::l2)
 	  set
-	  [{kept_sites = StringSet.empty}] in
-      StringMap.add a list local_map)
-    StringMap.empty 
+	  ([{kept_sites = StringSet.empty}],[])
+      in
+      StringMap.add a list local_map,
+      StringMap.add a list2 site_map)
+    (StringMap.empty,StringMap.empty)
     cpb.Pb_sig.cpb_interface 
   
   
 let compute_annotated_contact_map_in_approximated_mode system cpb contact_map  =
-  let local_map = compute_annotated_contact_map_init cpb in 
+  let local_map,_ = compute_annotated_contact_map_init cpb in 
+    
   List.fold_left  
     (fun (sol,passing_sites) rs ->
       let passive = rs.Pb_sig.passive_species in 
@@ -165,7 +168,7 @@ let compute_annotated_contact_map_in_approximated_mode system cpb contact_map  =
 	  in
 	  StringMap.add a ({kept_sites=b}::old) sol)
 	local_map sol,passing_sites 
-	)			  
+	)  
     (local_map,String2Set.empty)
     system
 
@@ -280,20 +283,7 @@ let trivial_rule2 (contact,keep_this_link) rule =
   end
     
 let compute_annotated_contact_map_in_compression_mode system cpb contact_map =
-  let local_map = compute_annotated_contact_map_init cpb in
-  let site_map = 
-    List.fold_left 
-      (fun map (a,b,c) -> 
-	let set = 
-	  List.fold_left 
-	    (fun set b -> StringSet.add b set)
-	    (List.fold_left 
-	       (fun set c -> StringSet.add c set)
-	       StringSet.empty 
-	       c)
-	    b in
-	StringMap.add a set map) 
-      StringMap.empty cpb.cpb_interface in 
+  let local_map,site_map  = compute_annotated_contact_map_init cpb in
   let fadd ag x y map = 
     let old1,old2 = 
       try StringMap.find ag map 
@@ -314,9 +304,9 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map =
 	  StringMap.add y new2_image old2 in 
 	StringMap.add ag (new1_map,new2_map)  map in
       
-      let site_relation = 
+      let site_relation,dangerous_sites = 
 	List.fold_left
-	  (fun relation rs -> 
+	  (fun (relation,dangerous_sites)  rs -> 
 	    let modified_sites = 
 	      let fadd a b sol = 
 		let old = 
@@ -353,12 +343,11 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map =
 	          modif rs.passive_species in
 	      modif 
 	    in 
-	    let destroyed_agent = String2Set.empty in 
 	    List.fold_left 
-	      (fun relation rule -> 
-		let tested_sites = 
+	      (fun (relation,dangerous_sites) rule -> 
+		let tested_sites,free_sites = 
 		  List.fold_left 
-		    (fun sol a -> 
+		    (fun (sol1,sol2) a -> 
 		      let fadd x y sol = 
 			let old' = 
 			  try String2Map.find x sol 
@@ -370,54 +359,82 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map =
 		      match a with
 			H (x,x'),true -> 
 			  (try 
-			    (String2Map.find (x,x') sol;sol)
+			    (String2Map.find (x,x') sol1;sol1,sol2)
 			  with 
 			    Not_found -> 
-			      (String2Map.add (x,x') StringSet.empty sol))
-		      |  H _,_ -> sol
-		      | Connected _,_ -> sol 
-		      |  B(a,a',b),_ ->  fadd (a,a') b sol
-		      | AL((a,a',b),_),_ -> fadd (a,a') b sol
-		      | L((a,a',b),(c,c',d)),_ -> fadd (a,a') b (fadd (c,c') d sol)
-		      | M((a,a',b),c),_ -> fadd (a,a') b sol
+			      (String2Map.add (x,x') StringSet.empty sol1,sol2))
+		      |  H _,_ -> sol1,sol2
+		      | Connected _,_ -> sol1,sol2 
+		      |  B(a,a',b),false  ->  fadd (a,a') b sol1,fadd (a,a') b sol2
+		      |	B(a,a',b),_ -> fadd (a,a') b sol1,sol2
+		      |	AL((a,a',b),_),true -> fadd (a,a') b sol1,fadd (a,a') b sol2
+		      | AL((a,a',b),_),_ -> fadd (a,a') b sol1,sol2
+		      |	L((a,a',b),(c,c',d)),true -> fadd (a,a') b (fadd (c,c') d sol1),fadd (a,a') b (fadd (c,c') d sol2)
+		      | L((a,a',b),(c,c',d)),_ -> fadd (a,a') b (fadd (c,c') d sol1),sol2
+		      | M((a,a',b),c),_ -> fadd (a,a') b sol1,sol2
 		      | _ -> error 964 )
-		    String2Map.empty  rule.Pb_sig.injective_guard in
-	     (*  	let relation = 
-		  String2Set.fold
-		    (fun (a,a') relation -> 
-		      let tested = 
-			try String2Map.find (a,a') tested_sites
-			with Not_found -> StringSet.empty in 
-		      StringSet.fold
-			(fun site relation -> 
-			  StringSet.fold 
-			    (fun site' relation -> 
-			      if site==site' 
-			      then relation 
-			      else
-				fadd a' site site' 
-				  (fadd a' site' site relation))
-			    tested relation)
-			tested relation)
-		    destroyed_agent relation in *)
-		let relation = 
-		  String2Set.fold 
-		    (fun (a,a') relation -> 
-		      let set = 
-			try StringMap.find a' site_map 
+		    (String2Map.empty,String2Map.empty)  rule.Pb_sig.injective_guard 
+		in
+		let relation,dangerous_sites = 
+		  List.fold_left 
+		    (fun (relation,dangerous_sites) a_id -> 
+		      let a = 
+			try 
+			  StringMap.find 
+			    a_id 
+			    rs.Pb_sig.specie_of_id 
 			with 
-			  Not_found -> StringSet.empty 
+			  Not_found -> error 394 
 		      in 
-		      if StringSet.is_empty set then relation
-		      else
-			let min = StringSet.min_elt set in 
+		      let tested = 
+			try String2Map.find (a_id,a) tested_sites
+			with Not_found -> StringSet.empty in 
+		      let relation = 
+			StringSet.fold
+			  (fun site relation -> 
+			    StringSet.fold 
+			      (fun site' relation -> 
+				if site==site' 
+				then relation
+				else
+				    (fadd a site site' relation))
+			      (  try 
+				List.fold_left 
+				  (fun sol s -> StringSet.add s sol)
+				  (StringSet.empty)
+				  (StringMap.find a site_map)
+			      with 
+				Not_found -> StringSet.empty )
+			      relation)
+			  tested relation 
+		      in 
+		      let dangerous_sites = 
+			let free_sites = 
+			  try 
+			    String2Map.find (a_id,a) free_sites
+			  with 
+			    Not_found -> StringSet.empty 
+			in 
+			let sites = 
+			  try 
+			    List.fold_left 
+			      (fun sol s -> StringSet.add s sol)
+			      (StringSet.empty)
+			      (StringMap.find a site_map)
+			  with 
+			    Not_found -> StringSet.empty 
+			in 
+			let diff = StringSet.diff sites free_sites in 
 			StringSet.fold 
-			  (fun x relation -> 
-			    fadd a' min x 
-			      (fadd a' x min relation))
-			  set relation)
-		    destroyed_agent relation in 
-		  let relation = 
+			  (fun s -> String2Set.add (a,s)) diff dangerous_sites
+		      in 
+		      
+		      relation,dangerous_sites)
+		    (relation,dangerous_sites)
+		    rs.Pb_sig.control.Pb_sig.remove 
+		in
+
+		let relation = 
 		  String2Map.fold2
 		    (fun _ _ x -> x)
 		    (fun _ _ x -> x)
@@ -433,11 +450,12 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map =
 			tested rel)
 		    tested_sites
 		    modified_sites 
-		    relation in 
-		relation)
-	      relation 
+		    relation 
+		in 
+		relation,dangerous_sites)
+	      (relation,dangerous_sites)
 	      rs.Pb_sig.rules)
-	  StringMap.empty 
+	  (StringMap.empty,String2Set.empty)
 	  system 
       in 
       let _ = 
@@ -564,6 +582,18 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map =
 		      (contact_map (b,c)))
 		  solid_edges 
 		  rs.Pb_sig.control.Pb_sig.uncontext_update 
+	      in 
+	      let solid_edges = 
+		String2Set.fold 
+		  (fun (b,c) solid_edges -> 
+		    List.fold_left 
+                      (fun solid_edges (_,d,e) -> 
+			String22Set.add ((b,c),(d,e))
+			  (String22Set.add ((d,e),(b,c)) solid_edges))
+		      solid_edges 
+		      (contact_map (b,c)))
+		  dangerous_sites 
+		  solid_edges  
 	      in 
 	      solid_edges)
 	  
