@@ -13,6 +13,7 @@ let string_of_line i = "line "^(string_of_int  i)
 type agent = string 
 
 module StringMap = Map2.Make(struct type t = string let compare = compare end)
+module StringSet = Set.Make(struct type t = string let compare = compare end)
 
 module Agent = struct type t=agent let compare=compare end
 module AgentSet = Set.Make(Agent)

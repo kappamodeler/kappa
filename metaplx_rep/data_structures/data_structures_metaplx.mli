@@ -15,6 +15,7 @@ type agent = string
 type site = string 
 
 module StringMap : (Map.S with type key = string)
+module StringSet : (Set.S with type elt = site)
 module SiteSet : (Set.S with type elt = site)
 module SiteMap : (Map.S with type key = site)
 module AgentMap : (Map.S with type key = agent)

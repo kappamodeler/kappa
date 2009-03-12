@@ -61,7 +61,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     | '*' {MULT}
     | '/' {DIVIDE}
     | '!' {KAPPA_LNK}
-    | internal_state as s {KAPPA_MRK s}
+    | '~' {KAPPA_MRK}
     | '?' {KAPPA_WLD}
     | '_' {KAPPA_SEMI}
     | "->" {KAPPA_RAR}

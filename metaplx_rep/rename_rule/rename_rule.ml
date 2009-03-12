@@ -102,11 +102,14 @@ let rename_rule rule interface_database flagmap  =
 	  [] prefix_list) 
       [[],[]] l 
   in 
+  let check l = List.for_all (Rename_agent.check_agent) l in 
   let hand_side_common' = rename rule.hand_side_common in 
   let mod_left_hand_side' = rename rule.mod_left_hand_side in 
   let mod_right_hand_side' = rename rule.mod_right_hand_side in 
   let rule_list = 
-    List.fold_left 
+    if check rule.fixed_left_hand_side && check rule.fixed_right_hand_side 
+    then 
+      List.fold_left 
       (fun liste (hs,hs') -> 
 	List.fold_left 
 	  (fun liste (left,left') -> 
@@ -129,6 +132,8 @@ let rename_rule rule interface_database flagmap  =
 	  mod_left_hand_side')
       ([],flagmap) 
       hand_side_common' 
+    else 
+      ([],flagmap)
   in 
   rule_list 
 

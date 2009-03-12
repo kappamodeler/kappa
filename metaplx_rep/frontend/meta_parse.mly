@@ -41,7 +41,9 @@ let error_found x y =
 %token OP_PAR CL_PAR OP_CONC CL_CONC OP_ACC CL_ACC
 %token <int> INT REF
 %token <float> FLOAT 
-%token <string> ID KAPPA_MRK LABEL 
+%token <string> ID 
+%token KAPPA_MRK
+%token <string> LABEL 
 %token <string> COMMENT
 %left PLUS MINUS
 %left COMMA
@@ -168,7 +170,7 @@ main:
   ;
 
   state_expr: /*empty*/ {fun f -> ""}
-| KAPPA_MRK {fun f -> f $1}
+| KAPPA_MRK id {fun f -> "~"^($2 f)}
   ;
 
   link_expr: /*empty*/ {fun f -> ""}
@@ -195,7 +197,7 @@ main:
   
   named_rule_expr:
 | LABEL rule_expr newline {fun f -> f $1,let (a,b,c,d,e)=$2 f  in (a,b,c,d,e^($3 f))}
-| rule_expr newline {fun f -> f "Auto"^(string_of_int (!line)) ,let (a,b,c,d,e)=$1 f in (a,b,c,d,e^($2 f))}
+| rule_expr newline {let l = (!line)+1 in fun f -> f "Auto"^(string_of_int l) ,let (a,b,c,d,e)=$1 f in (a,b,c,d,e^($2 f))}
   ;
 
 

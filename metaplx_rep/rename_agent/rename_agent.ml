@@ -1,6 +1,15 @@
 open Data_structures_metaplx 
 open Agent_tree 
 
+let check_agent agent = 
+  let interface_list = List.map fst agent.interface in 
+  let rec scan l black = 
+    match l with 
+      t::q when SiteSet.mem t black -> false
+    | t::q -> scan q (SiteSet.add t black)
+    | [] -> true
+  in
+  scan interface_list SiteSet.empty  
 
 let rename_agent agent subs = 
  let name = agent.agent_name in 
@@ -24,22 +33,27 @@ let rename_agent agent subs =
 		 with Not_found -> [] in
 	       let extended_prefix_set = 
 		 List.fold_left 
-		   (fun set (eti,prefix)  -> 
+		   (fun set (eti,prefix,siteset)  -> 
 		     List.fold_left 
 		       (fun set site  -> 
-		     ((oldsite,site)::eti,(site,image)::prefix)
+			 if SiteSet.mem site siteset then set
+			 else
+			   ((oldsite,site)::eti,
+			    (site,image)::prefix,
+			    SiteSet.add site siteset)
 			 ::set)
 		       set (newsites:site list))
 		   [] prefix_set 
 	       in 
 	       extended_prefix_set)
-	     [[name,agent_name],[]] agent.interface  in 
+	     [[name,agent_name],[],SiteSet.empty] agent.interface  in 
 	 List.fold_left  
-	   (fun sol (annotation,int) -> (List.rev annotation,{agent_name=agent_name;interface=List.rev int})::sol) 
+	   (fun sol (annotation,int,_) -> (List.rev annotation,{agent_name=agent_name;interface=List.rev int})::sol) 
 	   sol interface_set )
        [] cases 
    end
-     with Not_found -> [[],agent]
+     with Not_found -> 
+       if check_agent agent then [[],agent] else [] 
 
 
 

@@ -14,34 +14,10 @@ let compile fic =
     let rep = Meta_parse.main token lexbuf in 
     rep 
     
-
-(*let x = 
-  {
-  concrete_names = 
-  AgentMap.add "A1" (Some (SiteSet.add "s" SiteSet.empty),[]) 
-    (AgentMap.add "A2" (Some (SiteSet.add "s1" (SiteSet.add "s2" (SiteSet.add "y" SiteSet.empty))),[]) AgentMap.empty);
-  definitions = 
-  AgentMap.add 
-    "A2" 
-    (Variant ("A3",[Rename("s",["s1";"s2"])]),None)
-    (AgentMap.add "A3" (Root (SiteSet.add "s" (SiteSet.add "y" SiteSet.empty)),None) 
-       (AgentMap.add 
-	  "A4"
-	  (Variant ("A2",[Rename("s1",[])]),None)
-	  (AgentMap.add 
-	     "A5" 
-	     (Variant ("A2",[]),None)
-	     AgentMap.empty)
-      )
-   )
-} 
-  *)  
-
-
-
 let file = Sys.argv.(1)
 let r = compile file
-let r = Macro_processing.macro_expanse r 
+let r,def = Macro_processing.collect_def r 
+let r = Macro_processing.macro_expanse [] def (fun x-> x) r []  
 let (decl:declaration)  = Compile_directives.convert r 
 let rules = List.map Compile_rule.convert r 
 let decl = 
