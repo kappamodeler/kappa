@@ -177,7 +177,7 @@ let main ()  =
     else 
       pb,log in 
   let pb,log = 
-    if !Config_complx.do_dump_latex then 
+    if !Config_complx.do_dump_latex && (!Config_complx.output_latex_rule_system <> "") then 
       methods.dump_latex_rule_system 
 	(!Config_complx.output_latex_rule_system) 
 	prefix pb log 

@@ -940,15 +940,15 @@ let dump_rs chan rs auto =
 
       
       let dump file auto pb  k = 
-	let chan = 
-	  if file = "" then None
-	  else Some (open_out file) 
-	in
-	let _ = 
-	  try 
-	    let rs = IntMap.find k pb.refined_system in
-	    let system = rs.system in
-	    List.iter 
+	if file = "" then () 
+	else 
+	  let chan = Some (open_out file) 
+	  in
+	  let _ = 
+	    try 
+	      let rs = IntMap.find k pb.refined_system in
+	      let system = rs.system in
+	      List.iter 
 	      (fun rs -> 
 		let inj = rs.rules in 
 		List.iter 

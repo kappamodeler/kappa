@@ -186,6 +186,8 @@ let empty_structure v =
    link_to_template=String4Map.empty;
    blist_to_template=StringBListMap.empty}
 
+let dummy = () 
+
 let gather ode_handler rep rep2 = (*GENERATE DATA STRUCTURES *)
   List.fold_left  
     (fun (data_structures,n) view  -> 
@@ -233,7 +235,7 @@ let gather ode_handler rep rep2 = (*GENERATE DATA STRUCTURES *)
 	)
 	(match rep2 with 
 	  t::q -> empty_structure t,1
-	| _ -> error 185)
+	| _ -> empty_structure dummy,1)
 	rep2 
 
 

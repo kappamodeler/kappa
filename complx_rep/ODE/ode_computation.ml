@@ -157,15 +157,20 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     then
       Some 
 	begin
-	  let chan = 
-	    if file ="" 
-	    then stdout
-	    else open_out file  in
-	  {print_string = Printf.fprintf chan "%s"  ;
-	    print_float = (fun x -> Printf.fprintf chan "%s" (Float_pretty_printing.string_of_float x)) ;
-	    print_int = Printf.fprintf chan "%d" ;
-	    chan = [chan];
-	    print_newline = (fun () -> Printf.fprintf chan "\n")}
+	  if file ="" 
+	  then 
+	    {print_string = (fun _ -> ());
+	      print_float = (fun _ -> ());
+	      print_int = (fun _ -> ());
+	      chan = [];
+	      print_newline = (fun _ -> ())}
+	  else 
+	    let chan = open_out file  in
+	    {print_string = Printf.fprintf chan "%s"  ;
+	      print_float = (fun x -> Printf.fprintf chan "%s" (Float_pretty_printing.string_of_float x)) ;
+	      print_int = Printf.fprintf chan "%d" ;
+	      chan = [chan];
+	      print_newline = (fun () -> Printf.fprintf chan "\n")}
 	end
     else None in
   let set_print = f in 
