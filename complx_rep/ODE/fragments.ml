@@ -1210,7 +1210,7 @@ let check_compatibility data_structure hash subspecies =
     
 
 
-let apply_blist_with_species ode_handler data_structure keep_link rule_id  species blist = 
+let apply_blist_with_species ode_handler data_structure keep_link rule_id  species blist free_sites = 
   let _ = 
     if apply_blist_debug 
     then
@@ -1241,6 +1241,7 @@ let apply_blist_with_species ode_handler data_structure keep_link rule_id  speci
 	with 
 	  Not_found -> error 881 None 
   in 
+  (* deal with blist *)
    let update,subspecies = 
     List.fold_left 
       (fun (modified,subspecies) (b,bool) -> 
@@ -1302,7 +1303,26 @@ let apply_blist_with_species ode_handler data_structure keep_link rule_id  speci
       (update,species) 
       blist 
   in 
-  let stringblist (x,bmap) = 
+   (* deal with side_effects due to agent removal *)
+   let _ = print_string "size" in
+   let _ = print_int (List.length free_sites) in 
+   let update,subspecies = 
+     List.fold_left 
+       (fun (update,subspecies) ((rp,a,s),(rp',s')) ->
+	 try 
+	   let agent_type,v = get rp' update in 
+	   let v' = BMap.add (B(agent_type,agent_type,s')) false v in 
+	   let v' = BMap.add (AL((agent_type,agent_type,s'),(a,s))) false v' in 
+	   RPathMap.add 
+	     rp' 
+	     (agent_type,v') 
+	     update,
+	   subspecies
+	 with 
+	   Not_found -> update,subspecies)
+       (update,subspecies) free_sites 
+   in 
+   let stringblist (x,bmap) = 
     let hashkey  = 
       (x,List.sort compare (BMap.fold (fun b bool l -> (b,bool)::l) bmap [])) in
     try 
@@ -1502,6 +1522,44 @@ let compute_edges fragment view_data_structure=
       (0,stack,bonds) 
       views in
   bonds 
+
+let remove_agent_in_species ode_handler data_structure keep_link rule_id  (species,free_sites)  agent  =
+  let rp = (build_empty_path agent) in 
+  let get_dual_binding = 
+    let map  = 
+      try 
+	RPathMap.find rp species.bonds_map 
+      with 
+	Not_found -> SitetypeMap.empty
+    in 
+    SitetypeMap.fold 
+      (fun s (rp2,s2) bindings -> ((rp,agent,s),(rp2,s2))::bindings)
+      map [] 
+  in 
+  let frem (a,s) map = 
+    let old = try RPathMap.find a map with Not_found -> SitetypeMap.empty in 
+    let new' = SitetypeMap.remove s old in 
+    if SitetypeMap.is_empty new' then 
+      RPathMap.remove a map 
+    else
+      RPathMap.add a new' map in 
+  let frem ((a,_,s),(a',s')) map = 
+    frem (a,s) (frem (a',s') map) in 
+  let bonds_map = 
+    List.fold_left 
+      (fun bonds_map x -> frem x bonds_map)
+      (species.bonds_map)
+      get_dual_binding 
+  in 
+  let free_sites = 
+    List.fold_left 
+      (fun l x -> x::l)
+      free_sites
+      get_dual_binding 
+  in
+  let subspecies_views = RPathMap.remove rp species.subspecies_views in 
+   {bonds_map = bonds_map;
+    subspecies_views = subspecies_views},free_sites 
 
 let pretty_print 
     stdprint 

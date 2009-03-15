@@ -85,7 +85,17 @@ module type Fragments =
 
       val build_species: (views_id -> string) -> views_id Pb_sig.StringMap.t -> ((string*((string*string)*(string*string))list)*views_id) list -> subspecies
 
-      val apply_blist_with_species: ('a,'b,'c,'d,'e,'f,'g)  Views.ode_handler -> 'b Views.view_data_structure -> ((string*string) -> (string*string) -> bool) -> string -> subspecies -> (Pb_sig.b*bool) list -> subspecies 
+      val apply_blist_with_species: ('a,'b,'c,'d,'e,'f,'g)  Views.ode_handler -> 'b Views.view_data_structure -> ((string*string) -> (string*string) -> bool) -> string -> subspecies -> (Pb_sig.b*bool) list -> (((rooted_path*string*string)*(rooted_path*string)) list) -> subspecies 
+
+
+      val remove_agent_in_species: 
+	  ('a,'b,'c,'d,'e,'f,'g)  Views.ode_handler -> 
+	    'b Views.view_data_structure -> 
+	      ((string*string) -> (string*string) -> bool) -> 
+		string -> 
+		  (subspecies *  (((rooted_path*string*string)*(rooted_path*string)) list))
+		  -> string  
+		    -> (subspecies *  (((rooted_path*string*string)*(rooted_path*string)) list))
 
       val merge:subspecies -> subspecies -> subspecies 
 

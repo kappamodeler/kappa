@@ -55,6 +55,7 @@ let get_views_from_agent_id = F.get_views_from_agent_id
 let get_neighbour = F.get_neighbour 
 let build_species = F.build_species  
 let apply_blist_with_species = F.apply_blist_with_species
+let remove_agent_in_species = F.remove_agent_in_species 
 let merge = F.merge 
 let split_subspecies = F.split_subspecies 
 let empty_hash = F.empty_hash 
@@ -105,6 +106,7 @@ type ('a,'b) classes =
 						    a choice (list/an elmt per potential signature of the lens
 						     of compositions (list/an elmt per subcomposant (delimited by dashed edges)
                                                      of choices (list/an elmt per potential completion) *)
+	extended_passives:((string*string*string)*(string*string*string)) list;  
 	rate:expr option;
 	rate_other:expr option }
       	
@@ -119,7 +121,8 @@ let empty_class g =
    roots = None;
    subclass = None;
    rate = None;
-   rate_other = None}
+   rate_other = None;
+   extended_passives = [] }
 
 let get_rule_of_class g = g.rule
 let check x = 
@@ -194,7 +197,12 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   let cpb = match pb.Pb_sig.intermediate_encoding with 
     Some cpb -> cpb
   | None -> error 178 in
-  
+
+  let sites_of_agent x = 
+    try 
+      StringMap.find x cpb.Pb_sig.cpb_interface_of_agent 
+    with 
+      Not_found -> error 202 in 
 
   let print_ODE = 
     {dump = None ;
@@ -912,6 +920,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	  
 	  let control = x.Pb_sig.control in 
 	  let passives = x.Pb_sig.passive_species in 
+	
 	  let specie_of_id y = 
 	    try 
 	      StringMap.find y x.Pb_sig.specie_of_id
@@ -1020,7 +1029,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				       rule_id 
 				       consumed_species
 				       [AL((target_type,target_type,target_site),(origin_type,origin_site)),false;B(target_type,target_type,target_site),false]
-				       )
+				       [] )
 				in 
 				fadd_contrib 
 				  cons_key 
@@ -1136,6 +1145,27 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	       let classes = 
 		 List.map  
 		   (fun xx -> 
+
+		     (* TO DO DEAL WITH THAT *)
+		     let passives = 
+		       let passives_target = 
+			 List.fold_left 
+			   (fun set ((a,_,_),_) -> StringSet.add a set)
+			   StringSet.empty 
+			   passives 
+		       in 
+		       List.fold_left 
+			 (fun passives (b,bool) -> 
+			   match b,bool with 
+			     L((a,a2,s),(a',a2',s')),true -> 
+			       if not (StringSet.mem a passives_target) && not (StringSet.mem a' passives_target)
+			       then 
+				 (((a,a2,s),(a',a2',s'))::passives)
+			       else passives 
+			   | _ -> passives)
+			 passives 
+			 xx.Pb_sig.injective_guard 
+		     in 
 		     StringSet.fold 
 		       (fun x l ->
 			 let rec aux to_visit black set = 
@@ -1154,6 +1184,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			       let tv,b = aux2 passives q black in
 			       aux tv b (StringSet.add t set) in
 			 {(empty_class xx) with 
+			   extended_passives = passives ;
 			   agents_id=aux [x] (StringSet.empty) (StringSet.singleton x)}::l)
 		       (List.fold_left 
 			  (fun set ((a',_,_),_) -> StringSet.remove a' set)
@@ -1220,7 +1251,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				  StringSet.remove a set 
 				else 
 				  set )
-			      agentset passives in
+			      agentset cla.extended_passives in
 			  {cla with roots = Some roots}) x))
 		   classes 
 	       in
@@ -1307,7 +1338,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 							[] -> None 
 						      | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b4,b5,b6,b2,b3) -> Some b1
 						      | _::q -> aux q in
-						    aux passives in
+						    aux (cla.extended_passives) in
 						  (match a4 with 
 						    None -> (same,other)
 						  | Some a4 when StringSet.mem a4 black -> (same,other)
@@ -1415,8 +1446,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		   (fun (mainprod,bool) x -> 
 		     let _ = dump_line 888 in
 		     let prod = Intmap.empty in 
-		     if control.remove = []
-			 && 
+		     if (*control.remove = []
+			 && *)
 		       List.for_all 
 			 (fun (b,bool) -> match b with H _ -> not bool | _ -> true) 
 			 control.context_update
@@ -1583,7 +1614,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 							       | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b4,b5,b6,b2,b3) -> Some b1
 							       | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b1,b2,b3,b5,b6) -> Some b4
 							       | _::q -> aux q in
-							     aux passives in
+							     aux (cla.extended_passives) in
 							   (match a4 with 
 							     None -> (same,other)
 							   | Some a4 when StringSet.mem a4 black -> (same,other)
@@ -1715,8 +1746,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				       
 				   end) in 
 			      	 
-				 let context_update = 
-				   filter_context_update control.context_update x in
+				 let context_update = filter_context_update control.context_update x in
 				 let _  = 
 				   if debug
 				   then 
@@ -1824,11 +1854,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				     (context_update,[],[])  
 			      	     (control.uncontext_update)
 				 in 
-				 if 
+				(* if 
 				   context_update  = [] 
 				 then 
 				   (c_list,p_list,sl_list) 
-				 else
+				 else*)
 				   let fadd ag site map = 
 				     if StringSet.mem ag x 
 				     then 
@@ -1855,16 +1885,35 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					       )
 				       StringMap.empty control.context_update
 				   in
+				   let removed_agents = 
+				     List.fold_left 
+				       (fun set a -> StringSet.add a set)
+				       StringSet.empty 
+				       control.remove
+				   in 
+				   let modagents = 
+				     StringSet.fold 
+				       (fun a map -> 
+					 let sp = specie_of_id a in 
+					 let site1,site2 = sites_of_agent sp in 
+					 let f = 
+					   List.fold_left 
+					     (fun map site -> fadd a site map)
+					 in 
+					 f (f map site1) site2 )
+				       removed_agents
+				       modagents 
+				   in 
 				   let _ = 
 				     if debug
 				     then 
-				       let _ = pprint_string print_debug "MODAGENTS\n" in
+				       let _ = print_string  "MODAGENTS\n" in
 				       let _ = 
 					 StringMap.iter 
 					   (fun a s -> 
-					     pprint_string print_debug a;
-					     StringSet.iter (pprint_string print_debug) s;
-					     pprint_newline print_debug)
+					     print_string a;
+					     StringSet.iter (print_string) s;
+					     print_newline ())
 					   modagents 
 				       in () in 
 				   let skeme_map = 
@@ -2027,7 +2076,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					     map 
 					 in
 					 fadd a s b (fadd b s' a map))
-				       StringMap.empty passives 
+				       StringMap.empty (cla.extended_passives)
 				   in
 				   let cut_list = 
 				   (* We remove binding internal to the subspecies *)
@@ -2184,7 +2233,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 						   sp
 						     ) 
 					       sp
-					       passives  in    
+					       (cla.extended_passives)  in    
 					   complete_subspecies sp))
 				       [] 
 				       extended_list in 
@@ -2207,8 +2256,27 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					   let _ = print_int (snd a) in 
 					   let _ = print_newline () in ()
 					 in
+					 let consumed_species',free_sites = 
+					   StringSet.fold 
+					     (fun a cs-> 
+					       remove_agent_in_species  ode_handler views_data_structures keep_this_link rule_id cs a)
+					     removed_agents 
+					     (consumed_species,[])
+					 in 
+					 let context_update = 
+					   List.filter 
+					     (fun b -> 
+					       match b with 
+						 H(a,_),_
+					       | B(a,_,_),_ 
+					       | M((a,_,_),_),_ 
+					       | AL((a,_,_),_),_ -> not (StringSet.mem a removed_agents) 
+					       | L((a,_,_),(b,_,_)),_ -> (not (StringSet.mem a removed_agents)) && (not (StringSet.mem b removed_agents))
+					       | _ -> true )
+					     context_update in 
+
       					 let product = 
-					   apply_blist_with_species ode_handler views_data_structures keep_this_link rule_id consumed_species context_update  in 
+					   apply_blist_with_species ode_handler views_data_structures keep_this_link rule_id consumed_species' context_update free_sites  in 
 					 let _ = if debug then 
 					 (*  let pkey = hash_subspecies product in *)
 					   let _ = print_string "PRODUCT " in
@@ -2221,7 +2289,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					   ()
 					 in
 					 ((consumed_fragment,-1,[i,consumed_species,kyn_mod])::c_list),
-					 ((product,1,[i,consumed_species,kyn_mod])::p_list),
+					 ((product,consumed_species,1,[i,consumed_species,kyn_mod])::p_list),
 					 (List.fold_left 
 					    (fun l (target_type,target_site,
 						    origin_type,origin_site) -> 
@@ -2265,7 +2333,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			 fst
 			   begin 
 			     List.fold_left 
-			       (fun (product_list,hash) (species,k1,k2) -> 
+			       (fun (product_list,hash) (species,species_to_hash,k1,k2) -> 
 				 let _ = 
 				   if debug 
 				   then 
@@ -2309,7 +2377,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				       check_compatibility 
 					 views_data_structures 
 					 old_hash 
-					     species 
+					     species_to_hash 
 				     in
 				     let _ = 
 				       if debug 
