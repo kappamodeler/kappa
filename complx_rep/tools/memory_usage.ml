@@ -19,7 +19,7 @@ let set_memory_usage i memory_overflow  =
     then 
     memory_alarm := None
   else
-    (let coef = 1024 * 1024 / 4 in
+    (let coef = 1024 * 1024 / (Sys.word_size / 8) in
      let k = 
          if max_int / coef < i 
 	 then max_int else 

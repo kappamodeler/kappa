@@ -1304,8 +1304,6 @@ let apply_blist_with_species ode_handler data_structure keep_link rule_id  speci
       blist 
   in 
    (* deal with side_effects due to agent removal *)
-   let _ = print_string "size" in
-   let _ = print_int (List.length free_sites) in 
    let update,subspecies = 
      List.fold_left 
        (fun (update,subspecies) ((rp,a,s),(rp',s')) ->
