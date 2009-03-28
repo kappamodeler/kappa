@@ -36,7 +36,7 @@ let error_found x y =
 %}
 %token INIT_LINE  OBS_LINE  STORY_LINE NEWLINE MODIF_LINE GEN_LINE CONC_LINE BEGIN_MAC_LINE END_MAC_LINE EXPAND_MAC_LINE EOF
 %token MULT DIVIDE PLUS MINUS COMMA SEMICOLON GREATER SMALLER SET EQUAL INFINITY SEP
-%token DO AT TIME
+%token INSTANCE DO AT TIME
 %token KAPPA_LNK KAPPA_WLD KAPPA_SEMI KAPPA_LRAR KAPPA_RAR
 %token OP_PAR CL_PAR OP_CONC CL_CONC OP_ACC CL_ACC
 %token <int> INT REF
@@ -109,7 +109,7 @@ main:
 | INT {fun f -> string_of_int $1}
 | INFINITY {fun f -> "$INF"}
 
-| LABEL {fun f -> "'"^(f $1)^"'"}
+| LABEL {fun f -> "'"^(f ($1,""))^"'"}
 | id    {$1}
   ;
   
@@ -129,7 +129,7 @@ main:
   conc_val:
 | FLOAT {fun f -> string_of_float $1}
 | INT {fun f -> string_of_int $1}
-| OP_CONC LABEL CL_CONC {fun f -> "["^(f $2)^"]"}
+| OP_CONC LABEL CL_CONC {fun f -> "["^(f ($2,""))^"]"}
 | OP_CONC error {error_found 229 "invalid concentration expression"}
   ;
 
@@ -182,22 +182,22 @@ main:
 
   
   obs_expr: 
-| LABEL newline {PP_OBS_L((fun f -> f $1,"%obs: '"^(f $1)^"'"^($2 f)),!line)}
+| LABEL newline {PP_OBS_L((fun f -> let a = f ($1,"") in a,"%obs: '"^a^"'"^($2 f)),!line)}
 | ne_sol_expr newline {PP_DONT_CARE_L((fun f -> 
     let a,b = $1 f in 
     "%obs: "^(b)^($2 f)),!line)}
 | LABEL ne_sol_expr newline {PP_DONT_CARE_L((fun f -> 
     let a,b =  $2 f in 
-    "%obs: '"^(f $1)^"' "^b^($3 f)),!line)}
+    "%obs: '"^(f ($1,""))^"' "^b^($3 f)),!line)}
   ;
 
   story_expr: 
-| LABEL newline {PP_STORY_L((fun f -> f $1,"%story: '"^(f $1)^"'"^($2 f)),!line)}
+| LABEL newline {PP_STORY_L((fun f -> let a = f ($1,"")in a,"%story: '"^a^"'"^($2 f)),!line)}
   ;
   
   named_rule_expr:
-| LABEL rule_expr newline {fun f -> f $1,let (a,b,c,d,e)=$2 f  in (a,b,c,d,e^($3 f))}
-| rule_expr newline {let l = (!line)+1 in fun f -> f "Auto"^(string_of_int l) ,let (a,b,c,d,e)=$1 f in (a,b,c,d,e^($2 f))}
+| LABEL rule_expr newline {fun f -> f ($1,""),let (a,b,c,d,e)=$2 f  in (a,b,c,d,e^($3 f))}
+| rule_expr newline {let l = (!line)+1 in fun f -> f ("Auto"^(string_of_int l),"") ,let (a,b,c,d,e)=$1 f in (a,b,c,d,e^($2 f))}
   ;
 
 
@@ -298,7 +298,8 @@ newline2:
 | COMMENT {fun f -> $1}
 
 id:
-    ID {fun f -> f $1}
+    ID {fun f -> f ($1,"")}
+| ID INSTANCE INT {fun f -> f ($1,string_of_int $3)}
 
 macro_def: 
     id OP_PAR idlistcomma CL_PAR newline {(fun f -> ($1 f)),

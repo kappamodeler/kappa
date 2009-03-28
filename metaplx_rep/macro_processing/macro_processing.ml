@@ -7,7 +7,7 @@ let collect_def l =
     match l with t::q -> 
       begin 
 	match t with 
-	  PP_BMAC_L (x,i) -> seek_macro_end q (x (fun x->x),i) [] sol dictionary 
+	  PP_BMAC_L (x,i) -> seek_macro_end q (x (fun (x,_)->x),i) [] sol dictionary 
 	| PP_EMAC_L (_,i) -> failwith ("END OF MACRO unexpected in line "^(string_of_line i))
 	| _ -> seek_macro_def q (t::sol) dictionary 
       end
@@ -52,18 +52,18 @@ let print_def handler def =
 
 
 let get_macro_var rule = 
-  let sol  = ref StringSet.empty in 
+  let sol  = ref String2Set.empty in 
     match rule with 
-      PP_INIT_L (x,_) -> let _ = x (fun x -> let _ = sol:= StringSet.add x (!sol) in x) in !sol 
-    | PP_DONT_CARE_L (x,_) -> let _ = x (fun x -> let _ = sol:= StringSet.add x (!sol) in x) in !sol 
-    | PP_OBS_L (x,_)  ->  let _ = x (fun x -> let _ = sol:= StringSet.add x (!sol) in x) in !sol 
+      PP_INIT_L (x,_) -> let _ = x (fun x -> let _ = sol:= String2Set.add x (!sol) in fst x) in !sol 
+    | PP_DONT_CARE_L (x,_) -> let _ = x (fun x -> let _ = sol:= String2Set.add x (!sol) in fst x) in !sol 
+    | PP_OBS_L (x,_)  ->  let _ = x (fun x -> let _ = sol:= String2Set.add x (!sol) in fst x) in !sol 
 
-    | PP_STORY_L (x,_) -> let _ = x (fun x -> let _ = sol:= StringSet.add x (!sol) in x) in !sol 
-    | PP_GEN_L (x,_)  ->  let _ = x (fun x -> let _ = sol:= StringSet.add x (!sol) in x) in !sol 
-    | PP_CONC_L (x,_)  ->  let _ = x (fun x -> let _ = sol:= StringSet.add x (!sol) in x) in !sol 
-    | PP_RULE_L (x,_) ->  let _ = x (fun x -> let _ = sol:= StringSet.add x (!sol) in x) in !sol 
-    | PP_PREPROCESSED_RULE (x,_) ->  let _ = x (fun x -> let _ = sol:= StringSet.add x (!sol) in x) in !sol 
-    | PP_CMAC_L (x,_)  ->  let _ = x (fun x -> let _ = sol:= StringSet.add x (!sol) in x) in !sol 
+    | PP_STORY_L (x,_) -> let _ = x (fun x -> let _ = sol:= String2Set.add x (!sol) in fst x) in !sol 
+    | PP_GEN_L (x,_)  ->  let _ = x (fun x -> let _ = sol:= String2Set.add x (!sol) in fst x) in !sol 
+    | PP_CONC_L (x,_)  ->  let _ = x (fun x -> let _ = sol:= String2Set.add x (!sol) in fst x) in !sol 
+    | PP_RULE_L (x,_) ->  let _ = x (fun x -> let _ = sol:= String2Set.add x (!sol) in fst x) in !sol 
+    | PP_PREPROCESSED_RULE (x,_) ->  let _ = x (fun x -> let _ = sol:= String2Set.add x (!sol) in (fst x)) in !sol 
+    | PP_CMAC_L (x,_)  ->  let _ = x (fun x -> let _ = sol:= String2Set.add x (!sol) in fst x) in !sol 
 
 
       
@@ -75,23 +75,23 @@ let get_subs varset int arg  =
       |	t1::q1,t2::q2 -> scan q1 q2 (StringMap.add t1 t2 map)
     in scan int arg StringMap.empty 
   in
-  StringSet.fold 
+  String2Set.fold 
     (fun var prefixlist -> 
       try 
-	let a = StringMap.find var map
+	let a = StringMap.find (fst var) map
 	in 
 	List.fold_left 
 	  (fun sol prefix -> 
 	    List.fold_left 
-	      (fun sol image -> (StringMap.add var image prefix)::sol)
+	      (fun sol image -> (String2Map.add var image prefix)::sol)
 	      sol
 	      a) [] prefixlist
       with 
 	Not_found -> prefixlist)
     varset 
-    [StringMap.empty],map
+    [String2Map.empty],map
 
-let extend_flag x stack = 
+let extend_flag x stack tag = 
   if stack = [] then x
   else
     let flag = 
@@ -100,10 +100,10 @@ let extend_flag x stack =
 	(fst x)
 	stack
     in
-    flag,snd x
+    flag^tag,snd x
 	  
 	    
-let rec macro_expanse calling_stack def f l sol = 
+let rec macro_expanse calling_stack def f tag l sol = 
   match l with 
     [] -> sol 
   | t::q -> 
@@ -116,11 +116,12 @@ let rec macro_expanse calling_stack def f l sol =
 	  | PP_STORY_L (x,i) -> STORY_L(let a,b = x f in a,b,i)::sol
 	  | PP_GEN_L (x,i) -> GEN_L(x f,i)::sol
 	  | PP_CONC_L (x,i) -> CONC_L(x f,i)::sol
-	  | PP_RULE_L (x,i) -> RULE_L(extend_flag (x f) calling_stack,i)::sol
+	  | PP_RULE_L (x,i) -> RULE_L(extend_flag (x f) calling_stack tag,i)::sol
 	  | PP_PREPROCESSED_RULE (x,i) -> PREPROCESSED_RULE(let a,b = x f in a,b,i)::sol
 	  | PP_CMAC_L (cont,i) -> 
 	      let rec call (x,arg,string) sol calling_stack = 
 		try 
+		  let _ = print_string x in 
 		  let (int,body),i2= 
 		    StringMap.find x def 
 		  in 
@@ -157,13 +158,23 @@ let rec macro_expanse calling_stack def f l sol =
 		      |	rule -> 
 			  List.fold_left 
 			    (fun sol sigma -> 
+			      let tag = 
+				String2Map.fold 
+				  (fun (x,a) y tag -> 
+				    (tag^"."^x^"%"^a^"/"^y))
+							  
+							sigma 
+							""
+			      in
+							 
 			      let sigma x = 
 				try 
-				  StringMap.find x sigma 
+				  String2Map.find x sigma 
 				with 
-				  Not_found -> x 
+				  Not_found -> (fst x) 
 			      in 
-			      macro_expanse calling_stack def sigma [rule] sol )
+			      
+			      macro_expanse calling_stack def sigma tag [rule] sol )
 		      sol 
 		      fun_list)
 		  sol body 
@@ -171,8 +182,8 @@ let rec macro_expanse calling_stack def f l sol =
 		Not_found -> 
 		  failwith ("MACRO "^x^" undefined at line "^(string_of_line i))
 	      in (call (cont f) sol ((string_of_line i)::calling_stack)) 
-	in macro_expanse calling_stack def f q sol' 
+	in macro_expanse calling_stack def f tag q sol' 
       end
 
-let macro_expanse x a b c d = 
-  List.rev (macro_expanse x a b c d)
+let macro_expanse x a b c d e = 
+  List.rev (macro_expanse x a b c d e)

@@ -20,6 +20,9 @@ module SiteSet : (Set.S with type elt = site)
 module SiteMap : (Map.S with type key = site)
 module AgentMap : (Map.S with type key = agent)
 module AgentSet : (Set.S with type elt = agent)
+module String2Map : (Map.S with type key = string*string)
+module String2Set : (Set.S with type elt = string*string)
+
 
 type print_handler = 
     {string:string -> unit;
@@ -88,18 +91,20 @@ type parse = INIT_L of  (parsed_agent list *string*int)
   | RULE_L of (parsed_rule*int) 
   | PREPROCESSED_RULE of (parsed_rule * string rule_metaplx*int)
 
+type arg = string*string
+type subs = arg -> string 
 
-type pp_parse = PP_INIT_L of  (((string->string) -> (parsed_agent list *string))*int)
-  | PP_DONT_CARE_L of (((string->string) -> string)*int)
-  | PP_OBS_L of ((string->string)->(string*string))*int
-  | PP_STORY_L of ((string->string) -> (string*string))*int
-  | PP_GEN_L of ((string ->string)-> parsed_gen)*int
-  | PP_CONC_L of ((string->string) -> parsed_conc)*int
-  | PP_RULE_L of ((string->string)->parsed_rule)*int 
-  | PP_PREPROCESSED_RULE of ((string->string)->(parsed_rule * string rule_metaplx))*int
-  | PP_BMAC_L of ((string->string) -> string * string list * string)* int 
-  | PP_EMAC_L of ((string->string) -> string)*int 
-  | PP_CMAC_L of ((string->string) -> string * string list list * string)*int 
+type pp_parse = PP_INIT_L of  ((subs -> (parsed_agent list *string))*int)
+  | PP_DONT_CARE_L of ((subs -> string)*int)
+  | PP_OBS_L of (subs->(string*string))*int
+  | PP_STORY_L of (subs -> (string*string))*int
+  | PP_GEN_L of (subs-> parsed_gen)*int
+  | PP_CONC_L of (subs -> parsed_conc)*int
+  | PP_RULE_L of (subs->parsed_rule)*int 
+  | PP_PREPROCESSED_RULE of (subs->(parsed_rule * string rule_metaplx))*int
+  | PP_BMAC_L of (subs -> string * string list * string)* int 
+  | PP_EMAC_L of (subs -> string)*int 
+  | PP_CMAC_L of (subs -> string * string list list * string)*int 
 
 val print_interface: print_handler -> concrete_interface  ->unit
 val print_action: print_handler -> action -> unit

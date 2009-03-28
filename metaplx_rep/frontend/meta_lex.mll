@@ -47,6 +47,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     | integer as n {INT(int_of_string n)}
     | real as f {FLOAT(float_of_string f)}
     | '\'' {let lab = read_label "" lexbuf in LABEL lab}
+    | "%" {INSTANCE}
     | id as str {ID(str)}
     | '@' {AT}
     | ',' {COMMA}
