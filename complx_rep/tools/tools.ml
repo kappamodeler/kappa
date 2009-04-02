@@ -498,3 +498,10 @@ let avoid_copy g a =
 
  
 let starline = "*******************************************************************************\n"
+
+let print_long_float f = 
+  let inv = 1./.f in 
+  let ndigit = log inv /. log 10. in 
+  let n = int_of_float ndigit in 
+  let n = max 6 (n+3) in 
+  Printf.sprintf "%.*f" (n+1) f

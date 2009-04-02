@@ -629,7 +629,7 @@ module Pipeline =
 	     let l = chrono prefix "Second compilation(pretty printing)" l in 
 	     Some {rep with txt_lines = Some txt},(l,m))
 		with _ -> Some rep,(chrono prefix "Second compilation" l,
-                                    "Complx parser failed !!!"::m)
+                                    (("Complx parser failed at line "^(string_of_int (!Data_structures.parser_line))^" !!!"))::m)
        and reachability_analysis prefix (pb':'a Pb_sig.pb option) (l,m) = 
 	 let prefix' = add_suffix prefix "reachability_analysis" in 
 	 match pb' 

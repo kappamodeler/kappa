@@ -1274,8 +1274,8 @@ let apply_blist_with_species ode_handler data_structure keep_link rule_id  speci
 		       species.bonds_map)
 		in
 		let (agent_type',v') = get rp' modified in 
-		
-		let modified  = f b rp modified in
+		let modified  = f (B(agent_type,agent_type,site))  rp modified in
+		let modified = f (AL((agent_type,agent_type,site),(agent_type',site'))) rp modified in 
 		let modified = f (B(agent_type',agent_type',site')) rp' modified in
 		let modified = f (AL((agent_type',agent_type',site'),(agent_type,site))) rp' modified in
 		modified,
@@ -1309,6 +1309,12 @@ let apply_blist_with_species ode_handler data_structure keep_link rule_id  speci
        (fun (update,subspecies) ((rp,a,s),(rp',s')) ->
 	 try 
 	   let agent_type,v = get rp' update in 
+	   let _ = print_string "FRAGMENTS 1312" in 
+	   let _ = print_string agent_type in 
+	   let _ = print_string s' in 
+	   let _ = print_string a in 
+	   let _ = print_string s in 
+	   let _ = print_newline () in 
 	   let v' = BMap.add (B(agent_type,agent_type,s')) false v in 
 	   let v' = BMap.add (AL((agent_type,agent_type,s'),(a,s))) false v' in 
 	   RPathMap.add 
@@ -1340,7 +1346,7 @@ let apply_blist_with_species ode_handler data_structure keep_link rule_id  speci
 		print_string "F\n")
 	    bmap in 
 	    
-	       error 861 (Some  "Try to hash unknown view")
+	       error 1343 (Some  "Try to hash unknown view")
   in
   let species = 
     {subspecies 

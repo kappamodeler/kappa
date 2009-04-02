@@ -8,9 +8,8 @@ rule token = parse
    "\\\n" {NextLine}
 |  ('#') {Sharp} 
 | eof    { EOF }
-| "-" {Minus}
-| ">" {Greater}
-| "<" {Less}
+| "->" {Direct}
+| "<->" {Bi}
 | '\n' |  "\r\n" | "\n\r" {EOL}
 | '%' {Percent}
 | '\'' {Flag}

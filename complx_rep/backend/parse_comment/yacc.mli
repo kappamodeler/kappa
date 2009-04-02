@@ -6,9 +6,8 @@ type token =
   | Double_rule
   | EOL
   | EOF
-  | Greater
-  | Less
-  | Minus
+  | Direct
+  | Bi
   | Flag
   | NextLine
   | IDENT of ( string )

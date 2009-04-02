@@ -19,7 +19,7 @@ open Error_handler
 let explicit = false
 let debug = false
 let log_step = false
-let memory = true
+let memory = false
 
 
 let error i = 
@@ -182,7 +182,14 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   let print_matlab = f MATLAB file_ODE_matlab in
   let print_latex = f LATEX file_ODE_latex in
   let print_latex_obs = f LATEX file_obs_latex in 
-  let print_mathematica = f MATHEMATICA file_ODE_mathematica in 
+  let print_mathematica = 
+    let rep = f MATHEMATICA file_ODE_mathematica in 
+    match rep with None -> None 
+    |	Some rep -> 
+	Some 
+	  {rep 	    
+	  with print_float = (fun x -> rep.print_string (Tools.print_long_float x))}
+  in
   let print_txt = f MATHEMATICA file_alphabet  in 
   let print_kappa = f MATHEMATICA file_obs in 
 
@@ -529,10 +536,13 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 
    let _ = 
     if debug   then 
-      let _ = print_string "VARIABLES\n" in 
+      let _ = print_string "VIEWS\n\n" in 
       let _ = 
-	List.iter 
-	  (fun view  -> 
+	List.fold_left
+	  (fun i view  -> 
+	    let _ = print_newline () in 
+	    let _ = print_string "VIEW: " in
+	    let _ = print_string (string_of_int i) in 
 	    let _ = print_newline () in 
 	    let _ = print_string "AGENT: " in
 	    let _ = print_string (agent_of_view view) in
@@ -548,8 +558,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		  print_string (if bool then "TRUE" else "FALSE");
 		    print_newline ())
 		(valuation_of_view view) 
-	    in ())
-	  views_list 
+	    in (i+1))
+	  1 views_list 
       in () in
   
 
@@ -902,7 +912,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	    if debug then 
 	      let _ = print_string "RULE (604) \n " in
 	      let _ = print_string rule_id in 
-	      let _ = print_newline () in () 
+	      let _ = print_newline () in 
+	      () 
+		
 	  in 
 	  let fadd_contrib (i,aut) k expr coef prod = 
 	    let  old = 
@@ -955,33 +967,34 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		   get_denum_handling_compatibility=get_denum_handling_compatibility;
 		   get_bond=(fun x -> x.bond);
 		   get_fragment_extension=get_fragment_extension} in 
-	       
+	     let _ = dump_line 960 in 
 
 	    if trivial_rule2 (contact,keep_this_link) x
 	    then 
 	      begin
-	      let deal_with (target_type,target_site,origin_type,origin_site) kyn prod = 
-		let _ = 
-		  if debug
-		  then 
-		    print_string "Dealing with half bond breaking\n "
-		in
-		let prod = 
-		  begin 
-		    let tp_list = 
-		       try StringMap.find target_type annotated_contact_map.subviews 
-		       with 
-			 Not_found -> 
+		let _ = dump_line 965 in 
+		let deal_with (target_type,target_site,origin_type,origin_site) kyn prod = 
+		  let _ = 
+		    if debug
+		    then 
+		      print_string "Dealing with half bond breaking\n "
+		  in
+		  let prod = 
+		    begin 
+		      let tp_list = 
+			try StringMap.find target_type annotated_contact_map.subviews 
+			with 
+			  Not_found -> 
 			   error 776
-		     in
-		     let tp_list = 
-		       try 
-			 List.fold_left
-			   (fun list skel -> 
+		      in
+		      let tp_list = 
+			try 
+			  List.fold_left
+			    (fun list skel -> 
 			     let skel = 
 			       StringSet.fold
 				 (fun a b -> a::b)
-				  skel.kept_sites  
+				 skel.kept_sites  
 				 [] in
 			     (StringListMap.find (List.rev skel) 
 				(try StringMap.find target_type  agent_to_int_to_nlist
@@ -989,10 +1002,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				  error 2481 )
 				 
 				)@list)
-			   [] tp_list 
-		       with Not_found -> 
-			 error 795
-		     in 
+			    [] tp_list 
+			with Not_found -> 
+			  error 795
+		      in
+		      let _ = dump_line 999 in 
 		     let tp_list = 
 		       List.filter
 			 (fun tp_i -> 
@@ -1010,13 +1024,13 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		     List.fold_left
 		       (fun prod tp_i -> 
 			 let extended_list = 
-			    complete_subspecies 
-			      (build_species 
-				 agent_of_tp_i 
-				 (StringMap.add (agent_of_tp_i tp_i) tp_i StringMap.empty)
-			         [])
-			  in 
-			  let prod = 
+			   complete_subspecies 
+			     (build_species 
+				agent_of_tp_i 
+				(StringMap.add (agent_of_tp_i tp_i) tp_i StringMap.empty)
+			        [])
+			 in 
+			 let prod = 
 			    List.fold_left 
 			      (fun prod consumed_species -> 
 				let cons_key = hash_subspecies consumed_species in 
@@ -1142,6 +1156,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	     end
 	   else
 	     begin 
+	       let _ = dump_line 1149 in 
 	       let classes = 
 		 List.map  
 		   (fun xx -> 
@@ -1966,11 +1981,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 						 | (bvar,bool)::q -> 
 						     match ode_handler.b_of_var bvar with 
 						       B(ag',_,s) 
-						       when ag'=agt && StringSet.mem s int ->( try (bool = BMap.find (B(ag,agt,s)) b2) with Not_found -> true) && check_compatibility q
+						       when ag'=agt && StringSet.mem s int ->( try (bool = BMap.find (B(agt,agt,s)) b2) with Not_found -> true) && check_compatibility q
 						     |	AL((ag',_,s),t) 
-						       when ag'=agt && StringSet.mem s int ->( try (bool = BMap.find (AL((ag,agt,s),t)) b2) with Not_found -> true)  && check_compatibility q 
+						       when ag'=agt && StringSet.mem s int ->( try (bool = BMap.find (AL((agt,agt,s),t)) b2) with Not_found -> true)  && check_compatibility q 
 						     |	M((ag',_,s),m) 
-						       when ag'=agt && StringSet.mem s int -> (try (bool = BMap.find (M((ag,agt,s),m)) b2)  with Not_found -> true) && check_compatibility q 
+						       when ag'=agt && StringSet.mem s int -> (try (bool = BMap.find (M((agt,agt,s),m)) b2)  with Not_found -> true) && check_compatibility q 
 						     |  _ -> 
 							 check_compatibility q in 
 					       let filtered_a = 

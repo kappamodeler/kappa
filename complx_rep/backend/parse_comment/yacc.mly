@@ -5,15 +5,16 @@
 
 open Comment_sig
 
-%}
 
+let succ () = (Data_structures.parser_line:=(!Data_structures.parser_line)+1)
+%}
 
  /* declarations */
 
 
 /* lexer tokens */
 
-%token Comment Percent Sharp Single_rule Double_rule EOL EOF Greater Less Minus Flag NextLine
+%token Comment Percent Sharp Single_rule Double_rule EOL EOF Direct Bi Flag NextLine
 %token < string > IDENT   
 %start main                   /* the entry point */
 %type <commented_line list> main
@@ -27,13 +28,9 @@ Rule :
 | RuleSign Ident {"",$1,$2}
 
 RuleSign :
-  Leftarrow {$1,1}
-| Less Bullshit Leftarrow {"<"^$2^$3,2}
-| Less Leftarrow {"<"^$2,2}
+  Direct {"->",1}
+| Bi {"<->",2}
 
-Leftarrow :
-  Minus Greater {"->"}
-| Minus Bullshit Greater {"-"^$2^">"}
 
 Bullshit :
   Bullshititem {$1}
@@ -49,25 +46,19 @@ Comment_rule :
 |   Flag FlagIdent Flag Rule C {let (a,b,c)=$4 in {arrow=fst b;flag=Some $2;lhs=a;rhs=c;dir=snd b;comments=$5}}
 
 Line :
-  D EOL {Decl($1)}
-| C EOL {Mutt($1)}
-| Comment_rule EOL {Rgl($1)}
-| EOL {Mutt("")}
+  D EOL {let _ = succ () in Decl($1)}
+| C EOL {let _ = succ () in Mutt($1)}
+| Comment_rule EOL {let _ = succ () in Rgl($1)}
+| EOL {let _ = succ () in Mutt("")}
 
 LastLine :
   D EOF {Decl($1)}
 | C EOF {Mutt($1)}
 | Comment_rule EOF {Rgl($1)}
 
-Char :
-   Less {"<"}
-| Minus {"-"}
-| Greater {">"}
 
 FlagIdent :
   Ident FlagIdent {($1)^($2)}
-| Char FlagIdent  {($1)^($2)}
-| Char            {$1}
 | Ident           {$1}
 | Sharp {"#"}
 | Sharp FlagIdent {"#"^$2}
@@ -84,7 +75,8 @@ C :
 Comment_char :
   IDENT {$1}
 | Flag {"'"}
-| Char {$1}
+| Direct {"->"}
+| Bi {"<->"}
 | Bullshititem {$1}
 | Percent {"%"} 
 | Sharp {"#"} 

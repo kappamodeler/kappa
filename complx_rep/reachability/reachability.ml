@@ -403,7 +403,7 @@ module Iterateur=
 	      cpb.cpb_interface
 	| Some map -> 
 	    try String2Map.find (a,x) map 
-	    with Not_found -> (print_string "INT";print_string a;print_string x;print_newline ();[]) 
+	    with Not_found -> [] 
 
       let init_false pb = 
 	let cpb = 

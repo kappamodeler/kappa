@@ -7,7 +7,7 @@ type token =
   | Double_rule
   | EOL
   | EOF
-   | Greater | Less | Minus  | Flag | NextLine
+  | Direct | Bi  | Flag | NextLine
   | IDENT of ( string )
  
 val main :

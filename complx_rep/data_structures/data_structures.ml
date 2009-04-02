@@ -119,3 +119,5 @@ let tuple_data =
   f_impossible_links=DATA}
 
 module Arraymap = Unbounded_array.ArrayExt
+
+let parser_line = ref 0 
