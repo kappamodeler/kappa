@@ -51,7 +51,7 @@ let restrict_contact_map contact binding set =
 
 
 let dump_contact_map_in_dot interface contact dotted fic = 
-  if fic = "" or contact = [] 
+  if fic = "" or (contact = [] && interface = [])
   then ()
   else
     let output=open_out fic in 
@@ -110,7 +110,7 @@ let print_contact_map_in_dot res  pb =
 	match pb.contact_map  
 	with Some l -> l.relation_list  
 	| None -> [] in 
-      if fic = "" or l = [] 
+      if fic = "" 
       then ()
       else
 	begin	
@@ -120,7 +120,10 @@ let print_contact_map_in_dot res  pb =
 	    | None -> error "OUTPUT_CONTACT_MAP 24 " (raise Exit)
 	  in 
 	  let interface = cpb.cpb_interface in
-	  dump_contact_map_in_dot interface l (fun _ _ -> false) fic 
+	  if l = [] && interface = [] 
+	  then () 
+	  else 
+	    dump_contact_map_in_dot interface l (fun _ _ -> false) fic 
 	end
     end
   else
