@@ -167,7 +167,7 @@ module Input =
 	  (print_string "BACKTRACKS";
 	   print_int nback;
 	   print_newline ()) in
-      let _ = trace_print "RESTORE" in
+      let _ = trace_print "\nBacktrack\nCancel last assumption" in
       let _ =  
 	List.iter 
 	  (fun (i,j,k)  -> 
@@ -177,7 +177,7 @@ module Input =
 	    configuration.status.(j).(i) <- k)
 	  stack 
       in 
-      let _ = trace_print "END RESTORE" in 
+      let _ = trace_print "Cancellation finished" in 
       let _ = back:=nback in
       configuration  
 
@@ -248,14 +248,16 @@ module Input =
       else
 	raise Too_expensive 
 	 
-    let best_choice = 
-      if !trace 
-      then 
-	(fun x -> let rep = best_choice x in 
-	          let _ = print_string (string_of_choice rep) in 
-		  let _ = print_newline () in 
-		  rep)
-      else best_choice 
+    let best_choice x = 
+      let rep = best_choice x in 
+      let _ = 
+	if !trace
+	then 
+	  let _ = print_string (string_of_choice rep) in 
+	  let _ = print_newline () in 
+	    () 
+      in
+	rep
 
     let network_after_short configuration event wire = 
       configuration.network.sparse_matrix.(wire).(event).state_after
