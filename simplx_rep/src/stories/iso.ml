@@ -4,7 +4,7 @@ open Tools
 
 let debug = false
 
-let debug_compress = debug or Story_compressor.trace
+let debug_compress () = debug or !Story_compressor.trace
 
 module Iso = 
   struct
@@ -140,7 +140,7 @@ let compress_drawers log drawers test_iso_mode add_log_entry =
 		      let _ = Story_compressor.set_init_time () in
 		      let kold = kold+1 in
 		      let _ = 
-			if debug_compress 
+			if debug_compress () 
 			then 
 			  (print_newline ();
 			   print_string "\n **************************** ";
@@ -180,7 +180,7 @@ let compress_drawers log drawers test_iso_mode add_log_entry =
 				let nevents = net.Network.fresh_id in 
 				let nevent = Network.weigth net in 
 				let _ = 
-				  if debug_compress && k<nevents 
+				  if debug_compress () && k<nevents 
 				  then 
 				    begin
 				    let _ = print_string "\n **********************" in
@@ -205,7 +205,7 @@ let compress_drawers log drawers test_iso_mode add_log_entry =
 				in
 				  if k>=nevents then 
 				    let _ = 
-				      if debug_compress 
+				      if debug_compress () 
 				      then 
 					print_string "No more compression found\n"
 				    in
@@ -222,7 +222,7 @@ let compress_drawers log drawers test_iso_mode add_log_entry =
 					perm_list in 
 					    
 				    let _ = 
-				      if debug_compress
+				      if debug_compress () 
 				      then 
 					let _ = print_int (List.length perm_list) in 
 					let _ = print_string " potential permutation(s) found\n" in 
@@ -230,14 +230,14 @@ let compress_drawers log drawers test_iso_mode add_log_entry =
 				    let rec aux2 l = 
 				      if not (Story_compressor.test_time ()) 
 				      then 
-					(let _ = if debug_compress
+					(let _ = if debug_compress ()
 					then print_string "time out !!!\n" in net)
 				      else 
 					match l with 
 					      [] -> aux net (k+1)
 					    | (Some (t,sigma))::q -> 
 						let _ = 
-						  if debug_compress 
+						  if debug_compress ()
 						  then 
 						    let _ = print_string "Trying the following substitution:\n" in 
 						    let _ = 
@@ -270,16 +270,24 @@ let compress_drawers log drawers test_iso_mode add_log_entry =
 						    if !Data.use_multiset_in_strong_compression then compare_net nevent' nevent < 0  
 						    else nevents' < nevents
 							) then 
-						    (let _ = if debug_compress then 
-						      print_string "Better compression found!\n" in 
-						    aux net' 0)
+						    (let _ = if debug_compress () 
+						     then 
+						       print_string "Better compression found!\n" in 
+						       aux net' 0)
 						  else 
-						    (let _ = if debug_compress then print_string "Compression is not valid because the depth of some events has increased, or the story has not been compressed.\n" in 
-						    aux2 q)
+						    (let _ = if debug_compress () 
+						     then print_string "Compression is not valid because the depth of some events has increased, or the story has not been compressed.\n" in 
+						       aux2 q)
 						| _ -> 
-						    let _ = if debug_compress then print_string "No valid compression found. \n" in aux2 q)
+						    let _ = 
+						      if debug_compress () 
+						      then print_string "No valid compression found. \n" 
+						    in aux2 q)
 					    | None::q -> 
-						let _ = if debug_compress then print_string "No permutation\n" in aux2 q 
+						let _ = 
+						  if debug_compress () 
+						  then print_string "No permutation\n" 
+						in aux2 q 
 					in aux2 perm_list
 			    in 
 			      aux net' 0 in 

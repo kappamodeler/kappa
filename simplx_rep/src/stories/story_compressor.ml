@@ -3,9 +3,9 @@ open Network
 open Mods2
 
 
-let trace = false  (*true for dumping compression log*)
+let trace = Data.show_steps_in_compression  (*true for dumping compression log*)
 let trace_print s = 
-  if trace then
+  if !trace then
     begin
       print_string s;
       print_newline ()
@@ -196,7 +196,7 @@ module Input =
 	    let nevents = Array.length network.sparse_matrix.(k) in
 	    status.(k)<- Array.make (nevents+1)  None;
 	    status.(k).(0)<-Some "_";
-	    let _ = if trace then 
+	    let _ = if !trace then 
 	      (print_string ("INIT "^(string_of_cell 
 				       (k,
 					(None,Some (network.sparse_matrix.(k).(0).eid )),
@@ -249,7 +249,7 @@ module Input =
 	raise Too_expensive 
 	 
     let best_choice = 
-      if trace 
+      if !trace 
       then 
 	(fun x -> let rep = best_choice x in 
 	          let _ = print_string (string_of_choice rep) in 
@@ -495,7 +495,7 @@ module Input =
 		      | Some y -> 
 			  (
 			  let _ = 
-			    (if trace
+			    (if !trace
 			    then 
 			      let _ = print_string "FAIL" in
 			      let _ = print_string " Step " in
@@ -535,7 +535,7 @@ module Solve =
 	    let o = I.store_solution configuration  output
 	    in 
 	    let _ = 
-	      if trace then 
+	      if !trace then 
 		begin 
 		  let _ = print_string "SUCCESS\n We keep events: " in
 		  let _ = I.dump_output o in ()
@@ -828,7 +828,7 @@ module Convert =
 	    StringMap.add a (IntSet.add i old) map)
 	    id_to_name StringMap.empty in
 (*	let _ = 
-	  if trace then 
+	  if !trace then 
 	    let _ = 
 	      print_string "AGENT_TO_WIRE\n" in 
 	    let _ = 
@@ -903,7 +903,7 @@ module Convert =
 	      let modifs = event.Network.nodes in  
 	      let perms = permutation_of_modifs modifs in 
 	      let _ = 
-		if trace 
+		if !trace 
 		then 
 		  let _ = print_string "PERMUTATIONS "in 
 		    let _ = print_newline () in  
@@ -1463,7 +1463,7 @@ let compress net iter_mode granularity log add_log_entry =
     try 
       begin
 	let network,a,forbid  = Convert.convert net granularity in 
-	let _ = if trace then 
+	let _ = if !trace then 
 	  let _ = print_network network in 
 	  let _ = print_string "SELECT_EVENT(observable) " in
 	  let _ = List.iter (fun x -> print_int x;print_newline ()) (snd a) in

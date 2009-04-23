@@ -85,6 +85,8 @@ let main =
     ("--no-use-strong-compression",Arg.Unit (fun () -> strong_compression:=false),
      "[temporary] do not use strong compression to classify stories");
     ("--forward",Arg.Unit (fun () -> forward:=true), "[temporary] do not consider backward rules" );
+    ("--show-steps-in-compression",Arg.Unit (fun () -> show_steps_in_compression:=true),
+     "[temporary] display all step of story compressions in the standard output");
     ("--log-compression",Arg.Unit (fun () -> log_compression:=true),
      "[temporary] display the before/after compression status in the html desktop");
     ("--backtrack-limit",Arg.Int (fun i -> max_backtrack:=i),"[temporary] limit the exploration when scanning for stories");

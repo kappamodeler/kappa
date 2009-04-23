@@ -48,7 +48,9 @@ let log_strong_compression=ref true
 let network_display_limit = ref 100
 let strong_compression = ref true
 let reorder_by_depth = ref true
-let use_multiset_in_strong_compression = ref true                                  
+let use_multiset_in_strong_compression = ref true 
+let show_steps_in_compression = ref false
+                                 
 (**directory to which outputting files (default current dir)*)                        
 let output_dir = ref Filename.current_dir_name 
 
