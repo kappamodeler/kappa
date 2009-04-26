@@ -862,7 +862,7 @@ let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log =
   (*1. CHECKING FOR PURE COLLISION*)
   let phi_psi_opt = try Some (merge_injections phi psi) with Not_found -> None 
   in
-    if not try_intra then  (*if not looking for depolymerization, then no clash is enough to answer*)
+    if not try_intra && (r.Rule.constraints = []) then  (*if not looking for depolymerization, then no clash is enough to answer*)
       match phi_psi_opt with
 	  Some inj -> 
 	    if boost > r.kinetics then 
