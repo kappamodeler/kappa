@@ -530,7 +530,7 @@ module Pipeline =
 			 			 (fun _ -> raise Exit)),(l,m) 
 		 | Some a -> rep',
 		     String2Map.map 
-		       (List.map (fun (a,b,c) -> (a,b)))
+		       (List.map (fun (a,b,c) -> (a,c)))
 		       a.link_of_site,(l,m)
 	       in
 	       (Some {rep' with 

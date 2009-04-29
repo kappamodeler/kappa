@@ -162,9 +162,13 @@ type contact_map =
       access: String2Set.t String2Map.t} 
 
 type drawers = 
-    { agent_to_rules:IntSet.t StringMap.t;
-      sites_to_rules:IntSet.t String2Map.t;
-      edges_to_rules:IntSet.t String22Map.t }
+    { mod_agent_to_rules:IntSet.t StringMap.t;
+      mod_sites_to_rules:IntSet.t String2Map.t;
+      mod_edges_to_rules:IntSet.t String22Map.t;
+      tested_agent_to_rules:IntSet.t StringMap.t;
+      tested_sites_to_rules:IntSet.t String2Map.t;
+      tested_edges_to_rules:IntSet.t String22Map.t;
+ }
       
 type id = int
 type agent = string

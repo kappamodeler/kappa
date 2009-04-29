@@ -78,7 +78,7 @@ let main =
     (*temporary options*)
     ("--light-xml", Arg.Unit (fun () -> skip_xml:=true), "[temporary] prevent simplx from building xml structures for results") ;
     ("--no-seed",Arg.Unit (fun () -> seed:=Some 0),"[temporary] equivalent to --seed 0. Kept for compatibilty issue") ; 
-    ("--compress-stories",Arg.Unit (fun () -> story_compression:=true),"[temporary] weak compression of stories");
+    ("--compress-stories",Arg.Unit (fun () -> story_compression:=true),"[temporary] compression of stories");
     ("--no-compress-stories",Arg.Unit (fun () -> story_compression:=false),"[temporary] do not compress stories");
     ("--use-strong-compression",Arg.Unit (fun () -> strong_compression:=true),
      "[temporary] use strong compression to classify stories");

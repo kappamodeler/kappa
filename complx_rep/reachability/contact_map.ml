@@ -85,15 +85,20 @@ let are_connected (id1,ig1) (id2,ig2) cm sites_of_ig1 =
 
 
 let empty_drawer = 
-  {agent_to_rules = StringMap.empty;
-    sites_to_rules = String2Map.empty;
-    edges_to_rules = String22Map.empty} 
+  {
+    tested_agent_to_rules = StringMap.empty;
+    tested_sites_to_rules = String2Map.empty;
+    tested_edges_to_rules = String22Map.empty;
+    mod_agent_to_rules = StringMap.empty;
+    mod_sites_to_rules = String2Map.empty;
+    mod_edges_to_rules = String22Map.empty;
+} 
 
 let build_drawer p rules contact = 
-  let fadd_agents_to_rules drawer agent r_list  = 
+  let fadd_mod_agents_to_rules drawer agent r_list  = 
      let old = 
        try 
-	 StringMap.find agent drawer.agent_to_rules 
+	 StringMap.find agent drawer.mod_agent_to_rules 
        with 
 	 Not_found -> 
 	   IntSet.empty in
@@ -107,12 +112,12 @@ let build_drawer p rules contact =
 	       else set)
 	     set a)
 	 old r_list.cpb_guard in 
-     {drawer with agent_to_rules = StringMap.add agent image drawer.agent_to_rules} 
+     {drawer with mod_agent_to_rules = StringMap.add agent image drawer.mod_agent_to_rules} 
   in 
-  let fadd_sites_to_rules drawer site r_list = 
+  let fadd_mod_sites_to_rules drawer site r_list = 
       let old = 
        try 
-	 String2Map.find site drawer.sites_to_rules
+	 String2Map.find site drawer.mod_sites_to_rules
        with 
 	 Not_found -> 
 	   IntSet.empty in
@@ -126,9 +131,9 @@ let build_drawer p rules contact =
 	       else set)
 	     set a)
 	 old r_list.cpb_guard in 
-     {drawer with sites_to_rules  = String2Map.add site image drawer.sites_to_rules} 
+     {drawer with mod_sites_to_rules  = String2Map.add site image drawer.mod_sites_to_rules} 
   in 
-  let fadd_edges_to_rules drawer edge r_list = 
+  let fadd_mod_edges_to_rules drawer edge r_list = 
     let edge = 
       let ((a,b),(c,d)) = edge in 
       if compare (a,b) (c,d) < 0 then 
@@ -137,7 +142,7 @@ let build_drawer p rules contact =
 	((c,d),(a,b)) in 
     let old = 
        try 
-	 String22Map.find edge drawer.edges_to_rules
+	 String22Map.find edge drawer.mod_edges_to_rules
        with 
 	 Not_found -> 
 	   IntSet.empty in
@@ -151,12 +156,81 @@ let build_drawer p rules contact =
 	       else set)
 	     set a)
 	 old r_list.cpb_guard in 
-     {drawer with edges_to_rules  = String22Map.add edge image drawer.edges_to_rules} 
+     {drawer with mod_edges_to_rules  = String22Map.add edge image drawer.mod_edges_to_rules} 
+  in 
+  let fadd_tested_agents_to_rules drawer agent r_list  = 
+     let old = 
+       try 
+	 StringMap.find agent drawer.tested_agent_to_rules 
+       with 
+	 Not_found -> 
+	   IntSet.empty in
+     let image = 
+       List.fold_left 
+	 (fun set  (a,_,_) -> 
+	   List.fold_left 
+	     (fun set  r_id -> 
+	       if p r_id then 
+		 IntSet.add r_id.r_simplx.Rule.id set
+	       else set)
+	     set a)
+	 old r_list.cpb_guard in 
+     {drawer with tested_agent_to_rules = StringMap.add agent image drawer.tested_agent_to_rules} 
+  in 
+  let fadd_tested_sites_to_rules drawer site r_list = 
+      let old = 
+       try 
+	 String2Map.find site drawer.tested_sites_to_rules
+       with 
+	 Not_found -> 
+	   IntSet.empty in
+     let image = 
+       List.fold_left 
+	 (fun set  (a,_,_) -> 
+	   List.fold_left 
+	     (fun set  r_id -> 
+	       if p r_id then 
+		 IntSet.add r_id.r_simplx.Rule.id set
+	       else set)
+	     set a)
+	 old r_list.cpb_guard in 
+     {drawer with tested_sites_to_rules  = String2Map.add site image drawer.tested_sites_to_rules} 
+  in 
+  let fadd_tested_edges_to_rules drawer edge r_list = 
+    let edge = 
+      let ((a,b),(c,d)) = edge in 
+      if compare (a,b) (c,d) < 0 then 
+	edge 
+      else 
+	((c,d),(a,b)) in 
+    let old = 
+       try 
+	 String22Map.find edge drawer.tested_edges_to_rules
+       with 
+	 Not_found -> 
+	   IntSet.empty in
+     let image = 
+       List.fold_left 
+	 (fun set  (a,_,_) -> 
+	   List.fold_left 
+	     (fun set  r_id -> 
+	       if p r_id then 
+		 IntSet.add r_id.r_simplx.Rule.id set
+	       else set)
+	     set a)
+	 old r_list.cpb_guard in 
+     {drawer with tested_edges_to_rules  = String22Map.add edge image drawer.tested_edges_to_rules} 
   in 
   
   List.fold_left 
     (fun drawer  r -> 
-      let control = r.cpb_control in 
+      let control = r.cpb_control in
+      let test = 
+	match r.cpb_guard 
+	with 
+	    [_,_,a] -> a 
+	  | _ -> error "line : 231" "illegal cpb (some rules have been  gathered)" "build_drawer" [] 
+      in 
       let id = 
 	List.fold_left 
 	  (fun map (i,a) -> IntMap.add i a map) 
@@ -172,13 +246,13 @@ let build_drawer p rules contact =
 	IntSet.fold 
 	  (fun i drawer -> 
 	    let ag = get_id i in 
-	    fadd_agents_to_rules drawer ag r)
+	    fadd_mod_agents_to_rules drawer ag r)
 	  control.cpb_create drawer in 
       let drawer =
 	IntSet.fold 
 	  (fun i drawer -> 
 	    let ag = get_id i in 
-	    fadd_agents_to_rules drawer ag r)
+	    fadd_mod_agents_to_rules drawer ag r)
 	  control.cpb_remove drawer in 
       let drawer = 
 	List.fold_left 
@@ -188,29 +262,63 @@ let build_drawer p rules contact =
 	    | Bind ((i,s),(i',s')) -> 
 		let ag = get_id i in 
 		let ag' = get_id i' in 
-		fadd_edges_to_rules drawer ((ag,s),(ag',s')) r 
+		fadd_mod_edges_to_rules drawer ((ag,s),(ag',s')) r 
 	    | Mark ((i,s),m) -> 
 		let ag = get_id i in
-		fadd_sites_to_rules drawer (ag,s) r
+		fadd_mod_sites_to_rules drawer (ag,s) r
 	    | Release ((i,s),(i',s')) -> 
 		let ag = get_id i in
 		let ag'= get_id i' in 
-		fadd_edges_to_rules drawer ((ag,s),(ag',s')) r 
+		fadd_mod_edges_to_rules drawer ((ag,s),(ag',s')) r 
 	    | Break_half (i,s) -> 
 		let ag = get_id i in 
 		List.fold_left 
 		  (fun drawer (ag',s') ->
-		    fadd_edges_to_rules drawer ((ag,s),(ag',s')) r)
+		    fadd_mod_edges_to_rules drawer ((ag,s),(ag',s')) r)
 		  drawer
 		  (try String2Map.find (ag,s) contact
 		  with 
-		    Not_found -> [])
+		     Not_found -> [])
 	    | Check_choice _ | Check _ -> drawer 
 	    )
 	  drawer
-	  control.cpb_update in 
-      drawer)
+	  control.cpb_update in
+      let drawer = 
+	List.fold_left 
+	  (fun drawer test -> 
+	     match test with 
+		 Is_here i ->
+		   let ag = get_id i in 
+		     fadd_tested_agents_to_rules drawer ag r
+	       |  Is_forbid _ | Is_disjoint _ | Is_connected _ -> drawer  
+	       | Is_marked ((i,s),_) -> 
+		   let ag = get_id i in 
+		     fadd_tested_sites_to_rules drawer (ag,s) r 
+	       | Is_bound (i,s) | Is_free (i,s) ->
+		   let ag = get_id i in 
+		   let _ = print_string "\n" in 
+		   let _ = print_string ag in 
+		   let _ = print_string s in 
+		   let _ = print_string ":" in 
+		     List.fold_left 
+		       (fun drawer (ag',s') ->
+			  let _ = print_string ag' in
+			  let _ = print_string s' in 
+			    fadd_tested_edges_to_rules drawer ((ag,s),(ag',s')) r)
+		       drawer
+		       (try String2Map.find (ag,s) contact
+			with 
+			    Not_found -> let _ = print_string ag;print_string s;print_string "OUPS\n" in [])
+	       | Is_related ((i,s),(i',s')) -> 
+		   let ag = get_id i in 
+		   let ag' = get_id i' in
+		     fadd_tested_edges_to_rules drawer ((ag,s),(ag',s')) r 
+	  )
+	  drawer 
+	  test
+      in drawer 
+    )
     empty_drawer 
     rules 
-    
+	  
 	

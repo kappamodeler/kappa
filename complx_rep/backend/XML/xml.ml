@@ -261,29 +261,29 @@ let print_contact_map channel pb set  =
   let print_rule r = print "<Rule Id=\"%i\"/>\n" r in
   let g f x = if reachables x then f x else () in 
   
-  let iter_filter_ag ag f =
+  let iter_filter_mod_ag ag f =
     match pb.drawers with 
       None -> ()
     | Some a -> 
 	let rules = 
 	  try 
-	    StringMap.find ag a.agent_to_rules 
+	    StringMap.find ag a.mod_agent_to_rules 
 	  with 
 	    Not_found -> IntSet.empty 
 	in
 	IntSet.iter (g f) rules  in
-  let iter_filter_sites site f = 
+  let iter_filter_mod_sites site f = 
     match pb.drawers with 
       None -> ()
     | Some a -> 
 	let rules = 
 	  try 
-	    String2Map.find site a.sites_to_rules
+	    String2Map.find site a.mod_sites_to_rules
 	  with 
 	    Not_found -> IntSet.empty 
 	in
 	IntSet.iter (g f) rules  in
-   let iter_filter_edges edge f = 
+   let iter_filter_mod_edges edge f = 
      let (a,b) = edge in 
      let edge = 
        if compare a b < 0 then edge else (b,a) in 
@@ -292,34 +292,73 @@ let print_contact_map channel pb set  =
     | Some a -> 
 	let rules = 
 	  try 
-	    String22Map.find edge a.edges_to_rules
+	    String22Map.find edge a.mod_edges_to_rules
 	  with 
 	    Not_found -> IntSet.empty 
 	in
 	IntSet.iter (g f) rules  in
-   let iter_ag ag f =
+   let iter_mod_ag ag f =
     match pb.drawers with 
       None -> ()
     | Some a -> 
 	let rules = 
 	  try 
-	    StringMap.find ag a.agent_to_rules 
+	    StringMap.find ag a.mod_agent_to_rules 
 	  with 
 	    Not_found -> IntSet.empty 
 	in
 	IntSet.iter f rules  in
-  let iter_sites site f = 
+  let iter_mod_sites site f = 
     match pb.drawers with 
       None -> ()
     | Some a -> 
 	let rules = 
 	  try 
-	    String2Map.find site a.sites_to_rules
+	    String2Map.find site a.mod_sites_to_rules
 	  with 
 	    Not_found -> IntSet.empty 
 	in
 	IntSet.iter f rules  in
-   let iter_edges edge f = 
+   let iter_mod_edges edge f = 
+     let (a,b) = edge in 
+     let edge = 
+       if compare a b < 0 then edge else (b,a) 
+     in 
+       match pb.drawers with 
+	   None -> ()
+	 | Some a -> 
+	     let rules = 
+	       try 
+		 String22Map.find edge a.mod_edges_to_rules
+	       with 
+		   Not_found -> IntSet.empty 
+	     in
+	       IntSet.iter f rules  
+   in
+   
+   let iter_filter_tested_ag ag f =
+    match pb.drawers with 
+      None -> ()
+    | Some a -> 
+	let rules = 
+	  try 
+	    StringMap.find ag a.tested_agent_to_rules 
+	  with 
+	    Not_found -> IntSet.empty 
+	in
+	IntSet.iter (g f) rules  in
+  let iter_filter_tested_sites site f = 
+    match pb.drawers with 
+      None -> ()
+    | Some a -> 
+	let rules = 
+	  try 
+	    String2Map.find site a.tested_sites_to_rules
+	  with 
+	    Not_found -> IntSet.empty 
+	in
+	IntSet.iter (g f) rules  in
+   let iter_filter_tested_edges edge f = 
      let (a,b) = edge in 
      let edge = 
        if compare a b < 0 then edge else (b,a) in 
@@ -328,11 +367,50 @@ let print_contact_map channel pb set  =
     | Some a -> 
 	let rules = 
 	  try 
-	    String22Map.find edge a.edges_to_rules
+	    String22Map.find edge a.tested_edges_to_rules
+	  with 
+	    Not_found -> IntSet.empty 
+	in
+	IntSet.iter (g f) rules  in
+   let iter_tested_ag ag f =
+    match pb.drawers with 
+      None -> ()
+    | Some a -> 
+	let rules = 
+	  try 
+	    StringMap.find ag a.tested_agent_to_rules 
 	  with 
 	    Not_found -> IntSet.empty 
 	in
 	IntSet.iter f rules  in
+  let iter_tested_sites site f = 
+    match pb.drawers with 
+      None -> ()
+    | Some a -> 
+	let rules = 
+	  try 
+	    String2Map.find site a.tested_sites_to_rules
+	  with 
+	    Not_found -> IntSet.empty 
+	in
+	IntSet.iter f rules  in
+   let iter_tested_edges edge f = 
+     let (a,b) = edge in 
+     let edge = 
+       if compare a b < 0 then edge else (b,a) 
+     in 
+       match pb.drawers with 
+	   None -> ()
+	 | Some a -> 
+	     let rules = 
+	       try 
+		 String22Map.find edge a.tested_edges_to_rules
+	       with 
+		   Not_found -> IntSet.empty 
+	     in
+	       IntSet.iter f rules  
+   in
+
    let _ = 
      begin
        match cpb.cpb_contact,set 
@@ -351,7 +429,11 @@ let print_contact_map channel pb set  =
 		let m2 = list_fold StringSet.add c StringSet.empty in 
 		let mall = StringSet.union m1 m2 in 
 		let _ = print "<Agent Name=\"%s\">\n" a in 
-		let _ = iter_ag a print_rule in 
+		let _ = print "<RuleSet Name=\"Mod\">\n" in 
+		let _ = iter_mod_ag a print_rule in 
+		let _ = print "</RuleSet>\n<RuleSet Name=\"Test\">\n" in 
+               	let _ = iter_tested_ag a print_rule in 
+		let _ = print "</RuleSet>" in 
 		let _ = 
 		  StringSet.iter 
 		    (fun site -> 
@@ -361,7 +443,11 @@ let print_contact_map channel pb set  =
 			  (if StringSet.mem site m1 then "true" else "false")
 			  (if StringSet.mem site m2 then "true" else "false")
 		      in 
-		      let _ = iter_sites (a,site)  print_rule in 
+		      let _ = print "<RuleSet Name=\"Mod\">\n" in 
+		      let _ = iter_mod_sites (a,site)  print_rule in
+		      let _ = print "</RuleSet>\n<RuleSet Name=\"Test\">\n" in 
+          	      let _ = iter_tested_sites (a,site) print_rule in 
+		      let _ = print "</RuleSet>" in 
 		      let _ = print "</Site>\n" in () )
 		    mall in 
 		let _ = print "</Agent>\n" in ()) 
@@ -382,8 +468,12 @@ let print_contact_map channel pb set  =
 	  let _ = String4Set.iter 
 	      (fun ((a,b),(c,d)) -> let _ = 
 	  	print "<Bond FromAgent=\"%s\" FromSite=\"%s\" ToAgent=\"%s\" ToSite=\"%s\">\n" a b c d in
-	      let _ = iter_edges ((a,b),(c,d)) print_rule in 
-	      let _ = print "</Bond>" in ()
+	       let _ = print "<RuleSet Name=\"Mod\">\n" in 
+	       let _ = iter_mod_edges ((a,b),(c,d)) print_rule in 
+	       let _ = print "</RuleSet>\n<RuleSet Name=\"Test\">\n" in 
+               let _ = iter_tested_edges ((a,b),(c,d)) print_rule in 
+	       let _ = print "</RuleSet>" in 
+	       let _ = print "</Bond>" in ()
 		  ) set in 
   	  let _ = print "</ContactMap>\n" in ()
     end in  
@@ -402,7 +492,11 @@ let print_contact_map channel pb set  =
 		let m2 = list_fold StringSet.add c StringSet.empty in 
 		let mall = StringSet.union m1 m2 in 
 		let _ = print "<Agent Name=\"%s\">\n" a in
-		let _ = iter_filter_ag a print_rule in 
+		let _ = print "<RuleSet Name=\"Mod\">\n" in 
+		let _ = iter_mod_ag a print_rule in 
+		let _ = print "</RuleSet>\n<RuleSet Name=\"Test\">\n" in 
+               	let _ = iter_tested_ag a print_rule in 
+		let _ = print "</RuleSet>" in 
 		let _ = 
 		  StringSet.iter 
 		    (fun site -> 
@@ -412,7 +506,11 @@ let print_contact_map channel pb set  =
 			   (if StringSet.mem site m1 then "true" else "false")
 			  (if StringSet.mem site m2 then "true" else "false")
 		      in 
-		      let _ = iter_filter_sites (a,site)  print_rule in 
+		      let _ = print "<RuleSet Name=\"Mod\">\n" in 
+		      let _ = iter_mod_sites (a,site) print_rule in 
+		      let _ = print "</RuleSet>\n<RuleSet Name=\"Test\">\n" in 
+               	      let _ = iter_tested_sites (a,site) print_rule in 
+		      let _ = print "</RuleSet>" in 
 		      let _ = print "</Site>\n" in 
 		      ())
 		    mall in 
@@ -421,8 +519,12 @@ let print_contact_map channel pb set  =
 	  let _ = 
 	    List.iter (fun ((a,b),(c,d)) ->
 	      let _ = print "<Bond FromAgent=\"%s\" FromSite=\"%s\" ToAgent=\"%s\" ToSite=\"%s\">\n" a b c d in
-	        let _ = iter_filter_edges ((a,b),(c,d)) print_rule in
-		let _ = print "</Bond>" in ()
+	      let _ = print "<RuleSet Name=\"Mod\">\n" in 
+	      let _ = iter_mod_edges ((a,b),(c,d)) print_rule in 
+	      let _ = print "</RuleSet>\n<RuleSet Name=\"Test\">\n" in 
+              let _ = iter_tested_edges ((a,b),(c,d)) print_rule in 
+	      let _ = print "</RuleSet>" in 
+	      let _ = print "</Bond>" in ()
 		      ) l
 	  in 
 	  let _ = print "</ContactMap>\n" in ()
