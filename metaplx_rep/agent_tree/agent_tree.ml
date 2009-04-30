@@ -206,12 +206,24 @@ let convert_declaration_into_solved_definition  x  =
       agent 
       (List.map 
 	 (fun (t,sol) -> 
-	   let forbid = 
+	    let intt = AgentMap.find t interface in 
+	    let sol = 
+	      SiteSet.fold 
+		(fun site map -> 
+		   try 
+		     let _ = SiteMap.find site map in 
+		       map
+		   with 
+		       Not_found -> SiteMap.add site [site] map) 
+	        intt sol 
+	    in 
+	    let forbid = 
 	     SiteMap.fold 
 	       (fun a b c -> 
 		 if b = [] then SiteSet.add a c 
 		 else c)
-	       sol SiteSet.empty
+	       sol 
+	       SiteSet.empty
 	   in 
 	   {target_name=t;
              forbidden_sites=forbid;
