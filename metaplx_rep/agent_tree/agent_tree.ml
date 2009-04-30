@@ -126,7 +126,7 @@ let convert_declaration_into_solved_definition  x  =
 	    with 
 	      Not_found -> error 113 
 	  in 
-	  let subs = Agent_interfaces.compute_interface old_interface decl in 
+	  let subs,new_sites  = Agent_interfaces.compute_interface old_interface decl in 
 	  let new_interface = 
 	    SiteSet.fold 
 	      (fun s interface  -> 
@@ -143,6 +143,9 @@ let convert_declaration_into_solved_definition  x  =
 	      old_interface 
 	      SiteSet.empty
 	  in
+	  let new_interface = 
+	    SiteSet.union new_interface new_sites 
+	  in 
 	  aux 
 	    (AgentMap.add t new_interface interface_map)
 	    (deal_with t (q,npred))

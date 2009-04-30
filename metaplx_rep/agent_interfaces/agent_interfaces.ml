@@ -26,9 +26,9 @@ let compute_interface starting_interface directives =
       starting_interface 
       SiteMap.empty 
   in
-  let map,sources,targets = 
+  let map,newsites,sources,targets = 
     List.fold_left 
-      (fun (map,sources,targets) d -> 
+      (fun (map,newsites,sources,targets) d -> 
 	match d with 
 	  Add_site (site) -> 
 	    if 
@@ -36,7 +36,7 @@ let compute_interface starting_interface directives =
 	    then 
 	      failwith ("Site "^site^" occurs several time as a new site")
 	    else
-	      (map,sources,SiteSet.add site targets)
+	      (map,SiteSet.add site newsites,sources,SiteSet.add site targets)
 	| Rename (site,l) -> 
 	    if 
 	      SiteSet.mem site sources 
@@ -53,6 +53,7 @@ let compute_interface starting_interface directives =
 	      failwith ("Site "^site^" is not defined")
 	    else 
 	      SiteMap.add site l map,
+              newsites,
 	      SiteSet.add site sources,
 	      List.fold_left
 		(fun targets site -> 
@@ -63,9 +64,9 @@ let compute_interface starting_interface directives =
 		    SiteSet.add site targets)
 		targets l
 	| _ -> error 34)
-      (map,SiteSet.empty,SiteSet.empty) directives
+      (map,SiteSet.empty,SiteSet.empty,SiteSet.empty) directives
   in 
-  map 
+  map,newsites 
 
 let compute_interface_portion  starting_interface directives = 
   let map = 
@@ -74,9 +75,9 @@ let compute_interface_portion  starting_interface directives =
       SiteMap.empty 
       starting_interface 
   in
-  let map,sources,targets = 
+  let map,newsites,sources,targets = 
     List.fold_left 
-      (fun (map,sources,targets) d -> 
+      (fun (map,newsites,sources,targets) d -> 
 	match d with 
 	  Add_site (site) -> 
 	    if 
@@ -84,7 +85,10 @@ let compute_interface_portion  starting_interface directives =
 	    then 
 	      failwith ("Site "^site^" occurs several time as a new site")
 	    else
-	      (map,sources,SiteSet.add site targets)
+	      (map,
+	       SiteSet.add site newsites,
+               sources,
+	       SiteSet.add site targets)
 	| Rename (site,l) -> 
 	    if 
 	      SiteSet.mem site sources 
@@ -98,9 +102,10 @@ let compute_interface_portion  starting_interface directives =
 	      with 
 		Not_found -> true 
 	    then 
-	      (map,sources,targets)
+	      (map,newsites,sources,targets)
 	    else 
 	      SiteMap.add site l map,
+	      newsites,
 	      SiteSet.add site sources,
 	      List.fold_left
 		(fun targets site -> 
@@ -111,9 +116,13 @@ let compute_interface_portion  starting_interface directives =
 		    SiteSet.add site targets)
 		targets l
 	| _ -> error 34)
-      (map,SiteSet.empty,SiteSet.empty) directives
+      (map,
+       SiteSet.empty,
+       SiteSet.empty,
+       SiteSet.empty) 
+      directives
   in 
-  map 
+  map,newsites 
 
 
 let abstract map = 
@@ -123,12 +132,17 @@ let abstract map =
     with 
       Not_found -> error 76)
   
-let compute_subs (starting_subs:site list SiteMap.t) directives =
-    SiteMap.map (fun l -> 
-      SiteMap.fold 
-	(fun l l2 sol -> 
-	  List.fold_left 
-	    (fun q a -> a::q)
-	    sol l2)
-	(compute_interface_portion l directives)
-	[]) starting_subs
+let compute_subs (starting_subs) directives =
+  SiteMap.map 
+    (fun l -> 
+       let a,b = compute_interface_portion l directives in 
+	 SiteMap.fold 
+	   (fun l l2 sol -> 
+	      List.fold_left 
+		(fun q a -> a::q)
+		(if SiteSet.mem l b then l::sol else sol) 
+		l2)
+	     a
+	   [])
+    starting_subs 
+
