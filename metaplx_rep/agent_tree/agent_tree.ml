@@ -101,10 +101,10 @@ let convert_declaration_into_solved_definition  x  =
     let _ = print_string s in 
     let _ = print_newline () in 
     failwith s in 
-  let interface = 
-    let rec aux interface_map (working_list,npred) = 
+  let interface,new_sites_map = 
+    let rec aux interface_map new_sites_map (working_list,npred) = 
       match working_list with 
-	[] -> interface_map 
+	[] -> interface_map,new_sites_map  
       |	t::q -> 
 	  let def = 
 	    try 
@@ -148,9 +148,13 @@ let convert_declaration_into_solved_definition  x  =
 	  in 
 	  aux 
 	    (AgentMap.add t new_interface interface_map)
+	    (AgentMap.add t new_sites new_sites_map)
 	    (deal_with t (q,npred))
     in
-    aux interface_map (working_list,npred)
+    aux 
+      interface_map 
+      AgentMap.empty 
+      (working_list,npred)
   in
   let _ = if trace then print_string "C8\n" in 
 
@@ -206,7 +210,7 @@ let convert_declaration_into_solved_definition  x  =
       agent 
       (List.map 
 	 (fun (t,sol) -> 
-	    let intt = AgentMap.find t interface in 
+	    let intt = AgentMap.find t new_sites_map  in 
 	    let sol = 
 	      SiteSet.fold 
 		(fun site map -> 
