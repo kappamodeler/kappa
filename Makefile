@@ -123,7 +123,9 @@ LIBS_CMXFILES = $(LIBS_MLFILES:%.ml=%.cmx)
 #$(LIBSC_CMXA): $(LIBS_CMXFILES) $(LIBS_OFILES)
 #	$(OCAMLOPT) -a -o $@ $+
 
-AUTOGENML=$(SIMPLXREP)/src/bnf/kappa_parse.ml $(COMPLXREP)/automatically_generated/svn_number.ml 
+AUTOGENML=$(SIMPLXREP)/src/bnf/kappa_parse.ml 
+
+AUTODURINGCOMMIT=$(COMPLXREP)/automatically_generated/svn_number.ml 
 
 MLFULL? = $(COMPLXREP)/lib/$(TKREP)/superargTk.ml 
 
@@ -403,6 +405,7 @@ clean:
 
 
 clean_all: clean 
+	rm $(AUTOGEN) ;
 	rm -f simplx_rep/sim complx_rep/compress complx_rep/compress_light  simplx complx_light bd_influence_map bd_influence_map_light complx *.options* $(OUTPUT)
 
 grab_svn_version_number:
