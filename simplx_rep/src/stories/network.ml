@@ -193,9 +193,11 @@ struct
 	
       in
       let unify i i' sigma = 
-	try (IntMap.find i sigma;None) 
+	try (let _ = IntMap.find i sigma in None) 
 	with Not_found -> 
-	  Some (IntMap.add i i' sigma)
+	  try (let _ = IntMap.find i' sigma in None)
+	  with Not_found -> 
+	    Some (IntMap.add i i' (IntMap.add i' i sigma))
       in 
       let rec aux new_state  = 
 	match new_state with

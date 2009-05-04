@@ -1047,8 +1047,8 @@ module Convert =
 			 if j=try (Mods2.IntMap.find i rho) with Not_found -> i
 			 then (rho,codomain)::sol
 			 else
-			 if IntSet.mem j codomain (* or IntSet.mem i codomain *) then sol
-			else ((*Mods2.IntMap.add j i *)(Mods2.IntMap.add i j rho),(*IntSet.add i*) (IntSet.add j codomain))::sol)
+			 if IntSet.mem j codomain (**) or IntSet.mem i codomain (**) then sol
+			else ((**)Mods2.IntMap.add j i (**)(Mods2.IntMap.add i j rho),(**)IntSet.add i(**) (IntSet.add j codomain))::sol)
 		      extended_perm_list partial_perm_list)
 		  (try (StringMap.find 
 		     (IntMap.find i id_to_name) agent_to_wire) with Not_found -> print_string "BUG STORY COMPRESSOR 1068 (when introduced species are not atomic)";print_int i ;(try (print_string (IntMap.find i id_to_name)) with Not_found -> ()); [i]) [])
