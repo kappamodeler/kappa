@@ -99,7 +99,7 @@ type 'a pipeline = {
     dump_html_output: file_name -> 'a step;
     save_options: 'a step ;
     good_vertice: file_name -> prefix -> output_channel -> StringSet.t option * output_channel ;
-    template: file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> 'a step ;
+    template: file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> 'a step ;
     dump_potential_cycles: precision -> 'a step;
     refine_system_to_avoid_polymers: 
 	file_name -> simplx_encoding option -> Avoid_polymere.mode -> int option -> float  -> ('a,('a rule_class list)) step_with_output; 
@@ -1264,7 +1264,7 @@ module Pipeline =
 	 | Some a -> pb,(l,m),a 
 	   
      and template = 
-	 (fun file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 file11  prefix pb (l,m) ->
+	 (fun file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 file11 file12  prefix pb (l,m) ->
 	   let prefix' = add_suffix prefix "template" in 
 	   let _ = print_option prefix (Some stdout) "Starting ODE generation\n" in
 	   
@@ -1330,7 +1330,7 @@ module Pipeline =
 	       if not (is_views rep)
 	       then (
 		     let pb,log = reachability_analysis prefix' rep  (l,m) in
-	             template file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 file11 prefix pb (l,m))
+	             template file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 file11 file12 prefix pb (l,m))
 	       else (
 		 match pb with 
 		   None -> pb,(l,m) 
@@ -1354,6 +1354,7 @@ module Pipeline =
 			     file9 
 			     file10 
 			     file11
+			     file12 
 			     {project=A.project;
 			      export_ae = A.export_ae;
 			      restore = A.restore_subviews;
@@ -1855,7 +1856,7 @@ module Pipeline =
 	 try good_vertice a b c 
 	 with 
 	   Exception _ -> None,c);
-       template = (fun a b c d e f g h i j k l -> handle_errors_step (Some "Complx") (Some "template") (template a b c d e f g h i j k l));
+       template = (fun a b c d e f g h i j k l m -> handle_errors_step (Some "Complx") (Some "template") (template a b c d e f g h i j k l m));
        find_potential_cycles = (fun a -> handle_errors_step (Some "Complx") (Some "find_potential_cycles") (find_potential_cycles a));
        dump_potential_cycles = (fun a -> handle_errors_step (Some "Complx") (Some "dump_potential_cycles") (dump_potential_cycles a)) ;
        find_connected_components = (fun a -> handle_errors_step (Some "Complx") (Some "find_connected_components") (find_connected_components a));

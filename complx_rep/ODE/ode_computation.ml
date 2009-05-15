@@ -142,7 +142,7 @@ let print_log s =
 
 
 
-let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode (l,m) = 
+let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode (l,m) = 
   
   let prefix' = "-"^(fst prefix) in 
   let do_latex = !Config_complx.do_dump_latex in 
@@ -180,6 +180,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
  
   let print_data = f DATA file_obs_data_head in 
   let print_matlab = f MATLAB file_ODE_matlab in
+  let print_matlab_aux = f MATLAB file_ODE_matlab_aux in 
   let print_latex = f LATEX file_ODE_latex in
   let print_latex_obs = f LATEX file_obs_latex in 
   let print_mathematica = 
@@ -218,8 +219,12 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      kappa = None ;
      mathematica = print_mathematica;
      latex = print_latex;
-     matlab = print_matlab}
+     matlab = print_matlab;
+     matlab_aux = None}
   in
+
+  let print_ODE_aux = 
+    {print_ODE with matlab = None ; matlab_aux = print_matlab} in
 
   let print_ODE_mathematica = 
     {print_ODE with matlab = None} in 
@@ -231,7 +236,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       kappa = None;
       mathematica = None;
       latex = print_latex;
-      matlab = None} in
+      matlab = None;
+      matlab_aux = None} in
 
   let print_ODE_matlab = 
     {dump = None;
@@ -240,7 +246,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       kappa = None;
       mathematica = None;
       latex = None;
-      matlab = print_matlab} in
+      matlab = print_matlab;
+      matlab_aux = None} in
 
   let print_only_data = 
     {dump = None;
@@ -249,7 +256,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       kappa = None;
       mathematica = None;
       latex = None;
-      matlab= None} in 
+      matlab= None;
+      matlab_aux = None} in 
 
   let print_debug = 
     {dump = Some stdprint ;
@@ -258,7 +266,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      kappa=None;
       mathematica=None;
       latex = None;
-      matlab = None} 
+      matlab = None;
+      matlab_aux = None} 
   in
   let print_obs = 
     { dump = None ;
@@ -267,7 +276,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       mathematica = None;
       latex = None;
       txt = print_txt  ;
-      matlab = None} 
+      matlab = None;
+      matlab_aux = None} 
   in 
   let print_obs_latex = 
     { dump = None;
@@ -276,7 +286,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       mathematica = None;
       latex = print_latex_obs;
       txt = None;
-      matlab = None}
+      matlab = None;
+      matlab_aux = None }
   in
   let _ = pprint_ODE_head print_ODE in 
 
@@ -1117,9 +1128,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			  (Const 0) l)
 		   in 
 		   let funname = ((prefix_output_file^(string_of_intermediar_var flag (string_of_int i)))^".m") in 
-		   let matlab =  set_print MATLAB funname in 
 		   let print_ODE = 
-		     {print_ODE with matlab = matlab } in 
+		     {print_ODE with matlab = print_matlab_aux } in 
 		   let _ = 
 		     match print_ODE.matlab with 
 		       None -> () 

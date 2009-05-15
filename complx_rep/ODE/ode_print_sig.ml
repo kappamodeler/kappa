@@ -16,5 +16,6 @@ type print_desc =
      kappa:print option;
      data:print option;
      matlab: print option;
+     matlab_aux: print option;
      mathematica: print option;
      latex: print option}
