@@ -1,7 +1,5 @@
 all: simplx_light complx_light metaplx_light
 
-metaplx_light: 
-	make TKREP=light TKINCLUDES="" TK_CMXA="" KEY="without_key" metaplx
 simplx_light:
 	make TKREP=light TKINCLUDES="" TK_CMXA=""  KEY="without_key" simplx
 complx_light:
@@ -17,13 +15,9 @@ simplx_full:
 complx_full: 
 	make complx TKREP=full TKINCLUDES="-I +labltk" TK_CMXA="labltk.cmxa jpflib.cmxa frxlib.cmxa -cclib -lpthread -cclib -lXau -cclib -lXdmcp" KEY="without_key"
 
-metaplx_full: 
-	make metaplx TKREP=full TKINCLUDES="-I +labltk" TK_CMXA="labltk.cmxa jpflib.cmxa frxlib.cmxa -cclib -lpthread -cclib -lXau -cclib -lXdmcp" KEY="without_key" 
-
 with_key:
 	make TKREP=light TKINCLUDES="" TK_CMXQ="" KEY="with_key" simplx
 	make TKREP=light TKINCLUDES="" TK_CMXQ="" KEY="with_key" complx
-	make TKREP=light TKINCLUDES="" TK_CMXQ="" KEY="with_key" metaplx 
 
 top:
 	make toplevel KEY=without_key 
@@ -38,7 +32,6 @@ TKREP?=light
 SIMPLXREP?=simplx_rep
 COMPLXREP?=complx_rep
 INTERPLXREP?=interplx_rep
-METAPLXREP?=metaplx_rep
 
 BIN = ./bin
 KEY?=without_key
@@ -88,15 +81,6 @@ OCAMLINCLUDES= -I $(COMPLXREP)/lib/$(TKREP) \
 		-I $(COMPLXREP)/cyclical_complexes \
 		-I $(COMPLXREP)/refinements \
 		-I $(COMPLXREP)/isomorphism_detection \
-		-I $(METAPLXREP)/config \
-		-I $(METAPLXREP)/agent_interfaces \
-		-I $(METAPLXREP)/data_structures \
-		-I $(METAPLXREP)/macro_processing \
-		-I $(METAPLXREP)/agent_tree \
-		-I $(METAPLXREP)/rename_agent \
-		-I $(METAPLXREP)/rename_rule \
-		-I $(METAPLXREP)/pretty_printing \
-		-I $(METAPLXREP)/frontend \
 		$(TKINCLUDES) 
 
 OCAMLFLAGS=	$(OCAMLINCLUDES)
@@ -147,7 +131,6 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(COMPLXREP)/backend/parse_comment/comment_sig.cmo \
 	./$(COMPLXREP)/frontend/pb_sig.cmo \
 	./$(COMPLXREP)/data_structures/data_structures.cmo \
-	./$(METAPLXREP)/data_structures/data_structures_metaplx.cmo \
 	./$(COMPLXREP)/lib/superarg.cmo \
 	./$(COMPLXREP)/lib/$(TKREP)/superargTk.cmo \
 	./$(COMPLXREP)/data_structures/big_array.cmo \
@@ -223,23 +206,9 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(SIMPLXREP)/src/tools/bench.cmo \
 	./$(SIMPLXREP)/src/main/simulation2.cmo \
 	./$(SIMPLXREP)/src/html_config/HTML.cmo \
-	./$(METAPLXREP)/macro_processing/macro_processing.cmo \
-	./$(METAPLXREP)/config/config_metaplx.cmo \
-	./$(METAPLXREP)/pretty_printing/pretty_printing.cmo \
-	./$(METAPLXREP)/agent_interfaces/agent_interfaces.cmo \
-	./$(METAPLXREP)/agent_tree/agent_tree.cmo \
-	./$(METAPLXREP)/rename_agent/rename_agent.cmo \
-	./$(METAPLXREP)/rename_rule/rename_rule.cmo \
-	./$(METAPLXREP)/frontend/meta_parse.cmo \
-	./$(METAPLXREP)/frontend/meta_lex.cmo \
-	./$(METAPLXREP)/frontend/compile_rule.cmo \
-	./$(METAPLXREP)/frontend/compile_directives.cmo 
-
- 
 
 SIMPLX_MAIN = ./$(SIMPLXREP)/src/main/main.ml
 COMPLX_MAIN = ./$(COMPLXREP)/main.ml 
-METAPLX_MAIN = ./$(METAPLXREP)/main.ml 
 INTERPLX_MAIN = ./$(INTERPLXREP)/shell.ml
 
 
@@ -257,8 +226,6 @@ MLI =  ./$(SIMPLXREP)/src/tools/error.mli \
 	./$(SIMPLXREP)/src/kappa/solution.mli \
 	./$(SIMPLXREP)/src/kappa/rule.mli\
 	./$(SIMPLXREP)/src/bnf/kappa_parse.mli \
-	./$(METAPLXREP)/data_structures/data_structures_metaplx.mli \
-	./$(METAPLXREP)/frontend/meta_parse.mli 
 
 CMI = $(MLI:mli=cmi)
 CMA = unix.cma threads.cma str.cma nums.cma
@@ -266,8 +233,7 @@ CMXA = unix.cmxa threads.cmxa str.cmxa nums.cmxa
 
 SIMPLX_OUT = simplx
 COMPLX_OUT = complx
-METAPLX_OUT = metaplx
-OUTPUT = $(SIMPLX_OUT) $(COMPLX_OUT) $(METAPLX_OUT) 
+OUTPUT = $(SIMPLX_OUT) $(COMPLX_OUT) 
 
 LIB_OPT = $(SIMPLX_OUT).cmxa
 LIB_BYTE = $(SIMPLX_OUT).cma
@@ -306,10 +272,6 @@ LINE = $(OCAMLOPT) $(OCAMLFLAGS) $(TKINCLUDES) $(CMXA) $(TK_CMXA) $(LIBSC_CMXA) 
 complx: $(LIBSC_CMXA) $(NATIVE_OBJS) $(COMPLX_MAIN)
 	$(LINE) $(COMPLX_MAIN) -o $(BIN)/$(COMPLX_OUT)
 
-metaplx: $(LIBSC_CMXA) $(NATIVE_OBJS) $(METAPLX_MAIN)
-	$(LINE) $(METAPLX_MAIN) -o $(BIN)/$(METAPLX_OUT)
-
-
 toplevel: $(MLI) $(CMI) $(LIBSC_CMA) $(LIB_BYTE)
 	ocaml -I +threads $(OCAMLINCLUDES) $(CMA) $(OBJS)
 
@@ -319,23 +281,14 @@ toplx: $(MLI) $(CMI) $(LIBSC_CMA) $(LIB_BYTE)
 ./$(SIMPLXREP)/src/bnf/kappa_parse.ml ./$(SIMPLXREP)/src/bnf/kappa_parse.mli : ./$(SIMPLXREP)/src/bnf/kappa_parse.mly
 	ocamlyacc ./$(SIMPLXREP)/src/bnf/kappa_parse.mly 
 
-./$(METAPLXREP)/frontend/meta_parse.ml ./$(METAPLXREP)/frontend/meta_parse.mli : ./$(METAPLXREP)/frontend/meta_parse.mly 
-	ocamlyacc -v ./$(METAPLXREP)/frontend/meta_parse.mly 
-
 ./$(COMPLXREP)/automatically_generated/svn_number.ml:
 	make grab_svn_version_number
 
 ./$(SIMPLXREP)/src/bnf/kappa_parse.cmo: ./$(SIMPLXREP)/src/bnf/kappa_parse.mli ./$(SIMPLXREP)/src/bnf/kappa_parse.ml
 	$(OCAMLC) $(OCAMLFLAGS) -c ./$(SIMPLXREP)/src/bnf/kappa_parse.mli ./$(SIMPLXREP)/src/bnf/kappa_parse.ml
 
-./$(METAPLXREP)/frontend/meta_parse.cmo: ./$(METAPLXREP)/frontend/meta_parse.mli ./$(METAPLXREP)/frontend/meta_parse.ml 
-	$(OCAMLC) $(OCAMLFLAGS) -c ./$(METAPLXREP)/frontend/meta_parse.mli ./$(METAPLXREP)/frontend/meta_parse.ml 
-
 ./$(SIMPLXREP)/src/bnf/kappa_lex.ml: ./$(SIMPLXREP)/src/bnf/kappa_lex.mll
 	ocamllex ./$(SIMPLXREP)/src/bnf/kappa_lex.mll
-
-./$(METAPLXREP)/frontend/meta_lex.ml: ./$(METAPLXREP)/frontend/meta_lex.mll
-	ocamllex ./$(METAPLXREP)/frontend/meta_lex.mll
 
 ./$(COMPLXREP)/backend/parse_comment/yacc.ml: ./$(COMPLXREP)/backend/parse_comment ./$(COMPLXREP)/backend/parse_comment/yacc.mly 
 	ocamlyacc ./$(COMPLXREP)/backend/parse_comment/yacc.mly
@@ -394,14 +347,12 @@ install_light:
 	cd $(SIMPLXREP) ; make install
 	cd $(COMPLXREP) ; make install_light
 	cd $(INTERPLXREP) ; make install_light
-	cd $(METAPLXREP) ; make install_light
 
 clean:
 	rm -f *~ ; 
 	cd $(SIMPLXREP) ; make -f cleanup ;
 	cd $(COMPLXREP) ; make -f cleanup ; 
 	cd $(INTERPLXREP) ; make -f cleanup ;
-	cd $(METAPLXREP) ; make -f cleanup
 
 
 clean_all: clean 
@@ -421,8 +372,6 @@ help:
 	echo make sim: create the simulator ;\
 	echo make complx_full: create the compressor;\
 	echo make complx_light: create the light version of the compressor without labltk;\
-	echo make metaplx_full: create the meta-language preprocessor ;\
-	echo make metaplx_light: create the light version of the meta-language preprocessor;\
 	echo make VERSION=X.YY tar: create all tarballs in your home directory;\
 	echo make VERSION=X.YY tar_sim: create the tarball of simplx in your home directory;\
 	echo make VERSION=X.YY tar_com: create the tarball of complx in your home directory;\

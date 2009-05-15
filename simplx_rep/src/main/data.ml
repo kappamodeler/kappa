@@ -196,8 +196,3 @@ let max_sol_display = 1000
 let env:(string,(Solution.t*int))Hashtbl.t ref = ref (Hashtbl.create 100)
 
 
-(** Meta language*)
-let (gen:(((string Mods2.IntMap.t * Solution.AA.content) option *  string option * string option * Data_structures_metaplx.action list) list   ref)) = ref []
-
-let (conc:(((string Mods2.IntMap.t * Solution.AA.content) option *  string option * string option * Data_structures_metaplx.action list) list   ref)) = ref []
-

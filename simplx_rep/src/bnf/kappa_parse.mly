@@ -122,8 +122,8 @@
 | OBS_LINE obs_expr {obs_l := $2::(!obs_l)}
 | STORY_LINE story_expr {obs_l := $2::(!obs_l)}
 | MODIF_LINE modif_expr {exp := Experiment.add $2 (!exp)}
-| GEN_LINE gen_expr {gen := $2::(!gen)}
-| CONC_LINE gen_expr {conc := $2::(!conc)}
+| GEN_LINE gen_expr {}
+| CONC_LINE gen_expr {}
 | NEWLINE {()}
 | named_rule_expr {rules := (List.fold_left (fun rules r -> r::rules) (!rules) $1)} 
 | EOF {let sol = sol_of_hsh !env in
@@ -521,10 +521,10 @@
 | instruction instruction_list {$1::$2}
 
   instruction:
-| PLUS ID {Data_structures_metaplx.Add_site $2}
-| MINUS ID {Data_structures_metaplx.Delete_site $2}
-| ID DIVIDE OP_ACC id_list CL_ACC {Data_structures_metaplx.Rename ($1,$4)}
-| ID DIVIDE ID {Data_structures_metaplx.Mutate_site($1,$3)}
+| PLUS ID {}
+| MINUS ID {}
+| ID DIVIDE OP_ACC id_list CL_ACC {}
+| ID DIVIDE ID {}
 
   id_list: 
     /*empty*/ {[]}
