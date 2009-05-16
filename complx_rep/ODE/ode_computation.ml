@@ -142,7 +142,7 @@ let print_log s =
 
 
 
-let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode (l,m) = 
+let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_jacobian file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode (l,m) = 
   
   let prefix' = "-"^(fst prefix) in 
   let do_latex = !Config_complx.do_dump_latex in 
@@ -213,6 +213,16 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       Not_found -> error 202 in 
 
   let print_ODE = 
+     {dump = None ;
+     txt = None ;
+     data = None; 
+     kappa = None ;
+     mathematica = print_mathematica;
+     latex = print_latex;
+     matlab = print_matlab;
+     matlab_aux = print_matlab_aux}
+  in
+  let print_ODE_main = 
     {dump = None ;
      txt = None ;
      data = None; 
@@ -224,10 +234,10 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   in
 
   let print_ODE_aux = 
-    {print_ODE with matlab = None ; matlab_aux = print_matlab} in
+    {print_ODE with matlab = None ; matlab_aux = print_matlab_aux} in
 
   let print_ODE_mathematica = 
-    {print_ODE with matlab = None} in 
+    {print_ODE_main with matlab = None} in 
  
   let print_ODE_latex = 
      {dump = None;
@@ -248,7 +258,16 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       latex = None;
       matlab = print_matlab;
       matlab_aux = None} in
-
+ let print_ODE_matlab_aux = 
+    {dump = None;
+      txt = None;
+      data = None;
+      kappa = None;
+      mathematica = None;
+      latex = None;
+      matlab_aux = print_matlab_aux;
+      matlab = None} in
+    
   let print_only_data = 
     {dump = None;
       txt = None;
@@ -289,8 +308,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab = None;
       matlab_aux = None }
   in
-  let _ = pprint_ODE_head print_ODE in 
-
+  let _ = pprint_ODE_head print_ODE file_ODE_matlab_aux in 
+  let _ = dump_line 312 in  
   let is_access = 
     match pb.unreachable_rules with 
       None -> (fun x -> true)
@@ -311,7 +330,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	    else ({x with labels = lab})::sol)
 	  [] rs.rules)} in 
     rs in
- 
+  let _ = dump_line 333 in 
   let simplify rs = 
     (* when a passive species is not tested, it can be written in the binding type *)
     let a = rs.Pb_sig.passive_species in 
@@ -954,7 +973,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	  else 
 	    let _ = pprint_string print_ODE_latex "\\odegroup{" in 
 	    let _ = pprint_string print_ODE_latex "\\oderulename{" in 
-	    let _ = print_comment print_ODE rule_id in
+	    let _ = print_comment print_ODE_aux rule_id in
 	    let _ = print_comment print_ODE_latex "}{" in 
 	    let _ = print_comment print_ODE_latex (string_of_int rule_key) in 
 	    let _ = pprint_string print_ODE_latex "}}{" in 
@@ -1128,8 +1147,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			  (Const 0) l)
 		   in 
 		   let funname = ((prefix_output_file^(string_of_intermediar_var flag (string_of_int i)))^".m") in 
-		   let print_ODE = 
-		     {print_ODE with matlab = print_matlab_aux } in 
+		   let print_ODE = print_ODE_aux in 
 		   let _ = 
 		     match print_ODE.matlab with 
 		       None -> () 
@@ -1150,10 +1168,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		   let _ = pprint_commandsep print_ODE in 
 		   let _ = pprint_string print_ODE_latex "}" in 
 		   let _ = pprint_newline print_ODE in
-		   let _ = 
-		     match print_ODE.matlab 
-		     with None -> ()  
-		     |	Some a -> List.iter close_out a.chan  in 
 		   let l = 
 		     try Arraymap.find i mainprod
 		     with Not_found -> [] in 
@@ -2773,9 +2787,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				 (Const 0)
 				 l in 
 			   let funname = ((prefix_output_file^(string_of_intermediar_var flag (string_of_int i)))^".m") in 
-			   let matlab =  set_print MATLAB funname in 
-			   let print_ODE = 
-			     {print_ODE with matlab = matlab } in 
+			   let print_ODE = print_ODE_aux in 
 			   let _ = 
 			     match print_ODE.matlab with 
 			       None -> () 
@@ -2796,10 +2808,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			   let _ = pprint_commandsep print_ODE in 
 			   let _ = pprint_string print_ODE_latex "}"in 
 			   let _ = pprint_newline print_ODE in
-			   let _ = 
-			     match print_ODE.matlab 
-			     with None -> ()  
-			     |	Some a -> List.iter close_out a.chan  in 
 			   let l = 
 			     try Arraymap.find i mainprod
 			     with Not_found -> [] in 
@@ -3044,7 +3052,10 @@ init
 	  then Some rep else None)
 	print_ODE_mathematica 
 	print_ODE_matlab 
-	file_data_foot  
+	print_ODE_matlab_aux 
+	file_data_foot
+        file_ODE_matlab_aux 
+	file_ODE_matlab_jacobian  
     in 
       let _ = (match print_data with None -> () | Some a -> 
     (a.print_string "\n ")) in 

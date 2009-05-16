@@ -168,6 +168,7 @@ let output_ODE_contact = ref ""
 let output_ODE_mathematica = ref ""
 let output_ODE_matlab = ref "" 
 let output_ODE_matlab_aux = ref ""
+let output_ODE_matlab_jacobian = ref "" 
 let output_ODE_alphabet = ref "" 
 let output_ODE_obs = ref ""
 let output_influence_map_dot_file = ref "" 
@@ -374,6 +375,7 @@ let options = List.rev
 "--output-ODE-contact","_plx_ODE_contact.dot";
 "--output-ODE-mathematica","_plx_ODE_system.nb";
 "--output-ODE-matlab-aux","_plx_ODE_system_aux.m";
+"--output-ODE-matlab-jacobian","_plx_ODE_system_jacobian.m";
 "--output-ODE-matlab","_plx_ODE_system.m";
 "--output-ODE-alphabet","_plx_ODE_alphabet";
 "--output-ODE-covering","_plx_ODE_covering";
@@ -465,6 +467,10 @@ let options = List.rev
 "--output-ODE-matlab-aux",
   String output_ODE_matlab_aux,
   "write the ODE auxilliary functions in a matlab file",
+  ["2_Output'";"ODE"],Normal;
+"--output-ODE-matlab-jacobian",
+  String output_ODE_matlab_jacobian,
+  "write the ODE jacobian  in a matlab file",
   ["2_Output'";"ODE"],Normal;
 "--output-ODE-latex",
   String output_ODE_latex,

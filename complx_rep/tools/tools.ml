@@ -505,3 +505,28 @@ let print_long_float f =
   let n = int_of_float ndigit in 
   let n = max 6 (n+3) in 
   Printf.sprintf "%.*f" (n+1) f
+
+
+let cut f = 
+  try 
+    let n = String.length f in 
+    let rec vide i rep = 
+      if i = n then rep 
+      else if String.get f i ='\\' 
+      then vide (i+1) i 
+    else vide (i+1) rep 
+    in
+    let last_back = vide 0 (-1) in 
+    let rec vide i = 
+      if i=n then (n+1) 
+      else if String.get f i = '.' 
+      then i 
+      else vide (i+1) 
+    in 
+  let dot = vide (last_back+1) in 
+  let rep = String.sub f (last_back+1) (dot-last_back-1) in 
+  let _ = print_string rep in 
+    rep 
+  with 
+    _ -> "FAIL"^f
+  

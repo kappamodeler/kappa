@@ -182,9 +182,27 @@ let print_ODE_system_matlab pb channel =
   then 
     precomputed_data channel 
       (!Config_complx.output_ODE_matlab)
+      "Main file (matlab)"
+  else
+    null 
+
+let print_ODE_system_matlab_aux pb channel = 
+  if !Config_complx.do_ODE 
+  then 
+    precomputed_data channel 
+      (!Config_complx.output_ODE_matlab_aux)
       "Equations (matlab)"
   else
     null 
+let print_ODE_system_matlab_jacobian pb channel = 
+  if !Config_complx.do_ODE 
+  then 
+    precomputed_data channel 
+      (!Config_complx.output_ODE_matlab_jacobian)
+      "Jacobian (matlab)"
+  else
+    null 
+
 
 
 
@@ -349,6 +367,8 @@ let dump_html pb channel (l,m)  =
 	 print_ODE_alphabet pb channel;
 	 print_ODE_system_mathematica pb channel;
 	 print_ODE_system_matlab pb channel;
+	 print_ODE_system_matlab_aux pb channel;
+	 print_ODE_system_matlab_jacobian pb channel;
 	 print_ODE_obs pb channel] 
      else 
        []))

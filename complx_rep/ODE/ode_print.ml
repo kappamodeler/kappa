@@ -16,7 +16,7 @@ let stdprint =
     
 
 
-let all_fields x  = [x.dump;x.matlab;x.mathematica;x.latex;x.data;x.kappa;x.txt]
+let all_fields x  = [x.dump;x.matlab;x.mathematica;x.latex;x.matlab_aux;x.data;x.kappa;x.txt]
 
       
 module CSet = Set.Make (struct type t = out_channel let compare = compare end)
@@ -35,6 +35,15 @@ let string_of_intermediar_var var rule =
 let print_intermediar_var print var rule  =
   let _ = 
     match print.matlab with 
+      None -> () 
+    | Some matlab -> (matlab.print_string "r";
+		       matlab.print_string var;
+		       matlab.print_string "v";
+		       matlab.print_string rule;
+		       matlab.print_string "")
+  in
+  let _ = 
+    match print.matlab_aux with 
       None -> () 
     | Some matlab -> (matlab.print_string "r";
 		       matlab.print_string var;
@@ -106,6 +115,13 @@ let pprint_var print k i =
     | Some a -> a.print_string k;a.print_string "(";a.print_string i;a.print_string ")"
   in
   let _ = 
+    match print.matlab_aux 
+    with 
+      None -> ()
+    | Some a -> a.print_string k;a.print_string "(";a.print_string i;a.print_string ")"
+  in 
+
+  let _ = 
     match print.mathematica 
     with 
       None -> () 
@@ -165,6 +181,10 @@ let pprint_derivate print i =
     match print.matlab  with 
       None -> ()
     | Some a -> a.print_string "d" in
+  let _ = 
+    match print.matlab_aux  with 
+      None -> ()
+    | Some a -> a.print_string "d" in
   let _ = pprint_lvar print "y" (string_of_int i) in
   let _ = 
     match print.mathematica with 
@@ -184,6 +204,11 @@ let pprint_ty print =
      None -> ()
    | Some a -> a.print_string "(y)"
  in 
+ let _ = 
+   match print.matlab_aux with 
+     None -> ()
+   | Some a -> a.print_string "(y)"
+ in  
  let _ = 
    match print.dump with 
      None -> ()
@@ -232,7 +257,8 @@ let pprint_assign print =
   in pprint_string print "=" 
 
 let remove_latex print = {print with latex = None} 
-let keep_latex print = {print with matlab = None ; mathematica = None} 
+let keep_latex print = {print with matlab = None ; matlab_aux=None;mathematica = None} 
+let keep_aux print = {print with latex=None;matlab=None;mathematica=None} 
 
 let pprint_eq_separator print = 
   let print' = remove_latex print in 
@@ -265,7 +291,12 @@ let pprint_abstract print x =
     match print.matlab with 
     | None -> ()
     | Some a -> a.print_string ("@("^x^")")
-  in () 
+  in 
+  let _ = 
+    match print.matlab_aux with 
+    | None -> ()
+    | Some a -> a.print_string ("@("^x^")")
+  in  () 
 
 let pprint_assign print =
   let _ = 
@@ -278,9 +309,14 @@ let pprint_assign print =
     | Some a -> a.print_string "="
   in
   let _ = 
+    match print.matlab_aux with 
+	None -> ()
+      | Some a -> a.print_string "="
+  in
+  let _ = 
     match print.latex with 
-      None -> ()
-    | Some a -> a.print_string "\\odeequal"
+	None -> ()
+      | Some a -> a.print_string "\\odeequal"
   in 
   () 
 
@@ -294,25 +330,48 @@ let pprint_commandsep print =
     match print.matlab with 
       None -> ()
     | Some a -> a.print_string ";"
-  in () 
+  in 
+  let _ = 
+    match print.matlab_aux with 
+	None -> ()
+      | Some a -> a.print_string ";"
+  in   () 
+	 
+	 
 
 
-
-
-let pprint_ODE_head print = 
+let pprint_ODE_head print file = 
   let print_latex = keep_latex print in 
   let print = remove_latex print in 
-  let _ = pprint_string print "tinit" in 
-  let _ = pprint_assign print in 
-  let _ = pprint_float print (!Config_complx.ode_init_time) in
-  let _ = pprint_commandsep print in
-  let _ = pprint_newline print in 
-  let _ = pprint_string print "tend" in 
-  let _ = pprint_assign print in 
-  let _ = pprint_float print (!Config_complx.ode_final_time) in
-  let _ = pprint_commandsep print in
-  let _ = pprint_newline print in 
-  let _ = pprint_string print_latex "\\odebeforeequs\n" in 
+  let print_main = {print with matlab_aux = None } in
+  let print_aux = keep_aux print in 
+  let _ = pprint_string print_main "% THINGS THAT ARE KNOWN FROM KAPPA FILE AND COMPLX OPTIONS;\n" in 
+  let _ = pprint_string print_main "% \n" in 
+  let _ = pprint_string print_main "% init - the initial abundances of each fragment " in
+  let _ = pprint_string print_main "% tinit - the initial simulation time (likely 0)" in 
+  let _ = pprint_string print_main "% tfinal - the final simulation time " in 
+  let _ = pprint_string print_main "% num_t_point - the number of time points to return " in 
+  let _ = pprint_string print_main "\n" in 
+  let _ = pprint_string print_main "tinit" in 
+  let _ = pprint_assign print_main in 
+  let _ = pprint_float print_main (!Config_complx.ode_init_time) in
+  let _ = pprint_commandsep print_main in
+  let _ = pprint_newline print_main  in 
+  let _ = pprint_string print_main  "tend" in 
+  let _ = pprint_assign print_main in 
+  let _ = pprint_float print_main (!Config_complx.ode_final_time) in
+  let _ = pprint_commandsep print_main in
+  let _ = pprint_newline print_main in 
+  let print = remove_latex print_main in 
+  let _ = pprint_string print_main  "num_t_point" in 
+  let _ = pprint_assign print_main  in 
+  let _ = pprint_int print_main (!Config_complx.ode_points) in
+  let _ = pprint_commandsep print_main in
+  let _ = pprint_newline print_main in 
+  let _ = pprint_newline print_main in
+  let _ = pprint_newline print_main in    
+ let _ = pprint_string print_aux ("function dydt="^(Tools.cut file)^"(t,y)\n\n\n") in 
+let _ = pprint_string print_latex "\\odebeforeequs\n" in 
   ()
 
 let pprint_ODE_head' print = 
@@ -329,9 +388,17 @@ let pprint_ODE_head' print =
       None -> ()
     | Some a -> 
 	let _ = a.print_string "options = odeset('OutputSel',[1]);" in
-	let _ = a.print_string "dydt = @(t,y) ["
-	in () 
-  in () 
+	() 
+  in 
+  let _ = 
+    match print.matlab_aux 
+    with 
+	None -> () 
+      | Some a -> 
+	  let _ = a.print_string "dydt = ["
+	  in () 
+  in
+    () 
 
 
 
@@ -351,7 +418,7 @@ let pprint_ODE_middle1 print =
   in ()
 
 
-let pprint_ODE_middle2 print = 
+let pprint_ODE_middle2 print jac_file aux_file = 
   let _ = 
     match print.mathematica with 
       None -> () 
@@ -359,8 +426,18 @@ let pprint_ODE_middle2 print =
   let _ = 
     match print.matlab with 
       None -> ()
-    | Some a -> a.print_string "];\node45(dydt,[tinit tend],init,options)\n"
-  in ()
+    | Some a -> 
+	begin
+	  let _ = 
+	    a.print_string ("];\n\n\noptions = odeset('RelTol', 1e-3,\n                 'AbsTol', 1e-3,\n                'MaxStep', tend,\n                  'Jacobian', "^(Tools.cut jac_file)^");\n\n\node45(dydt,[tinit tend],init,options)\n")
+	  in
+          let _ =
+	    a.print_string ("soln = ode2r(@"^(Tools.cut aux_file)^",[tinit end],init,options);\n\nt = linspace(tinit, tend, num_t_point+1);\n y = interpl(soln.x, soln.y, t, 'pchip');") in 
+	    ()
+
+	end
+  in 
+    ()
 
 let pprint_ODE_foot print = 
   let _ = 
@@ -389,6 +466,11 @@ let print_comment print s =
     | Some a -> a.print_string ("\n %"^s^"\n")
   in 
   let _ = 
+    match print.matlab_aux with 
+      None -> ()
+    | Some a -> a.print_string ("\n %"^s^"\n")
+  in 
+  let _ = 
     match print.latex with 
       None -> ()
     | Some a ->
@@ -408,11 +490,16 @@ let pprint_y print =
     | Some a -> a.print_string "(y)"
   in
   let _ = 
+    match print.matlab_aux  with 
+	None -> ()
+      | Some a -> a.print_string "(y)"
+  in 
+  let _ = 
     match print.dump with 
-      None -> ()
-    | Some a -> a.print_string "(y)"
+	None -> ()
+      | Some a -> a.print_string "(y)"
   in ()
-
+       
 
 let channel_set print set = 
   let f x set = 
@@ -551,7 +638,7 @@ let print_expr print bool bool2 x =
   in ()
   
 
- let dump_prod (prod,bool) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab output_data   = 
+ let dump_prod (prod,bool) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab print_ODE_matlab_aux output_data file_aux file_jac   = 
     let print_ODE = print_ODE_mathematica in 
     let print_latex = keep_latex print_ODE_mathematica in 
     let print_ODE_wo_latex = remove_latex print_ODE_mathematica in 
@@ -618,7 +705,7 @@ let print_expr print bool bool2 x =
 	      false 
 	      obs in
 	  let _ = pprint_string print_latex "}" in 
-	  let _ = pprint_ODE_middle2 print_ODE in 
+	  let _ = pprint_ODE_middle2 print_ODE file_aux file_jac in 
     let _ = 
       List.fold_left
 	(fun bool c -> 
@@ -661,8 +748,7 @@ let print_expr print bool bool2 x =
 	 ( )
     in 
     let print_ODE = print_ODE_matlab in 
-    let _ = pprint_ODE_middle0 print_ODE in 
-    
+    let _ = pprint_ODE_middle0 print_ODE  in 
     let _  = 
       Arraymap.fold 
 	(fun k b bool -> 
@@ -683,6 +769,10 @@ let print_expr print bool bool2 x =
 	  true)
 	init false  in
     let _ = pprint_string print_ODE "]\n" in 
+    let _ = pprint_ODE_middle1 print_ODE in
+    let _ = pprint_ODE_middle2 print_ODE file_aux file_jac in 
+  
+    let print_ODE = print_ODE_matlab_aux in 
     let _ = pprint_ODE_head' print_ODE in 
     let _   = 
       Arraymap.fold
@@ -696,14 +786,13 @@ let print_expr print bool bool2 x =
 		  if bool then pprint_string print_ODE "+"
 		  else 
 		    () in
-		print_expr print_ODE true true  (simplify_expr (Mult(Const a,b)));
+		print_expr print_ODE false false  (simplify_expr (Mult(Const a,b)));
 			  true) 
 	      false b in 
 	  true)
 	prod  false in
 
-    let _ = pprint_ODE_middle1 print_ODE in
-    let _ = pprint_ODE_middle2 print_ODE in 
+    let _ = pprint_string print_ODE "];\n" in 
     let _ = pprint_ODE_foot print_ODE in 
     
     ()
