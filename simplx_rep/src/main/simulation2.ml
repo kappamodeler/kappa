@@ -204,7 +204,7 @@ let empty_counters = {curr_iteration=0;
 		     }
 
 
-let init_counters () = 
+let init_counters sim_data = 
   let rec init_ticks n = 
     if n > !clock_precision then (prerr_string "\n"; flush stderr;flush stdout ; IntSet.empty)
     else 
@@ -219,8 +219,24 @@ let init_counters () =
      skipped = 0;
      drawers = Iso.empty_drawers !max_iter ;
      compression_log = [] ; 
-     concentrations = IntMap.empty ; (*put initial concentration here!*)
-     time_map = IntMap.empty ;
+     concentrations = 
+	begin
+	  let obs_map = 
+	    IntSet.fold (fun ind_obs map ->
+			   let r_obs,inst_obs = Rule_of_int.find ind_obs sim_data.rules in
+			   let automorphisms = 
+			     match r_obs.automorphisms with 
+				 None -> (failwith "Automorphisms not computed") 
+			       | Some i -> float_of_int i 
+			   in
+			   let act_obs = (inst_obs *. r_obs.kinetics) /. automorphisms
+			   in 
+			     IntMap.add ind_obs act_obs map
+			) sim_data.obs_ind IntMap.empty 
+	  in
+	    IntMap.add 0 obs_map IntMap.empty (*slot 0 is mapped to time 0.0 and contains initial obs*)
+	end ;
+     time_map = IntMap.add 0 0.0 IntMap.empty ;
      ticks = init_ticks 1 ;
      clock_precision = !clock_precision ;
      snapshot_time = !Data.snapshot_time ;
@@ -1896,7 +1912,7 @@ let rec iter log sim_data p c =
 	begin (*exiting event loop*)
 	  Printf.printf "\n";
 	  flush stdout; 
-	  let log = Session.add_log_entry 0 (Printf.sprintf "-Event loop terminated at t=%f (%d events)" c.curr_time c.curr_step) log in
+	  let log = Session.add_log_entry 0 (Printf.sprintf "-Event loop terminated at t=%f (%d events)" c.curr_time (c.curr_step-1)) log in
 	    (0 (*termination*),log,sim_data,p,c)
 	end
       else
@@ -2158,14 +2174,20 @@ let rec iter log sim_data p c =
 				   concentrations = IntMap.add t obs_map c.concentrations;
 				   curr_step = c.curr_step + 1 ;
 				   curr_time = curr_time ;
-				   time_map = (*JF if !time_mode then c.time_map else*) IntMap.add t curr_time c.time_map
+				   time_map = 
+				    if IntMap.mem t c.time_map then c.time_map 
+				    else
+				      IntMap.add t curr_time c.time_map
 				} 
 			  else
 			    iter log {sim_data with sol = sol'} p 
 			      {c with 
 				 curr_step = c.curr_step + 1 ;
 				 curr_time = curr_time ;
-				 time_map = (*JF if !time_mode then c.time_map else*) IntMap.add t curr_time c.time_map
+				 time_map = 
+				  if IntMap.mem t c.time_map then c.time_map 
+				  else
+				    IntMap.add t curr_time c.time_map
 			      } 
 		      end
 			(*end simulation mode*)

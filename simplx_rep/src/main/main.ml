@@ -356,7 +356,7 @@ let main =
 	      begin
 		let log = Session.add_log_entry 0 "-Simulation..." log in
 		let t_sim = Mods2.gettime() in
-		let (deadlocked,log,sd,p,c) = iter log sd p (Simulation2.init_counters ()) in
+		let (deadlocked,log,sd,p,c) = iter log sd p (Simulation2.init_counters sd) in
 		let log,drawers,compress_log  = 
 		  Iso.compress_drawers log c.drawers p.iso_mode (fun a b c -> Session.add_log_entry a b c) 
 		in 		 
