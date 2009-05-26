@@ -18,4 +18,5 @@ type print_desc =
      matlab: print option;
      matlab_aux: print option;
      mathematica: print option;
-     latex: print option}
+     latex: print option;
+     matlab_jacobian: print option}

@@ -11,6 +11,7 @@ type s4 = (*PL of*) step list  (*| PR of string * int*)
 
 module StringSet=StringSet
 module IntMap = IntMap
+module Int2Map = Map2.Make (struct type t = int*int let compare = compare end)
 module IntSet = IntSet
 module Int22Map = Map2.Make (struct type t = (int*int)*(int*int) let compare = compare end)
 module Int3Map = Map2.Make (struct type t = int*int*int let compare = compare end)

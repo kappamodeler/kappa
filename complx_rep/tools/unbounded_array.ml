@@ -2,11 +2,13 @@ module ArrayExt =
   struct
     type 'a t = 
 	{mutable size:int;
-         mutable array:'a option array}
+         mutable array:'a option array;
+         mutable max_elt:int}
 
     let create a = 
       {size = 0;
-       	 array = Array.create 0 (None:'a option)} 
+       max_elt = 0;
+       array = Array.create 0 (None:'a option)} 
  
     
     let find x a = 
@@ -43,8 +45,12 @@ module ArrayExt =
       if k>a.size then 
 	add k  x (double a)
       else
-	let _ = a.array.(k-1)<-Some x in a
+	let _ = (a.array.(k-1)<-Some x;
+                 if k > a.max_elt then a.max_elt<- k)
+	in a
       
+    let length a = a.max_elt
+
     let iter f x = 
        let g k y  = 
 	match y with None -> ()
@@ -108,7 +114,8 @@ module ArrayExt =
 	| Some a -> Some (f a) 
       in
 	{array = Array.map f x.array;
-	  size =x.size}
+	 max_elt = x.max_elt;
+	 size =x.size}
 
 
     let rec map2 f g h x y = 

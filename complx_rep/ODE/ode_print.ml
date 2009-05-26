@@ -16,7 +16,7 @@ let stdprint =
     
 
 
-let all_fields x  = [x.dump;x.matlab;x.mathematica;x.latex;x.matlab_aux;x.data;x.kappa;x.txt]
+let all_fields x  = [x.dump;x.matlab;x.mathematica;x.latex;x.matlab_aux;x.data;x.kappa;x.txt;x.matlab_jacobian]
 
       
 module CSet = Set.Make (struct type t = out_channel let compare = compare end)
@@ -120,7 +120,12 @@ let pprint_var print k i =
       None -> ()
     | Some a -> a.print_string k;a.print_string "(";a.print_string i;a.print_string ")"
   in 
-
+  let _ = 
+    match print.matlab_jacobian 
+    with 
+      None -> ()
+    | Some a -> a.print_string k;a.print_string "(";a.print_string i;a.print_string ")"
+  in 
   let _ = 
     match print.mathematica 
     with 
@@ -257,8 +262,9 @@ let pprint_assign print =
   in pprint_string print "=" 
 
 let remove_latex print = {print with latex = None} 
-let keep_latex print = {print with matlab = None ; matlab_aux=None;mathematica = None} 
-let keep_aux print = {print with latex=None;matlab=None;mathematica=None} 
+let keep_latex print = {print with matlab = None ; matlab_aux=None;matlab_jacobian = None ; mathematica = None} 
+let keep_aux print = {print with latex=None;matlab=None;mathematica=None;matlab_jacobian = None} 
+let keep_jac print = {print with latex=None;matlab=None;mathematica=None;matlab_aux=None}
 
 let pprint_eq_separator print = 
   let print' = remove_latex print in 
@@ -340,11 +346,12 @@ let pprint_commandsep print =
 	 
 
 
-let pprint_ODE_head print file = 
+let pprint_ODE_head print file file_jac = 
   let print_latex = keep_latex print in 
   let print = remove_latex print in 
-  let print_main = {print with matlab_aux = None } in
-  let print_aux = keep_aux print in 
+  let print_main = {print with matlab_aux = None ; matlab_jacobian = None  } in
+  let print_aux = keep_aux print in
+  let print_jac = keep_jac print in  
   let _ = pprint_string print_main "% THINGS THAT ARE KNOWN FROM KAPPA FILE AND COMPLX OPTIONS;\n" in 
   let _ = pprint_string print_main "% \n" in 
   let _ = pprint_string print_main "% init - the initial abundances of each fragment " in
@@ -370,8 +377,9 @@ let pprint_ODE_head print file =
   let _ = pprint_newline print_main in 
   let _ = pprint_newline print_main in
   let _ = pprint_newline print_main in    
- let _ = pprint_string print_aux ("function dydt="^(Tools.cut file)^"(t,y)\n\n\n") in 
-let _ = pprint_string print_latex "\\odebeforeequs\n" in 
+  let _ = pprint_string print_aux ("function dydt="^(Tools.cut file)^"(t,y)\n\n\n") in 
+  let _ = pprint_string print_jac ("function Jac="^(Tools.cut file_jac)^"(t,y)\n\n Jac = sparse(%,%);\n\n\n") in 
+  let _ = pprint_string print_latex "\\odebeforeequs\n" in 
   ()
 
 let pprint_ODE_head' print = 
@@ -850,4 +858,16 @@ let print_expr print bool bool2 x =
 	   end
      in 
      ( ) 
+
+
+let print_diff print_ODE i j flag expr = 
+  match print_ODE.matlab_jacobian with None -> () 
+    | Some print -> 
+	let var = "d"^(string_of_int i)^"_d"^(string_of_int j)^"r"^flag in 
+	let _ = print.print_string var in 
+	let _ = print.print_string "=" in 
+	let print_ODE = {print_ODE with matlab = None ; mathematica = None ; latex = None ; matlab_aux = None} in 
+	let _ = print_expr print_ODE true true  expr in 
+	let _ = print.print_string ";\n" in 
+	  () 
 

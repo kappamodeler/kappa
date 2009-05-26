@@ -181,6 +181,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   let print_data = f DATA file_obs_data_head in 
   let print_matlab = f MATLAB file_ODE_matlab in
   let print_matlab_aux = f MATLAB file_ODE_matlab_aux in 
+  let print_matlab_jacobian = f MATLAB file_ODE_matlab_jacobian in 
   let print_latex = f LATEX file_ODE_latex in
   let print_latex_obs = f LATEX file_obs_latex in 
   let print_mathematica = 
@@ -212,6 +213,17 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     with 
       Not_found -> error 202 in 
 
+  let print_ODE_jacobian = 
+    {dump = None;
+     data = None;
+     txt = None;
+     kappa = None;
+     mathematica = None;
+     latex = None;
+     matlab = None;
+     matlab_aux = None;
+     matlab_jacobian = print_matlab_jacobian } in 
+
   let print_ODE = 
      {dump = None ;
      txt = None ;
@@ -220,7 +232,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      mathematica = print_mathematica;
      latex = print_latex;
      matlab = print_matlab;
-     matlab_aux = print_matlab_aux}
+     matlab_aux = print_matlab_aux;
+     matlab_jacobian = print_matlab_jacobian }
   in
   let print_ODE_main = 
     {dump = None ;
@@ -230,11 +243,12 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      mathematica = print_mathematica;
      latex = print_latex;
      matlab = print_matlab;
-     matlab_aux = None}
+     matlab_aux = None;
+     matlab_jacobian = None}
   in
 
   let print_ODE_aux = 
-    {print_ODE with matlab = None ; matlab_aux = print_matlab_aux} in
+    {print_ODE with matlab_jacobian = None ; matlab = None ; matlab_aux = print_matlab_aux} in
 
   let print_ODE_mathematica = 
     {print_ODE_main with matlab = None} in 
@@ -247,7 +261,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       mathematica = None;
       latex = print_latex;
       matlab = None;
-      matlab_aux = None} in
+      matlab_aux = None;
+      matlab_jacobian = None } in
 
   let print_ODE_matlab = 
     {dump = None;
@@ -257,7 +272,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       mathematica = None;
       latex = None;
       matlab = print_matlab;
-      matlab_aux = None} in
+      matlab_aux = None;
+      matlab_jacobian = None} in
  let print_ODE_matlab_aux = 
     {dump = None;
       txt = None;
@@ -266,7 +282,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       mathematica = None;
       latex = None;
       matlab_aux = print_matlab_aux;
-      matlab = None} in
+      matlab = None;
+      matlab_jacobian = None } in
     
   let print_only_data = 
     {dump = None;
@@ -276,17 +293,19 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       mathematica = None;
       latex = None;
       matlab= None;
-      matlab_aux = None} in 
+      matlab_aux = None;
+      matlab_jacobian = None } in 
 
   let print_debug = 
     {dump = Some stdprint ;
      txt=None;
-      data = None;
+     data = None;
      kappa=None;
-      mathematica=None;
-      latex = None;
-      matlab = None;
-      matlab_aux = None} 
+     mathematica=None;
+     latex = None;
+     matlab = None;
+     matlab_aux = None;
+     matlab_jacobian = None} 
   in
   let print_obs = 
     { dump = None ;
@@ -296,7 +315,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       latex = None;
       txt = print_txt  ;
       matlab = None;
-      matlab_aux = None} 
+      matlab_aux = None;
+      matlab_jacobian = None} 
   in 
   let print_obs_latex = 
     { dump = None;
@@ -306,9 +326,10 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       latex = print_latex_obs;
       txt = None;
       matlab = None;
-      matlab_aux = None }
+      matlab_aux = None ;
+      matlab_jacobian = None }
   in
-  let _ = pprint_ODE_head print_ODE file_ODE_matlab_aux in 
+  let _ = pprint_ODE_head print_ODE file_ODE_matlab_aux file_ODE_matlab_jacobian in 
   let _ = dump_line 312 in  
   let is_access = 
     match pb.unreachable_rules with 
@@ -917,9 +938,12 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   
 
     let mainprod = Arraymap.create (Const 0)   in   
+    let jacobian = Int2Map.empty in 
     let activity = 
       List.fold_left  
-	(fun mainprod x -> 
+	(fun ((mainprod:(int*expr) list Arraymap.t),
+	      (jacobian:expr list Int2Map.t)) 
+	   x -> 
 	  let rule_key,rule_id,flag,kyn_factor  =
 	    try 
 	      let label = List.hd (List.hd x.Pb_sig.rules).Pb_sig.labels in 
@@ -969,7 +993,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	    with 
 	      Not_found -> 
 		y in
-	  if rule_id = "EMPTY" then mainprod 
+	  if rule_id = "EMPTY" then mainprod,jacobian 
 	  else 
 	    let _ = pprint_string print_ODE_latex "\\odegroup{" in 
 	    let _ = pprint_string print_ODE_latex "\\oderulename{" in 
@@ -1138,7 +1162,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	       in 
 	       let x = 
 		 Intmap.fold 
-		 (fun i l (mainprod,bool) ->
+		 (fun i l (mainprod,jacobian) ->
 		   let l = 
 		     simplify_expr 
 		       (List.fold_left 
@@ -1165,6 +1189,20 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		   let _ = pprint_vart print_ODE in 
 		   let _ = pprint_assign print_ODE in 
 		   let _ = print_expr print_ODE true true l in 
+		   let grad = grad l in 
+		   let jacobian = 
+		     IntMap.fold 
+		       (fun j expr jacobian -> 
+			  let _ = print_diff print_ODE_jacobian i j flag expr in 
+			  let l = 
+			    try 
+			      Int2Map.find (i,j) jacobian 
+			    with 
+				Not_found -> [] 
+			  in 
+			    Int2Map.add (i,j) ((Vardi(i,flag,j))::l) jacobian)
+		       grad jacobian 
+		   in 
 		   let _ = pprint_commandsep print_ODE in 
 		   let _ = pprint_string print_ODE_latex "}" in 
 		   let _ = pprint_newline print_ODE in
@@ -1173,9 +1211,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		     with Not_found -> [] in 
 		   let mainprod = 
 		     Arraymap.add i ((1,Vari(i,flag))::l) mainprod in 
-		   (mainprod,true))
+		     (mainprod,jacobian))
 		 prod  
-		 mainprod in 
+		 (mainprod,jacobian)  in 
 	       let _ = pprint_string print_ODE_latex "}\n" in x
 	     end
 	   else
@@ -1480,9 +1518,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	       
 	      
 	       let _ = dump_line 882 in 
-	       let mainprod = 
+	       let mainprod,jacobian = 
 		 List.fold_left  
-		   (fun (mainprod,bool) x -> 
+		   (fun (mainprod,jacobian) x -> 
 		     let _ = dump_line 888 in
 		     let prod = Intmap.empty in 
 		     if (*control.remove = []
@@ -2779,62 +2817,78 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		       in 
 		       let x = 
 			 Intmap.fold 
-			   (fun i l (mainprod,bool) ->
-			     let l = 
-			       List.fold_left 
-				 (fun a (i,j) -> 
-				   Plus(a,Mult(Const i,j)))
-				 (Const 0)
-				 l in 
-			   let funname = ((prefix_output_file^(string_of_intermediar_var flag (string_of_int i)))^".m") in 
-			   let print_ODE = print_ODE_aux in 
-			   let _ = 
-			     match print_ODE.matlab with 
-			       None -> () 
-			     |	Some a -> 
-				 a.print_string "function z = " in 
-			   let _ = pprint_string print_ODE_latex "\\odeequ{" in
-			 
-			   let _ = print_intermediar_var print_ODE flag (string_of_int i)   in
-			   let _ = 
-			     match print_ODE.matlab with 
-			       None -> ()
-			     |	Some a -> 
-				 a.print_string "(y) \n global e \n z "
-			   in
-			   let _ = pprint_vart print_ODE in 
-			   let _ = pprint_assign print_ODE in 
-			   let _ = print_expr print_ODE true true (simplify_expr l) in 
-			   let _ = pprint_commandsep print_ODE in 
-			   let _ = pprint_string print_ODE_latex "}"in 
-			   let _ = pprint_newline print_ODE in
-			   let l = 
-			     try Arraymap.find i mainprod
-			     with Not_found -> [] in 
-			   let mainprod = 
-			     Arraymap.add i ((1,Vari(i,flag))::l) mainprod in 
-			   (mainprod,true))
-			 prod  
-			 (mainprod,bool) 
+			   (fun i l 
+			      ((mainprod: (int*expr) list Arraymap.t),jacobian) ->
+			      let l = 
+				List.fold_left 
+				  (fun a (i,j) -> 
+				     Plus(a,Mult(Const i,j)))
+				  (Const 0)
+				  l in 
+			      let funname = ((prefix_output_file^(string_of_intermediar_var flag (string_of_int i)))^".m") in 
+			      let print_ODE = print_ODE_aux in 
+			      let _ = 
+				match print_ODE.matlab with 
+				    None -> () 
+				  |	Some a -> 
+					  a.print_string "function z = " in 
+			      let _ = pprint_string print_ODE_latex "\\odeequ{" in
+				
+			      let _ = print_intermediar_var print_ODE flag (string_of_int i)   in
+			      let _ = 
+				match print_ODE.matlab with 
+				    None -> ()
+				  |	Some a -> 
+					  a.print_string "(y) \n global e \n z "
+			      in
+			      let _ = pprint_vart print_ODE in 
+			      let _ = pprint_assign print_ODE in 
+			      let expr = simplify_expr l in 
+			      let _ = print_expr print_ODE true true expr in 
+			      let grad = grad expr in 
+			      let _ = pprint_commandsep print_ODE in 
+			      let _ = pprint_string print_ODE_latex "}"in 
+			      let _ = pprint_newline print_ODE in
+			      let l = 
+				try Arraymap.find i mainprod
+				with Not_found -> [] in 
+			      let mainprod = 
+				Arraymap.add i ((1,Vari(i,flag))::l) mainprod in 
+			      let jacobian = 
+				IntMap.fold 
+				  (fun j expr jacobian -> 
+				     let _ = print_diff print_ODE_jacobian  i j flag expr in 
+				     let l = 
+				       try 
+					 Int2Map.find (i,j) jacobian 
+				       with 
+					   Not_found -> [] 
+				     in 
+				       Int2Map.add (i,j) ((Vardi(i,flag,j))::l) jacobian)
+				  grad jacobian 
+			      in 
+			      let jacobian = jacobian in 
+				(mainprod,jacobian))
+			   prod  
+			   (mainprod,jacobian) 
 		       in 
-		       let _ = 
-			 pprint_string print_ODE_latex "}\n" in 
-		       x 
-			 else
-			   let _ = pprint_string print_ODE_latex "}" in 
-			   let _ = dump_line 2137 in (mainprod,bool) 
+		       let _ = pprint_string print_ODE_latex "}\n" in 
+			 x 
+		     else
+		       let _ = pprint_string print_ODE_latex "}" in 
+		       let _ = dump_line 2137 in (mainprod,jacobian) 
 			     )
-		   mainprod   
+		   (mainprod,jacobian)   
 		   classes
-	       in (mainprod) 
+	       in 
+		 (mainprod,jacobian) 
 	     end)
-	(mainprod,false) 
+	(mainprod,jacobian) 
 	system in 
 
-    let merge_prod = fst activity in 
+    let merge_prod,jacobian  = activity in 
     
   
-    let bool = snd activity in 
     let proj_solution solution = 
       let specie_map = 
 	Solution.AA.fold 
@@ -3038,7 +3092,7 @@ init
 	[] in 
     let _ = 
       dump_prod 
-	(merge_prod,bool) 
+	(merge_prod,jacobian) 
 	init 
 	obs
 	(let i,f = !Config_complx.ode_init_time,!Config_complx.ode_final_time in 

@@ -1,3 +1,6 @@
+open Data_structures 
+open Ode_print_sig 
+
 let debug = false
 let count_embedding = false
     (* TRUE -> count embedding 
@@ -8,6 +11,7 @@ type expr =
 	
   | Vark of string
   | Vari of (int*string)
+  | Vardi of (int*string*int)
   | Var of int 
   | Mult of (expr*expr)
   | Div of (expr*expr)
@@ -29,8 +33,7 @@ let equal_zero expr =
 
 let rec simplify_expr (expr:expr) = 
   match expr with 
-   
-    Plus (a,x) when equal_zero a -> simplify_expr x
+      Plus (a,x) when equal_zero a -> simplify_expr x
   | Plus(x,a) when equal_zero a -> simplify_expr x
   | Mult(a,x) when equal_un a -> simplify_expr x
   | Mult(x,a) when equal_un a -> simplify_expr x 
@@ -39,9 +42,10 @@ let rec simplify_expr (expr:expr) =
   | Mult (x,y) -> 
       let x = simplify_expr x in
       let y = simplify_expr y in
-      if x=Const 1 then y 
-      else if y=Const 1 then x 
-      else Mult(x,y)
+	if equal_zero x or equal_zero y then Const 0 
+	else if x=Const 1 then y 
+	else if y=Const 1 then x 
+	else Mult(x,y)
   | Div  (x,y) -> 
       let x = simplify_expr x in
       let y = simplify_expr y in
@@ -80,8 +84,8 @@ let rec simplify2 expr =
       recombine_term_list map = 
     HExprMap.fold
       (fun a b expr -> 
-	if b = 1. then (Plus(a,expr))
-	else if b = 0. then expr
+	 if b = 1. then (Plus(a,expr))
+	else if b = 0. or equal_zero a then expr
 	else Plus(Mult(Constf b,a),expr))
       map
       (Constf 0.)
@@ -124,14 +128,16 @@ let rec simplify2 expr =
       recombine_factor_list map = 
     HExprMap.fold
       (fun a b expr -> 
-	if b = 1 then Mult(a,expr)
-	else if b = 0 then expr
-	else 
-	  let rec aux k sol = 
-	    if k=0 then sol
-	    else aux (k-1) (Mult(a,sol))
-	  in aux b (Const 1)
-	    )
+	 if expr = Const 0 then Const 0 
+	 else if b = 0 then expr 
+	 else if a = Const 0 then Const 0
+	 else if b = 1 then Mult(a,expr)
+	 else 
+	   let rec aux k sol = 
+	     if k=0 then sol
+	     else aux (k-1) (Mult(a,sol))
+	   in aux b (Const 1)
+      )
       map
       (Const 1)
   in 
@@ -223,3 +229,28 @@ let expr_of_classe expr_handler rep =
 	   expr_of_case expr_handler z))
     (Const 0) rep 
     
+
+let var_of_expr expr = 
+  let rec vide expr sol = 
+    match expr with 
+	Letter _ | Vark _ | Vari _ | Eps | Const _ | Constf _ | Shortcut _ -> sol 
+      | Var i -> IntMap.add i (Const 0) sol  
+      | Plus (a,b) | Mult (a,b) -> vide a (vide b sol)
+  in 
+    vide expr IntMap.empty 
+	
+let diff expr v = 
+  let rec aux expr = 
+    match expr with 
+	Var i when v = i -> Const 1 
+      | Letter _ | Vark _ | Vari _ | Eps | Const _ | Constf _ | Shortcut _ | Var _ -> Const 0 
+      | Mult(a,b) -> Plus(Mult(a,aux b),Mult(aux a,b))
+      | Plus(a,b) -> Plus(aux a,aux b)
+  in
+    simplify_expr (aux expr) 
+
+let grad expr = 
+  let vars = var_of_expr expr in 
+    IntMap.mapi 
+      (fun v i -> diff expr v)
+      vars 
