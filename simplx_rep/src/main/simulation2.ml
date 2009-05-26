@@ -807,34 +807,34 @@ let mult_kinetics flg mult sim_data =
 exception Intra of assoc
 exception Unary
 
-let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log = 
-  let r,_ = Rule_of_int.find ind_r sim_data.rules in
-  let try_intra = test_intra r in
+let rec bologna (abst_r,abst_ind) (conc_r,conc_ind) (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log = 
+  let try_intra = test_intra conc_r in
   let _ = 
-    if !debug_mode then (Printf.printf "[*] Entering Bologna procedure for application of injections [%d,%d,%d],[%d,%d,%d]\n" ind_r i_psi nb_psi ind_r i_phi nb_phi) else ()
+    if !debug_mode then (Printf.printf "[*] Entering Bologna procedure for application of injections [%d,%d,%d],[%d,%d,%d]\n" 
+			   abst_ind i_psi nb_psi abst_ind i_phi nb_phi) else ()
   in
     (*0. COMPUTING P_INTRA*)
   let n_phi = 
-    let coord = Coord.of_pair (ind_r,i_phi) in
+    let coord = Coord.of_pair (abst_ind,i_phi) in
     let _,_,m = InjArray.find coord sim_data.injections in
       float_of_int (AssocArray.size m)
   in
   let n_psi = 
-    let coord = Coord.of_pair (ind_r,i_psi) in
+    let coord = Coord.of_pair (abst_ind,i_psi) in
     let _,_,m = InjArray.find coord sim_data.injections in
       float_of_int (AssocArray.size m)
   in
   let n_inj = (n_psi/. !rescale) +. (n_phi/. !rescale) in
   let p_intra = (*p_intra is 0.0 if rule is infinite or no intra rate is defined*)
-    if (r.kinetics < 0.0) then 0.0
+    if (conc_r.kinetics < 0.0) then 0.0
     else
-      match r.intra with
-	  Some u -> begin u /. (r.boost *. n_inj) end
+      match conc_r.intra with
+	  Some u -> begin u /. (conc_r.boost *. n_inj) end
 	| None -> 0.0
   in (*u=coef_unary*beta and p = u/beta.(|phi|+|psi|-1)*)
   let log,p_intra,boost = 
     if try_intra then
-      let u = match r.intra with Some u -> u | None -> 
+      let u = match conc_r.intra with Some u -> u | None -> 
 	let s= "Simulation.bologna: intra rate not specified" in
 	Error.runtime 
 	  (Some "simulation2.ml",
@@ -844,33 +844,33 @@ let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log =
       in
       let boost = u /. n_inj in
 	if (p_intra > 1.0) then
-	  let log = Session.add_log_entry 4 (Printf.sprintf "Rule %s: boosting binary rate to catch up" (Rule.name r)) log 
+	  let log = Session.add_log_entry 4 (Printf.sprintf "Rule %s: boosting binary rate to catch up" (Rule.name conc_r)) log 
 	  in
 	    (log,1.0,boost)
 	else 
-	  if (boost >= r.kinetics) && (boost < r.boost) then (*decreasing boost if possible*)
-	    let log = Session.add_log_entry 4 (Printf.sprintf "Rule %s: decreasibg boosted binary rate" (Rule.name r)) log 
+	  if (boost >= conc_r.kinetics) && (boost < conc_r.boost) then (*decreasing boost if possible*)
+	    let log = Session.add_log_entry 4 (Printf.sprintf "Rule %s: decreasibg boosted binary rate" (Rule.name conc_r)) log 
 	    in
 	      (log,p_intra,boost)
 	  else
-	    (log,p_intra,r.boost)
+	    (log,p_intra,conc_r.boost)
     else
-      (log,p_intra,r.boost)
+      (log,p_intra,conc_r.boost)
   in
 
 
   (*1. CHECKING FOR PURE COLLISION*)
   let phi_psi_opt = try Some (merge_injections phi psi) with Not_found -> None 
   in
-    if not try_intra && (r.Rule.constraints = []) then  (*if not looking for depolymerization, then no clash is enough to answer*)
+    if not try_intra && (conc_r.Rule.constraints = []) then  (*if not looking for depolymerization, then no clash is enough to answer*)
       match phi_psi_opt with
 	  Some inj -> 
-	    if boost > r.kinetics then 
+	    if boost > conc_r.kinetics then 
 	      let _ =
-		if !debug_mode then (Printf.printf "Binary rate overestimated, correcting with p_inter = %f\n" (r.kinetics /.boost) ; flush stdout) else ()
+		if !debug_mode then (Printf.printf "Binary rate overestimated, correcting with p_inter = %f\n" (conc_r.kinetics /.boost) ; flush stdout) else ()
 	      in
 	      let dice = Random.float 1.0 in
-		if dice < (r.kinetics /. boost) then ([inj],log,None,boost) (*add here p_inter*)
+		if dice < (conc_r.kinetics /. boost) then ([inj],log,None,boost) (*add here p_inter*)
 		else
 		  let _ =
 		    if !debug_mode then (Printf.printf "Rejected\n" ; flush stdout) else ()
@@ -896,7 +896,6 @@ let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log =
 	let cc_phi,paths_phi = Solution.paths_of_id phi_0 sim_data.sol (*extending codomain of phi to the whole CC*)
 	and cc_psi,paths_psi = Solution.paths_of_id psi_0 sim_data.sol (*extending codomain of phi to the whole CC*)
 	in
-	let r,_ = Rule_of_int.find ind_r sim_data.rules in 
 	let paths_phi,paths_psi = (*adding the newly created bond to the paths*)
 	  IntMap.fold (fun id act_msg_list (paths_phi,paths_psi) ->
 			 let l = Solution.get_binding act_msg_list in
@@ -941,7 +940,7 @@ let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log =
 					       in
 						 (paths_phi,paths_psi)
 					  ) (paths_phi,paths_psi) l
-		      ) r.Rule.actions (paths_phi,paths_psi)
+		      ) abst_r.Rule.actions (paths_phi,paths_psi)
 	in
 	let _ =
 	  if !debug_mode then Printf.printf "-Injective map, testing now whether constraints are satisfied...\n" else ()
@@ -953,7 +952,7 @@ let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log =
 						 match cstr with
 						     NO_HELIX -> (true,no_poly)
 						   | NO_POLY -> (no_helix,true)
-					      ) (false,false) r.constraints
+					      ) (false,false) conc_r.constraints
 	in
 	let clash = Paths.clashing_on_names ~debug:(!debug_mode) (no_helix,no_poly) paths_psi paths_phi
 	in
@@ -966,12 +965,12 @@ let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log =
 		    let _ =
 		      if !debug_mode then Printf.printf "-Reaction satisfies constraints...\n" else ()
 		    in
-		      if boost > r.kinetics then 
+		      if boost > conc_r.kinetics then 
 			let _ =
-			  if !debug_mode then (Printf.printf "But binary rate overestimated, correcting with p_inter = %f\n" (r.kinetics /. boost) ; flush stdout) else ()
+			  if !debug_mode then (Printf.printf "But binary rate overestimated, correcting with p_inter = %f\n" (conc_r.kinetics /. boost) ; flush stdout) else ()
 			in
 			let dice = Random.float 1.0 in
-			  if dice < (r.kinetics /. boost) then ([inj],log,None,boost) (*add here p_inter*)
+			  if dice < (conc_r.kinetics /. boost) then ([inj],log,None,boost) (*add here p_inter*)
 			  else
 			    let _ =
 			      if !debug_mode then (Printf.printf "Rejected\n" ; flush stdout) else ()
@@ -1019,7 +1018,7 @@ let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log =
 							     in
 							       CoordSet.fold (fun (coord,inj_number') inj_blacklist -> 
 										let (indice_r',indice_cc') = Coord.to_pair coord in
-										  if (indice_r' = ind_r) && (indice_cc'=indice_cc) then 
+										  if (indice_r' = abst_ind) && (indice_cc'=indice_cc) then 
 										    let _,_,assoc_map = InjArray.find coord sim_data.injections in
 										      if inj_number' = inj_number then
 											let _ =
@@ -1036,7 +1035,7 @@ let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log =
 											      Some ga -> 
 												let _ = 
 												  if !debug_mode then 
-												    (Printf.printf " with injection [%d,%d,%d]\n" ind_r indice_cc inj_number' ; flush stdout)
+												    (Printf.printf " with injection [%d,%d,%d]\n" abst_ind indice_cc inj_number' ; flush stdout)
 												  else () 
 												in
 												  raise (Intra ga)
@@ -1054,12 +1053,12 @@ let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log =
 		  Intra inj -> (Some inj,false)
 		| Unary -> (None,true) 
 	    in
-	    let _ = if !debug_mode then (Printf.printf "Reaction does not satisfy constraints, trying to exchange [%d,%d,%d]..." ind_r i_phi nb_phi ; flush stdout) else () 
+	    let _ = if !debug_mode then (Printf.printf "Reaction does not satisfy constraints, trying to exchange [%d,%d,%d]..." abst_ind i_phi nb_phi ; flush stdout) else () 
 	    in
 	    let opt_intra_phi,unary = intra cc_psi i_phi nb_phi psi co_psi in
 	      if unary then
 		let dice = Random.float 1.0 in
-		let log = Session.add_log_entry 4 (Printf.sprintf "Unary case of binary rule r[%d] no need to apply intra\n" ind_r) log in
+		let log = Session.add_log_entry 4 (Printf.sprintf "Unary case of binary rule r[%d] no need to apply intra\n" abst_ind) log in
 		  if dice<p_intra then 
 		    match phi_psi_opt with
 			Some inj -> ([inj],log,Some p_intra,boost)
@@ -1074,7 +1073,7 @@ let rec bologna ind_r (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log =
 		    in
 		      ([],log,Some p_intra,boost) 
 	      else
-		let _ = if !debug_mode then Printf.printf "Trying to exchange [%d,%d,%d]..." ind_r i_psi nb_psi ; flush stdout in
+		let _ = if !debug_mode then Printf.printf "Trying to exchange [%d,%d,%d]..." abst_ind i_psi nb_psi ; flush stdout in
 		let opt_intra_psi,_ = intra cc_phi i_psi nb_psi phi co_phi in
 		  match (opt_intra_phi,opt_intra_psi) with
 		      (None,None) -> ([],log,None,boost) (*clash because no intra could be found*)
@@ -1114,7 +1113,7 @@ exception Assoc of int IntMap.t
 
 let select log sim_data p c =
   let get_map_opt map = 
-    let (k,assoc) = (*IntMap.random*) AssocArray.random map in (k,assoc)
+    let (k,assoc) = AssocArray.random map in (k,assoc)
   in
   let activity = Rule_of_int.accval sim_data.rules 
   in
@@ -1125,38 +1124,41 @@ let select log sim_data p c =
       in
 	(log,None,sim_data,cpt)
     else
-      let abst_ind,ind_r,(r,inst),log = 
+      let (abst_ind,abst_r),(conc_ind,conc_r),inst,log = 
 	try (*first trying to pick an infinitely fast rule*)
-	  let ind_r = IntSet.choose sim_data.inf_list in
-	  let (r,inst) = Rule_of_int.find ind_r sim_data.rules
+	  let conc_ind = IntSet.choose sim_data.inf_list in
+	  let (conc_r,inst) = Rule_of_int.find conc_ind sim_data.rules
 	  in
-	  let r,log = 
+	  let abst_r,log = 
 	    if !Data.quotient_refs then 
-	      match r.Rule.abstraction with
+	      match conc_r.Rule.abstraction with
 		  None -> 
-		    let log = Session.add_log_entry 1 (Printf.sprintf "Abstraction not computed for rule %s" (Rule.name r)) log 
+		    let log = Session.add_log_entry 1 (Printf.sprintf "Abstraction not computed for rule %s" (Rule.name conc_r)) log 
 		    in
-		      (r,log)
+		      (conc_r,log)
 		| Some l_abst -> 
 		    begin
 		      match l_abst with
-			  [] -> (r,log)
-			| [r_abs] -> 
-			    let log = Session.add_log_entry 1 (Printf.sprintf "Using abstraction for rule %s" (Rule.name r)) log 
+			  [] -> (conc_r,log)
+			| [abst_r] -> 
+			    let log = Session.add_log_entry 1 (Printf.sprintf "Using abstraction for rule %s" (Rule.name conc_r)) log 
 			    in
-			      (r_abs,log)
+			      (abst_r,log)
 			| _ -> (*several choices of abstraction, so making no choice at all*)
-			    let log = Session.add_log_entry 1 (Printf.sprintf "Not a unique abstraction for rule %s" (Rule.name r)) log 
+			    let log = Session.add_log_entry 1 (Printf.sprintf "Not a unique abstraction for rule %s" (Rule.name conc_r)) log 
 			    in
-			      (r,log)
+			      (conc_r,log)
 		    end
-	    else (r,log)
+	    else (conc_r,log) (*if not quotienting refinements then abst rule is also the concrete one*)
 	  in
-	  let abst_ind = StringMap.find (Rule.name r) sim_data.rule_of_name in
-	    (abst_ind,ind_r,(r,inst),log)
+	  let abst_ind = 
+	    if !Data.quotient_refs then StringMap.find (Rule.name abst_r) sim_data.rule_of_name 
+	    else conc_ind
+	  in
+	    ((abst_ind,abst_r),(conc_ind,conc_r),inst,log)
 	with Not_found -> (*no infinite rule applies*)
 	  begin
-	    let ind_r,(r,inst) = 
+	    let conc_ind,(conc_r,inst) = 
 	      try Rule_of_int.random_val sim_data.rules 
 	      with exn -> let s = ("Simulation.select: from Rule_of_int.random_val, received "^(Printexc.to_string exn)) in
 		Error.runtime
@@ -1165,43 +1167,47 @@ let select log sim_data p c =
 		   Some s)
 		  s
 	    in
-	    let r,log =
+	    let abst_r,log =
 	      if !Data.quotient_refs then 
 		(*replacing rule r with its abstraction*)
 		begin
-		  match r.Rule.abstraction with
+		  match conc_r.Rule.abstraction with
 		      None -> 
-			let log = Session.add_log_entry 1 (Printf.sprintf "Abstraction not computed for rule %s" (Rule.name r)) log 
+			let log = Session.add_log_entry 1 
+			  (Printf.sprintf "Abstraction not computed for rule %s" (Rule.name conc_r)) log 
 			in
-			  (r,log)
+			  (conc_r,log)
 		    | Some l_abst -> 
 			begin
 			  match l_abst with
-			      [] -> (r,log)
-			    | [r_abs] -> (r_abs,log)
+			      [] -> (conc_r,log)
+			    | [abst_r] -> (abst_r,log)
 			    | _ -> (*several choices of abstraction, so making no choice at all*)
-				let log = Session.add_log_entry 1 (Printf.sprintf "Not a unique abstraction for rule %s" (Rule.name r)) log 
+				let log = Session.add_log_entry 1 (Printf.sprintf "Not a unique abstraction for rule %s" (Rule.name conc_r)) log 
 				in
-				  (r,log)
+				  (conc_r,log)
 			end
 		end
-	      else (r,log)
+	      else (conc_r,log)
 	    in
 	      try
-		let abst_ind = StringMap.find (Rule.name r) sim_data.rule_of_name in
-		  (abst_ind,ind_r,(r,inst),log)
+		let abst_ind = 
+		  if !Data.quotient_refs then StringMap.find (Rule.name abst_r) sim_data.rule_of_name 
+		  else conc_ind
+		in
+		  ((abst_ind,abst_r),(conc_ind,conc_r),inst,log)
 	      with
 		  Not_found -> 
-		    let s=("Simulation.select: Rule "^(Rule.name r)^" not found") in 
+		    let s=("Simulation.select: Rule "^(Rule.name abst_r)^" not found") in 
 		      Error.runtime 
 			(Some "simulation2.ml",
-			 Some 1210,
+			 Some 1204,
 			 Some s)
 			s
 	  end
       in
       let _ = 
-	if r.input = "" then 
+	if abst_r.input = "" then 
 	  let s="Simulation.select: cannot apply fake rule" in 
 	    Error.runtime 
 	      (Some "simulation2.ml",
@@ -1209,7 +1215,7 @@ let select log sim_data p c =
 	       Some s) 
 	      s 
       in  
-	if r.infinite then (*selection of an instance of an infinitely fast rule*)
+	if conc_r.infinite then (*selection of an instance of an infinitely fast rule*)
 	  let assoc_map_list = 
 	    IntMap.fold (fun i lhs_i cont ->
 			   let _,_,assoc_map_i = InjArray.find (Coord.of_pair (abst_ind,i)) sim_data.injections in
@@ -1222,7 +1228,7 @@ let select log sim_data p c =
 				   s
 			     else
 			       assoc_map_i::cont
-			) r.lhs []
+			) abst_r.lhs []
 	  in
 	  let product l = 
 	    List.fold_left (fun prod assoc_ar ->
@@ -1232,7 +1238,8 @@ let select log sim_data p c =
 								     try 
 								       let (m,im) = 
 									 IntMap.fold (fun i j (map,invmap) -> 
-											if IntMap.mem j invmap then raise (Not_applicable (1,r)) (*collision*)
+											if IntMap.mem j invmap then raise (Not_applicable (1,abst_r)) 
+											  (*collision*)
 											else
 											  (IntMap.add i j map,IntMap.add j i invmap)
 										     ) map_j (prod_map_i,inv_prod_map_i)
@@ -1248,16 +1255,16 @@ let select log sim_data p c =
 	  let prod = product assoc_map_list in
 	    match prod with
 		[] -> 
-		  let log = Session.add_log_entry 1 (Printf.sprintf "Infinite rule r[%d] is discarded because it has only clashing instances" ind_r) log 
+		  let log = Session.add_log_entry 1 (Printf.sprintf "Infinite rule r[%d] is discarded because it has only clashing instances" conc_ind) log 
 		  in
 		    choose_rule log {sim_data with 
-				       inf_list = IntSet.remove ind_r sim_data.inf_list ;
-				       rules = Rule_of_int.add ind_r (r,0.0) sim_data.rules 
+				       inf_list = IntSet.remove conc_ind sim_data.inf_list ;
+				       rules = Rule_of_int.add conc_ind (conc_r,0.0) sim_data.rules 
 				    } max_failure cpt
 	      | (m,_)::_ -> 
-		  let log = Session.add_log_entry 1 (Printf.sprintf "Applying infinitely fast rule r[%d]" ind_r) log 
+		  let log = Session.add_log_entry 1 (Printf.sprintf "Applying infinitely fast rule r[%d]" conc_ind) log 
 		  in
-		    (log,Some (abst_ind,ind_r,[m]),sim_data,cpt) (*cpt doesn't matter since infinite rate rule and time advance is null*)
+		    (log,Some (abst_ind,conc_ind,[m]),sim_data,cpt) (*cpt doesn't matter since infinite rate rule and time advance is null*)
 	else
 	  try
 	    let inj_list,arity =
@@ -1266,15 +1273,15 @@ let select log sim_data p c =
 			       let free_keys,fresh,assoc_map_i = 
 				 InjArray.find (Coord.of_pair (abst_ind,i)) sim_data.injections in
 			       let length_i = AssocArray.size assoc_map_i in
-				 if length_i = 0 then raise (Not_applicable (-1,r)) 
+				 if length_i = 0 then raise (Not_applicable (-1,abst_r)) 
 				 else
 				   let inj_nb,phi_i = get_map_opt assoc_map_i 
 				   in
 				     ((inj_nb,i,phi_i)::inj_list,length+1)
 			     with
-				 Not_found -> raise (Not_applicable (0,r))  (*not applicable because one cc has no injection*)
+				 Not_found -> raise (Not_applicable (0,abst_r))  (*not applicable because one cc has no injection*)
 				   
-			  ) (r.lhs) ([],0) (*IntMap.empty,IntMap.empty*)
+			  ) (abst_r.lhs) ([],0) (*IntMap.empty,IntMap.empty*)
 	    in
 	    let inj_list,log,opt_intra,boost = 
 	      (* JK inj_list is empty if rule has no left hand side*)
@@ -1288,7 +1295,7 @@ let select log sim_data p c =
 	      else
 		if arity = 1 then 
 		  match inj_list with 
-		      [(_,_,phi)] -> ([phi],log,None,r.boost) 
+		      [(_,_,phi)] -> ([phi],log,None,conc_r.boost) 
 		    | _ -> let s= "Simulation2.select: invalid argument" in
 			Error.runtime 
 			  (Some "simulation2.ml",
@@ -1297,7 +1304,8 @@ let select log sim_data p c =
 			  s
 		else
 		  match inj_list with
-		      [(psi_nb,cc_psi,psi);(phi_nb,cc_phi,phi)] -> bologna ind_r (cc_psi,psi_nb,psi) (cc_phi,phi_nb,phi) sim_data log
+		      [(psi_nb,cc_psi,psi);(phi_nb,cc_phi,phi)] -> 
+			bologna (abst_r,abst_ind) (conc_r,conc_ind) (cc_psi,psi_nb,psi) (cc_phi,phi_nb,phi) sim_data log
 		    | l -> 
 			let phi = 
 			  List.fold_left (fun phi (_,_,psi) -> 
@@ -1305,11 +1313,11 @@ let select log sim_data p c =
 					      try Some (merge_injections phi psi) with Not_found -> None
 					    in
 					      match opt with
-						  None -> raise (Not_applicable (2,r)) 
+						  None -> raise (Not_applicable (2,abst_r)) 
 						| Some ga -> ga
 					 ) IntMap.empty l
 			in
-			  ([phi],log,None,r.boost) 
+			  ([phi],log,None,conc_r.boost) 
 	    in
 	      if !plot_p_intra then 
 		begin
@@ -1326,27 +1334,24 @@ let select log sim_data p c =
 		    | None -> ()
 		end ;
 	      match inj_list with
-		  [] -> raise (Not_applicable (2,r))
+		  [] -> raise (Not_applicable (2,abst_r))
 		| [ga] -> 
-		    let r,a = Rule_of_int.find ind_r sim_data.rules in
-		    let rules = Rule_of_int.add ind_r ({r with boost = boost},a) sim_data.rules in
+		    let rules = Rule_of_int.add conc_ind ({conc_r with boost = boost},inst) sim_data.rules in
 		    let sd = {sim_data with rules = rules} in
-		      (log,Some (abst_ind,ind_r,[ga]),sd,cpt)			
+		      (log,Some (abst_ind,conc_ind,[ga]),sd,cpt)			
 		| [ga0;ga1] -> 
 		    let compatible = try let _ = merge_injections ga0 ga1 in true with Not_found -> false
 		    in
 		      if compatible then 
-			let r,a = Rule_of_int.find ind_r sim_data.rules in
-			let rules = Rule_of_int.add ind_r ({r with boost = boost},a) sim_data.rules in
+			let rules = Rule_of_int.add conc_ind ({conc_r with boost = boost},inst) sim_data.rules in
 			let sd = {sim_data with rules = rules} in
-			  (log,Some (abst_ind,ind_r,[ga0;ga1]),sd,cpt)
+			  (log,Some (abst_ind,conc_ind,[ga0;ga1]),sd,cpt)
 		      else 
 			begin
 			  let log = Session.add_log_entry 4 "Selected pair of intras are conflicting, discarding one." log in
-			  let r,a = Rule_of_int.find ind_r sim_data.rules in
-			  let rules = Rule_of_int.add ind_r ({r with boost = boost},a) sim_data.rules in
+			  let rules = Rule_of_int.add conc_ind ({conc_r with boost = boost},inst) sim_data.rules in
 			  let sd = {sim_data with rules = rules} in
-			    (log,Some (abst_ind,ind_r,[ga0]),sd,cpt)
+			    (log,Some (abst_ind,conc_ind,[ga0]),sd,cpt)
 			end
 		| _ -> let s="Simulation.selec: invalid argument" in
 		    Error.runtime
@@ -1814,7 +1819,7 @@ let get_step_range p s = (s / !step_sample)
 let rec apply_exp p curr_time sim_data =
   match sim_data.lab.time_dep with
       (t0,i)::tl -> 
-	if t0 < curr_time then
+	if t0 <= curr_time then
 	  let pert_i = IntMap.find i sim_data.lab.perturbations in
 	  let (oo,inf_list,rules) = pert_i.modif (sim_data.oo,sim_data.inf_list,sim_data.rule_of_name,sim_data.rules) in
 	  let lab = {sim_data.lab with 
@@ -1931,7 +1936,12 @@ let rec iter log sim_data p c =
 		let log = Session.add_log_entry 1 
 		  (Printf.sprintf "Deadlock found (activity = %f)" (Rule_of_int.accval sim_data.rules)) log
 		in
-		  (1 (*deadlocked*),log,sim_data,p,c)
+		  match sim_data.lab.time_dep with
+		      [] -> (1 (*deadlocked*),log,sim_data,p,c) (*no more perturbation to execute*)
+		    | (t0,_)::_ -> iter log sim_data p {c with 
+							  curr_time = t0 ; (*go directly to next time*) 
+							  curr_step = c.curr_step+1
+						       } 
 	      )
 	    | Some (abst_ind,r_ind,assoc_list) ->
 		let activity = Rule_of_int.accval sim_data.rules in
@@ -1989,7 +1999,7 @@ let rec iter log sim_data p c =
 			 Some s)
 			s
 		in
-		let sim_data,mod_obs = update warn abst_ind assoc upd_q assoc_add sol' sim_data p
+		let sim_data,mod_obs = update warn abst_ind assoc upd_q assoc_add sol' sim_data p (*update abst_ind is equal to original rule*)
 		in
 		let _ = if !bench_mode then Bench.update_time := !Bench.update_time +. (chrono t_update) in
 

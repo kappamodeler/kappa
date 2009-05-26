@@ -1,7 +1,7 @@
 (**Data references*)
 
 let version_main = 3
-let version_cpt = 671 (*Simplx was ignoring constraints when no intra rate was specified*) 
+let version_cpt = 7 (*Simplx problem in perturbation not applied when system was deadlocking first and conflict in --quotient-refinements option and Bologna resolved.*)
 let version_svn = Svn_number.svn_number
 let version_branch = ""
 let arch_type = string_of_int Sys.word_size

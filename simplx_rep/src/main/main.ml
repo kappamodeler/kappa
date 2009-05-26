@@ -587,6 +587,5 @@ let main =
 	    let msg = "Memory limit reached" in
 	    let log = Session.add_log_entry 2 msg log in Session.finalize xml_file log 2
 	| exn -> let log = Session.add_log_entry 2 (Printexc.to_string exn) log in Session.finalize xml_file log 2
-
     in 
       if !Mods2.bench_mode then (Gc.print_stat stdout;print_newline ()) else ()
