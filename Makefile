@@ -189,8 +189,8 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(COMPLXREP)/backend/XML/xml.cmo \
 	./$(COMPLXREP)/backend/HTML/html.cmo \
 	./$(COMPLXREP)/influence_map/influence_map.cmo \
-	./$(COMPLXREP)/ODE/arithmetics.cmo \
 	./$(COMPLXREP)/ODE/ode_print_sig.cmo \
+	./$(COMPLXREP)/ODE/arithmetics.cmo \
 	./$(COMPLXREP)/ODE/ode_print.cmo \
 	./$(COMPLXREP)/ODE/annotated_contact_map.cmo \
 	./$(COMPLXREP)/ODE/views.cmo \
