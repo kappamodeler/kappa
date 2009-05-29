@@ -142,7 +142,7 @@ let print_log s =
 
 
 
-let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_jacobian file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode (l,m) = 
+let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode (l,m) = 
   
   let prefix' = "-"^(fst prefix) in 
   let do_latex = !Config_complx.do_dump_latex in 
@@ -182,6 +182,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   let print_matlab = f MATLAB file_ODE_matlab in
   let print_matlab_aux = f MATLAB file_ODE_matlab_aux in 
   let print_matlab_jacobian = f MATLAB file_ODE_matlab_jacobian in 
+  let print_matlab_size = f MATLAB file_ODE_matlab_size in 
   let print_latex = f LATEX file_ODE_latex in
   let print_latex_obs = f LATEX file_obs_latex in 
   let print_mathematica = 
@@ -222,7 +223,20 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      latex = None;
      matlab = None;
      matlab_aux = None;
-     matlab_jacobian = print_matlab_jacobian } in 
+     matlab_jacobian = print_matlab_jacobian;
+     matlab_size = None } in
+
+ let print_ODE_size = 
+    {dump = None;
+     data = None;
+     txt = None;
+     kappa = None;
+     mathematica = None;
+     latex = None;
+     matlab = None;
+     matlab_aux = None;
+     matlab_size= print_matlab_size;
+     matlab_jacobian= None } in
 
   let print_ODE = 
      {dump = None ;
@@ -233,7 +247,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      latex = print_latex;
      matlab = print_matlab;
      matlab_aux = print_matlab_aux;
-     matlab_jacobian = print_matlab_jacobian }
+     matlab_jacobian = print_matlab_jacobian ;
+     matlab_size = print_matlab_size }
   in
   let print_ODE_main = 
     {dump = None ;
@@ -244,7 +259,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      latex = print_latex;
      matlab = print_matlab;
      matlab_aux = None;
-     matlab_jacobian = None}
+     matlab_jacobian = None;
+     matlab_size = None}
   in
 
   let print_ODE_aux = 
@@ -262,7 +278,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       latex = print_latex;
       matlab = None;
       matlab_aux = None;
-      matlab_jacobian = None } in
+      matlab_jacobian = None;
+      matlab_size = None } in
 
   let print_ODE_matlab = 
     {dump = None;
@@ -273,7 +290,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       latex = None;
       matlab = print_matlab;
       matlab_aux = None;
-      matlab_jacobian = None} in
+      matlab_jacobian = None;
+      matlab_size = None } in
  let print_ODE_matlab_aux = 
     {dump = None;
       txt = None;
@@ -283,8 +301,21 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       latex = None;
       matlab_aux = print_matlab_aux;
       matlab = None;
-      matlab_jacobian = None } in
-    
+      matlab_jacobian = None ;
+      matlab_size = None } in
+ let print_ODE_matlab_size = 
+    {dump = None;
+      txt = None;
+      data = None;
+      kappa = None;
+      mathematica = None;
+      latex = None;
+      matlab_aux = None;
+      matlab = None;
+      matlab_jacobian = None ;
+      matlab_size = print_matlab_size } in
+
+
   let print_only_data = 
     {dump = None;
       txt = None;
@@ -294,7 +325,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       latex = None;
       matlab= None;
       matlab_aux = None;
-      matlab_jacobian = None } in 
+      matlab_jacobian = None ;
+      matlab_size = None } in 
 
   let print_debug = 
     {dump = Some stdprint ;
@@ -305,7 +337,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      latex = None;
      matlab = None;
      matlab_aux = None;
-     matlab_jacobian = None} 
+     matlab_jacobian = None ;
+     matlab_size = None } 
   in
   let print_obs = 
     { dump = None ;
@@ -316,7 +349,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       txt = print_txt  ;
       matlab = None;
       matlab_aux = None;
-      matlab_jacobian = None} 
+      matlab_jacobian = None;
+      matlab_size = None } 
   in 
   let print_obs_latex = 
     { dump = None;
@@ -327,9 +361,10 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       txt = None;
       matlab = None;
       matlab_aux = None ;
-      matlab_jacobian = None }
+      matlab_jacobian = None ;
+      matlab_size = None }
   in
-  let _ = pprint_ODE_head print_ODE file_ODE_matlab_aux file_ODE_matlab_jacobian in 
+  let _ = pprint_ODE_head print_ODE file_ODE_matlab_aux file_ODE_matlab_jacobian file_ODE_matlab_size in 
   let _ = dump_line 312 in  
   let is_access = 
     match pb.unreachable_rules with 
@@ -1001,7 +1036,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	    let _ = print_comment print_ODE_latex "}{" in 
 	    let _ = print_comment print_ODE_latex (string_of_int rule_key) in 
 	    let _ = pprint_string print_ODE_latex "}}{" in 
-	    let _ = pprint_newline print_ODE  in 
+	    let _ = pprint_newline {print_ODE with matlab = None}  in 
 	    let _ = 
 	      if !Config_complx.trace_rule_iteration && rule_id <> "EMPTY"
 	      then 
@@ -3086,8 +3121,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	 (fun a _ obs -> (Var a)::(obs))
 	 (fun a _ _ obs -> (Var a)::(obs))
 	 merge_prod 
-	 
-init 
+	 init 
 
 	[] in 
     let _ = 
@@ -3107,11 +3141,14 @@ init
 	print_ODE_mathematica 
 	print_ODE_matlab 
 	print_ODE_matlab_aux 
+	print_ODE_jacobian
+	print_ODE_matlab_size
 	file_data_foot
         file_ODE_matlab_aux 
 	file_ODE_matlab_jacobian  
+	(size ())
     in 
-      let _ = (match print_data with None -> () | Some a -> 
+    let _ = (match print_data with None -> () | Some a -> 
     (a.print_string "\n ")) in 
     let chanset = 
       List.fold_left

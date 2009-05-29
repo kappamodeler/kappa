@@ -165,6 +165,7 @@ let main ()  =
 	(!Config_complx.output_ODE_latex) 
 	(!Config_complx.output_ODE_matlab)  
 	(!Config_complx.output_ODE_matlab_aux) 
+	(!Config_complx.output_ODE_matlab_size)
 	(!Config_complx.output_ODE_matlab_jacobian)
 	(!Config_complx.output_ODE_mathematica) 
 	"" 

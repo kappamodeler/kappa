@@ -166,6 +166,7 @@ let output_ODE_covering = ref ""
 let output_ODE_covering_latex = ref "" 
 let output_ODE_contact = ref ""
 let output_ODE_mathematica = ref ""
+let output_ODE_matlab_size = ref "" 
 let output_ODE_matlab = ref "" 
 let output_ODE_matlab_aux = ref ""
 let output_ODE_matlab_jacobian = ref "" 
@@ -375,6 +376,7 @@ let options = List.rev
 "--output-ODE-contact","_plx_ODE_contact.dot";
 "--output-ODE-mathematica","_plx_ODE_system.nb";
 "--output-ODE-matlab-aux","_plx_ODE_system_aux.m";
+"--output-ODE-matlab-size","_plx_ODE_system_size.m";
 "--output-ODE-matlab-jacobian","_plx_ODE_system_jacobian.m";
 "--output-ODE-matlab","_plx_ODE_system.m";
 "--output-ODE-alphabet","_plx_ODE_alphabet";
@@ -467,10 +469,14 @@ let options = List.rev
 "--output-ODE-matlab-aux",
   String output_ODE_matlab_aux,
   "write the ODE auxilliary functions in a matlab file",
-  ["2_Output'";"ODE"],Normal;
+      ["2_Output'";"ODE"],Normal;
 "--output-ODE-matlab-jacobian",
-  String output_ODE_matlab_jacobian,
-  "write the ODE jacobian  in a matlab file",
+      String output_ODE_matlab_jacobian,
+      "write the ODE jacobian  in a matlab file",
+      ["2_Output'";"ODE"],Normal;
+"--output-ODE-matlab-size",
+  String output_ODE_matlab_size,
+  "write the dimmension of the ODE in a matlab file",
   ["2_Output'";"ODE"],Normal;
 "--output-ODE-latex",
   String output_ODE_latex,

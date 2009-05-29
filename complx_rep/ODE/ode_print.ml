@@ -16,7 +16,7 @@ let stdprint =
     
 
 
-let all_fields x  = [x.dump;x.matlab;x.mathematica;x.latex;x.matlab_aux;x.data;x.kappa;x.txt;x.matlab_jacobian]
+let all_fields x  = [x.dump;x.matlab;x.mathematica;x.latex;x.matlab_aux;x.data;x.kappa;x.txt;x.matlab_jacobian;x.matlab_size]
 
       
 module CSet = Set.Make (struct type t = out_channel let compare = compare end)
@@ -262,9 +262,10 @@ let pprint_assign print =
   in pprint_string print "=" 
 
 let remove_latex print = {print with latex = None} 
-let keep_latex print = {print with matlab = None ; matlab_aux=None;matlab_jacobian = None ; mathematica = None} 
-let keep_aux print = {print with latex=None;matlab=None;mathematica=None;matlab_jacobian = None} 
-let keep_jac print = {print with latex=None;matlab=None;mathematica=None;matlab_aux=None}
+let keep_latex print = {print with matlab = None ; matlab_aux=None;matlab_jacobian = None ; mathematica = None ;matlab_size = None} 
+let keep_aux print = {print with latex=None;matlab=None;mathematica=None;matlab_jacobian = None;matlab_size = None} 
+let keep_jac print = {print with latex=None;matlab=None;mathematica=None;matlab_aux=None;matlab_size = None }
+let keep_size print = {print with latex=None;matlab=None;mathematica=None;matlab_aux=None;matlab_jacobian=None}
 
 let pprint_eq_separator print = 
   let print' = remove_latex print in 
@@ -346,12 +347,13 @@ let pprint_commandsep print =
 	 
 
 
-let pprint_ODE_head print file file_jac = 
+let pprint_ODE_head print file file_jac file_size = 
   let print_latex = keep_latex print in 
   let print = remove_latex print in 
-  let print_main = {print with matlab_aux = None ; matlab_jacobian = None  } in
+  let print_main = {print with matlab_aux = None ; matlab_jacobian = None ; matlab_size = None  } in
   let print_aux = keep_aux print in
   let print_jac = keep_jac print in  
+  let print_size = keep_size print in 
   let _ = pprint_string print_main "% THINGS THAT ARE KNOWN FROM KAPPA FILE AND COMPLX OPTIONS;\n" in 
   let _ = pprint_string print_main "% \n" in 
   let _ = pprint_string print_main "% init - the initial abundances of each fragment " in
@@ -370,17 +372,27 @@ let pprint_ODE_head print file file_jac =
   let _ = pprint_commandsep print_main in
   let _ = pprint_newline print_main in 
   let print = remove_latex print_main in 
+  let size = Tools.cut file_size^"()" in 
   let _ = pprint_string print_main  "num_t_point" in 
   let _ = pprint_assign print_main  in 
   let _ = pprint_int print_main (!Config_complx.ode_points) in
   let _ = pprint_commandsep print_main in
   let _ = pprint_newline print_main in 
   let _ = pprint_newline print_main in
+  let _ = pprint_string print_main ("init = sparse(@"^size^",@"^size^")") in 
+  let _ = pprint_commandsep print_main in 
+  let _ = pprint_newline print_main in 
   let _ = pprint_newline print_main in    
   let _ = pprint_string print_aux ("function dydt="^(Tools.cut file)^"(t,y)\n\n\n") in 
-  let _ = pprint_string print_jac ("function Jac="^(Tools.cut file_jac)^"(t,y)\n\n Jac = sparse(%,%);\n\n\n") in 
+  let _ = pprint_string print_jac ("function Jac="^(Tools.cut file_jac)^"(t,y)\n\nJac = sparse(@"^size^",@"^size^");\n\n") in 
   let _ = pprint_string print_latex "\\odebeforeequs\n" in 
-  ()
+  let _ = pprint_string print_size "function Size=" in
+  let _ = pprint_string print_size size in
+  let _ = pprint_string print_size "()" in 
+  let _ = pprint_newline print_size in 
+  let _ = pprint_newline print_size in 
+  let _ = pprint_string print_size "Size = " in 
+ ()
 
 let pprint_ODE_head' print = 
   let _ = 
@@ -403,19 +415,19 @@ let pprint_ODE_head' print =
     with 
 	None -> () 
       | Some a -> 
-	  let _ = a.print_string "dydt = ["
+	  let _ = a.print_string "\n\n\ndydt = ["
 	  in () 
   in
     () 
 
 
 
-let pprint_ODE_middle0 print = 
-  let _ = 
+let pprint_ODE_middle0 print = ()
+(*  let _ = 
     match print.matlab with 
       None -> ()
     | Some a -> a.print_string "\n init = [\n"
-  in () 
+  in () *)
 
 
 let pprint_ODE_middle1 print = 
@@ -426,7 +438,7 @@ let pprint_ODE_middle1 print =
   in ()
 
 
-let pprint_ODE_middle2 print jac_file aux_file = 
+let pprint_ODE_middle2 print aux_file jac_file = 
   let _ = 
     match print.mathematica with 
       None -> () 
@@ -437,10 +449,10 @@ let pprint_ODE_middle2 print jac_file aux_file =
     | Some a -> 
 	begin
 	  let _ = 
-	    a.print_string ("];\n\n\noptions = odeset('RelTol', 1e-3,\n                 'AbsTol', 1e-3,\n                'MaxStep', tend,\n                  'Jacobian', "^(Tools.cut jac_file)^");\n\n\node45(dydt,[tinit tend],init,options)\n")
+	    a.print_string ("\n\n\noptions = odeset('RelTol', 1e-3,\n                 'AbsTol', 1e-3,\n                'MaxStep', tend,\n                  'Jacobian', @"^(Tools.cut jac_file)^");\n\n\node45(dydt,[tinit tend],init,options)\n")
 	  in
           let _ =
-	    a.print_string ("soln = ode2r(@"^(Tools.cut aux_file)^",[tinit end],init,options);\n\nt = linspace(tinit, tend, num_t_point+1);\n y = interpl(soln.x, soln.y, t, 'pchip');") in 
+	    a.print_string ("soln = ode2r(@"^(Tools.cut aux_file)^",[tinit end],init,options);\n\nt = linspace(tinit, tend, num_t_point+1);\ny = interpl(soln.x, soln.y, t, 'pchip');") in 
 	    ()
 
 	end
@@ -531,6 +543,15 @@ let rec print_expr  print bool bool2  x =
    | Vari (v,r) -> (print_intermediar_var print r (string_of_int v);(if bool then pprint_ty print else if bool2 then pprint_zero print else ())) 
    | Vark i ->   pprint_var print "k" i 
    | Var i ->  (pprint_var print "y" (string_of_int i);(if bool then pprint_t print else if bool2 then pprint_zero print else ()))
+   | Vardi (i,r,j) -> 
+       begin 
+	 pprint_string print "d";
+	 pprint_string print (string_of_int i);
+	 pprint_string print "_d";
+	 pprint_string print (string_of_int j);
+	 pprint_string print "r";
+	 pprint_string print r
+       end
    | Shortcut (s,a) -> (print_intermediar_var print s a;(if bool then pprint_t print else if bool2 then pprint_zero print else ())) 
    | Div (a,b) -> 
        begin
@@ -582,6 +603,15 @@ let rec print_expr  print bool bool2  x =
        let _ = pprint_string print "}" in 
        ()
 
+   | Vardi (i,r,j) -> 
+       begin 
+	 pprint_string print "d";
+	 pprint_string print (string_of_int i);
+	 pprint_string print "_d";
+	 pprint_string print (string_of_int j);
+	 pprint_string print "r";
+	 pprint_string print r
+       end
    | Vari (v,r) -> (print_intermediar_var print r (string_of_int v);(if bool then pprint_ty print else if bool2 then pprint_zero print else ())) 
    | Vark i ->   pprint_var print "k" i 
    | Var i ->  (pprint_var print "y" (string_of_int i);(if bool then pprint_t print else if bool2 then pprint_zero print else ()))
@@ -646,7 +676,7 @@ let print_expr print bool bool2 x =
   in ()
   
 
- let dump_prod (prod,bool) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab print_ODE_matlab_aux output_data file_aux file_jac   = 
+ let dump_prod (prod,jac) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab print_ODE_matlab_aux print_ODE_matlab_jac print_ODE_matlab_size output_data file_aux file_jac  size  = 
     let print_ODE = print_ODE_mathematica in 
     let print_latex = keep_latex print_ODE_mathematica in 
     let print_ODE_wo_latex = remove_latex print_ODE_mathematica in 
@@ -713,7 +743,7 @@ let print_expr print bool bool2 x =
 	      false 
 	      obs in
 	  let _ = pprint_string print_latex "}" in 
-	  let _ = pprint_ODE_middle2 print_ODE file_aux file_jac in 
+	  let _ = pprint_ODE_middle2 print_ODE file_jac file_aux in 
     let _ = 
       List.fold_left
 	(fun bool c -> 
@@ -758,25 +788,20 @@ let print_expr print bool bool2 x =
     let print_ODE = print_ODE_matlab in 
     let _ = pprint_ODE_middle0 print_ODE  in 
     let _  = 
-      Arraymap.fold 
-	(fun k b bool -> 
-	  let _ = if bool then pprint_eq_separator print_ODE in 
-	  let _ = pprint_newline print_ODE in 
-	  let _ = if k=0 then (print_string "BUG";Printf.fprintf stdout "BUG\n") in 
-	   
-	  let _ = pprint_equal print_ODE in
-	  let _ = print_expr print_ODE true true  (simplify_expr b) in
-	  let _ = 
-	    try let _ = Arraymap.find k prod in ()  
-	    with Not_found -> 
-	      let _ = if bool then pprint_eq_separator print_ODE in 
-	      let _ = pprint_newline print_ODE in 
-	      let _ = pprint_derivate print_ODE k in
-	      let _ = pprint_equal print_ODE in 
-	      let _ = print_expr print_ODE true true  (Const 0) in () in  
-	  true)
-	init false  in
-    let _ = pprint_string print_ODE "]\n" in 
+      Arraymap.iter 
+	(fun k b  -> 
+	   let _ = if k=0 then (print_string "BUG";Printf.fprintf stdout "BUG\n") in 
+	   let expr = simplify_expr b in 
+	   if equal_zero expr then () 
+	   else 
+	     let _ = pprint_string print_ODE "init(" in 
+	     let _ = pprint_string print_ODE (string_of_int k) in 
+	     let _ = pprint_string print_ODE ")= " in 
+	     let _ = print_expr print_ODE true true  expr in 
+	     let _ = pprint_string print_ODE ";"  in 
+	     let _ = pprint_newline print_ODE in 
+	  ())
+	init   in
     let _ = pprint_ODE_middle1 print_ODE in
     let _ = pprint_ODE_middle2 print_ODE file_aux file_jac in 
   
@@ -802,7 +827,34 @@ let print_expr print bool bool2 x =
 
     let _ = pprint_string print_ODE "];\n" in 
     let _ = pprint_ODE_foot print_ODE in 
-    
+    let print_ODE = print_ODE_matlab_jac in 
+    let _ = pprint_string print_ODE "\n\n" in 
+    let _   = 
+      Int2Map.iter 
+	(fun (i,j) b  ->
+	   let _ = pprint_string print_ODE "Jac(" in 
+	   let _ = pprint_string print_ODE (string_of_int i) in 
+	   let _ = pprint_string print_ODE "," in 
+	   let _ = pprint_string print_ODE (string_of_int j) in 
+	   let _ = pprint_string print_ODE ") =  " in 
+	   let _ = List.fold_left 
+	     (fun bool (b) ->
+		let _ = 
+		  if bool then pprint_string print_ODE "+"
+		  else 
+		    () in
+		  print_expr print_ODE false false  (simplify_expr b);		  true) 
+	      false b in 
+	   let _ = if not bool then print_expr print_ODE false false (Const 0)
+	   in 
+	   let _ = pprint_string print_ODE ";" in 
+	   let _ = pprint_newline print_ODE in ())
+
+	jac   in
+
+    let _ = pprint_ODE_foot print_ODE in 
+    let print_ODE = print_ODE_matlab_size in  
+    let _ = pprint_string print_ODE (string_of_int size) in 
     ()
 
  let pprint_obs print print_sb n expr pb = 
