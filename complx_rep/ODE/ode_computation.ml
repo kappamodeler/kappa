@@ -264,7 +264,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   in
 
   let print_ODE_aux = 
-    {print_ODE with matlab_jacobian = None ; matlab = None ; matlab_aux = print_matlab_aux} in
+    {print_ODE with matlab_size = None ; matlab_jacobian = None ; matlab = None ; matlab_aux = print_matlab_aux} in
 
   let print_ODE_mathematica = 
     {print_ODE_main with matlab = None} in 
@@ -292,7 +292,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab_aux = None;
       matlab_jacobian = None;
       matlab_size = None } in
- let print_ODE_matlab_aux = 
+
+  let print_ODE_matlab_aux = 
     {dump = None;
       txt = None;
       data = None;
@@ -303,6 +304,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab = None;
       matlab_jacobian = None ;
       matlab_size = None } in
+ 
  let print_ODE_matlab_size = 
     {dump = None;
       txt = None;
@@ -1036,7 +1038,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	    let _ = print_comment print_ODE_latex "}{" in 
 	    let _ = print_comment print_ODE_latex (string_of_int rule_key) in 
 	    let _ = pprint_string print_ODE_latex "}}{" in 
-	    let _ = pprint_newline {print_ODE with matlab = None}  in 
+	    let _ = pprint_newline {print_ODE with matlab = None ; matlab_size = None }  in 
 	    let _ = 
 	      if !Config_complx.trace_rule_iteration && rule_id <> "EMPTY"
 	      then 

@@ -89,7 +89,7 @@ let inhibition = ref false
 (* Data structures *)
     (* hash *)
 
-let ode_points = ref 0 
+let ode_points = ref 1000 
 let ode_init_time = ref 0.
 let ode_final_time = ref 1.
 let ode_ulp = ref 0.00001

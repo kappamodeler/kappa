@@ -379,7 +379,7 @@ let pprint_ODE_head print file file_jac file_size =
   let _ = pprint_commandsep print_main in
   let _ = pprint_newline print_main in 
   let _ = pprint_newline print_main in
-  let _ = pprint_string print_main ("init = sparse(@"^size^",@"^size^")") in 
+  let _ = pprint_string print_main ("init = sparse(@"^size^",1)") in 
   let _ = pprint_commandsep print_main in 
   let _ = pprint_newline print_main in 
   let _ = pprint_newline print_main in    
@@ -388,7 +388,6 @@ let pprint_ODE_head print file file_jac file_size =
   let _ = pprint_string print_latex "\\odebeforeequs\n" in 
   let _ = pprint_string print_size "function Size=" in
   let _ = pprint_string print_size size in
-  let _ = pprint_string print_size "()" in 
   let _ = pprint_newline print_size in 
   let _ = pprint_newline print_size in 
   let _ = pprint_string print_size "Size = " in 
@@ -449,10 +448,10 @@ let pprint_ODE_middle2 print aux_file jac_file =
     | Some a -> 
 	begin
 	  let _ = 
-	    a.print_string ("\n\n\noptions = odeset('RelTol', 1e-3,\n                 'AbsTol', 1e-3,\n                'MaxStep', tend,\n                  'Jacobian', @"^(Tools.cut jac_file)^");\n\n\node45(dydt,[tinit tend],init,options)\n")
+	    a.print_string ("\n\n\noptions = odeset('RelTol', 1e-3,\n                 'AbsTol', 1e-3,\n                'MaxStep', tend,\n                  'Jacobian', @"^(Tools.cut jac_file)^");\n\n")
 	  in
           let _ =
-	    a.print_string ("soln = ode2r(@"^(Tools.cut aux_file)^",[tinit end],init,options);\n\nt = linspace(tinit, tend, num_t_point+1);\ny = interpl(soln.x, soln.y, t, 'pchip');") in 
+	    a.print_string ("soln = ode2r(@"^(Tools.cut aux_file)^",[tinit tend],init,options);\n\nt = linspace(tinit, tend, num_t_point+1);\ny = interp1(soln.x, soln.y, t, 'pchip');") in 
 	    ()
 
 	end
@@ -855,6 +854,7 @@ let print_expr print bool bool2 x =
     let _ = pprint_ODE_foot print_ODE in 
     let print_ODE = print_ODE_matlab_size in  
     let _ = pprint_string print_ODE (string_of_int size) in 
+    let _ = pprint_string print_ODE ";" in 
     ()
 
  let pprint_obs print print_sb n expr pb = 
