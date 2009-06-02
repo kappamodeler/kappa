@@ -512,7 +512,7 @@ let cut f =
     let n = String.length f in 
     let rec vide i rep = 
       if i = n then rep 
-      else if String.get f i ='\\' 
+      else if String.get f i ='/' 
       then vide (i+1) i 
     else vide (i+1) rep 
     in
