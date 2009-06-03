@@ -144,6 +144,7 @@ let print_log s =
 
 let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode (l,m) = 
   
+ 
   let prefix' = "-"^(fst prefix) in 
   let do_latex = !Config_complx.do_dump_latex in 
   let good_mode a b = 
@@ -207,6 +208,19 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   let cpb = match pb.Pb_sig.intermediate_encoding with 
     Some cpb -> cpb
   | None -> error 178 in
+
+
+  let obs_full = 
+    match pb.Pb_sig.simplx_encoding with 
+	Some (_,_,obs) -> obs 
+      | None -> error 215 in 
+
+  let obs = 
+    List.fold_left
+      (fun list obs -> 
+	  match obs with Solution.Concentration(_,a) -> a::list
+	    | _ -> list)
+      [] obs_full in 
 
   let sites_of_agent x = 
     try 
@@ -388,7 +402,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	    else ({x with labels = lab})::sol)
 	  [] rs.rules)} in 
     rs in
+
   let _ = dump_line 333 in 
+
   let simplify rs = 
     (* when a passive species is not tested, it can be written in the binding type *)
     let a = rs.Pb_sig.passive_species in 
@@ -493,9 +509,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   let pre_annotated_contact_map = 
     match compression_mode 
       with 
-	Flat -> upgrade (compute_annotated_contact_map_in_flat_mode system cpb contact) cpb
-      |	Compressed -> compute_annotated_contact_map_in_compression_mode system cpb contact 
-      |	Approximated -> upgrade(compute_annotated_contact_map_in_approximated_mode system cpb contact) cpb
+	Flat -> upgrade (compute_annotated_contact_map_in_flat_mode system cpb contact obs) cpb
+      |	Compressed -> compute_annotated_contact_map_in_compression_mode system cpb contact obs 
+      |	Approximated -> upgrade(compute_annotated_contact_map_in_approximated_mode system cpb contact obs) cpb
     in 
   
 
