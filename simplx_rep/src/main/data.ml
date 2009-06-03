@@ -1,7 +1,7 @@
 (**Data references*)
 
 let version_main = 3
-let version_cpt = 8 (*initial measure not taken at time 0.0*)
+let version_cpt = 81 (*correction of bug with --save-all option when kappa file was containing experiments*)
 let version_svn = Svn_number.svn_number
 let version_branch = ""
 let arch_type = string_of_int Sys.word_size

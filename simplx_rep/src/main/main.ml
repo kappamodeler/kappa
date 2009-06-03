@@ -329,7 +329,7 @@ let main =
 			let d = open_out_bin file in
 			let f_sd = Simulation2.marshal sd in
 			  begin
-			    Marshal.to_channel d f_sd [] ;
+			    Marshal.to_channel d f_sd [Marshal.Closures] ;
 			    let log = Session.add_log_entry 0 "--Initial state succesfully saved" log
 			    in 
 			      close_out d ;
