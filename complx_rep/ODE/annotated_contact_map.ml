@@ -142,7 +142,7 @@ let compute_annotated_contact_map_init cpb  =
     cpb.Pb_sig.cpb_interface 
   
   
-let compute_annotated_contact_map_in_approximated_mode system cpb contact_map obs  =
+let compute_annotated_contact_map_in_approximated_mode system cpb contact_map  =
   let local_map,_ = compute_annotated_contact_map_init cpb in 
     
   List.fold_left  
@@ -325,7 +325,7 @@ let trivial_rule2 (contact,keep_this_link) rule =
     | Unbind(a,b,c,d) -> not (keep_this_link (a,b) (c,d))
   end
     
-let compute_annotated_contact_map_in_compression_mode system cpb contact_map obs =
+let compute_annotated_contact_map_in_compression_mode system cpb contact_map  =
   let local_map,site_map  = compute_annotated_contact_map_init cpb in
   let fadd ag x y map = 
     let old1,old2 = 
@@ -515,11 +515,11 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map obs
 	  (StringMap.empty,StringMap.empty,String2Set.empty)
 	  system 
       in 
-      let classes = 
+(*      let classes = 
 	List.fold_left
 	  (fun classes obs -> get_sitesets_of_solution obs classes)
 	  classes obs 
-      in 
+      in *)
       let _ = 
 	if debug 
 	then
@@ -613,13 +613,13 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map obs
 	      local_map 
       in
       let solid_edges = String22Set.empty in 
-      let solid_edges = 
+(*      let solid_edges = 
 	List.fold_left 
 	  (fun solid_edges obs -> get_links_of_solution obs solid_edges)
 	  solid_edges 
 	  obs
       in 
-
+  *)
       let solid_edges = 
 	List.fold_left 
 	  (fun solid_edges rs -> 
@@ -676,7 +676,7 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map obs
       (local_map,solid_edges) 
 
 
-let compute_annotated_contact_map_in_flat_mode system cpb contact_map obs = 
+let compute_annotated_contact_map_in_flat_mode system cpb contact_map  = 
   let passing_sites = 
     List.fold_left 
       (fun sol (a,b,c) ->

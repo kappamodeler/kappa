@@ -142,7 +142,7 @@ let print_log s =
 
 
 
-let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode (l,m) = 
+let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs (l,m) = 
   
  
   let prefix' = "-"^(fst prefix) in 
@@ -210,7 +210,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   | None -> error 178 in
 
 
-  let obs_full = 
+(*  let obs_full = 
     match pb.Pb_sig.simplx_encoding with 
 	Some (_,_,obs) -> obs 
       | None -> error 215 in 
@@ -220,7 +220,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       (fun list obs -> 
 	  match obs with Solution.Concentration(_,a) -> a::list
 	    | _ -> list)
-      [] obs_full in 
+      [] obs_full in *)
 
   let sites_of_agent x = 
     try 
@@ -403,6 +403,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	  [] rs.rules)} in 
     rs in
 
+
   let _ = dump_line 333 in 
 
   let simplify rs = 
@@ -474,11 +475,17 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	rs.Pb_sig.rules } in 
 
 
-  (******************************************************)
-  (* WE REMOVE DEAD RULES, AND SIMPLIFY PASSIVE SPECIES *) 
-  (******************************************************)
+
+ 
+
+
+(******************************************************)
+(* WE REMOVE DEAD RULES, AND SIMPLIFY PASSIVE SPECIES *) 
+(******************************************************)
+  
 
   let system = List.map (fun x -> simplify (clean x)) a.Pb_sig.system in 
+ 
         
   let _ = print_log "COMPUTE ANNOTATED CONTACT MAP" in
 
@@ -509,9 +516,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   let pre_annotated_contact_map = 
     match compression_mode 
       with 
-	Flat -> upgrade (compute_annotated_contact_map_in_flat_mode system cpb contact obs) cpb
-      |	Compressed -> compute_annotated_contact_map_in_compression_mode system cpb contact obs 
-      |	Approximated -> upgrade(compute_annotated_contact_map_in_approximated_mode system cpb contact obs) cpb
+	Flat -> upgrade (compute_annotated_contact_map_in_flat_mode system cpb contact ) cpb
+      |	Compressed -> compute_annotated_contact_map_in_compression_mode system cpb contact 
+      |	Approximated -> upgrade(compute_annotated_contact_map_in_approximated_mode system cpb contact ) cpb
     in 
   
 

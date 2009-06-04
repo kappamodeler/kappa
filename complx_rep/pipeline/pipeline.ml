@@ -74,6 +74,7 @@ type 'a pipeline = {
     unmarshallize: file_name -> prefix -> output_channel -> 'a internal_encoding*output_channel;
     marshallize: file_name -> 'a step;
     build_pb: simplx_encoding -> prefix -> 'a internal_encoding; 
+    build_obs: simplx_encoding -> prefix -> int  -> 'a internal_encoding * IntSet.t ;
     translate: interface -> 'a step;
     dump_ckappa: file_name -> compile -> 'a step;
     compile: interface -> compile -> 'a step;
@@ -246,6 +247,50 @@ module Pipeline =
 		 print_newline ()) in 
 	 let _ = dump_chrono prefix l in ()
        and build_pb a prefix = Some {pb_init with simplx_encoding = a}
+       and build_obs a prefix n = 
+	 match a with None -> None,IntSet.empty 
+	   | Some (a,b,c) -> 
+	       let fake_rules,obs,_  = 
+		 List.fold_right 
+		   (fun obs (cont,obs',fresh_id) ->
+		      match obs with
+			  Solution.Concentration (flg,sol) -> 
+			    let actions = Mods2.IntMap.empty
+			    and lhs = Solution.split sol
+			    in
+			    let precompil = 
+			      Mods2.IntMap.fold (fun i cc_i map -> 
+						   Mods2.IntMap.add i (Solution.recognitions_of_cc cc_i) map
+						) lhs Mods2.IntMap.empty 
+			    in
+			    let r =
+			      {Rule.lhs = lhs ;
+			       Rule.rhs = sol ; (*identity*)
+			       Rule.precompil = precompil ;
+			       Rule.add = Mods2.IntMap.empty ;
+			       Rule.actions = actions;
+			       Rule.corr_ag = 0 ;
+			       Rule.rate = -1 (*really geekish!*);
+			       Rule.input = "" ; (*fake rule*)
+			       Rule.flag = Some flg ;
+			       Rule.constraints = [] ;
+			       Rule.kinetics = 1.0 ;
+			       Rule.boost = 1.0 ;
+			       Rule.automorphisms = None ;
+			       Rule.n_cc = Mods2.IntMap.size lhs ;
+			       Rule.id = fresh_id;
+			       Rule.infinite = false;
+			       Rule.abstraction = None;
+			       Rule.intra = None
+			      }
+			    in
+			     (r::cont,IntSet.add fresh_id obs',fresh_id+1)
+		       | _ -> (cont,obs',fresh_id)
+		    ) c ([],IntSet.empty,n+1)
+
+	       in
+		 Some {pb_init with simplx_encoding =  Some (fake_rules,b,c)},obs
+		       
        and parse_file  s prefix (l,m) =
 	 let tmp_forward = !Data.forward in
 	 let tmp_mode = !Data.compile_mode in
@@ -1331,7 +1376,7 @@ module Pipeline =
 	       if not (is_views rep)
 	       then (
 		     let pb,log = reachability_analysis prefix' rep  (l,m) in
-	             template 
+		       template 
 		       file0 
 		       file1 
 		       file2 
@@ -1347,7 +1392,7 @@ module Pipeline =
 		       file12 
 		       file13 
 		       file14
-		       prefix pb (l,m))
+		       prefix pb  (l,m))
 	       else (
 		 match pb with 
 		   None -> pb,(l,m) 
@@ -1356,55 +1401,64 @@ module Pipeline =
 		     let pb,(l,m),auto = get_auto prefix' pb (l,m) in 
 		     (match pb.bdd_sub_views with None -> Some pb,(l,m)
 		     | Some sub ->
-			 
-			 let opt,(l,m)  = 
-			   Ode_computation.compute_ode
-			     file0 
-			     file1 
-			     file2
-			     file3
-			     file4 
-			     file5
-			     file6 
-			     file7 
-			     file8
-			     file9 
-			     file10 
-			     file11
-			     file12 
-			     file13
-			     file14
-			     {project=A.project;
-			      export_ae = A.export_ae;
-			      restore = A.restore_subviews;
-			      b_of_var = A.K.E.V.b_of_var ;
-			      var_of_b = A.K.E.V.var_of_b ;
-				print_sb = print_sb;
-				print_sb_latex = print_sb_latex;
-			      fnd_of_bdd = A.fnd_of_bdd;
-			      conj = A.conj ;
-			      atom_pos = A.atom_pos ;
-			      atom_neg = A.atom_neg ; 
-			      expr_true = A.ae_true}
-
-			     Ode_print_sig.MATLAB
-			     prefix 
-			     (Some stdout)
-			     a boolean 
-			     sub
-			     auto 
-			     (match !Config_complx.flat_ode 
-			     with 
-			       true -> Annotated_contact_map.Flat
-			     | _ -> Annotated_contact_map.Compressed)
-
-			     (l,m) in  
+			 let nrule = List.length boolean.system in 
+			 let pb',obs_list  = build_obs pb.simplx_encoding  prefix' nrule  in 
+			   match pb' with 
+			       None -> pb',(l,m)
+			     |Some a' -> 
+				let pb',(l,m),boolean_obs = get_boolean_encoding 
+				  None 
+				  prefix' 
+				  a' (l,m) in 
+				let boolean = {boolean with system = boolean.system@boolean_obs.system} in 
+				let opt,(l,m)  = 
+				  Ode_computation.compute_ode
+				    file0 
+				    file1 
+				    file2
+				    file3
+				    file4 
+				    file5
+				    file6 
+				    file7 
+				    file8
+				    file9 
+				    file10 
+				    file11
+				    file12 
+				    file13
+				    file14
+				    {project=A.project;
+				     export_ae = A.export_ae;
+				     restore = A.restore_subviews;
+				     b_of_var = A.K.E.V.b_of_var ;
+				     var_of_b = A.K.E.V.var_of_b ;
+				     print_sb = print_sb;
+				     print_sb_latex = print_sb_latex;
+				     fnd_of_bdd = A.fnd_of_bdd;
+				     conj = A.conj ;
+				     atom_pos = A.atom_pos ;
+				     atom_neg = A.atom_neg ; 
+				     expr_true = A.ae_true}
+				    Ode_print_sig.MATLAB
+				    prefix 
+				    (Some stdout)
+				    a 
+				    boolean 
+				    sub
+				    auto 
+				    (match !Config_complx.flat_ode 
+				     with 
+					 true -> Annotated_contact_map.Flat
+				       | _ -> Annotated_contact_map.Compressed)
+				    boolean_obs 
+				    (l,m) in  
 			 let nfrag = 
 			   match opt with None -> None 
 			   | Some(_,_,n) -> Some n 
 			 in 
 			 let l = chrono prefix "dumping fragments" l in 
-			 Some {pb with nfrag = nfrag},(l,m))
+			   Some {pb with nfrag = nfrag},(l,m))
 		       ))
 	   
        and 
@@ -1838,6 +1892,7 @@ module Pipeline =
        add_message = (fun a b -> handle_errors_homo (Some "Complx") (Some "add_message") (add_message a b));
        print_channel  = (fun a -> handle_errors_main (Some "Complx") (Some "print_channel") (print_channel a));
        build_pb = handle_errors (Some "Complx") (Some "build_pb") build_pb;
+       build_obs = handle_errors (Some "Complx") (Some "build_obs") build_obs; 
        parse_file = 
        (fun a b c -> 
 	 (handle_errors_return 
