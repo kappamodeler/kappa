@@ -296,19 +296,13 @@ let build_drawer p rules contact =
 		     fadd_tested_sites_to_rules drawer (ag,s) r 
 	       | Is_bound (i,s) | Is_free (i,s) ->
 		   let ag = get_id i in 
-		   let _ = print_string "\n" in 
-		   let _ = print_string ag in 
-		   let _ = print_string s in 
-		   let _ = print_string ":" in 
 		     List.fold_left 
 		       (fun drawer (ag',s') ->
-			  let _ = print_string ag' in
-			  let _ = print_string s' in 
 			    fadd_tested_edges_to_rules drawer ((ag,s),(ag',s')) r)
 		       drawer
 		       (try String2Map.find (ag,s) contact
 			with 
-			    Not_found -> let _ = print_string ag;print_string s;print_string "OUPS\n" in [])
+			    Not_found -> [])
 	       | Is_related ((i,s),(i',s')) -> 
 		   let ag = get_id i in 
 		   let ag' = get_id i' in

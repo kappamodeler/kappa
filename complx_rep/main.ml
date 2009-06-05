@@ -53,6 +53,7 @@ let main ()  =
     then methods.build_contact Low prefix pb log 
     else pb,log
   in
+  let _ = trace_print "RETURN LOCAL" in 
   let pb,log = 
      if !Config_complx.do_local_views or !Config_complx.do_qualitative_compression 
 	or !Config_complx.do_quantitative_compression
@@ -61,27 +62,25 @@ let main ()  =
        let pb,log = methods.reachability_analysis prefix pb log in
        methods.refine_subviews prefix pb log 
      else pb,log in 
- (* let pb,log = 
-    if !Config_complx.do_local_views
-    then
-      methods.refine_views prefix pb log 
-    else
-      pb,log in *)
+  let _ = trace_print "CONTACT MAP HIGH" in 
   let pb,log = 
     if !Config_complx.do_high_res_contact_map
     then methods.build_contact High prefix pb log
     else pb,log in 
+  let _ = trace_print "CONTACT MAP LOW" in 
   let pb,log = 
     if !Config_complx.do_high_res_contact_map 
 	or !Config_complx.do_low_res_contact_map 
     then
       methods.build_drawers prefix pb log 
     else pb,log in 
+  let _ = trace_print "INFLUENCE:QUARK" in 
   let pb,log = 
     if !Config_complx.do_influence 
     then 
       methods.quarkification prefix pb log 
     else pb,log in 
+  let _ = trace_print "INFLUENCE:INFLUENCE" in 
   let pb,log =
     if !Config_complx.do_influence
     then 

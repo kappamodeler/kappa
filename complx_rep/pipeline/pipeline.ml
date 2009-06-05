@@ -1413,9 +1413,8 @@ module Pipeline =
 				  None 
 				  prefix' 
 				  a' (l,m) in 
-				let _ = print_string "PIPELINE" in 
-				let _ = print_int (List.length boolean_obs.system) in 
-				let _ = print_newline () in 
+				let pb',(l,m),obs_auto = get_auto prefix' pb' (l,m) in 
+				let auto = IntMap.fold IntMap.add obs_auto auto in 
 				let boolean = {boolean with system = boolean.system@boolean_obs.system} in 
 				let opt,(l,m)  = 
 				  Ode_computation.compute_ode

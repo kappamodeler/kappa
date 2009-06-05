@@ -525,7 +525,6 @@ let cut f =
     in 
   let dot = vide (last_back+1) in 
   let rep = String.sub f (last_back+1) (dot-last_back-1) in 
-  let _ = print_string rep in 
     rep 
   with 
     _ -> "FAIL"^f

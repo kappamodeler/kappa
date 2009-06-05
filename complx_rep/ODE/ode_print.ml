@@ -463,7 +463,7 @@ let pprint_ODE_middle2 print aux_file jac_file nfrag nobs =
     | Some a -> 
 	begin
 	  let _ = 
-	    a.print_string ("\n\n\noptions = odeset('RelTol', 1e-3,\n                 'AbsTol', 1e-3,\n                'MaxStep', tend,\n                  'Jacobian', @"^(Tools.cut jac_file)^");\n\n")
+	    a.print_string ("\n\n\noptions = odeset('RelTol', 1e-3,\n                 'AbsTol', 1e-3,\n                 'MaxStep', tend,\n                 'Jacobian', @"^(Tools.cut jac_file)^");\n\n")
 	  in
           let _ =
 	    a.print_string ("soln = ode2r(@"^(Tools.cut aux_file)^",[tinit tend],init,options);\n\nt = linspace(tinit, tend, num_t_point+1);\n\n")

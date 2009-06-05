@@ -142,7 +142,7 @@ let print_log s =
 
 
 
-let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_matlab_act file_ODE_matlab_obs file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs (l,m) = 
+let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_matlab_act file_ODE_matlab_obs file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs  (l,m) = 
   
  
   let prefix' = "-"^(fst prefix) in 
@@ -446,10 +446,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     | Some a -> (fun x -> not (RuleIdSet.mem x a)) in 
 
   let a = pb_boolean_encoding in 
-  let _ = print_string "OBS" in 
-  let _ = 
-    IntSet.iter print_int pb_obs in 
-  let _ = print_newline () in 
+
   
   let clean rs =  
     (* to remove unreachable rule *)
@@ -459,7 +456,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	  (
 	List.fold_left  
 	  (fun sol x -> 
-	    let lab = List.filter (fun a -> print_int a.Pb_sig.r_simplx.Rule.id;(IntSet.mem a.Pb_sig.r_simplx.Rule.id  pb_obs)  or (not a.r_clone &&  (is_access a))) x.labels in
+	    let lab = List.filter (fun a -> not a.r_clone && ((IntSet.mem a.Pb_sig.r_simplx.Rule.id  pb_obs)  or (is_access a))) x.labels in
 	    if lab = [] then sol
 	    else ({x with labels = lab})::sol)
 	  [] rs.rules)} in 
@@ -1079,7 +1076,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			 /. 
 			 begin
 			   (try 
-			      (float_of_int (IntMap.find label.Pb_sig.r_simplx.Rule.id  auto)) with Not_found -> 1.)
+			      (float_of_int (IntMap.find label.Pb_sig.r_simplx.Rule.id  auto)) with Not_found -> error 1082)
 			 end)
 	      in 
 	      key,rule_id,flag,kyn_factor
@@ -1156,7 +1153,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	    then 
 	      begin
 		let _ = dump_line 965 in 
-		let deal_with (target_type,target_site,origin_type,origin_site) kyn prod = 
+		let deal_with (target_type,target_site,origin_type,origin_site) kyn (prod,rate) = 
 		  let _ = 
 		    if debug
 		    then 
@@ -1204,7 +1201,20 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			     |  _ -> false in
 			   check_compatibility a)
 			 tp_list in
-		     List.fold_left
+		     let compatible_tp_list = 
+		       match tp_list with [] -> []
+			 | t::q -> 
+			     let interface = (view_of_tp_i t).Views.interface in 		       List.fold_left 
+			 (fun sol tp_i  -> 
+			    if interface = ((view_of_tp_i tp_i).Views.interface)
+			    then 
+			      tp_i::sol
+			    else 
+			  sol)
+			 [t] q 
+		     in 
+		       begin 
+		       List.fold_left
 		       (fun prod tp_i -> 
 			 let extended_list = 
 			   complete_subspecies 
@@ -1242,7 +1252,28 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			      prod 
 			      extended_list
 			   in prod )
-		       prod tp_list 
+		       prod tp_list
+		       end,
+		      begin 
+			 List.fold_left
+			   (fun rate tp_i -> 
+			      let extended_list = 
+				complete_subspecies_handling_compatibility 
+				  (build_species 
+				     agent_of_tp_i 
+				     (StringMap.add (agent_of_tp_i tp_i) tp_i StringMap.empty)
+			             [])
+			      in 
+			      let rate = 
+				List.fold_left 
+				  (fun rate consumed_species -> 
+				     let cons_key = hash_subspecies consumed_species in 
+				       Plus(rate,Var (fst (cons_key))))
+				  rate
+				  extended_list
+			   in rate )
+			   rate compatible_tp_list
+		      end
 		   end 
 		 in 
 		 prod in 
@@ -1253,18 +1284,18 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		 | Constf a -> Constf (2.*.a)
 		 | _ -> Mult(Const 2,kyn_factor) in 
 	       let prod = Intmap.empty in 
-	       let prod = 
+	       let prod,rate  = 
 		 match which_trivial_rule x
 		 with 
 		   Half(agent_type,site) -> 
 		     
-		     let prod = 
+		     let prod,rate  = 
 		       List.fold_left 
-			 (fun prod (_,agent_type',site') -> 
+			 (fun (prod,rate)  (_,agent_type',site') -> 
 			   if (agent_type,site) = (agent_type',site') 
 			   then
 			     (
-			     deal_with (agent_type,site,agent_type',site') d_kyn_factor prod )
+			     deal_with (agent_type,site,agent_type',site') d_kyn_factor (prod,Const 0) )
 			   else
 			     deal_with 
 			       (agent_type,site,agent_type',site') 
@@ -1272,22 +1303,30 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			       (deal_with 
 				  (agent_type',site',agent_type,site)
 				  kyn_factor
-				  prod))
-			 prod
-			 (contact (agent_type,site)) in 
-		     prod 
+				  (prod,rate)))
+			 (prod,Const 0)
+			 (contact (agent_type,site)) 
+		     in 
+		     (prod,Mult(Div(kyn_factor,Const 2),rate)) 
 	      |	Unbind(agent_type,site,agent_type',site') -> 
 		   if (agent_type,site) = (agent_type',site') 
 		   then
-		     deal_with (agent_type,site,agent_type',site') d_kyn_factor prod 
+		     let prod,rate = 
+		       deal_with (agent_type,site,agent_type',site') d_kyn_factor (prod,Const 0) 
+		     in prod,Mult(kyn_factor,rate)
 		   else
-		     deal_with 
-		       (agent_type,site,agent_type',site') 
-		       kyn_factor
-		       (deal_with 
-			  (agent_type',site',agent_type,site)
-			  kyn_factor
-			  prod)
+		     let prod,rate = 
+		       deal_with 
+			 (agent_type,site,agent_type',site') 
+			 kyn_factor
+			 (deal_with 
+			    (agent_type',site',agent_type,site)
+			    kyn_factor
+			  (prod,Const 0))
+		     in prod,Mult(Div(kyn_factor,Const 2),rate)
+	       in 
+	       let activity_map = 
+		 IntMap.add  rule_key rate activity_map 
 	       in 
 	       let x = 
 		 Intmap.fold 
@@ -1342,6 +1381,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		     with Not_found -> [] in 
 		   let mainprod = 
 		     Arraymap.add i ((1,Vari(i,flag))::l) mainprod in 
+		    
 		     (mainprod,jacobian))
 		 prod  
 		 (mainprod,jacobian)  in 
@@ -1688,7 +1728,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			   (fun _ factor expr -> 
 			      match factor with None -> expr 
 				| Some factor -> Mult(expr,factor))
-			   rate_map (Const 1)))
+			   rate_map kyn_factor))
 			   activity_map 
 			   in 
 			 
