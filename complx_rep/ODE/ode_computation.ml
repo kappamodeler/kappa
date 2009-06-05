@@ -3028,7 +3028,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 
     let merge_prod,jacobian,activity_map  = activity in 
     
-  
+    let nobs = IntSet.fold (fun _ i -> i+1) pb_obs 0 in 
     let proj_solution solution = 
       let specie_map = 
 	Solution.AA.fold 
@@ -3134,8 +3134,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		    let new_c = 
 		      List.fold_left
 			(fun bmap (b,bool) -> 
-			  try BMap.find b bmap;BMap.add b bool bmap
-			      with Not_found -> bmap)
+			  try let _ = BMap.find b bmap in 
+                              BMap.add b bool bmap
+			  with Not_found -> bmap)
 			
 			old_c delta_c in
 		    let c = 
@@ -3252,6 +3253,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
         file_ODE_matlab_aux 
 	file_ODE_matlab_jacobian  
 	(size ())
+	(string_of_int nobs) 
     in 
     let _ = (match print_data with None -> () | Some a -> 
     (a.print_string "\n ")) in 

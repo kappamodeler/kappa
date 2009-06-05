@@ -452,7 +452,7 @@ let pprint_ODE_middle1 print =
   in ()
 
 
-let pprint_ODE_middle2 print aux_file jac_file = 
+let pprint_ODE_middle2 print aux_file jac_file nfrag nobs = 
   let _ = 
     match print.mathematica with 
       None -> () 
@@ -466,7 +466,11 @@ let pprint_ODE_middle2 print aux_file jac_file =
 	    a.print_string ("\n\n\noptions = odeset('RelTol', 1e-3,\n                 'AbsTol', 1e-3,\n                'MaxStep', tend,\n                  'Jacobian', @"^(Tools.cut jac_file)^");\n\n")
 	  in
           let _ =
-	    a.print_string ("soln = ode2r(@"^(Tools.cut aux_file)^",[tinit tend],init,options);\n\nt = linspace(tinit, tend, num_t_point+1);\ny = interp1(soln.x, soln.y, t, 'pchip');") in 
+	    a.print_string ("soln = ode2r(@"^(Tools.cut aux_file)^",[tinit tend],init,options);\n\nt = linspace(tinit, tend, num_t_point+1);\n\n")
+	  in
+	  let _ = 
+	    a.print_string ("nrows = rows(soln.x);\nnobs = "^nobs^";\nnfragments = "^nfrag^";\ntmp = zeros(nfragments,1);\nobs = zeros (nrows,nobs);\n\nfor j=1:nrows\n   for i=1:nfragments\n      z(i)=soln.y(j,i);\n   end\n   h=essai_plx_ODE_system_obs(z);\n   for i=1:nobs\n      obs(j,i)=h(i);\n  end\nend\n\n y = interp1(soln.x, obs, t, 'pchip');\nplot(y)")
+	  in 	    
 	    ()
 
 	end
@@ -690,45 +694,46 @@ let print_expr print bool bool2 x =
   in ()
   
 
- let dump_prod (prod,jac) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab print_ODE_matlab_aux print_ODE_matlab_jac print_ODE_matlab_size output_data file_aux file_jac  size  = 
-    let print_ODE = print_ODE_mathematica in 
-    let print_latex = keep_latex print_ODE_mathematica in 
-    let print_ODE_wo_latex = remove_latex print_ODE_mathematica in 
-    let _ = pprint_ODE_head' print_ODE in
-    let _ = pprint_string print_latex "\\odesystem{" in 
-    let bool  = 
-      Arraymap.fold 
-	(fun k b bool ->
+ let dump_prod (prod,jac) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab print_ODE_matlab_aux print_ODE_matlab_jac print_ODE_matlab_size output_data file_aux file_jac  size  nobs = 
+   let nfragments = string_of_int size in 
+   let print_ODE = print_ODE_mathematica in 
+   let print_latex = keep_latex print_ODE_mathematica in 
+   let print_ODE_wo_latex = remove_latex print_ODE_mathematica in 
+   let _ = pprint_ODE_head' print_ODE in
+   let _ = pprint_string print_latex "\\odesystem{" in 
+   let bool  = 
+     Arraymap.fold 
+       (fun k b bool ->
 	  let _ = if bool then pprint_eq_separator print_ODE in 
 	  let _ = pprint_newline print_ODE in 
           let _ = pprint_string print_latex "\\odeequ{" in 
 	  let _ = pprint_derivate print_ODE k in
 	  let _ = pprint_equal print_ODE in 
 	  let _ = List.fold_left 
-	      (fun bool (a,b) ->
-		let _ = 
-		  if bool then 
-		    let _ = pprint_string print_latex " " in 
-		    let _ = pprint_string print_ODE "+" in 
-		    let _ = pprint_string print_latex " " in 
-		    ()
-		  else 
-		    () in
-		print_expr print_ODE true false (simplify_expr (Mult(Const a,b)));
-			  true) 
-	      false b in 
-	  true)
-	prod  false in
-
-    let bool  = 
-      Arraymap.fold 
-	(fun k b bool -> 
+	    (fun bool (a,b) ->
+	       let _ = 
+		 if bool then 
+		   let _ = pprint_string print_latex " " in 
+		   let _ = pprint_string print_ODE "+" in 
+		   let _ = pprint_string print_latex " " in 
+		     ()
+		 else 
+		   () in
+		 print_expr print_ODE true false (simplify_expr (Mult(Const a,b)));
+		 true) 
+	    false b in 
+	    true)
+       prod  false in
+     
+   let bool  = 
+     Arraymap.fold 
+       (fun k b bool -> 
 	  let _ = if bool then pprint_eq_separator print_ODE in 
 	  let _ = pprint_newline print_ODE in 
 	  let _ = pprint_string print_latex "\\odeequ{" in 
 	  let _ = pprint_initvar print_ODE k in
 	  let _ = if k=0 then (print_string "BUG";Printf.fprintf stdout "BUG\n") in 
-	   
+	    
 	  let _ = pprint_equal print_ODE in
 	  let _ = print_expr print_ODE true false  (simplify_expr b) in
 	  let _ = 
@@ -740,55 +745,55 @@ let print_expr print bool bool2 x =
 	      let _ = pprint_derivate print_ODE k in
 	      let _ = pprint_equal print_ODE in 
 	      let _ = print_expr print_ODE true false  (Const 0) in () in  
-	  true)
-	init bool  in 
-	  let _ = 
-	    if bool then pprint_string print_latex "}"
-	  in 
-	  let _ = pprint_ODE_middle1 print_ODE_wo_latex in
-	  let print_ODE = print_ODE_wo_latex in 
-	  let _ = 
-	    List.fold_left
-	      (fun bool c -> 
-		let _ = if bool then pprint_eq_separator print_ODE in
-		let _ = pprint_newline print_ODE in 
-		let _ = print_expr print_ODE false false   (simplify_expr c) in
-		true)
-	      false 
-	      obs in
-	  let _ = pprint_string print_latex "}" in 
-	  let _ = pprint_ODE_middle2 print_ODE file_jac file_aux in 
-    let _ = 
-      List.fold_left
-	(fun bool c -> 
+	    true)
+       init bool  in 
+   let _ = 
+     if bool then pprint_string print_latex "}"
+   in 
+   let _ = pprint_ODE_middle1 print_ODE_wo_latex in
+   let print_ODE = print_ODE_wo_latex in 
+   let _ = 
+     List.fold_left
+       (fun bool c -> 
+	  let _ = if bool then pprint_eq_separator print_ODE in
+	  let _ = pprint_newline print_ODE in 
+	  let _ = print_expr print_ODE false false   (simplify_expr c) in
+	    true)
+       false 
+       obs in
+   let _ = pprint_string print_latex "}" in 
+   let _ = pprint_ODE_middle2 print_ODE file_jac file_aux nfragments nobs in 
+   let _ = 
+     List.fold_left
+       (fun bool c -> 
 	  let _ = if bool then pprint_eq_separator print_ODE in 
 	  let _ = pprint_newline print_ODE  in 
 	  let _ = print_expr print_ODE true false  (simplify_expr c) in
-	  true)
-	false 
-	obs in  
-    let _ = pprint_ODE_foot print_ODE in 
-    let _ = 
+	    true)
+       false 
+       obs in  
+   let _ = pprint_ODE_foot print_ODE in 
+   let _ = 
      match step 
      with None -> ()
-     | Some a -> 
-	 let _ = pprint_string print_ODE "A:={" in 
-	 let rec aux (k:float) = 
-	   if k>final then ()
-           else 
-	     let _ = if k>init_t then pprint_string print_ODE "," in 
-	     let t = Float_pretty_printing.string_of_float k in 
-	     let _ = pprint_string print_ODE "{" in
-	     let _ = pprint_string print_ODE t in 
-	     let _ = 
-	       List.iter 
-		 (fun c -> 
-		   let _ = pprint_string print_ODE "," in 
-		   let _ = print_expr print_ODE false false   (simplify_expr c) in
-		   let _ = pprint_string print_ODE "[" in 
-		   let _ = pprint_string print_ODE t in 
-		   let _ = pprint_string print_ODE "]" in 
-		   ())
+       | Some a -> 
+	   let _ = pprint_string print_ODE "A:={" in 
+	   let rec aux (k:float) = 
+	     if k>final then ()
+             else 
+	       let _ = if k>init_t then pprint_string print_ODE "," in 
+	       let t = Float_pretty_printing.string_of_float k in 
+	       let _ = pprint_string print_ODE "{" in
+	       let _ = pprint_string print_ODE t in 
+	       let _ = 
+		 List.iter 
+		   (fun c -> 
+		      let _ = pprint_string print_ODE "," in 
+		      let _ = print_expr print_ODE false false   (simplify_expr c) in
+		      let _ = pprint_string print_ODE "[" in 
+		      let _ = pprint_string print_ODE t in 
+		      let _ = pprint_string print_ODE "]" in 
+			())
 		 obs in
 	     let _ = pprint_string print_ODE "}" in
 	     aux (k+.a) in 
@@ -817,7 +822,7 @@ let print_expr print bool bool2 x =
 	  ())
 	init   in
     let _ = pprint_ODE_middle1 print_ODE in
-    let _ = pprint_ODE_middle2 print_ODE file_aux file_jac in 
+    let _ = pprint_ODE_middle2 print_ODE file_aux file_jac nfragments nobs in 
   
     let print_ODE = print_ODE_matlab_aux in 
     let _ = pprint_ODE_head' print_ODE in 
