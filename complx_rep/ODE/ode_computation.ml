@@ -1059,29 +1059,32 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     let mainprod = Arraymap.create (Const 0)   in   
     let jacobian = Int2Map.empty in 
     let activity_map = IntMap.empty in 
+    let rate_map = IntMap.empty in 
     let activity = 
       List.fold_left  
 	(fun ((mainprod:(int*expr) list Arraymap.t),
 	      (jacobian:expr list Int2Map.t),
-	      (activity_map:expr IntMap.t)) 
+	      (activity_map:expr IntMap.t),
+	      (rate_map:float IntMap.t)) 
 	   x -> 
-	  let rule_key,rule_id,flag,kyn_factor  =
+	  let rule_key,rule_id,flag,kyn_factor,rate  =
 	    try 
 	      let label = List.hd (List.hd x.Pb_sig.rules).Pb_sig.labels in 
 	      let rule_id = name_of_rule label in 
 	      let flag = ltrim label.r_id in 
 	      let key = label.Pb_sig.r_simplx.Rule.id in 
+	      let rate = label.Pb_sig.r_simplx.Rule.kinetics in 
 	      let kyn_factor = 
-		Constf(label.Pb_sig.r_simplx.Rule.kinetics
-			 /. 
+		Mult(Vark (string_of_int key)
+			 ,
 			 begin
-			   (try 
+			   Constf (1./.try 
 			      (float_of_int (IntMap.find label.Pb_sig.r_simplx.Rule.id  auto)) with Not_found -> error 1082)
 			 end)
 	      in 
-	      key,rule_id,flag,kyn_factor
+	      key,rule_id,flag,kyn_factor,rate
 	    with 
-	      _ -> 0,"EMPTY","EMPTY",Constf 1.
+	      _ -> 0,"EMPTY","EMPTY",Constf 1.,1.
 	  in 
 	 
 	  let _ = 
@@ -1116,7 +1119,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	      Not_found -> 
 		y in
 	  if rule_id = "EMPTY" 
-	  then mainprod,jacobian,activity_map
+	  then mainprod,jacobian,activity_map,rate_map
 	  else 
 	    let _ = pprint_string print_ODE_latex "\\odegroup{" in 
 	    let _ = pprint_string print_ODE_latex "\\oderulename{" in 
@@ -1284,7 +1287,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		 | Constf a -> Constf (2.*.a)
 		 | _ -> Mult(Const 2,kyn_factor) in 
 	       let prod = Intmap.empty in 
-	       let prod,rate  = 
+	       let prod,activity  = 
 		 match which_trivial_rule x
 		 with 
 		   Half(agent_type,site) -> 
@@ -1326,7 +1329,10 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		     in prod,Mult(Div(kyn_factor,Const 2),rate)
 	       in 
 	       let activity_map = 
-		 IntMap.add  rule_key rate activity_map 
+		 IntMap.add  rule_key activity activity_map 
+	       in 
+	       let rate_map = 
+		 IntMap.add rule_key rate rate_map 
 	       in 
 	       let x = 
 		 Intmap.fold 
@@ -1385,7 +1391,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		     (mainprod,jacobian))
 		 prod  
 		 (mainprod,jacobian)  in 
-	       let _ = pprint_string print_ODE_latex "}\n" in (fst x,snd x,activity_map) 
+	       let _ = pprint_string print_ODE_latex "}\n" in (fst x,snd x,activity_map,rate_map) 
 	     end
 	   else
 	     begin 
@@ -1688,9 +1694,10 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	       
 	      
 	       let _ = dump_line 882 in 
-	       let mainprod,jacobian,activity_map = 
+	       let mainprod,jacobian,activity_map,rate_map = 
 		 List.fold_left  
-		   (fun (mainprod,jacobian,activity_map) x -> 
+		   (fun (mainprod,jacobian,activity_map,
+			 (rate_map:float IntMap.t)) x -> 
 		     let _ = dump_line 888 in
 		     let prod = Intmap.empty in 
 		     if (*control.remove = []
@@ -1701,7 +1708,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			 
 		     then (* No agent creation or agent suppresion *)
 		       let _ = dump_line 897 in
-		       let rate_map = (*map each connected component to the contribution in the kinetic rate *)
+		       let rate_kin_map = (*map each connected component to the contribution in the kinetic rate *)
 			 snd (
 			 List.fold_left 
 			   (fun (i,map) cla -> 
@@ -1720,7 +1727,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				 (match rate with None -> () 
 				 | Some rate -> print_expr print_debug true true rate);
 				 pprint_newline print_debug)
-			       rate_map in
+			       rate_kin_map in
 			   () in 
 		       let activity_map = 
 			 IntMap.add rule_key 
@@ -1728,9 +1735,12 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			   (fun _ factor expr -> 
 			      match factor with None -> expr 
 				| Some factor -> Mult(expr,factor))
-			   rate_map kyn_factor))
+			   rate_kin_map kyn_factor))
 			   activity_map 
 			   in 
+		       let rate_map = 
+			 IntMap.add rule_key rate rate_map 
+		       in 
 			 
 		       let consume_list,product_list,sl_list  = 
 			 snd (
@@ -2720,7 +2730,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			       aux 
 				 (try 
 				   (match 
-				     IntMap.find i rate_map
+				     IntMap.find i rate_kin_map
 				   with 
 				     None -> error 1979 
 				   | Some a -> a)
@@ -2749,7 +2759,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				     List.map 
 				       (fun x -> release_bond x rp_target rp_origin)
 				       d in 
-				   let expr = IntMap.add i (Some (Mult(expr_of_var expr_handler a,kyn_mod))) rate_map in 
+				   let expr = 
+				     IntMap.add i (Some (Mult(expr_of_var expr_handler a,kyn_mod))) rate_kin_map in 
 				   let expr = 
 				     IntMap.fold 
 				       (fun _ e sol -> 
@@ -2940,7 +2951,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			       List.fold_left 
 				 (fun map (i,a,e)
 				   -> IntMap.add i (Some (Mult(expr_of_var expr_handler a,e))) map)
-				 rate_map k2 in
+				 rate_kin_map k2 in
 			     let expr = 
 			       IntMap.fold
 				 (fun _ e sol ->
@@ -2968,7 +2979,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			       List.fold_left 
 				 (fun map (i,a,e)
 				   -> IntMap.add i (Some (Mult(expr_of_var expr_handler a,e))) map)
-				 rate_map k2 in
+				 rate_kin_map k2 in
 			     let expr = 
 			       IntMap.fold
 				 (fun _ e sol -> 
@@ -3052,21 +3063,21 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			   (mainprod,jacobian) 
 		       in 
 		       let _ = pprint_string print_ODE_latex "}\n" in 
-			 fst x,snd x,activity_map 
+			 fst x,snd x,activity_map,rate_map 
 		     else
 		       let _ = pprint_string print_ODE_latex "}" in 
 		       let _ = dump_line 2137 
-		       in (mainprod,jacobian,activity_map) 
+		       in (mainprod,jacobian,activity_map,rate_map) 
 		   )
-		   (mainprod,jacobian,activity_map)   
+		   (mainprod,jacobian,activity_map,rate_map)   
 		   classes
 	       in 
-		 (mainprod,jacobian,activity_map) 
+		 (mainprod,jacobian,activity_map,rate_map) 
 	     end)
-	(mainprod,jacobian,activity_map) 
+	(mainprod,jacobian,activity_map,rate_map) 
 	system in 
 
-    let merge_prod,jacobian,activity_map  = activity in 
+    let merge_prod,jacobian,activity_map,rate_map  = activity in 
     
     let nobs = IntSet.fold (fun _ i -> i+1) pb_obs 0 in 
     let proj_solution solution = 
@@ -3270,6 +3281,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	 init 
 
 	[] in 
+    let _ = dump_rate_map print_ODE rate_map in 
     let _ = 
       dump_prod 
 	(merge_prod,jacobian) 

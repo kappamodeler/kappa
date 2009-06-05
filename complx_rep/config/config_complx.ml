@@ -316,8 +316,8 @@ let options = List.rev
 	  "--do-refine-to-force-cycles";
           "--do-compute-dag-refinement-relation";
           "--do-compute-maximal-refinement-relation"],[]),
-  "launch everything",["0_Actions"],Normal;
-  "--reset-all",
+          "launch everything",["0_Actions"],Normal;
+      "--reset-all",
   Multi([
 	"--no-compute-local-views";
 	"--no-enumerate-complexes";

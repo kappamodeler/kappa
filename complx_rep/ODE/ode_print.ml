@@ -30,7 +30,19 @@ let string_of_intermediar_var var rule =
 ("r"^var^"v"^rule)
 
 
-
+let print_none = 
+    {dump = None;
+     data = None;
+     txt = None;
+     kappa = None;
+     mathematica = None;
+     latex = None;
+     matlab = None;
+     matlab_aux = None;
+     matlab_size= None;
+     matlab_jacobian= None;
+     matlab_activity = None;
+     matlab_obs = None } 
 
 let print_intermediar_var print var rule  =
   let _ = 
@@ -398,8 +410,8 @@ let pprint_ODE_head print print_obs print_activity  file file_jac file_size file
   let _ = pprint_commandsep print_main in 
   let _ = pprint_newline print_main in 
   let _ = pprint_newline print_main in    
-  let _ = pprint_string print_aux ("function dydt="^(Tools.cut file)^"(t,y)\n\n\n") in 
-  let _ = pprint_string print_jac ("function Jac="^(Tools.cut file_jac)^"(t,y)\n\nJac = sparse(@"^size^",@"^size^");\n\n") in 
+  let _ = pprint_string print_aux ("function dydt="^(Tools.cut file)^"(t,y)\n\n\nglobal k;\n\n\n") in 
+  let _ = pprint_string print_jac ("function Jac="^(Tools.cut file_jac)^"(t,y)\n\nJac = sparse(@"^size^",@"^size^");\n\nglobal k;\n\n\n") in 
   let _ = pprint_string print_latex "\\odebeforeequs\n" in 
   let _ = pprint_string print_size "function Size=" in
   let _ = pprint_string print_size size in
@@ -960,7 +972,7 @@ let print_activity print file activity_map =
 	 
   
 let print_obs_in_matlab print file activity_map obsset = 
-  let _ = pprint_string print ("function Observable="^(Tools.cut file)^"(y)\nObservable = [\n") in 
+  let _ = pprint_string print ("function Observable="^(Tools.cut file)^"(y)\nglobal k;\n\n\nObservable = [\n") in 
   let _ = 
     IntMap.fold
       (fun i j bool -> 
@@ -975,3 +987,25 @@ let print_obs_in_matlab print file activity_map obsset =
       activity_map false in 
   let _ = pprint_string print "];\n" in () 
 				    
+
+let dump_rate_map print rate_map = 
+  let _ = match print.matlab with None -> ()
+    | Some a -> 
+	let a = {print_none with matlab= Some a} in 
+	let _ = pprint_string a "global k = [\n" in 
+	let _ = 
+	  IntMap.fold
+	    (fun i expr (j,bool) -> 
+	       let _ = 
+		 if bool then pprint_string a ",\n"
+	       in 
+	       let rec aux k = 
+		 if k=i then ()
+		 else (pprint_string a "0,\n";aux (k+1))
+	       in 
+	       let _ = aux (j+1) in 
+	       let _ = pprint_float a expr in 
+	       (i,true))
+	    rate_map (0,false) in 
+	let _ = pprint_string a "];\n\n" in () 
+  in () 
