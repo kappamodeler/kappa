@@ -167,6 +167,8 @@ let main ()  =
 	(!Config_complx.output_ODE_matlab_aux) 
 	(!Config_complx.output_ODE_matlab_size)
 	(!Config_complx.output_ODE_matlab_jacobian)
+	(!Config_complx.output_ODE_matlab_activity)
+	(!Config_complx.output_ODE_matlab_obs)
 	(!Config_complx.output_ODE_mathematica) 
 	"" 
 	(!Config_complx.output_ODE_alphabet) 

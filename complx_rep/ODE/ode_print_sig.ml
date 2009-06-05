@@ -20,4 +20,6 @@ type print_desc =
      mathematica: print option;
      latex: print option;
      matlab_jacobian: print option;
-     matlab_size: print option}
+     matlab_size: print option;
+     matlab_activity: print option;
+     matlab_obs:print option}

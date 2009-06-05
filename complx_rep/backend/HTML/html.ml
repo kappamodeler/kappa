@@ -194,6 +194,25 @@ let print_ODE_system_matlab_aux pb channel =
       "Equations (matlab)"
   else
     null 
+
+let print_ODE_system_matlab_activity pb channel = 
+  if !Config_complx.do_ODE 
+  then 
+    precomputed_data channel 
+      (!Config_complx.output_ODE_matlab_activity)
+      "Rules activity (matlab)"
+  else
+    null 
+
+let print_ODE_system_matlab_obs pb channel = 
+  if !Config_complx.do_ODE 
+  then 
+    precomputed_data channel 
+      (!Config_complx.output_ODE_matlab_obs)
+      "Observable activity (matlab)"
+  else
+    null 
+
 let print_ODE_system_matlab_jacobian pb channel = 
   if !Config_complx.do_ODE 
   then 
@@ -376,6 +395,8 @@ let dump_html pb channel (l,m)  =
 	 print_ODE_system_matlab pb channel;
 	 print_ODE_system_matlab_aux pb channel;
 	 print_ODE_system_matlab_jacobian pb channel;
+	 print_ODE_system_matlab_activity pb channel;
+	 print_ODE_system_matlab_obs pb channel;
 	 print_ODE_system_matlab_size pb channel;
 	 print_ODE_obs pb channel] 
      else 

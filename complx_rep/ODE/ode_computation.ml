@@ -19,7 +19,7 @@ open Error_handler
 let explicit = false
 let debug = false
 let log_step = false
-let memory = false
+let memory = true
 
 
 let error i = 
@@ -142,7 +142,7 @@ let print_log s =
 
 
 
-let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs (l,m) = 
+let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_matlab_act file_ODE_matlab_obs file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs (l,m) = 
   
  
   let prefix' = "-"^(fst prefix) in 
@@ -184,6 +184,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   let print_matlab_aux = f MATLAB file_ODE_matlab_aux in 
   let print_matlab_jacobian = f MATLAB file_ODE_matlab_jacobian in 
   let print_matlab_size = f MATLAB file_ODE_matlab_size in 
+  let print_matlab_activity = f MATLAB file_ODE_matlab_act in 
+  let print_matlab_obs = f MATLAB file_ODE_matlab_obs in 
   let print_latex = f LATEX file_ODE_latex in
   let print_latex_obs = f LATEX file_obs_latex in 
   let print_mathematica = 
@@ -238,7 +240,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      matlab = None;
      matlab_aux = None;
      matlab_jacobian = print_matlab_jacobian;
-     matlab_size = None } in
+     matlab_size = None ;
+     matlab_activity = None;
+     matlab_obs = None } in
 
  let print_ODE_size = 
     {dump = None;
@@ -250,8 +254,40 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      matlab = None;
      matlab_aux = None;
      matlab_size= print_matlab_size;
-     matlab_jacobian= None } in
+     matlab_jacobian= None;
+     matlab_activity = None;
+     matlab_obs = None } in
 
+ let print_ODE_act = 
+    {dump = None;
+     data = None;
+     txt = None;
+     kappa = None;
+     mathematica = None;
+     latex = None;
+     matlab = None;
+     matlab_aux = None;
+     matlab_size= None;
+     matlab_jacobian= None;
+     matlab_activity = print_matlab_activity;
+     matlab_obs = None } in
+   
+ let print_ODE_matlab_activity = print_ODE_act in 
+
+ let print_ODE_matlab_obs = 
+    {dump = None;
+     data = None;
+     txt = None;
+     kappa = None;
+     mathematica = None;
+     latex = None;
+     matlab = None;
+     matlab_aux = None;
+     matlab_size= None;
+     matlab_jacobian= None;
+     matlab_activity = None;
+     matlab_obs = print_matlab_obs} in
+		 
   let print_ODE = 
      {dump = None ;
      txt = None ;
@@ -262,7 +298,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      matlab = print_matlab;
      matlab_aux = print_matlab_aux;
      matlab_jacobian = print_matlab_jacobian ;
-     matlab_size = print_matlab_size }
+     matlab_size = print_matlab_size;
+     matlab_activity = None(*print_matlab_activity*);
+     matlab_obs = None(*print_matlab_obs*)}
   in
   let print_ODE_main = 
     {dump = None ;
@@ -274,7 +312,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      matlab = print_matlab;
      matlab_aux = None;
      matlab_jacobian = None;
-     matlab_size = None}
+     matlab_size = None;
+     matlab_activity = None;
+     matlab_obs = None}
   in
 
   let print_ODE_aux = 
@@ -293,7 +333,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab = None;
       matlab_aux = None;
       matlab_jacobian = None;
-      matlab_size = None } in
+      matlab_size = None;
+      matlab_activity = None;
+      matlab_obs = None } in
 
   let print_ODE_matlab = 
     {dump = None;
@@ -305,7 +347,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab = print_matlab;
       matlab_aux = None;
       matlab_jacobian = None;
-      matlab_size = None } in
+      matlab_size = None;
+      matlab_activity = None;
+      matlab_obs = None} in
 
   let print_ODE_matlab_aux = 
     {dump = None;
@@ -317,7 +361,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab_aux = print_matlab_aux;
       matlab = None;
       matlab_jacobian = None ;
-      matlab_size = None } in
+      matlab_size = None;
+      matlab_activity = None;
+      matlab_obs = None} in
  
  let print_ODE_matlab_size = 
     {dump = None;
@@ -329,8 +375,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab_aux = None;
       matlab = None;
       matlab_jacobian = None ;
-      matlab_size = print_matlab_size } in
+      matlab_size = print_matlab_size;
+      matlab_activity = None;
+      matlab_obs = None } in
 
+ 
 
   let print_only_data = 
     {dump = None;
@@ -342,7 +391,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab= None;
       matlab_aux = None;
       matlab_jacobian = None ;
-      matlab_size = None } in 
+      matlab_size = None;
+      matlab_activity = None;
+      matlab_obs = None} in 
 
   let print_debug = 
     {dump = Some stdprint ;
@@ -354,7 +405,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      matlab = None;
      matlab_aux = None;
      matlab_jacobian = None ;
-     matlab_size = None } 
+     matlab_size = None;
+     matlab_activity = None;
+     matlab_obs = None} 
   in
   let print_obs = 
     { dump = None ;
@@ -366,7 +419,10 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab = None;
       matlab_aux = None;
       matlab_jacobian = None;
-      matlab_size = None } 
+      matlab_size = None ;
+      matlab_obs = None ;
+      matlab_activity = None } 
+
   in 
   let print_obs_latex = 
     { dump = None;
@@ -378,9 +434,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab = None;
       matlab_aux = None ;
       matlab_jacobian = None ;
-      matlab_size = None }
+      matlab_size = None ;
+      matlab_obs = None ;
+      matlab_activity = None }
   in
-  let _ = pprint_ODE_head print_ODE file_ODE_matlab_aux file_ODE_matlab_jacobian file_ODE_matlab_size in 
+  let _ = pprint_ODE_head print_ODE print_ODE_matlab_obs print_ODE_matlab_activity file_ODE_matlab_aux file_ODE_matlab_jacobian file_ODE_matlab_size file_ODE_matlab_act file_ODE_matlab_obs in 
   let _ = dump_line 312 in  
   let is_access = 
     match pb.unreachable_rules with 
@@ -388,6 +446,10 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     | Some a -> (fun x -> not (RuleIdSet.mem x a)) in 
 
   let a = pb_boolean_encoding in 
+  let _ = print_string "OBS" in 
+  let _ = 
+    IntSet.iter print_int pb_obs in 
+  let _ = print_newline () in 
   
   let clean rs =  
     (* to remove unreachable rule *)
@@ -397,13 +459,13 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	  (
 	List.fold_left  
 	  (fun sol x -> 
-	    let lab = List.filter (fun a -> not a.r_clone &&  (is_access a)) x.labels in
+	    let lab = List.filter (fun a -> print_int a.Pb_sig.r_simplx.Rule.id;(IntSet.mem a.Pb_sig.r_simplx.Rule.id  pb_obs)  or (not a.r_clone &&  (is_access a))) x.labels in
 	    if lab = [] then sol
 	    else ({x with labels = lab})::sol)
 	  [] rs.rules)} in 
     rs in
 
-
+    
   let _ = dump_line 333 in 
 
   let simplify rs = 
@@ -483,7 +545,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 (* WE REMOVE DEAD RULES, AND SIMPLIFY PASSIVE SPECIES *) 
 (******************************************************)
   
-
+ 
   let system = List.map (fun x -> simplify (clean x)) a.Pb_sig.system in 
  
         
@@ -999,10 +1061,12 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 
     let mainprod = Arraymap.create (Const 0)   in   
     let jacobian = Int2Map.empty in 
+    let activity_map = IntMap.empty in 
     let activity = 
       List.fold_left  
 	(fun ((mainprod:(int*expr) list Arraymap.t),
-	      (jacobian:expr list Int2Map.t)) 
+	      (jacobian:expr list Int2Map.t),
+	      (activity_map:expr IntMap.t)) 
 	   x -> 
 	  let rule_key,rule_id,flag,kyn_factor  =
 	    try 
@@ -1014,7 +1078,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		Constf(label.Pb_sig.r_simplx.Rule.kinetics
 			 /. 
 			 begin
-			   (float_of_int (IntMap.find label.Pb_sig.r_simplx.Rule.id  auto))
+			   (try 
+			      (float_of_int (IntMap.find label.Pb_sig.r_simplx.Rule.id  auto)) with Not_found -> 1.)
 			 end)
 	      in 
 	      key,rule_id,flag,kyn_factor
@@ -1053,7 +1118,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	    with 
 	      Not_found -> 
 		y in
-	  if rule_id = "EMPTY" then mainprod,jacobian 
+	  if rule_id = "EMPTY" 
+	  then mainprod,jacobian,activity_map
 	  else 
 	    let _ = pprint_string print_ODE_latex "\\odegroup{" in 
 	    let _ = pprint_string print_ODE_latex "\\oderulename{" in 
@@ -1069,6 +1135,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		  print_string prefix';
 		  print_string "Start translating rule: ";
 		  print_string rule_id;
+		  print_string "(";
+		  print_int rule_key;
+		  print_string ")";
 		  print_newline ();
 		  print_string prefix';
 		  print_string "  ";
@@ -1246,6 +1315,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		     |	Some a -> 
 			 a.print_string "(y) \n  z "
 		   in
+		   let _ = print_expr print_ODE_act true true (Const 0) in 
+		   let _ = pprint_string print_ODE_act ",\n" in 
 		   let _ = pprint_vart print_ODE in 
 		   let _ = pprint_assign print_ODE in 
 		   let _ = print_expr print_ODE true true l in 
@@ -1274,7 +1345,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		     (mainprod,jacobian))
 		 prod  
 		 (mainprod,jacobian)  in 
-	       let _ = pprint_string print_ODE_latex "}\n" in x
+	       let _ = pprint_string print_ODE_latex "}\n" in (fst x,snd x,activity_map) 
 	     end
 	   else
 	     begin 
@@ -1283,7 +1354,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		 List.map  
 		   (fun xx -> 
 
-		     (* TO DO DEAL WITH THAT *)
 		     let passives = 
 		       let passives_target = 
 			 List.fold_left 
@@ -1578,9 +1648,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	       
 	      
 	       let _ = dump_line 882 in 
-	       let mainprod,jacobian = 
+	       let mainprod,jacobian,activity_map = 
 		 List.fold_left  
-		   (fun (mainprod,jacobian) x -> 
+		   (fun (mainprod,jacobian,activity_map) x -> 
 		     let _ = dump_line 888 in
 		     let prod = Intmap.empty in 
 		     if (*control.remove = []
@@ -1612,264 +1682,273 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				 pprint_newline print_debug)
 			       rate_map in
 			   () in 
-		       
+		       let activity_map = 
+			 IntMap.add rule_key 
+			   (simplify_expr (IntMap.fold 
+			   (fun _ factor expr -> 
+			      match factor with None -> expr 
+				| Some factor -> Mult(expr,factor))
+			   rate_map (Const 1)))
+			   activity_map 
+			   in 
+			 
 		       let consume_list,product_list,sl_list  = 
 			 snd (
-			 List.fold_left 
+			   List.fold_left 
 			(*1*)
-			   (fun (i,(c_list,p_list,sl_list)) cla -> 
-			     let xx = cla.rule in 
-			     let x  = cla.agents_id in 
-			     let b  = get_guard_as_a_list_of_class cla in 
-			     let b2 = get_guard_as_a_map_of_class cla in 
-			     let rep = 
-			       match cla.subclass 
-			       with None -> error 921
+			     (fun (i,(c_list,p_list,sl_list)) cla -> 
+				let xx = cla.rule in 
+				let x  = cla.agents_id in 
+				let b  = get_guard_as_a_list_of_class cla in 
+				let b2 = get_guard_as_a_map_of_class cla in 
+				let rep = 
+				  match cla.subclass 
+				  with None -> error 921
 			       | Some a -> a in 
-			     let bmap = b2 in 
-			     let agents_compo = x in    
-			     let rule_flag  = (List.hd xx.Pb_sig.labels).Pb_sig.r_id in
-			     let _ = 
-			       if debug then 
-				 let _ = print_string "RULE: " in
-				 let _ = print_string rule_flag in
-				 let _ = print_newline () in () 
-			     in 
-			     let filter_context_update  context_update agents = 
-			       List.fold_left 
-				 (fun sol (b,bool) ->
-				   match b,bool with 
-				     H(a,a'),_ ->  sol
-				   | L((a,a',b'),(c,c',d')),_ -> 
-				       let sol  =
-					 if StringSet.mem a agents then 
-					   (AL((a,a',b'),(c',d')),bool)::sol 
-					 else
-					   sol in 
-				       let sol = 
-					 if StringSet.mem c agents then 
-					   (AL((c,c',d'),(a',b')),bool)::sol 
-					 else 
-					   sol in
-				       sol
-				   |	AL((a,a',b'),(c,d)),_ -> 
-				       if StringSet.mem a agents then 
-					 (AL((a,a',b'),(c,d)),bool)::sol 
-				       else sol
-				   |	B((a,a',b)),_ -> 
-				       if StringSet.mem a agents then 
-					 (B(a,a',b),bool)::sol
-				       else
-					 sol 
-				   |	M((a,a',b),m),_ -> 
-				       if StringSet.mem a agents then 
-					 (M((a,a',b),m),bool)::sol
-				       else sol
-				   |	_ -> sol) [] context_update in
-		             let _ = dump_line 958 in 
-			     let rep = 
-			       match rep 
-			       with t::_ -> t 
-			       | [] -> [] in 
-			     let blist = b in 
-			     i+1,List.fold_left
-			       (fun (*2*)(c_list,p_list,sl_list) subcla -> 
-				 let x = subcla.agent_list in
-				 let b = get_fragment_extension subcla in
-				 let rule = xx in 
-				 let x = 
-				   List.fold_left 
+				let bmap = b2 in 
+				let agents_compo = x in    
+				let rule_flag  = (List.hd xx.Pb_sig.labels).Pb_sig.r_id in
+				let _ = 
+				  if debug then 
+				    let _ = print_string "RULE: " in
+				    let _ = print_string rule_flag in
+				    let _ = print_newline () in () 
+				in 
+				let filter_context_update  context_update agents = 
+				  List.fold_left 
+				    (fun sol (b,bool) ->
+				       match b,bool with 
+					   H(a,a'),_ ->  sol
+					 | L((a,a',b'),(c,c',d')),_ -> 
+					     let sol  =
+					       if StringSet.mem a agents then 
+						 (AL((a,a',b'),(c',d')),bool)::sol 
+					       else
+						 sol in 
+					     let sol = 
+					       if StringSet.mem c agents then 
+						 (AL((c,c',d'),(a',b')),bool)::sol 
+					       else 
+						 sol in
+					       sol
+					 |	AL((a,a',b'),(c,d)),_ -> 
+						  if StringSet.mem a agents then 
+						    (AL((a,a',b'),(c,d)),bool)::sol 
+						  else sol
+					 |	B((a,a',b)),_ -> 
+						  if StringSet.mem a agents then 
+						    (B(a,a',b),bool)::sol
+						  else
+						    sol 
+					 |	M((a,a',b),m),_ -> 
+						  if StringSet.mem a agents then 
+						    (M((a,a',b),m),bool)::sol
+						  else sol
+					 |	_ -> sol) [] context_update in
+				let _ = dump_line 958 in 
+				let rep = 
+				  match rep 
+				  with t::_ -> t 
+				    | [] -> [] in 
+				let blist = b in 
+				  i+1,List.fold_left
+				    (fun (*2*)(c_list,p_list,sl_list) subcla -> 
+				       let x = subcla.agent_list in
+				       let b = get_fragment_extension subcla in
+				       let rule = xx in 
+				       let x = 
+					 List.fold_left 
 				     (fun sol x -> StringSet.add x sol)
-				     StringSet.empty  x in 
-				 let other_agents = StringSet.diff agents_compo x in 
-				 let _ = 
-				   if debug  then 
-				     (print_string "AGENTS: ";
-				      StringSet.iter print_string x;
-				      print_newline ();
-				      print_string "OTHERS: ";
-				      StringSet.iter print_string other_agents;
-				      print_newline ()) in 
-				 let kyn_mod = 
-                                (*3*)
-				   (begin
-				     let root = StringSet.min_elt x in
-				     let rec aux l  sol = 
-				       match l with 
-					 [] -> sol
-				       | (guard,to_visit_same_class,to_visit_other_class,black,prefix,same_class_agent,other_class)::q -> 
-					   begin
-					     match to_visit_same_class with 
-					       [] -> 
-						 begin
+					   StringSet.empty  x in 
+				       let other_agents = StringSet.diff agents_compo x in 
+				       let _ = 
+					 if debug  then 
+					   (print_string "AGENTS: ";
+					    StringSet.iter print_string x;
+					    print_newline ();
+					    print_string "OTHERS: ";
+					    StringSet.iter print_string other_agents;
+					    print_newline ()) in 
+				       let kyn_mod = 
+					 (*3*)
+					 (begin
+					    let root = StringSet.min_elt x in
+					    let rec aux l  sol = 
+					      match l with 
+						  [] -> sol
+						| (guard,to_visit_same_class,to_visit_other_class,black,prefix,same_class_agent,other_class)::q -> 
+						    begin
+						      match to_visit_same_class with 
+							  [] -> 
+							    begin
 						   match to_visit_other_class 
 						   with [] -> 
 						     aux 
 						       q 
 						       ((init_subclass 
 							   (guard,prefix,same_class_agent)::other_class)::sol)
-						   | (g,a)::b -> 
-						       aux 
-							 (((g,[a],b,black,empty_species,[],(init_subclass (guard,prefix,same_class_agent))::other_class))::q) sol 
-						 end
-						   
-					     | a::b -> 
-						 if StringSet.mem a black  or  not (List.exists (fun x -> match x with H(x,_),b -> (
-						   (x=a && b)) | 
-						   _  -> false) xx.Pb_sig.injective_guard) 
-						 then 
-						   ( aux ((guard,b,to_visit_other_class,black,prefix,same_class_agent,other_class)::q) sol)
-						 else
-						   let restricted_blist = 
-						     List.filter 
-						       (fun (b,bool) -> 
-							 match b with 
-							   B(b',_,_) | AL((b',_,_),_) | M((b',_,_),_) when b' = a -> true 
-							 | L((b',_,_),(c',_,_)) when b'=a or c'=a -> true 
-							 | _ -> false)
-						       blist in
-						   let tp_list = 
-						     compute_compatible_views_id 
-						       blist 
-						       restricted_blist 
-						       bmap 
-						       a 
-						       (specie_of_id,agent_to_int_to_nlist,view_of_tp_i,ode_handler)  in 
-						   
-						   
-						   
-						   let bound_agent_list_same_class,
-						     bound_agent_list_other_class = 
-						     List.fold_left 
-						       (fun 
-							 (same,other) b 
-							 ->
-							   let f (a1,a2,a3,a5,a6) (same,other) = 						 let a4 = 
-							     let rec aux l = 
-							       match l with 
-								 [] -> None 
-							       | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b4,b5,b6,b2,b3) -> Some b1
-							       | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b1,b2,b3,b5,b6) -> Some b4
-							       | _::q -> aux q in
-							     aux (cla.extended_passives) in
-							   (match a4 with 
-							     None -> (same,other)
-							   | Some a4 when StringSet.mem a4 black -> (same,other)
-							   | Some a4 -> 
-							       if  not (List.exists (fun x -> x=(H(a4,a5),true)) rule.Pb_sig.injective_guard) then 
-								 same,other
-							       else
-								 if keep_this_link 
-								     (a2,a3) (a5,a6)  
-								 then 
-								   ((a4::same,other))
-								 else
-								   (same,(Some (a5,a6,a2,a3),a4)::other))
-							     
-							   in 
-							   match b with 
-							     AL((a1,a2,a3),(a5,a6)),true -> f (a1,a2,a3,a5,a6) (same,other)
-							   | L((a1,a2,a3),(a4,a5,a6)),true -> 
-							       let same,other = 
-								 if a1=a then f (a1,a2,a3,a5,a6) (same,other)
-								 else same,other in
-							       let same,other = 
-								 if a4=a then f (a4,a5,a6,a2,a3) (same,other) 
-								 else same,other 
-							       in same,other
-							   | _ -> same,other )
-						       (to_visit_same_class,to_visit_other_class)
-						       restricted_blist in
-						   aux 
-						     (List.fold_left
-							(fun sol x -> (guard,
-								       bound_agent_list_same_class,
-								       bound_agent_list_other_class,
-								       StringSet.add a black,
-								       plug_views_in_subspecies a x prefix,
-								       a::same_class_agent,
-								       other_class)::sol) 
-							q
-							tp_list) 
-						     sol
-					   end
-				     in
-				     let rep_explode  =
-				       (aux [None,[root],[],StringSet.empty,empty_species,[],[]] []) in
-				     
-				     
-				     (
-				     
-				     
-				     let rep_explode = 
-				       List.map 
-					 (fun x -> 
-					   List.filter 
-					     (fun subclass  -> 
-					       match subclass.bond  with None -> false
-					       |  _ -> true )
-					     x) rep_explode in
-				     let rep_explode = 
-				       List.sort compare rep_explode in
-				     let rec aux old rep_explode sol = 
-				       match rep_explode with 
-					 [] -> sol
-				       | t::q when t=old -> aux old q sol
-				       | t::q -> aux t q (t::sol)
-				     in
-				     let rep_explode = 
-				       match rep_explode 
-				       with [] -> []
-				       | t::q -> aux t q [t]
-				     in
-				     let _ = 
-				       if debug then
-					 (let _ = print_string "EXPLODE" in 
-					 List.iter 
-					   (fun x -> 
-					     List.iter 
-					       (fun subclass -> 
-						 (match subclass.bond with None -> print_string "NONE"
-						 |	Some (a,b,c,d) -> 
-						     (
-						     print_string a;
-						     print_string b;
-						     print_string c;
-						     print_string d;
-						     print_string ";"));
-						 List.iter
-						   (fun d -> 
-						     (fun (i,j) -> 
-						       print_int i;
-						       print_string "#";
-						       print_int j)
-						       (hash_subspecies d);
-						     print_newline ()) 
-						   (complete_subspecies (subclass.subspecies));)
-					       x;
-					     print_newline ()) 
-					   rep_explode) 
-				     in 
-				     List.fold_left 
-				       (fun (expr) l -> 
-					 Plus(expr,
-					      fst 
-						(List.fold_left 
-						   (fun (expr,black) l -> 
-						     match l.bond  with None -> expr,black
-						     | (Some (a,s,a',s')) ->
-							 let b = l.subspecies in 
-							 let d = get_denum_handling_compatibility (a,s,a',s')  in
-							 (
-							 if List.length d = 1 && List.hd d = List.hd (complete_subspecies_handling_compatibility  b)  
-							 then 
-							   expr 
-							 else
+						     | (g,a)::b -> 
+							 aux 
+							   (((g,[a],b,black,empty_species,[],(init_subclass (guard,prefix,same_class_agent))::other_class))::q) sol 
+							    end
+							      
+							| a::b -> 
+							    if StringSet.mem a black  or  not (List.exists (fun x -> match x with H(x,_),b -> (
+													      (x=a && b)) | 
+														_  -> false) xx.Pb_sig.injective_guard) 
+							    then 
+							      ( aux ((guard,b,to_visit_other_class,black,prefix,same_class_agent,other_class)::q) sol)
+							    else
+							      let restricted_blist = 
+								List.filter 
+								  (fun (b,bool) -> 
+								     match b with 
+									 B(b',_,_) | AL((b',_,_),_) | M((b',_,_),_) when b' = a -> true 
+								       | L((b',_,_),(c',_,_)) when b'=a or c'=a -> true 
+								       | _ -> false)
+								  blist in
+							      let tp_list = 
+								compute_compatible_views_id 
+								  blist 
+								  restricted_blist 
+								  bmap 
+								  a 
+								  (specie_of_id,agent_to_int_to_nlist,view_of_tp_i,ode_handler)  in 
+								
+								
+								
+							      let bound_agent_list_same_class,
+								bound_agent_list_other_class = 
+								List.fold_left 
+								  (fun 
+								     (same,other) b 
+								     ->
+								       let f (a1,a2,a3,a5,a6) (same,other) = 						 let a4 = 
+									 let rec aux l = 
+									   match l with 
+									       [] -> None 
+									     | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b4,b5,b6,b2,b3) -> Some b1
+									     | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b1,b2,b3,b5,b6) -> Some b4
+									     | _::q -> aux q in
+									   aux (cla.extended_passives) in
+									 (match a4 with 
+									      None -> (same,other)
+									    | Some a4 when StringSet.mem a4 black -> (same,other)
+									    | Some a4 -> 
+										if  not (List.exists (fun x -> x=(H(a4,a5),true)) rule.Pb_sig.injective_guard) then 
+										  same,other
+										else
+										  if keep_this_link 
+										    (a2,a3) (a5,a6)  
+										  then 
+										    ((a4::same,other))
+										  else
+										    (same,(Some (a5,a6,a2,a3),a4)::other))
+									   
+								       in 
+									 match b with 
+									     AL((a1,a2,a3),(a5,a6)),true -> f (a1,a2,a3,a5,a6) (same,other)
+									   | L((a1,a2,a3),(a4,a5,a6)),true -> 
+									       let same,other = 
+										 if a1=a then f (a1,a2,a3,a5,a6) (same,other)
+										 else same,other in
+									       let same,other = 
+										 if a4=a then f (a4,a5,a6,a2,a3) (same,other) 
+										 else same,other 
+									       in same,other
+									   | _ -> same,other )
+								  (to_visit_same_class,to_visit_other_class)
+								  restricted_blist in
+								aux 
+								  (List.fold_left
+								     (fun sol x -> (guard,
+										    bound_agent_list_same_class,
+										    bound_agent_list_other_class,
+										    StringSet.add a black,
+										    plug_views_in_subspecies a x prefix,
+										    a::same_class_agent,
+										    other_class)::sol) 
+								     q
+								     tp_list) 
+								  sol
+						    end
+					    in
+					    let rep_explode  =
+					      (aux [None,[root],[],StringSet.empty,empty_species,[],[]] []) in
+					      
+					      
+					      (
+						
+						
+						let rep_explode = 
+						  List.map 
+						    (fun x -> 
+						       List.filter 
+							 (fun subclass  -> 
+							    match subclass.bond  with None -> false
+							      |  _ -> true )
+							 x) rep_explode in
+						let rep_explode = 
+						  List.sort compare rep_explode in
+						let rec aux old rep_explode sol = 
+						  match rep_explode with 
+						      [] -> sol
+						    | t::q when t=old -> aux old q sol
+						    | t::q -> aux t q (t::sol)
+						in
+						let rep_explode = 
+						  match rep_explode 
+						  with [] -> []
+						    | t::q -> aux t q [t]
+						in
+						let _ = 
+						  if debug then
+						    (let _ = print_string "EXPLODE" in 
+						       List.iter 
+							 (fun x -> 
+							    List.iter 
+							      (fun subclass -> 
+								 (match subclass.bond with None -> print_string "NONE"
+								    |	Some (a,b,c,d) -> 
+									  (
+									    print_string a;
+									    print_string b;
+									    print_string c;
+									    print_string d;
+									    print_string ";"));
+								 List.iter
+								   (fun d -> 
+								      (fun (i,j) -> 
+									 print_int i;
+									 print_string "#";
+									 print_int j)
+									(hash_subspecies d);
+								      print_newline ()) 
+								   (complete_subspecies (subclass.subspecies));)
+							      x;
+							    print_newline ()) 
+							 rep_explode) 
+						in 
+						  List.fold_left 
+						    (fun (expr) l -> 
+						       Plus(expr,
+							    fst 
+							      (List.fold_left 
+								 (fun (expr,black) l -> 
+								    match l.bond  with None -> expr,black
+								      | (Some (a,s,a',s')) ->
+									  let b = l.subspecies in 
+									  let d = get_denum_handling_compatibility (a,s,a',s')  in
+									    (
+									      if List.length d = 1 && List.hd d = List.hd (complete_subspecies_handling_compatibility  b)  
+									      then 
+										expr 
+									      else
 							   Mult
 							     (expr,
 							      Div 
 								(
-							      List.fold_left 
+								  List.fold_left 
 								(fun expr d -> 
 								  Plus(expr,expr_of_var expr_handler d))
 								(Const 0)  
@@ -1897,7 +1976,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					 context_update;
 				       print_string "B2\n";
 				       BMap.iter (fun b bool -> 
-					 pprint_string print_debug (string_of_b b);
+						    pprint_string print_debug (string_of_b b);
 					 pprint_bool print_debug bool;
 					 pprint_newline print_debug )
 					 b2
@@ -1929,7 +2008,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 						   (iter_views_in_species
 						      (fun tp_i  -> 
 							List.iter (fun (b,bool) -> 
-							  print_string (string_of_b (ode_handler.b_of_var b));
+								     print_string (string_of_b (ode_handler.b_of_var b));
 							  print_string (if bool then "T\n" else  "F\n")) (bool_of_tp_i tp_i))) 
 						   b in () in 
 					   let optional_binding = (* scan for the type of the bond that is removed *)
@@ -1990,13 +2069,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					 context_update,res,solid_half)
 				     (context_update,[],[])  
 			      	     (control.uncontext_update)
-				 in 
-				(* if 
-				   context_update  = [] 
-				 then 
-				   (c_list,p_list,sl_list) 
-				 else*)
-				   let fadd ag site map = 
+				 in
+				 let fadd ag site map = 
 				     if StringSet.mem ag x 
 				     then 
 				       let old = 
@@ -2169,6 +2243,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					   tp_list)
 				       modagents 
 				       [StringMap.empty,[]] in
+				   let liste = 
+				     if liste = [StringMap.empty,[]]
+				     then []
+				     else liste 
+				   in 
 				   let _ = 
 				     if debug
 				     then
@@ -2933,20 +3012,21 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			   (mainprod,jacobian) 
 		       in 
 		       let _ = pprint_string print_ODE_latex "}\n" in 
-			 x 
+			 fst x,snd x,activity_map 
 		     else
 		       let _ = pprint_string print_ODE_latex "}" in 
-		       let _ = dump_line 2137 in (mainprod,jacobian) 
-			     )
-		   (mainprod,jacobian)   
+		       let _ = dump_line 2137 
+		       in (mainprod,jacobian,activity_map) 
+		   )
+		   (mainprod,jacobian,activity_map)   
 		   classes
 	       in 
-		 (mainprod,jacobian) 
+		 (mainprod,jacobian,activity_map) 
 	     end)
-	(mainprod,jacobian) 
+	(mainprod,jacobian,activity_map) 
 	system in 
 
-    let merge_prod,jacobian  = activity in 
+    let merge_prod,jacobian,activity_map  = activity in 
     
   
     let proj_solution solution = 
@@ -3175,6 +3255,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     in 
     let _ = (match print_data with None -> () | Some a -> 
     (a.print_string "\n ")) in 
+    let _ = print_obs_in_matlab  print_ODE_matlab_obs file_ODE_matlab_obs activity_map pb_obs  in 
+    let _ = print_activity print_ODE_matlab_activity file_ODE_matlab_act activity_map in 
     let chanset = 
       List.fold_left
 	(fun set x -> channel_set x set)

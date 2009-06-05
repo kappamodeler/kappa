@@ -912,7 +912,7 @@ List.map (rename_test f) b)) r.cpb_guard;
 			    List.map 
 			      (fun (x,y) -> 
 				(fst (ir.id_mapping x),
-				 (fst (ir.id_mapping y)))) 
+				(fst (ir.id_mapping y)))) 
 			      r.cpb_equal in
 	     l
 	      ;

@@ -16,7 +16,7 @@ let stdprint =
     
 
 
-let all_fields x  = [x.dump;x.matlab;x.mathematica;x.latex;x.matlab_aux;x.data;x.kappa;x.txt;x.matlab_jacobian;x.matlab_size]
+let all_fields x  = [x.dump;x.matlab;x.mathematica;x.latex;x.matlab_aux;x.data;x.kappa;x.txt;x.matlab_jacobian;x.matlab_size;x.matlab_activity;x.matlab_obs]
 
       
 module CSet = Set.Make (struct type t = out_channel let compare = compare end)
@@ -120,6 +120,18 @@ let pprint_var print k i =
       None -> ()
     | Some a -> a.print_string k;a.print_string "(";a.print_string i;a.print_string ")"
   in 
+  let _ = 
+    match print.matlab_activity 
+    with 
+      None -> ()
+    | Some a -> a.print_string k;a.print_string "(";a.print_string i;a.print_string ")"
+  in 
+  let _ = 
+    match print.matlab_obs
+    with 
+      None -> ()
+    | Some a -> a.print_string k;a.print_string "(";a.print_string i;a.print_string ")"
+  in 		 
   let _ = 
     match print.matlab_jacobian 
     with 
@@ -262,10 +274,13 @@ let pprint_assign print =
   in pprint_string print "=" 
 
 let remove_latex print = {print with latex = None} 
-let keep_latex print = {print with matlab = None ; matlab_aux=None;matlab_jacobian = None ; mathematica = None ;matlab_size = None} 
-let keep_aux print = {print with latex=None;matlab=None;mathematica=None;matlab_jacobian = None;matlab_size = None} 
-let keep_jac print = {print with latex=None;matlab=None;mathematica=None;matlab_aux=None;matlab_size = None }
-let keep_size print = {print with latex=None;matlab=None;mathematica=None;matlab_aux=None;matlab_jacobian=None}
+let keep_latex print = {print with matlab = None ; matlab_aux=None;matlab_jacobian = None ; mathematica = None ;matlab_size = None;matlab_obs=None;matlab_activity=None} 
+let keep_aux print = {print with latex=None;matlab=None;mathematica=None;matlab_jacobian = None;matlab_size = None;matlab_obs=None;matlab_activity=None} 
+let keep_jac print = {print with latex=None;matlab=None;mathematica=None;matlab_aux=None;matlab_size = None ;matlab_obs=None;matlab_activity=None}
+let keep_size print = {print with latex=None;matlab=None;mathematica=None;matlab_aux=None;matlab_jacobian=None;matlab_obs=None;matlab_activity=None}
+let keep_obs print = {print with latex = None;matlab=None;mathematica=None;matlab_aux=None;matlab_jacobian=None;matlab_activity=None;matlab_size=None}
+let keep_activity print = {print with latex = None;matlab=None;mathematica=None;matlab_aux=None;matlab_jacobian=None;matlab_obs=None;matlab_size=None}
+
 
 let pprint_eq_separator print = 
   let print' = remove_latex print in 
@@ -347,19 +362,19 @@ let pprint_commandsep print =
 	 
 
 
-let pprint_ODE_head print file file_jac file_size = 
+let pprint_ODE_head print print_obs print_activity  file file_jac file_size file_activity file_obs = 
   let print_latex = keep_latex print in 
   let print = remove_latex print in 
-  let print_main = {print with matlab_aux = None ; matlab_jacobian = None ; matlab_size = None  } in
+  let print_main = {print with matlab_aux = None ; matlab_jacobian = None ; matlab_size = None;matlab_activity = None ;matlab_obs = None  } in
   let print_aux = keep_aux print in
   let print_jac = keep_jac print in  
   let print_size = keep_size print in 
   let _ = pprint_string print_main "% THINGS THAT ARE KNOWN FROM KAPPA FILE AND COMPLX OPTIONS;\n" in 
   let _ = pprint_string print_main "% \n" in 
-  let _ = pprint_string print_main "% init - the initial abundances of each fragment " in
-  let _ = pprint_string print_main "% tinit - the initial simulation time (likely 0)" in 
-  let _ = pprint_string print_main "% tfinal - the final simulation time " in 
-  let _ = pprint_string print_main "% num_t_point - the number of time points to return " in 
+  let _ = pprint_string print_main "% init - the initial abundances of each fragment \n" in
+  let _ = pprint_string print_main "% tinit - the initial simulation time (likely 0) \n" in 
+  let _ = pprint_string print_main "% tfinal - the final simulation time \n" in 
+  let _ = pprint_string print_main "% num_t_point - the number of time points to return \n" in 
   let _ = pprint_string print_main "\n" in 
   let _ = pprint_string print_main "tinit" in 
   let _ = pprint_assign print_main in 
@@ -391,7 +406,7 @@ let pprint_ODE_head print file file_jac file_size =
   let _ = pprint_newline print_size in 
   let _ = pprint_newline print_size in 
   let _ = pprint_string print_size "Size = " in 
- ()
+    ()
 
 let pprint_ODE_head' print = 
   let _ = 
@@ -923,3 +938,35 @@ let print_diff print_ODE i j flag expr =
 	let _ = print.print_string ";\n" in 
 	  () 
 
+
+let print_activity print file activity_map = 
+    let _ = pprint_string print  ("function Activity="^(Tools.cut file)^"(y)\nActivity = [\n") in 
+    let _ = 
+      IntMap.fold
+	(fun i j bool -> 
+	   let _ = 
+	     if bool then pprint_string print ",\n"
+	   in
+	 let _ = print_expr print true true j in 
+	   true)
+	activity_map false in 
+    let _ = pprint_string print "];\n" in () 
+      
+	 
+  
+let print_obs_in_matlab print file activity_map obsset = 
+  let _ = pprint_string print ("function Observable="^(Tools.cut file)^"(y)\nObservable = [\n") in 
+  let _ = 
+    IntMap.fold
+      (fun i j bool -> 
+	 if IntSet.mem i obsset 
+	 then 
+	   let _ = 
+	     if bool then pprint_string print ",\n"
+	   in
+	   let _ = print_expr print true true j in 
+	     true
+	 else bool)
+      activity_map false in 
+  let _ = pprint_string print "];\n" in () 
+				    

@@ -100,6 +100,8 @@ type subspecies =
     subspecies_views:view_id RPathMap.t;
   } 
 
+let is_empty_species s = RPathMap.is_empty s.subspecies_views 
+
 let iter_views_in_species f sp = 
   RPathMap.iter (fun _ -> f) sp.subspecies_views 
 
