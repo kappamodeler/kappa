@@ -39,9 +39,9 @@ KEY?=without_key
 $(BIN): bin/
 	mkdir bin
 
-OCAMLC=		$(OCAMLPREFIX)ocamlc -thread
-OCAMLCI=	$(OCAMLPREFIX)ocamlc -thread
-OCAMLOPT= 	$(OCAMLPREFIX)ocamlopt.opt -thread
+OCAMLC=		$(OCAMLPREFIX)ocamlc
+OCAMLCI=	$(OCAMLPREFIX)ocamlc
+OCAMLOPT= 	$(OCAMLPREFIX)ocamlopt.opt
 OCAMLYACC=	$(OCAMLPREFIX)ocamlyacc -v
 OCAMLLEX=	$(OCAMLPREFIX)ocamllex
 
@@ -228,8 +228,8 @@ MLI =  ./$(SIMPLXREP)/src/tools/error.mli \
 	./$(SIMPLXREP)/src/bnf/kappa_parse.mli \
 
 CMI = $(MLI:mli=cmi)
-CMA = unix.cma threads.cma str.cma nums.cma
-CMXA = unix.cmxa threads.cmxa str.cmxa nums.cmxa
+CMA = str.cma nums.cma unix.cma #threads.cma
+CMXA = unix.cmxa str.cmxa nums.cmxa #threads.cmxa
 
 SIMPLX_OUT = simplx
 COMPLX_OUT = complx
@@ -250,7 +250,6 @@ html_doc :
 
 dot_doc :
 	make KEY=without_key DOCTYPE=dot gen_doc
-
 
 simplx :$(MLI) $(CMI) $(LIBSC_CMXA) $(LIB_OPT) $(SIMPLX_MAIN) $(BIN)
 	$(OCAMLOPT) $(OCAMLFLAGS) $(CMXA) $(TK_CMXA) $(LIBSC_CMXA) $(LIB_OPT)  $(SIMPLX_MAIN) -o $(BIN)/$(SIMPLX_OUT)
@@ -302,7 +301,7 @@ toplx: $(MLI) $(CMI) $(LIBSC_CMA) $(LIB_BYTE)
 
 ./$(COMPLXREP)/backend/parse_comment/yacc.cmi: ./$(COMPLXREP)/backend/parse_comment/yacc.mli2
 	cp ./$(COMPLXREP)/backend/parse_comment/yacc.mli2 ./$(COMPLXREP)/backend/parse_comment/yacc.mli;
-	ocamlopt -c $(OCAMLFLAGS) ./$(COMPLXREP)/backend/parse_comment/yacc.mli
+	$(OCAMLOPT) -c $(OCAMLFLAGS) ./$(COMPLXREP)/backend/parse_comment/yacc.mli
 
 ./$(COMPLXREP)/backend/parse_comment/lexeur.ml: ./$(COMPLXREP)/backend/parse_comment/lexeur.mll
 	ocamllex ./$(COMPLXREP)/backend/parse_comment/lexeur.mll
