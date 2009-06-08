@@ -68,6 +68,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     | "$T" {TIME}
     | ":=" {SET}
     | "=" {EQUAL} 
+    | '&' {AND}
     | '$' (integer as i) {REF(int_of_string i)}
     | "$INF" {flush stdout ; INFINITY}
     | blank  {token lexbuf}

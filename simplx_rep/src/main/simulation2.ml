@@ -1461,11 +1461,11 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 			       if size = 0 then 
 				 begin 
 				   let s="Simulation.update: map size error" in
-				   Error.runtime 
-				     (Some "simulation2.ml",
-				      Some 1450,
-				      Some s)
-				     s
+				     Error.runtime 
+				       (Some "simulation2.ml",
+					Some 1450,
+					Some s)
+				       s
 				       
 				 end;
 			       let length = float_of_int size
@@ -1506,11 +1506,11 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 				   match r.flag with 
 				       Some s -> StringSet.add s mod_obs
 				     | None -> let s="Rule.update: obs invariant violation" in
-				       Error.runtime
-					 (Some "simulation2.ml",
-					  Some 1495,
-					  Some s)
-					 s
+					 Error.runtime
+					   (Some "simulation2.ml",
+					    Some 1495,
+					    Some s)
+					   s
 				 else mod_obs
 				   (*FIN CORRECTION BUG 11 dec 2007*)
 			       in
@@ -1583,11 +1583,11 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 			  with Not_found -> lift (*agent has been removed so all its quarks were modified*)
 		       ) assoc lift
 	 with Not_found -> let s="Simulation.update: rm_coord invariant violation" in
-	 Error.runtime 
-	   (Some "simulation2.ml",
-	    Some 1572,
-	    Some s)
-	   s
+	   Error.runtime 
+	     (Some "simulation2.ml",
+	      Some 1572,
+	      Some s)
+	     s
       ) rm_coord lift
   in
   let _ = if !bench_mode then Bench.neg_upd := !Bench.neg_upd +. (chrono t_neg) in
@@ -1609,11 +1609,11 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 	 let r_i,_ = 
 	   try Rule_of_int.find rule_ind sim_data.rules 
 	   with Not_found -> let s="Simulation.update: invalid rule indice" in
-	   runtime
-	     (Some "simulation2.ml",
-	      Some 1598,
-	      Some s)
-	     s
+	     runtime
+	       (Some "simulation2.ml",
+		Some 1598,
+		Some s)
+	       s
 	 in
 	 let _ = if !bench_mode then Bench.t_upd_rules:=!Bench.t_upd_rules +. (chrono t0) in
 	   if !debug_mode then Printf.printf "waking up r[%d]\n" rule_ind ; 
@@ -1642,11 +1642,11 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 						) ag_i set
 					  with Not_found -> 
 					    let s="Simulation.update: assoc_lhs_sol invariant violation" in
-					    Error.runtime
-					      (Some "simulation2.ml",
-					       Some 1631,
-					       Some s)
-					      s
+					      Error.runtime
+						(Some "simulation2.ml",
+						 Some 1631,
+						 Some s)
+						s
 				       ) assoc_lhs_sol PortSet.empty
 				   in
 				   let contains_modif = 
@@ -1725,20 +1725,20 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 				   Some s -> StringSet.add s mod_obs
 				 | None -> 
 				     let s = "Rule.update: obs invariant violation" in
-				     Error.runtime
-				       (Some "simulation2.ml",
-					Some 1714,
-					Some s) 
-				       s
+				       Error.runtime
+					 (Some "simulation2.ml",
+					  Some 1714,
+					  Some s) 
+					 s
 			     else mod_obs
 			   in
 			     (*boosting rule kinetics if necessary*)
 			   let boost = 
 			     let phi = 
 			       try
-			       let _,_,map0 = InjArray.find (Coord.of_pair (r_i,0)) injs
-			       in
-				 float_of_int (AssocArray.size map0)
+				 let _,_,map0 = InjArray.find (Coord.of_pair (r_i,0)) injs
+				 in
+				   float_of_int (AssocArray.size map0)
 			       with Not_found -> 0.0 (*cc has no injection*)
 			     in
 			     let psi = 
@@ -1766,11 +1766,11 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 			     (rules,mod_obs,inf_list)
 			 with Not_found -> 
 			   let s = "Simulation.update: invalid rule indice" in
-			   Error.runtime
-			     (Some "simulation2.ml",
-			      Some 1755,
-			      Some s)
-			     s
+			     Error.runtime
+			       (Some "simulation2.ml",
+				Some 1755,
+				Some s)
+			       s
 		       in
 			 (injs,lift,rules,mod_obs,inf_list)
 		    ) assoc_list (injs,lift,rules,mod_obs,inf_list)
@@ -1797,23 +1797,24 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 			let sim_data,perts,indices = 
 			  IntSet.fold (fun i (sim_data,perts,indices) ->
 					 let pert_i = IntMap.find i lab.perturbations in
-					   if pert_i.test (sim_data.rule_of_name,sim_data.rules) 
-					   then (
-					     if !debug_mode then 
-					       Printf.printf "Applying %s\n" (string_of_perturbation pert_i) ;
-					     let (oo,inf_list,rules) = 
-					       pert_i.modif (sim_data.oo,sim_data.inf_list,sim_data.rule_of_name,sim_data.rules) 
-					     and perts = IntMap.remove i perts
-					     and indices = IntSet.remove i indices 
-					     in
-					       if !debug_mode then (
-						 print_string "**********\n";
-						 print_rules rules sim_data.inf_list;
-						 print_string "**********\n"
-					       ) ;
-					       ({sim_data with rules = rules ; oo=oo ; inf_list = inf_list},perts,indices)
-					   )
-					   else (sim_data,perts,indices)
+					 let do_apply = List.for_all (fun test -> test (sim_data.rule_of_name,sim_data.rules)) pert_i.test_list in
+					   if not do_apply then (sim_data,perts,indices)
+					   else
+					     (
+					       if !debug_mode then 
+						 Printf.printf "Applying %s\n" (string_of_perturbation pert_i) ;
+					       let (oo,inf_list,rules) = 
+						 pert_i.modif (sim_data.oo,sim_data.inf_list,sim_data.rule_of_name,sim_data.rules) 
+					       and perts = IntMap.remove i perts
+					       and indices = IntSet.remove i indices 
+					       in
+						 if !debug_mode then (
+						   print_string "**********\n";
+						   print_rules rules sim_data.inf_list;
+						   print_string "**********\n"
+						 ) ;
+						 ({sim_data with rules = rules ; oo=oo ; inf_list = inf_list},perts,indices)
+					     )
 				      ) indices_pert (sim_data,lab.perturbations,indices_pert)
 			in
 			let name_dep = 
@@ -1821,7 +1822,7 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 			  else StringMap.add flag indices lab.name_dep
 			in
 			  {sim_data with lab = {lab with perturbations = perts ; name_dep = name_dep}}
-		      with Not_found -> sim_data 
+		      with Not_found -> sim_data (*perturbation not depending on the observable*)
 		   ) mod_obs sim_data
   in
   let _ = if !bench_mode then Bench.pos_upd := !Bench.pos_upd +. (chrono t_pos) in
@@ -1838,19 +1839,39 @@ let rec apply_exp p curr_time sim_data =
       (t0,i)::tl -> 
 	if t0 <= curr_time then
 	  let pert_i = IntMap.find i sim_data.lab.perturbations in
-	  let (oo,inf_list,rules) = pert_i.modif (sim_data.oo,sim_data.inf_list,sim_data.rule_of_name,sim_data.rules) in
-	  let lab = {sim_data.lab with 
-		       perturbations = IntMap.remove i sim_data.lab.perturbations ; 
-		       time_dep = tl
-		    }
-	  in
-	    if !debug_mode then (
-	      Printf.printf "Applying %s\n" (string_of_perturbation pert_i) ;
-	      print_string "**************\n";
-	      print_rules rules sim_data.inf_list;
-	      print_string "**************\n";
-	    ) ;
-	    apply_exp p curr_time {sim_data with rules = rules ; lab = lab ; oo = oo ; inf_list = inf_list}
+	  let do_apply = List.for_all (fun test -> test (sim_data.rule_of_name,sim_data.rules)) pert_i.test_list in
+	    if not do_apply then (*time is ok but not concentrations*)
+	      let name_dep = (*adding concentration dependencies for pert_i to the lab for future wake-up*)
+		List.fold_left (fun name_dep dep ->
+				   match dep with
+				       CURR_TIME t -> name_dep (*ignoring time dependencies now*)
+				     | RULE_FLAGS l -> 
+					 List.fold_right (fun flg map -> 
+							    let set = try StringMap.find flg map with Not_found -> IntSet.empty in
+							      StringMap.add flg (IntSet.add i set) map
+							 ) l name_dep
+			       ) sim_data.lab.name_dep pert_i.dep_list
+	      in
+	      let lab = {sim_data.lab with
+			   name_dep = name_dep ;
+			   time_dep = tl
+			}
+	      in
+		{sim_data with lab = lab}
+	    else
+	      let (oo,inf_list,rules) = pert_i.modif (sim_data.oo,sim_data.inf_list,sim_data.rule_of_name,sim_data.rules) in
+	      let lab = {sim_data.lab with 
+			   perturbations = IntMap.remove i sim_data.lab.perturbations ; 
+			   time_dep = tl
+			}
+	      in
+		if !debug_mode then (
+		  Printf.printf "Applying %s\n" (string_of_perturbation pert_i) ;
+		  print_string "**************\n";
+		  print_rules rules sim_data.inf_list;
+		  print_string "**************\n";
+		) ;
+		apply_exp p curr_time {sim_data with rules = rules ; lab = lab ; oo = oo ; inf_list = inf_list}
 	else sim_data
     | [] -> sim_data
 

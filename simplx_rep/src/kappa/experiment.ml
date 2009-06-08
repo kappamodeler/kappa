@@ -6,14 +6,15 @@ type dep = CURR_TIME of float | RULE_FLAGS of (string list)
 
 (*test = fun fake_rules_indices -> bool*)
 (*modif = [(flg_1,mult_1);...;(flg_n;mult_n)]*)
-type perturbation = {dep: dep ; 
-		     test: (int StringMap.t) * Rule_of_int.t -> bool ; 
+type perturbation = {dep_list: dep list; 
+		     test_list: ((int StringMap.t) * Rule_of_int.t -> bool) list;  (*rule_of_name,rules*) 
 		     modif: IntSet.t * IntSet.t * (int StringMap.t) * Rule_of_int.t  -> IntSet.t * IntSet.t * Rule_of_int.t  ; 
-		     test_str: string ; modif_str:string} 
+		     test_str: string ; 
+		     modif_str:string} 
 
 type t = {
   fresh_pert:int;
-  name_dep: IntSet.t StringMap.t ; (*pert_dep: [rule_name -> {pert_indices}] *)
+  name_dep: IntSet.t StringMap.t ; (*pert_dep: [obs_name -> {pert_indices}] *)
   time_dep: (float*int) list ; (*time_stack: sorted list (t_0,pert_0)::...::(t_n,pert_n)::[]*) 
   perturbations: perturbation IntMap.t ; (*[pert_indice -> perturbation]*) 
 }
@@ -32,9 +33,10 @@ let string_of_perturbation pert =
 
 let print exp =
   Printf.printf "PERTURBATIONS:\n" ;
-  IntMap.iter (fun _ pert -> 
-		 Printf.printf "%s\n" (string_of_perturbation pert)
-	      ) exp.perturbations
+  IntMap.iter (fun i pert -> 
+		 Printf.printf "%s\n" (string_of_perturbation pert) 
+	      ) exp.perturbations 
+
     
 
 let rec string_of_ast ast = 
@@ -154,19 +156,32 @@ let rec extract_dep ast =
     | Val_infinity -> []
 
 let add pert experiment =
-  let dep = pert.dep in
+  let dep_list = pert.dep_list in
   let fresh = experiment.fresh_pert in
-  let name_dep,time_dep =
-    match dep with
-	CURR_TIME t -> (experiment.name_dep,sorted_insert (t,fresh) experiment.time_dep)
-      | RULE_FLAGS l -> 
-	  let name_dep = 
-	    List.fold_right (fun flg map -> 
-			       let set = try StringMap.find flg map with Not_found -> IntSet.empty in
-				 StringMap.add flg (IntSet.add fresh set) map
-			    ) l experiment.name_dep
-	  in
-	    (name_dep,experiment.time_dep)
+  let name_dep,settime =
+    List.fold_left (fun (name_dep,settime) dep -> 
+		      match dep with
+			  CURR_TIME t -> 
+			    begin
+			      match settime with
+				  None -> (experiment.name_dep, Some t) 
+				| Some t' -> let t0 = max t t' in (experiment.name_dep,Some t0) 
+			    end
+			| RULE_FLAGS l -> 
+			    match settime with 
+				Some _ -> (experiment.name_dep,settime) (*if perturbation has a time dep, then no obs dependency*)
+			      | None ->
+				  let name_dep = 
+				    List.fold_right (fun flg map -> 
+						       let set = try StringMap.find flg map with Not_found -> IntSet.empty in
+							 StringMap.add flg (IntSet.add fresh set) map
+						    ) l name_dep
+				  in
+				    (name_dep,settime)
+		   ) (experiment.name_dep,None) dep_list 
+      
+  in
+  let time_dep = match settime with None -> experiment.time_dep | Some t -> sorted_insert (t,fresh) experiment.time_dep
   in
     {fresh_pert = fresh+1 ; 
      name_dep = name_dep ; 

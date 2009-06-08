@@ -101,7 +101,7 @@
 	error_found 90 (flag^" is an observation name, expecting a rule name")
 %}
 %token INIT_LINE  OBS_LINE  STORY_LINE NEWLINE MODIF_LINE GEN_LINE CONC_LINE EOF
-%token MULT DIVIDE PLUS MINUS COMMA SEMICOLON GREATER SMALLER SET EQUAL INFINITY SEP
+%token MULT DIVIDE AND PLUS MINUS COMMA SEMICOLON GREATER SMALLER SET EQUAL INFINITY SEP
 %token DO AT TIME
 %token KAPPA_LNK KAPPA_WLD KAPPA_SEMI KAPPA_LRAR KAPPA_RAR
 %token OP_PAR CL_PAR OP_CONC CL_CONC OP_ACC CL_ACC
@@ -111,6 +111,7 @@
 %left PLUS MINUS
 %left COMMA
 %left MULT DIVIDE
+%left AND
 
 %start line
 %type <unit> line 
@@ -133,22 +134,34 @@
   ;
 
   modif_expr:
-| concentration_ineq DO assignement NEWLINE {let dep,test,str1 = $1 and modif,str2 = $3 in {Experiment.dep=dep;
-											    Experiment.test=test;
-											    Experiment.modif=modif;
-											    Experiment.test_str=str1;
-											    Experiment.modif_str=str2
-											   }
-					    } 
-| time_ineq DO assignement NEWLINE {let dep,test,str1 = $1 and modif,str2 = $3 in {Experiment.dep=dep;
-										   Experiment.test=test;
-										   Experiment.modif=modif ;
-										   Experiment.test_str=str1;
-										   Experiment.modif_str=str2
-										  }
-				   }
+| preconditions DO assignement NEWLINE {let dep_list,test_list,str1 =
+					  match $1 with
+					      None -> raise (error_found 138 "empty preconditions")
+					    | Some result -> result
+						
+					and modif,str2 = $3 in 
+					  {Experiment.dep_list=dep_list;
+					   Experiment.test_list=test_list;
+					   Experiment.modif=modif;
+					   Experiment.test_str=str1;
+					   Experiment.modif_str=str2
+					  }
+				       } 
 | error {error_found 137 "invalid modification"}
   ;
+
+  preconditions: 
+| ineq {let dep,test,str = $1 in 
+	  Some ([dep],[test],str)
+       }
+| ineq AND preconditions {let dep,test,str = $1 in
+			  let dep_list,test_list,str' =
+			    match $3 with
+				None -> ([],[],"")
+			      | Some result -> result
+			  in
+			    Some (dep::dep_list,test::test_list,str^" AND "^str')
+			 }
 
   assignement: 
 | LABEL SET assign_expr {let assgn = $3 
@@ -193,7 +206,8 @@
 | LABEL {let flag = $1 in check_flag_rule flag ; Experiment.Val_kin flag }
   ;
   
-  concentration_ineq:
+  ineq:
+| OP_PAR ineq CL_PAR {$2}
 | conc_expr GREATER conc_expr {let c1 = $1 and c2 = $3 in
 			       let test (rule_of_name,rules) = 
 				 let inst1 = (Experiment.eval (!rescale) c1 rule_of_name rules)  
@@ -225,24 +239,6 @@
 				 let str = (Experiment.string_of_ast c1)^"<"^(Experiment.string_of_ast c2) in
 				   (dep,test,str)
 			      }
-  ;
-
-  conc_expr:
-| OP_PAR conc_expr CL_PAR {$2}
-| conc_val MULT conc_expr {Experiment.Mult($1,$3)}
-| conc_val DIVIDE conc_expr {Experiment.Div ($1,$3)}
-| conc_val PLUS conc_expr {Experiment.Add($1,$3)}
-| conc_val {$1}
-  ;
-
-  conc_val:
-| FLOAT {Experiment.Val_float $1}
-| INT {Experiment.Val_float (float_of_int $1)}
-| OP_CONC LABEL CL_CONC {Experiment.Val_sol ("["^$2^"]")}
-| OP_CONC error {error_found 229 "invalid concentration expression"}
-  ;
-
-  time_ineq:
 | TIME GREATER FLOAT {let t0 = $3 in
 		      let test _ = true 
 		      and dep = Experiment.CURR_TIME t0
@@ -258,6 +254,21 @@
 		      (dep,test,str)
 		   }
 | TIME error {error_found 247 "invalid precondition"}
+  ;
+
+  conc_expr:
+| OP_PAR conc_expr CL_PAR {$2}
+| conc_val MULT conc_expr {Experiment.Mult($1,$3)}
+| conc_val DIVIDE conc_expr {Experiment.Div ($1,$3)}
+| conc_val PLUS conc_expr {Experiment.Add($1,$3)}
+| conc_val {$1}
+  ;
+
+  conc_val:
+| FLOAT {Experiment.Val_float $1}
+| INT {Experiment.Val_float (float_of_int $1)}
+| OP_CONC LABEL CL_CONC {Experiment.Val_sol ("["^$2^"]")}
+| OP_CONC error {error_found 229 "invalid concentration expression"}
   ;
 
   init_expr:

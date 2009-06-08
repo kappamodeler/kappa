@@ -1,0 +1,15 @@
+'intro A' -> A()
+B(x),C(x) <-> B(x!1),C(x!1) @ 0.001,1.0
+'deg' B(x!_) -> 
+
+%init: 1000 * (B(x),C(x))
+
+%obs: 'A' A()
+%obs: 'B' B()
+
+%mod: $T>1.0 do 'intro A':=100.0
+%mod: $T>2.0 & ['A']>500 do 'intro A':=0.0
+%mod: $T>2.5 do 'deg':=0.0
+
+
+
