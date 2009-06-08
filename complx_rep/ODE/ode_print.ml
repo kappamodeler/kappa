@@ -976,36 +976,55 @@ let print_obs_in_matlab print file activity_map obsset =
   let _ = 
     IntMap.fold
       (fun i j bool -> 
-	 if IntSet.mem i obsset 
-	 then 
-	   let _ = 
-	     if bool then pprint_string print ",\n"
-	   in
-	   let _ = print_expr print true true j in 
-	     true
-	 else bool)
-      activity_map false in 
+	 try 
+	   begin 
+	     let i' = 
+	       match j 
+	       with None -> i
+		 | Some k -> k in 
+	     let _ = 
+	       if bool then pprint_string print ",\n"
+	     in
+	     let _ = print_expr print true true (try IntMap.find i' activity_map with Not_found -> raise Exit) in true 
+										   
+										   
+	   end
+	 with 
+	     Not_found -> bool)
+      obsset false in 
   let _ = pprint_string print "];\n" in () 
 				    
 
-let dump_rate_map print rate_map = 
+let dump_rate_map print rate_map flag_map = 
   let _ = match print.matlab with None -> ()
     | Some a -> 
 	let a = {print_none with matlab= Some a} in 
 	let _ = pprint_string a "global k = [\n" in 
-	let _ = 
+	let _,_,s = 
 	  IntMap.fold
-	    (fun i expr (j,bool) -> 
+	    (fun i expr (j,bool,s) -> 
 	       let _ = 
-		 if bool then pprint_string a ",\n"
+		 if bool then pprint_string a ","
 	       in 
+	       let _ = 
+		 if s<>"" then pprint_string a ("     %"^s) 
+	       in 
+	       let _ = if bool then pprint_string a "\n" in 
 	       let rec aux k = 
 		 if k=i then ()
 		 else (pprint_string a "0,\n";aux (k+1))
 	       in 
 	       let _ = aux (j+1) in 
-	       let _ = pprint_float a expr in 
-	       (i,true))
-	    rate_map (0,false) in 
-	let _ = pprint_string a "];\n\n" in () 
+	       let _ = pprint_float a expr in
+	       let s = 
+		 try 
+		   IntMap.find i flag_map 
+		 with 
+		     Not_found -> ""
+	       in 
+	       (i,true,s))
+	    rate_map (0,false,"") in 
+	let _ = pprint_string a ("%"^s) in 
+	let _ = pprint_string a "\n];\n\n" 
+	in () 
   in () 

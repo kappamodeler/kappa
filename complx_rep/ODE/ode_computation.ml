@@ -456,7 +456,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	  (
 	List.fold_left  
 	  (fun sol x -> 
-	    let lab = List.filter (fun a -> not a.r_clone && ((IntSet.mem a.Pb_sig.r_simplx.Rule.id  pb_obs)  or (is_access a))) x.labels in
+	    let lab = List.filter (fun a -> not a.r_clone && ((try None  = IntMap.find  a.Pb_sig.r_simplx.Rule.id  pb_obs with _ -> false)  or (is_access a))) x.labels in
 	    if lab = [] then sol
 	    else ({x with labels = lab})::sol)
 	  [] rs.rules)} in 
@@ -1060,14 +1060,16 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     let jacobian = Int2Map.empty in 
     let activity_map = IntMap.empty in 
     let rate_map = IntMap.empty in 
+    let flag_map = (StringMap.empty,IntMap.empty) in 
     let activity = 
       List.fold_left  
 	(fun ((mainprod:(int*expr) list Arraymap.t),
 	      (jacobian:expr list Int2Map.t),
 	      (activity_map:expr IntMap.t),
-	      (rate_map:float IntMap.t)) 
+	      (rate_map:float IntMap.t),
+	      (flag_map:int StringMap.t * string IntMap.t )) 
 	   x -> 
-	  let rule_key,rule_id,flag,kyn_factor,rate  =
+	  let rule_key,rule_id,flag,kyn_factor,rate,flag_map  =
 	    try 
 	      let label = List.hd (List.hd x.Pb_sig.rules).Pb_sig.labels in 
 	      let rule_id = name_of_rule label in 
@@ -1081,10 +1083,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			   Constf (1./.try 
 			      (float_of_int (IntMap.find label.Pb_sig.r_simplx.Rule.id  auto)) with Not_found -> error 1082)
 			 end)
-	      in 
-	      key,rule_id,flag,kyn_factor,rate
+	      in
+	      let flag_map = (StringMap.add rule_id key (fst flag_map),IntMap.add key rule_id (snd flag_map)) in 
+	      key,rule_id,flag,kyn_factor,rate,flag_map
 	    with 
-	      _ -> 0,"EMPTY","EMPTY",Constf 1.,1.
+	      _ -> 0,"EMPTY","EMPTY",Constf 1.,1.,flag_map
 	  in 
 	 
 	  let _ = 
@@ -1119,7 +1122,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	      Not_found -> 
 		y in
 	  if rule_id = "EMPTY" 
-	  then mainprod,jacobian,activity_map,rate_map
+	  then mainprod,jacobian,activity_map,rate_map,flag_map
 	  else 
 	    let _ = pprint_string print_ODE_latex "\\odegroup{" in 
 	    let _ = pprint_string print_ODE_latex "\\oderulename{" in 
@@ -1391,7 +1394,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		     (mainprod,jacobian))
 		 prod  
 		 (mainprod,jacobian)  in 
-	       let _ = pprint_string print_ODE_latex "}\n" in (fst x,snd x,activity_map,rate_map) 
+	       let _ = pprint_string print_ODE_latex "}\n" in (fst x,snd x,activity_map,rate_map,flag_map) 
 	     end
 	   else
 	     begin 
@@ -3072,14 +3075,14 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		   (mainprod,jacobian,activity_map,rate_map)   
 		   classes
 	       in 
-		 (mainprod,jacobian,activity_map,rate_map) 
+		 (mainprod,jacobian,activity_map,rate_map,flag_map) 
 	     end)
-	(mainprod,jacobian,activity_map,rate_map) 
+	(mainprod,jacobian,activity_map,rate_map,flag_map) 
 	system in 
 
-    let merge_prod,jacobian,activity_map,rate_map  = activity in 
+    let merge_prod,jacobian,activity_map,rate_map,flag_map  = activity in 
     
-    let nobs = IntSet.fold (fun _ i -> i+1) pb_obs 0 in 
+    let nobs = IntMap.fold (fun _ _ i -> i+1) pb_obs 0 in 
     let proj_solution solution = 
       let specie_map = 
 	Solution.AA.fold 
@@ -3281,7 +3284,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	 init 
 
 	[] in 
-    let _ = dump_rate_map print_ODE rate_map in 
+    let _ = dump_rate_map print_ODE rate_map (snd flag_map) in 
     let _ = 
       dump_prod 
 	(merge_prod,jacobian) 
@@ -3309,7 +3312,17 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     in 
     let _ = (match print_data with None -> () | Some a -> 
     (a.print_string "\n ")) in 
-    let _ = print_obs_in_matlab  print_ODE_matlab_obs file_ODE_matlab_obs activity_map pb_obs  in 
+    let pb_obs = 
+      IntMap.map 
+	(fun x -> 
+	   match x with None -> None
+	     | Some r -> 
+		 begin 
+		   try (Some (StringMap.find r (fst flag_map)))
+		   with Not_found -> (print_string r;error 3322)
+		 end)
+	pb_obs in 
+    let _ = print_obs_in_matlab  print_ODE_matlab_obs file_ODE_matlab_obs activity_map pb_obs   in 
     let _ = print_activity print_ODE_matlab_activity file_ODE_matlab_act activity_map in 
     let chanset = 
       List.fold_left

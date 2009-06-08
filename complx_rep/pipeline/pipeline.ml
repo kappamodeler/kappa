@@ -74,7 +74,7 @@ type 'a pipeline = {
     unmarshallize: file_name -> prefix -> output_channel -> 'a internal_encoding*output_channel;
     marshallize: file_name -> 'a step;
     build_pb: simplx_encoding -> prefix -> 'a internal_encoding; 
-    build_obs: simplx_encoding -> prefix -> int  -> 'a internal_encoding * IntSet.t ;
+    build_obs: simplx_encoding -> prefix -> int  -> 'a internal_encoding * string option IntMap.t;
     translate: interface -> 'a step;
     dump_ckappa: file_name -> compile -> 'a step;
     compile: interface -> compile -> 'a step;
@@ -248,7 +248,7 @@ module Pipeline =
 	 let _ = dump_chrono prefix l in ()
        and build_pb a prefix = Some {pb_init with simplx_encoding = a}
        and build_obs a prefix n = 
-	 match a with None -> None,IntSet.empty 
+	 match a with None -> None,IntMap.empty 
 	   | Some (a,b,c) -> 
 	       let fake_rules,obs,_  = 
 		 List.fold_right 
@@ -284,9 +284,11 @@ module Pipeline =
 			       Rule.intra = None
 			      }
 			    in
-			     (r::cont,IntSet.add fresh_id obs',fresh_id+1)
+			     (r::cont,IntMap.add fresh_id None obs',fresh_id+1)
+			| Solution.Occurrence s  -> (cont,
+					    IntMap.add fresh_id (Some s) obs',fresh_id+1) 
 		       | _ -> (cont,obs',fresh_id)
-		    ) c ([],IntSet.empty,n+1)
+		   ) c ([],IntMap.empty,n+1)
 
 	       in
 		 Some {pb_init with simplx_encoding =  Some (fake_rules,b,c)},obs
@@ -1405,7 +1407,7 @@ module Pipeline =
 		     (match pb.bdd_sub_views with None -> Some pb,(l,m)
 		     | Some sub ->
 			 let nrule = List.length boolean.system in 
-			 let pb',obs_list  = build_obs pb.simplx_encoding  prefix' nrule  in 
+			 let pb',obs_map  = build_obs pb.simplx_encoding  prefix' nrule  in 
 			   match pb' with 
 			       None -> pb',(l,m)
 			     |Some a' -> 
@@ -1458,7 +1460,7 @@ module Pipeline =
 				     with 
 					 true -> Annotated_contact_map.Flat
 				       | _ -> Annotated_contact_map.Compressed)
-				    obs_list 
+				    obs_map
 				    (l,m) in  
 			 let nfrag = 
 			   match opt with None -> None 
