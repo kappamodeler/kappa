@@ -211,19 +211,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     Some cpb -> cpb
   | None -> error 178 in
 
-
-(*  let obs_full = 
-    match pb.Pb_sig.simplx_encoding with 
-	Some (_,_,obs) -> obs 
-      | None -> error 215 in 
-
-  let obs = 
-    List.fold_left
-      (fun list obs -> 
-	  match obs with Solution.Concentration(_,a) -> a::list
-	    | _ -> list)
-      [] obs_full in *)
-
   let sites_of_agent x = 
     try 
       StringMap.find x cpb.Pb_sig.cpb_interface_of_agent 
@@ -439,7 +426,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab_activity = None }
   in
   let _ = pprint_ODE_head print_ODE print_ODE_matlab_obs print_ODE_matlab_activity file_ODE_matlab_aux file_ODE_matlab_jacobian file_ODE_matlab_size file_ODE_matlab_act file_ODE_matlab_obs in 
-  let _ = dump_line 312 in  
+  let _ = dump_line 429 in  
   let is_access = 
     match pb.unreachable_rules with 
       None -> (fun x -> true)
@@ -463,7 +450,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     rs in
 
     
-  let _ = dump_line 333 in 
+  let _ = dump_line 453 in 
 
   let simplify rs = 
     (* when a passive species is not tested, it can be written in the binding type *)
@@ -780,17 +767,17 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	let l = 
 	  FragmentMap.fold
 	    (fun l (n,aut) list -> 
-	      ((n,l)::list))
+	       ((n,l)::list))
 	    (!map) [] in 
-	  let l = List.sort (fun (a,b) (c,d) -> compare a c) l in
-	  let _ = pprint_string print_obs_latex (Latex.init_sep) in
-	  let bool = 
-	    List.fold_left
-	      (fun bool (n,expr) -> 
-		let _ = 
-		  if bool 
-		  then pprint_string print_obs_latex (Latex.sep) in 
-		let _ = 
+	let l = List.sort compare l in 
+	let _ = pprint_string print_obs_latex (Latex.init_sep) in
+	let bool = 
+	  List.fold_left
+	    (fun bool (n,expr) -> 
+	       let _ = 
+		 if bool 
+		 then pprint_string print_obs_latex (Latex.sep) in 
+	       let _ = 
 		  print_fragment 
 		    print_obs_latex 
 		    expr 
@@ -800,16 +787,16 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		    (fun a b -> keep_this_link a b annotated_contact_map)
 		    (Some "")
 		    true 
-		in
-		  true)
-	      false  
-	      l 
-	  in 
-	  let _ = if bool then pprint_string print_obs_latex Latex.final_sep in 	  	  
-	  let _ =
-	    List.fold_left
-	      (fun bool (n,expr) -> 
-		let f print_obs expr = 
+	       in
+		 true)
+	    false  
+	    l 
+	in 
+	let _ = if bool then pprint_string print_obs_latex Latex.final_sep in 	  	  
+	let _ =
+	  List.fold_left
+	    (fun bool (n,expr) -> 
+	       let f print_obs expr = 
 		   ((print_fragment 
 		       print_obs
 		       expr
@@ -819,51 +806,51 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		       (fun a b -> keep_this_link a b annotated_contact_map) 
 		       (Some "()")
 		       false
-                       ):unit) 
-		in
-		let print_obs = {print_obs with data = None} in 
-		let _ = 
-		  pprint_obs 
-		    print_obs 
-		    (f print_obs) 
-		    n
+                    ):unit) 
+	       in
+	       let print_obs = {print_obs with data = None} in 
+	       let _ = 
+		 pprint_obs 
+		   print_obs 
+		   (f print_obs) 
+		   n
 		    expr 
-		    pb in 
+		   pb in 
+		 true)
+	    false  
+	    l in  
+	let _ =
+	  List.fold_left
+	    (fun bool (n,expr) -> 
+	       let f print_obs expr = 
+		 ((print_fragment 
+		     print_obs
+		     expr
+		     string_txt 
+		     ode_handler 
+		     view_data_structure 
+		     (fun a b -> keep_this_link a b annotated_contact_map) 
+		     (Some "()")
+		     false
+                  ):unit) 
+	       in
+	       let _ = 
+		 pprint_obs 
+		   print_only_data
+		   (f print_only_data) 
+		   n
+		   expr 
+		   pb in 
 		true)
-	      false  
-	      l in  
-	  let _ =
-	    List.fold_left
-	      (fun bool (n,expr) -> 
-		let f print_obs expr = 
-		   ((print_fragment 
-		       print_obs
-		       expr
-		       string_txt 
-		       ode_handler 
-		       view_data_structure 
-		       (fun a b -> keep_this_link a b annotated_contact_map) 
-		       (Some "()")
-		       false
-                       ):unit) 
-		in
-		let _ = 
-		  pprint_obs 
-		    print_only_data
-		    (f print_only_data) 
-		    n
-		    expr 
-		    pb in 
-		true)
-	      false  
-	      (List.rev l)  
+	    false  
+	    (List.rev l)  
 	    
-      in
+	in
 	  () in dump),
       size 
     in
-    hash_tp_list,dump,size in 
-
+      hash_tp_list,dump,size in 
+    
 
   (*****************************************)
   (* WE CREATE THE HASHTABLE FOR FRAGMENTS *)
@@ -1092,7 +1079,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	 
 	  let _ = 
 	    if debug then 
-	      let _ = print_string "RULE (604) \n " in
+	      let _ = dump_line 1082 in 
 	      let _ = print_string rule_id in 
 	      let _ = print_newline () in 
 	      () 
@@ -1153,12 +1140,12 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		   get_denum_handling_compatibility=get_denum_handling_compatibility;
 		   get_bond=(fun x -> x.bond);
 		   get_fragment_extension=get_fragment_extension} in 
-	     let _ = dump_line 960 in 
+	     let _ = dump_line 1143 in 
 
 	    if trivial_rule2 (contact,keep_this_link) x
 	    then 
 	      begin
-		let _ = dump_line 965 in 
+		let _ = dump_line 1148 in 
 		let deal_with (target_type,target_site,origin_type,origin_site) kyn (prod,rate) = 
 		  let _ = 
 		    if debug
@@ -1192,7 +1179,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			with Not_found -> 
 			  error 795
 		      in
-		      let _ = dump_line 999 in 
+		      let _ = dump_line 1182 in 
 		     let tp_list = 
 		       List.filter
 			 (fun tp_i -> 
@@ -1398,7 +1385,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	     end
 	   else
 	     begin 
-	       let _ = dump_line 1149 in 
+	       let _ = dump_line 1388 in 
 	       let classes = 
 		 List.map  
 		   (fun xx -> 
@@ -1448,7 +1435,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		       [])
 		   x.Pb_sig.rules
 	       in
-	       let _ = dump_line 646 in 
+	       let _ = dump_line 1438 in 
 	       let classes = 
 		 List.map 
 		   (fun x -> 
@@ -1460,17 +1447,17 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			   (List.filter 
 			      (fun x -> 
 				match x with 
-				  B(a,_,_),_ | AL((a,_,_),_),_ | M((a,_,_),_),_ when StringSet.mem a cla -> true 
+				  H(a,_),false | B(a,_,_),_ | AL((a,_,_),_),_ | M((a,_,_),_),_ when StringSet.mem a cla -> true 
 				| L((a,_,_),(b,_,_)),_ when StringSet.mem a cla or StringSet.mem b cla -> true
 				| _ -> false)
 			      xx.Pb_sig.injective_guard) in
 			 let bmap =    
 			   List.fold_left 
 			     (fun map (b,bool) -> 
-			       match b with 
-				 B(_) 
-			       | AL(_) | M(_) -> BMap.add (downgrade_b b) bool map 
-			       | L((a,b,c),(d,e,f)) -> 
+			       match b,bool with 
+				 B(_),_ | H(_),false 
+			       | AL(_),_ | M(_),_ -> BMap.add (downgrade_b b) bool map 
+			       | L((a,b,c),(d,e,f)),_ -> 
 				   if bool then 
 				     BMap.add 
 				       (downgrade_b (AL((a,b,c),(e,f))))
@@ -1492,7 +1479,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			   )
 		       x) 
 		   classes in 
-	       let _ = dump_line 690 in 
+	       let _ = dump_line 1482 in 
 	       let classes = 
 		 List.map 
 		   (fun x -> 
@@ -1511,7 +1498,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			  {cla with roots = Some roots}) x))
 		   classes 
 	       in
-	       let _ = dump_line 709 in 
+	       let _ = dump_line 1501 in 
 	       let classes = 
 		 List.map 
 		   (fun x -> 
@@ -1558,9 +1545,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					  let restricted_blist = 
 					    List.filter 
 					      (fun (b,bool) -> 
-						match b with 
-						  B(b',_,_) | AL((b',_,_),_) | M((b',_,_),_) when b' = a -> true 
-						| L((b',_,_),(c',_,_)) when b'=a or c'=a -> true 
+						match b,bool with 
+						    H(b',_),false| B(b',_,_),_ | AL((b',_,_),_),_ | M((b',_,_),_),_ when b' = a -> true 
+						| L((b',_,_),(c',_,_)),_ when b'=a or c'=a -> true 
 						| _ -> false)
 					      blist in
 					  let tp_list = 
@@ -1665,7 +1652,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	       
 	      
 	       
-	       let _ = dump_line 842 in 
+	       let _ = dump_line 1655 in 
 	       let classes = 
 		 List.map 
 		   (fun x -> 
@@ -1696,325 +1683,431 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		   classes in 
 	       
 	      
-	       let _ = dump_line 882 in 
+	       let _ = dump_line 1686 in 
 	       let mainprod,jacobian,activity_map,rate_map = 
 		 List.fold_left  
 		   (fun (mainprod,jacobian,activity_map,
 			 (rate_map:float IntMap.t)) x -> 
-		     let _ = dump_line 888 in
+		     let _ = dump_line 1691 in
 		     let prod = Intmap.empty in 
-		     if (*control.remove = []
-			 && *)
-		       List.for_all 
-			 (fun (b,bool) -> match b with H _ -> not bool | _ -> true) 
-			 control.context_update
-			 
-		     then (* No agent creation or agent suppresion *)
-		       let _ = dump_line 897 in
-		       let rate_kin_map = (*map each connected component to the contribution in the kinetic rate *)
-			 snd (
+		     let rate_kin_map = (*map each connected component to the contribution in the kinetic rate *)
+		       snd (
 			 List.fold_left 
 			   (fun (i,map) cla -> 
-			     i+1,IntMap.add i cla.rate map)
+			      i+1,IntMap.add i cla.rate map)
 			   (1,IntMap.empty) x) in
 		       
-		       let _ = 
-			 if debug
-			 then 
-			   let _ = print_string "ACTIVITY\n" in 
-			   let _ = 
-			     IntMap.iter
-			       (fun i rate -> 
-				 pprint_int print_debug i ;
-				 pprint_string print_debug " ";
-				 (match rate with None -> () 
-				 | Some rate -> print_expr print_debug true true rate);
-				 pprint_newline print_debug)
-			       rate_kin_map in
+		     let _ = 
+		       if debug
+		       then 
+			 let _ = print_string "ACTIVITY\n" in 
+			 let _ = 
+			   IntMap.iter
+			     (fun i rate -> 
+				pprint_int print_debug i ;
+				pprint_string print_debug " ";
+				(match rate with None -> () 
+				   | Some rate -> print_expr print_debug true true rate);
+				pprint_newline print_debug)
+			     rate_kin_map in
 			   () in 
-		       let activity_map = 
-			 IntMap.add rule_key 
-			   (simplify_expr (IntMap.fold 
-			   (fun _ factor expr -> 
-			      match factor with None -> expr 
-				| Some factor -> Mult(expr,factor))
-			   rate_kin_map kyn_factor))
-			   activity_map 
-			   in 
-		       let rate_map = 
-			 IntMap.add rule_key rate rate_map 
-		       in 
-			 
-		       let consume_list,product_list,sl_list  = 
-			 snd (
-			   List.fold_left 
-			(*1*)
-			     (fun (i,(c_list,p_list,sl_list)) cla -> 
-				let xx = cla.rule in 
-				let x  = cla.agents_id in 
-				let b  = get_guard_as_a_list_of_class cla in 
-				let b2 = get_guard_as_a_map_of_class cla in 
-				let rep = 
-				  match cla.subclass 
-				  with None -> error 921
-			       | Some a -> a in 
-				let bmap = b2 in 
-				let agents_compo = x in    
-				let rule_flag  = (List.hd xx.Pb_sig.labels).Pb_sig.r_id in
-				let _ = 
-				  if debug then 
-				    let _ = print_string "RULE: " in
-				    let _ = print_string rule_flag in
-				    let _ = print_newline () in () 
-				in 
-				let filter_context_update  context_update agents = 
-				  List.fold_left 
-				    (fun sol (b,bool) ->
-				       match b,bool with 
-					   H(a,a'),_ ->  sol
-					 | L((a,a',b'),(c,c',d')),_ -> 
-					     let sol  =
-					       if StringSet.mem a agents then 
-						 (AL((a,a',b'),(c',d')),bool)::sol 
-					       else
-						 sol in 
-					     let sol = 
-					       if StringSet.mem c agents then 
-						 (AL((c,c',d'),(a',b')),bool)::sol 
-					       else 
-						 sol in
-					       sol
-					 |	AL((a,a',b'),(c,d)),_ -> 
-						  if StringSet.mem a agents then 
-						    (AL((a,a',b'),(c,d)),bool)::sol 
-						  else sol
-					 |	B((a,a',b)),_ -> 
-						  if StringSet.mem a agents then 
-						    (B(a,a',b),bool)::sol
-						  else
-						    sol 
-					 |	M((a,a',b),m),_ -> 
-						  if StringSet.mem a agents then 
-						    (M((a,a',b),m),bool)::sol
-						  else sol
-					 |	_ -> sol) [] context_update in
-				let _ = dump_line 958 in 
-				let rep = 
-				  match rep 
-				  with t::_ -> t 
-				    | [] -> [] in 
-				let blist = b in 
-				  i+1,List.fold_left
-				    (fun (*2*)(c_list,p_list,sl_list) subcla -> 
-				       let x = subcla.agent_list in
-				       let b = get_fragment_extension subcla in
-				       let rule = xx in 
-				       let x = 
-					 List.fold_left 
-				     (fun sol x -> StringSet.add x sol)
-					   StringSet.empty  x in 
-				       let other_agents = StringSet.diff agents_compo x in 
-				       let _ = 
-					 if debug  then 
-					   (print_string "AGENTS: ";
-					    StringSet.iter print_string x;
-					    print_newline ();
-					    print_string "OTHERS: ";
-					    StringSet.iter print_string other_agents;
-					    print_newline ()) in 
-				       let kyn_mod = 
-					 (*3*)
-					 (begin
-					    let root = StringSet.min_elt x in
-					    let rec aux l  sol = 
-					      match l with 
-						  [] -> sol
-						| (guard,to_visit_same_class,to_visit_other_class,black,prefix,same_class_agent,other_class)::q -> 
-						    begin
-						      match to_visit_same_class with 
-							  [] -> 
-							    begin
-						   match to_visit_other_class 
-						   with [] -> 
-						     aux 
-						       q 
-						       ((init_subclass 
-							   (guard,prefix,same_class_agent)::other_class)::sol)
-						     | (g,a)::b -> 
-							 aux 
-							   (((g,[a],b,black,empty_species,[],(init_subclass (guard,prefix,same_class_agent))::other_class))::q) sol 
-							    end
-							      
-							| a::b -> 
-							    if StringSet.mem a black  or  not (List.exists (fun x -> match x with H(x,_),b -> (
-													      (x=a && b)) | 
-														_  -> false) xx.Pb_sig.injective_guard) 
-							    then 
-							      ( aux ((guard,b,to_visit_other_class,black,prefix,same_class_agent,other_class)::q) sol)
-							    else
-							      let restricted_blist = 
-								List.filter 
-								  (fun (b,bool) -> 
-								     match b with 
-									 B(b',_,_) | AL((b',_,_),_) | M((b',_,_),_) when b' = a -> true 
-								       | L((b',_,_),(c',_,_)) when b'=a or c'=a -> true 
-								       | _ -> false)
-								  blist in
-							      let tp_list = 
-								compute_compatible_views_id 
-								  blist 
-								  restricted_blist 
-								  bmap 
-								  a 
-								  (specie_of_id,agent_to_int_to_nlist,view_of_tp_i,ode_handler)  in 
-								
-								
-								
-							      let bound_agent_list_same_class,
-								bound_agent_list_other_class = 
-								List.fold_left 
-								  (fun 
-								     (same,other) b 
-								     ->
-								       let f (a1,a2,a3,a5,a6) (same,other) = 						 let a4 = 
-									 let rec aux l = 
-									   match l with 
-									       [] -> None 
-									     | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b4,b5,b6,b2,b3) -> Some b1
-									     | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b1,b2,b3,b5,b6) -> Some b4
-									     | _::q -> aux q in
-									   aux (cla.extended_passives) in
-									 (match a4 with 
-									      None -> (same,other)
-									    | Some a4 when StringSet.mem a4 black -> (same,other)
-									    | Some a4 -> 
-										if  not (List.exists (fun x -> x=(H(a4,a5),true)) rule.Pb_sig.injective_guard) then 
-										  same,other
-										else
-										  if keep_this_link 
-										    (a2,a3) (a5,a6)  
-										  then 
-										    ((a4::same,other))
-										  else
-										    (same,(Some (a5,a6,a2,a3),a4)::other))
-									   
-								       in 
-									 match b with 
-									     AL((a1,a2,a3),(a5,a6)),true -> f (a1,a2,a3,a5,a6) (same,other)
-									   | L((a1,a2,a3),(a4,a5,a6)),true -> 
-									       let same,other = 
-										 if a1=a then f (a1,a2,a3,a5,a6) (same,other)
-										 else same,other in
-									       let same,other = 
-										 if a4=a then f (a4,a5,a6,a2,a3) (same,other) 
-										 else same,other 
-									       in same,other
-									   | _ -> same,other )
-								  (to_visit_same_class,to_visit_other_class)
-								  restricted_blist in
-								aux 
-								  (List.fold_left
-								     (fun sol x -> (guard,
-										    bound_agent_list_same_class,
-										    bound_agent_list_other_class,
-										    StringSet.add a black,
-										    plug_views_in_subspecies a x prefix,
-										    a::same_class_agent,
-										    other_class)::sol) 
-								     q
-								     tp_list) 
-								  sol
-						    end
-					    in
-					    let rep_explode  =
-					      (aux [None,[root],[],StringSet.empty,empty_species,[],[]] []) in
-					      
-					      
-					      (
-						
-						
-						let rep_explode = 
-						  List.map 
-						    (fun x -> 
-						       List.filter 
-							 (fun subclass  -> 
-							    match subclass.bond  with None -> false
-							      |  _ -> true )
-							 x) rep_explode in
-						let rep_explode = 
-						  List.sort compare rep_explode in
-						let rec aux old rep_explode sol = 
-						  match rep_explode with 
-						      [] -> sol
-						    | t::q when t=old -> aux old q sol
-						    | t::q -> aux t q (t::sol)
-						in
-						let rep_explode = 
-						  match rep_explode 
-						  with [] -> []
-						    | t::q -> aux t q [t]
-						in
-						let _ = 
-						  if debug then
-						    (let _ = print_string "EXPLODE" in 
-						       List.iter 
-							 (fun x -> 
-							    List.iter 
-							      (fun subclass -> 
-								 (match subclass.bond with None -> print_string "NONE"
-								    |	Some (a,b,c,d) -> 
-									  (
-									    print_string a;
-									    print_string b;
-									    print_string c;
-									    print_string d;
-									    print_string ";"));
-								 List.iter
-								   (fun d -> 
-								      (fun (i,j) -> 
-									 print_int i;
-									 print_string "#";
-									 print_int j)
-									(hash_subspecies d);
-								      print_newline ()) 
-								   (complete_subspecies (subclass.subspecies));)
-							      x;
-							    print_newline ()) 
-							 rep_explode) 
-						in 
-						  List.fold_left 
-						    (fun (expr) l -> 
-						       Plus(expr,
-							    fst 
-							      (List.fold_left 
-								 (fun (expr,black) l -> 
-								    match l.bond  with None -> expr,black
-								      | (Some (a,s,a',s')) ->
-									  let b = l.subspecies in 
-									  let d = get_denum_handling_compatibility (a,s,a',s')  in
-									    (
-									      if List.length d = 1 && List.hd d = List.hd (complete_subspecies_handling_compatibility  b)  
-									      then 
-										expr 
-									      else
-							   Mult
-							     (expr,
-							      Div 
-								(
-								  List.fold_left 
-								(fun expr d -> 
-								  Plus(expr,expr_of_var expr_handler d))
-								(Const 0)  
-								(complete_subspecies_handling_compatibility  b),
-							      expr_of_denum expr_handler d))),
-							 String4Set.add ((a,s),(a',s')) black)
-						   ((Const 1),String4Set.empty)
-						   l)))
-				       (Const 0)
-				       rep_explode)
-				       
-				   end) in 
-			      	 
+		     let activity_map = 
+		       IntMap.add rule_key 
+			 (simplify_expr (IntMap.fold 
+					   (fun _ factor expr -> 
+					      match factor with None -> expr 
+						| Some factor -> Mult(expr,factor))
+					   rate_kin_map kyn_factor))
+			 activity_map 
+		     in 
+		     let rate_map = 
+		       IntMap.add rule_key rate rate_map 
+		     in 
+		       
+		     let _,(consume_list,product_list,sl_list)  = 
+		       (
+			 List.fold_left 
+			   (*1*)
+			   (fun (i,(c_list,p_list,sl_list)) cla -> 
+			      let xx = cla.rule in 
+			      let x  = cla.agents_id in 
+			      let b  = get_guard_as_a_list_of_class cla in 
+			      let b2 = get_guard_as_a_map_of_class cla in 
+			      let filter_context_update  context_update agents = 
+				List.fold_left 
+				  (fun sol (b,bool) ->
+				     match b,bool with 
+					 H(a,a'),_ ->  sol
+				       | L((a,a',b'),(c,c',d')),_ -> 
+					   let sol  =
+					     if StringSet.mem a agents 
+					     then 
+					       (AL((a,a',b'),(c',d')),bool)::sol 
+					     else
+					       sol in 
+					   let sol = 
+					     if StringSet.mem c agents 
+					     then 
+					       (AL((c,c',d'),(a',b')),bool)::sol 
+					     else 
+					       sol in
+					     sol
+				       | AL((a,a',b'),(c,d)),_ -> 
+					   if StringSet.mem a agents 
+					   then 
+					     (AL((a,a',b'),(c,d)),bool)::sol 
+					   else 
+					     sol
+				       | B((a,a',b)),_ -> 
+					   if StringSet.mem a agents 
+					   then 
+					     (B(a,a',b),bool)::sol
+					   else
+					     sol 
+				       | M((a,a',b),m),_ -> 
+					   if StringSet.mem a agents 
+					   then 
+					     (M((a,a',b),m),bool)::sol
+					   else sol
+				       | _ -> sol) 
+				  [] 
+				  context_update 
+			      in
+			      let _ = dump_line 1776 in 
+			      let rep = 
+				match cla.subclass 
+				with None -> error 921
+				  | Some a -> a in 
+				match b with 
+				    [H (agent_id,agent),false] -> (* Agent creation *) 
+				      begin 
+					let _ = dump_line 1785 in 
+					let control = 
+					  filter_context_update 
+					    control.context_update
+					    (StringSet.singleton agent_id)
+					in
+					let subviews = 
+					  try StringMap.find agent annotated_contact_map.subviews
+					  with Not_found -> [] 
+					in 
+					let p_list  = 
+					  List.fold_left 
+					    (fun p_list subview -> 
+					       let blist = 
+						 List.filter 
+						   (fun (b,bool) -> 
+						      match b with 
+							  M((_,_,s),_) | B(_,_,s) | AL((_,_,s),_) -> StringSet.mem s subview.kept_sites
+							| _ -> false)
+						   control  
+					       in 
+					       let bmap = 
+						 StringSet.fold 
+						   (fun site  (bmap:bool BMap.t) -> 
+						      let (bmap:bool BMap.t) = 
+							List.fold_left 
+							  (fun bmap m -> 
+							     BMap.add (M((agent,agent,site),m)) false bmap)
+							  bmap 
+							  (
+							    try
+							      String2Map.find (agent,site) 
+								(match cpb.Pb_sig.cpb_mark_site 
+								 with 
+								     Some a -> a 
+								   | None -> error 1825)
+							    with 
+								Not_found -> [])
+						      in 
+						      let linklist = 
+							try
+							  String2Map.find (agent,site) 
+							    (match cpb.Pb_sig.cpb_contact 
+							     with 
+								 Some a -> a 
+							       | None -> error 1835)
+							with 
+							    Not_found -> [] in 
+						      let (bmap:bool BMap.t) = 
+							List.fold_left
+							  (fun bmap l -> 
+							     BMap.add (AL((agent,agent,site),l)) false bmap)
+							  (BMap.add (B(agent,agent,site)) false bmap)
+							  (linklist) in 
+							(bmap:bool BMap.t))
+						   subview.kept_sites 
+						   BMap.empty 
+					       in 
+					       let bmap = 
+						 List.fold_left 
+						   (fun bmap (b,bool) -> BMap.add b bool bmap)
+						   bmap blist 
+					       in 
+					       let blist = 
+						 BMap.fold 
+						   (fun b bool l -> (b,bool)::l)
+						   bmap [] in 
+						      
+					       let blist = List.sort compare blist in 
+					       let new_p = 
+						 try 
+						   (plug_views_in_subspecies 
+						      agent_id 
+						      (
+							StringBListMap.find  
+							  (agent,blist) 
+							  views_data_structures.blist_to_template)
+						      empty_species,empty_species,1,[])
+						 with 
+						     Not_found -> 
+						       (print_string "Invalid list of boolean attribute:\n";
+							print_string agent;
+							print_newline ();
+							List.iter 
+							  (fun (b,bool) -> 
+							     print_string (string_of_b b);
+							     print_string ":";
+							     print_string (if bool then "T" else "F");
+							     print_newline ())
+							  blist;
+							error 1828)
+					       in 
+					     	 (new_p)::p_list)
+					    p_list subviews 
+					in 
+					  (i+1,(c_list,p_list,sl_list))
+				      end
+				  | _ -> (* REGULAR STEP (not the creation of an agent *)
+				      begin 
+					let bmap = b2 in 
+					let agents_compo = x in    
+					let rule_flag  = (List.hd xx.Pb_sig.labels).Pb_sig.r_id in
+					let _ = 
+					  if debug then 
+					    let _ = print_string "RULE: " in
+					    let _ = print_string rule_flag in
+					    let _ = print_newline () in () 
+					in 
+					  
+				
+					let _ = dump_line 1894 in 
+					let rep = 
+					  match rep 
+					  with t::_ -> t 
+					    | [] -> [] 
+					in 
+					let blist = b in 
+					  i+1,
+					List.fold_left
+					  (fun (*2*)(c_list,p_list,sl_list) subcla -> 
+					     let x = subcla.agent_list in
+					     let b = get_fragment_extension subcla in
+					     let rule = xx in 
+					     let x = 
+					       List.fold_left 
+						 (fun sol x -> StringSet.add x sol)
+						 StringSet.empty  x in 
+					     let other_agents = StringSet.diff agents_compo x in 
+					     let _ = 
+					       if debug  then 
+						 (print_string "AGENTS: ";
+						  StringSet.iter print_string x;
+						  print_newline ();
+						  print_string "OTHERS: ";
+						  StringSet.iter print_string other_agents;
+						  print_newline ()) in 
+					     let kyn_mod = 
+					       (*3*)
+					       (begin
+						  let root = StringSet.min_elt x in
+						  let rec aux l  sol = 
+						    match l with 
+							[] -> sol
+						      | (guard,to_visit_same_class,to_visit_other_class,black,prefix,same_class_agent,other_class)::q -> 
+							  begin
+							    match to_visit_same_class with 
+								[] -> 
+								  begin
+								    match to_visit_other_class 
+								    with [] -> 
+								      aux 
+									q 
+									((init_subclass 
+									    (guard,prefix,same_class_agent)::other_class)::sol)
+								      | (g,a)::b -> 
+									  aux 
+									    (((g,[a],b,black,empty_species,[],(init_subclass (guard,prefix,same_class_agent))::other_class))::q) sol 
+								  end
+								    
+							      | a::b -> 
+								  if StringSet.mem a black  or  not (List.exists (fun x -> match x with H(x,_),b -> (
+														    (x=a && b)) | 
+														      _  -> false) xx.Pb_sig.injective_guard) 
+								  then 
+								    ( aux ((guard,b,to_visit_other_class,black,prefix,same_class_agent,other_class)::q) sol)
+								  else
+								    let restricted_blist = 
+								      List.filter 
+									(fun (b,bool) -> 
+									   match b with 
+									       B(b',_,_) | AL((b',_,_),_) | M((b',_,_),_) when b' = a -> true 
+									     | L((b',_,_),(c',_,_)) when b'=a or c'=a -> true 
+									     | _ -> false)
+									blist in
+								    let tp_list = 
+								      compute_compatible_views_id 
+									blist 
+									restricted_blist 
+									bmap 
+									a 
+									(specie_of_id,agent_to_int_to_nlist,view_of_tp_i,ode_handler)  in 
+								      
+								      
+								      
+								    let bound_agent_list_same_class,
+								      bound_agent_list_other_class = 
+								      List.fold_left 
+									(fun 
+									   (same,other) b 
+									   ->
+									     let f (a1,a2,a3,a5,a6) (same,other) = 						 
+									       let a4 = 
+										 let rec aux l = 
+										   match l with 
+										       [] -> None 
+										     | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b4,b5,b6,b2,b3) -> Some b1
+										     | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b1,b2,b3,b5,b6) -> Some b4
+										     | _::q -> aux q in
+										   aux (cla.extended_passives) in
+										 (match a4 with 
+										      None -> (same,other)
+										    | Some a4 when StringSet.mem a4 black -> (same,other)
+										    | Some a4 -> 
+											if  not (List.exists (fun x -> x=(H(a4,a5),true)) rule.Pb_sig.injective_guard) then 
+											  same,other
+											else
+											  if keep_this_link 
+											    (a2,a3) (a5,a6)  
+											  then 
+											    ((a4::same,other))
+											  else
+											    (same,(Some (a5,a6,a2,a3),a4)::other))
+										   
+									     in 
+									       match b with 
+										   AL((a1,a2,a3),(a5,a6)),true -> f (a1,a2,a3,a5,a6) (same,other)
+										 | L((a1,a2,a3),(a4,a5,a6)),true -> 
+										     let same,other = 
+										       if a1=a then f (a1,a2,a3,a5,a6) (same,other)
+										       else same,other in
+										     let same,other = 
+										       if a4=a then f (a4,a5,a6,a2,a3) (same,other) 
+										       else same,other 
+										     in same,other
+										 | _ -> same,other )
+									(to_visit_same_class,to_visit_other_class)
+									restricted_blist in
+								      aux 
+									(List.fold_left
+									   (fun sol x -> (guard,
+											  bound_agent_list_same_class,
+											  bound_agent_list_other_class,
+											  StringSet.add a black,
+											  plug_views_in_subspecies a x prefix,
+											  a::same_class_agent,
+											  other_class)::sol) 
+									   q
+									   tp_list) 
+									sol
+							  end
+						  in
+						  let rep_explode  =
+						    (aux [None,[root],[],StringSet.empty,empty_species,[],[]] []) in
+						    (
+						      let rep_explode = 
+							List.map 
+							  (fun x -> 
+							     List.filter 
+							       (fun subclass  -> 
+								  match subclass.bond  with None -> false
+								    |  _ -> true )
+							       x) rep_explode in
+						      let rep_explode = 
+							List.sort compare rep_explode in
+						      let rec aux old rep_explode sol = 
+							match rep_explode with 
+							    [] -> sol
+							  | t::q when t=old -> aux old q sol
+							  | t::q -> aux t q (t::sol)
+						      in
+						      let rep_explode = 
+							match rep_explode 
+							with [] -> []
+							  | t::q -> aux t q [t]
+						      in
+						      let _ = 
+							if debug then
+							  (let _ = print_string "EXPLODE" in 
+							     List.iter 
+							       (fun x -> 
+								  List.iter 
+								      (fun subclass -> 
+									 (match subclass.bond with None -> print_string "NONE"
+									    |	Some (a,b,c,d) -> 
+										  (
+										    print_string a;
+										    print_string b;
+										    print_string c;
+										    print_string d;
+										    print_string ";"));
+									 List.iter
+									   (fun d -> 
+									      (fun (i,j) -> 
+										 print_int i;
+										 print_string "#";
+										 print_int j)
+										(hash_subspecies d);
+									      print_newline ()) 
+									   (complete_subspecies (subclass.subspecies));)
+								    x;
+								  print_newline ()) 
+							       rep_explode) 
+						      in 
+							List.fold_left 
+							  (fun (expr) l -> 
+							     Plus(expr,
+								  fst 
+								    (List.fold_left 
+								       (fun (expr,black) l -> 
+									  match l.bond  with None -> expr,black
+									    | (Some (a,s,a',s')) ->
+										let b = l.subspecies in 
+										let d = get_denum_handling_compatibility (a,s,a',s')  in
+										  (
+										    if List.length d = 1 && List.hd d = List.hd (complete_subspecies_handling_compatibility  b)  
+										    then 
+										      expr 
+										    else
+										      Mult
+											(expr,
+											 Div 
+											   (
+											     List.fold_left 
+											       (fun expr d -> 
+												  Plus(expr,expr_of_var expr_handler d))
+											       (Const 0)  
+											       (complete_subspecies_handling_compatibility  b),
+											     expr_of_denum expr_handler d))),
+										String4Set.add ((a,s),(a',s')) black)
+								       ((Const 1),String4Set.empty)
+								       l)))
+							  (Const 0)
+							  rep_explode)
+							
+						end) 
+					     in 
+			      		       
 				 let context_update = filter_context_update control.context_update x in
 				 let _  = 
 				   if debug
@@ -2573,62 +2666,63 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				   (consume_list,
 				    product_list,
 				    semi_list)
-				     )
+					  ) 
+					  (*2*)
 			       (c_list,p_list,sl_list)
-			       rep)
+			       rep 
+				      end)
 			   
-			   (1,([],[],[])) x) in  
-		       
-		       let new_binding = 
-			 List.fold_left
-			   (fun n_b (b,bool) -> 
-			     match b with 
-			       L((a,a',c),(b,b',c')) 
-			       when keep_this_link (a',c) (b',c') 
-			       -> 
-				 if bool 
-				 then 
-				   (a,a',c,b,b',c')::n_b
-				 else
-				   n_b
-			     | _ -> n_b
-				   )
-			   [] 
-			   control.Pb_sig.context_update 
-		       in 
-		       
-		       
-		       let p_list = 
-			 fst
-			   begin 
-			     List.fold_left 
-			       (fun (product_list,hash) (species,species_to_hash,k1,k2) -> 
-				 let _ = 
-				   if debug 
-				   then 
-				     print_string "BEGIN_SPLIT"
-				 in
-				 let connected_components = 
-				   split_subspecies  views_data_structures ode_handler annotated_contact_map species in 
-				 let _ = 
-				   if debug 
-				   then 
-				     print_string "END_SPLIT"
-				 in
-				 List.fold_left 
-				   (fun (product_list,hash) a -> 
-				     let (a_frag,_) = canonical_form a in
-				     let key = (root_of_species a,a_frag) in 
-				     let _ = 
-				       if debug 
-				       then 
-					 let _ = print_rpath (fst (root_of_species a)) in
-					 let _ = print_int (snd (root_of_species a)) in 
-					 let _ = print_newline () in
-					 let _ = print_string "FRAGMENT \n" in 
-					 let _ = F.print_fragment   a_frag in
-					 let _ = print_newline () in
-					 () in 
+			   (1,([],[],[])) x) 
+		     in  
+		     let _ = dump_line 2677 in 
+		     let new_binding = 
+		       List.fold_left
+			 (fun n_b (b,bool) -> 
+			    match b with 
+				L((a,a',c),(b,b',c')) 
+				  when keep_this_link (a',c) (b',c') 
+				    -> 
+				      if bool 
+				      then 
+					(a,a',c,b,b',c')::n_b
+				      else
+					n_b
+			      | _ -> n_b
+			 )
+			 [] 
+			 control.Pb_sig.context_update 
+		     in 
+		     let p_list = 
+		       fst
+			 begin 
+			   List.fold_left 
+			     (fun (product_list,hash) (species,species_to_hash,k1,k2) -> 
+				let _ = 
+				  if debug 
+				  then 
+				    print_string "BEGIN_SPLIT"
+				in
+				let connected_components = 
+				  split_subspecies  views_data_structures ode_handler annotated_contact_map species in 
+				let _ = 
+				  if debug 
+				  then 
+				    print_string "END_SPLIT"
+				in
+				  List.fold_left 
+				    (fun (product_list,hash) a -> 
+				       let (a_frag,_) = canonical_form a in
+				       let key = (root_of_species a,a_frag) in 
+				       let _ = 
+					 if debug 
+					 then 
+					   let _ = print_rpath (fst (root_of_species a)) in
+					   let _ = print_int (snd (root_of_species a)) in 
+					   let _ = print_newline () in
+					   let _ = print_string "FRAGMENT \n" in 
+					   let _ = F.print_fragment   a_frag in
+					   let _ = print_newline () in
+					     () in 
 				     let old_hash = 
 				       try 
 					 RootedFragmentMap.find key  hash 
@@ -3067,10 +3161,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		       in 
 		       let _ = pprint_string print_ODE_latex "}\n" in 
 			 fst x,snd x,activity_map,rate_map 
-		     else
-		       let _ = pprint_string print_ODE_latex "}" in 
-		       let _ = dump_line 2137 
-		       in (mainprod,jacobian,activity_map,rate_map) 
 		   )
 		   (mainprod,jacobian,activity_map,rate_map)   
 		   classes
@@ -3230,6 +3320,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	      sol l)
 	      map 
 	      (Arraymap.create 0) in 
+
+
     let init = 	
       let _ = 
 	if !Config_complx.trace_rule_iteration 

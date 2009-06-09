@@ -529,3 +529,16 @@ let cut f =
   with 
     _ -> "FAIL"^f
   
+let normalize_list l = 
+  let a = List.sort compare l in 
+  let rec vide l old sol = 
+    match l with 
+	t::q when old = t -> vide q old sol
+      | t::q -> vide q t (t::sol)
+      | [] -> List.rev sol 
+  in 
+    match a with t::q -> vide q t [t]
+      | [] -> [] 
+	  
+	    
+    
