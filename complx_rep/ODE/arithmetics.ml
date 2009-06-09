@@ -10,6 +10,7 @@ type expr =
     Letter of string 
 	
   | Vark of string
+  | VarInit of int
   | Vari of (int*string)
   | Vardi of (int*string*int)
   | Var of int 
@@ -233,9 +234,10 @@ let expr_of_classe expr_handler rep =
 let var_of_expr expr = 
   let rec vide expr sol = 
     match expr with 
-	Letter _ | Vark _ | Vari _ | Eps | Const _ | Constf _ | Shortcut _ -> sol 
+	Letter _ | VarInit _ | Vark _ | Vari _ | Eps | Const _ | Constf _ | Shortcut _ -> sol 
       | Var i -> IntMap.add i (Const 0) sol  
-      | Plus (a,b) | Mult (a,b) -> vide a (vide b sol)
+      | Div(a,b) | Plus (a,b) | Mult (a,b) -> vide a (vide b sol)
+      | Vardi _ -> raise Exit 
   in 
     vide expr IntMap.empty 
 	
@@ -243,9 +245,10 @@ let diff expr v =
   let rec aux expr = 
     match expr with 
 	Var i when v = i -> Const 1 
-      | Letter _ | Vark _ | Vari _ | Eps | Const _ | Constf _ | Shortcut _ | Var _ -> Const 0 
+      | Letter _ | VarInit _ | Vark _ | Vari _ | Eps | Const _ | Constf _ | Shortcut _ | Var _ -> Const 0 
       | Mult(a,b) -> Plus(Mult(a,aux b),Mult(aux a,b))
       | Plus(a,b) -> Plus(aux a,aux b)
+      | Div _ | Vardi _ -> raise Exit 
   in
     simplify_expr (aux expr) 
 

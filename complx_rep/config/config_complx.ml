@@ -172,6 +172,7 @@ let output_ODE_matlab_aux = ref ""
 let output_ODE_matlab_jacobian = ref "" 
 let output_ODE_matlab_activity = ref ""
 let output_ODE_matlab_obs = ref "" 
+let output_ODE_matlab_init = ref ""
 let output_ODE_alphabet = ref "" 
 let output_ODE_obs = ref ""
 let output_influence_map_dot_file = ref "" 
@@ -378,6 +379,7 @@ let options = List.rev
 "--output-ODE-contact","_plx_ODE_contact.dot";
 "--output-ODE-mathematica","_plx_ODE_system.nb";
 "--output-ODE-matlab-aux","_plx_ODE_system_aux.m";
+"--output-ODE-matlab-init","_plx_ODE_system_init.m";
 "--output-ODE-matlab-size","_plx_ODE_system_size.m";
 "--output-ODE-matlab-jacobian","_plx_ODE_system_jacobian.m";
 "--output-ODE-matlab-activity","_plx_ODE_system_activity.m";
@@ -474,6 +476,10 @@ let options = List.rev
   String output_ODE_matlab_activity,
   "write the activity of rules in a matlab file",
   ["2_Output'";"ODE"],Normal;
+"--output-ODE-matlab-init",
+  String output_ODE_matlab_init,
+  "write the initial concentration of fragments in a matlab file",
+  ["2_Output'";"ODE"],Normal;    
 "--output-ODE-matlab-obs",
   String output_ODE_matlab_obs,
   "write the activity of observables in a matlab file",
@@ -523,8 +529,7 @@ let options = List.rev
   String output_ODE_obs_head,
   "write the preamble of the data file",
   ["2_Output'";"ODE"],Normal;
-"--output-ODE-data",
-  String output_ODE_data,
+"--output-ODE-data",  String output_ODE_data,
   "add the generation of the data file in the mathematica output",
   ["2_Output'";"ODE"],Normal;
 "--output-pack-constraints",

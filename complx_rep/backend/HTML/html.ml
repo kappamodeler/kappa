@@ -213,6 +213,15 @@ let print_ODE_system_matlab_obs pb channel =
   else
     null 
 
+let print_ODE_system_matlab_init pb channel = 
+  if !Config_complx.do_ODE 
+  then 
+    precomputed_data channel 
+      (!Config_complx.output_ODE_matlab_init)
+      "Initial solution (matlab)"
+  else
+    null 
+
 let print_ODE_system_matlab_jacobian pb channel = 
   if !Config_complx.do_ODE 
   then 
@@ -397,6 +406,7 @@ let dump_html pb channel (l,m)  =
 	 print_ODE_system_matlab_jacobian pb channel;
 	 print_ODE_system_matlab_activity pb channel;
 	 print_ODE_system_matlab_obs pb channel;
+	 print_ODE_system_matlab_init pb channel;
 	 print_ODE_system_matlab_size pb channel;
 	 print_ODE_obs pb channel] 
      else 

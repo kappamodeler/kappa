@@ -142,7 +142,7 @@ let print_log s =
 
 
 
-let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_matlab_act file_ODE_matlab_obs file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs  (l,m) = 
+let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_matlab_act file_ODE_matlab_obs file_ODE_matlab_init file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs  (l,m) = 
   
  
   let prefix' = "-"^(fst prefix) in 
@@ -178,6 +178,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	end
     else None in
   let set_print = f in 
+    
  
   let print_data = f DATA file_obs_data_head in 
   let print_matlab = f MATLAB file_ODE_matlab in
@@ -188,6 +189,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   let print_matlab_obs = f MATLAB file_ODE_matlab_obs in 
   let print_latex = f LATEX file_ODE_latex in
   let print_latex_obs = f LATEX file_obs_latex in 
+  let print_matlab_init = f MATLAB file_ODE_matlab_init in 
   let print_mathematica = 
     let rep = f MATHEMATICA file_ODE_mathematica in 
     match rep with None -> None 
@@ -229,7 +231,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      matlab_jacobian = print_matlab_jacobian;
      matlab_size = None ;
      matlab_activity = None;
-     matlab_obs = None } in
+     matlab_obs = None ;
+     matlab_init = None } in
 
  let print_ODE_size = 
     {dump = None;
@@ -243,7 +246,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      matlab_size= print_matlab_size;
      matlab_jacobian= None;
      matlab_activity = None;
-     matlab_obs = None } in
+     matlab_obs = None ;
+     matlab_init = None} in
 
  let print_ODE_act = 
     {dump = None;
@@ -257,7 +261,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      matlab_size= None;
      matlab_jacobian= None;
      matlab_activity = print_matlab_activity;
-     matlab_obs = None } in
+     matlab_obs = None;
+     matlab_init = None} in
    
  let print_ODE_matlab_activity = print_ODE_act in 
 
@@ -273,7 +278,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      matlab_size= None;
      matlab_jacobian= None;
      matlab_activity = None;
-     matlab_obs = print_matlab_obs} in
+     matlab_obs = print_matlab_obs;
+     matlab_init = None} in
 		 
   let print_ODE = 
      {dump = None ;
@@ -286,8 +292,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      matlab_aux = print_matlab_aux;
      matlab_jacobian = print_matlab_jacobian ;
      matlab_size = print_matlab_size;
-     matlab_activity = None(*print_matlab_activity*);
-     matlab_obs = None(*print_matlab_obs*)}
+     matlab_activity = None;
+     matlab_obs = None;
+     matlab_init = None}
   in
   let print_ODE_main = 
     {dump = None ;
@@ -301,11 +308,12 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      matlab_jacobian = None;
      matlab_size = None;
      matlab_activity = None;
-     matlab_obs = None}
+     matlab_obs = None;
+     matlab_init = None}
   in
 
   let print_ODE_aux = 
-    {print_ODE with matlab_size = None ; matlab_jacobian = None ; matlab = None ; matlab_aux = print_matlab_aux} in
+    {print_ODE with matlab_size = None ; matlab_jacobian = None ; matlab = None ; matlab_aux = print_matlab_aux ; matlab_init = None } in
 
   let print_ODE_mathematica = 
     {print_ODE_main with matlab = None} in 
@@ -322,7 +330,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab_jacobian = None;
       matlab_size = None;
       matlab_activity = None;
-      matlab_obs = None } in
+      matlab_obs = None;
+      matlab_init = None } in
 
   let print_ODE_matlab = 
     {dump = None;
@@ -336,7 +345,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab_jacobian = None;
       matlab_size = None;
       matlab_activity = None;
-      matlab_obs = None} in
+      matlab_obs = None;
+      matlab_init = None } in
 
   let print_ODE_matlab_aux = 
     {dump = None;
@@ -350,7 +360,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab_jacobian = None ;
       matlab_size = None;
       matlab_activity = None;
-      matlab_obs = None} in
+      matlab_obs = None;
+      matlab_init = None } in
  
  let print_ODE_matlab_size = 
     {dump = None;
@@ -364,7 +375,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab_jacobian = None ;
       matlab_size = print_matlab_size;
       matlab_activity = None;
-      matlab_obs = None } in
+      matlab_obs = None;
+      matlab_init = None } in
 
  
 
@@ -380,7 +392,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab_jacobian = None ;
       matlab_size = None;
       matlab_activity = None;
-      matlab_obs = None} in 
+      matlab_obs = None;
+      matlab_init = None } in 
 
   let print_debug = 
     {dump = Some stdprint ;
@@ -394,7 +407,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      matlab_jacobian = None ;
      matlab_size = None;
      matlab_activity = None;
-     matlab_obs = None} 
+     matlab_obs = None;
+     matlab_init = None } 
   in
   let print_obs = 
     { dump = None ;
@@ -408,7 +422,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab_jacobian = None;
       matlab_size = None ;
       matlab_obs = None ;
-      matlab_activity = None } 
+      matlab_activity = None ;
+      matlab_init = None } 
 
   in 
   let print_obs_latex = 
@@ -423,7 +438,23 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab_jacobian = None ;
       matlab_size = None ;
       matlab_obs = None ;
-      matlab_activity = None }
+      matlab_activity = None;
+      matlab_init = None }
+  in
+  let print_ODE_matlab_init = 
+     { dump = None;
+      data=None;
+      kappa = None; 
+      mathematica = None;
+      latex = print_latex_obs;
+      txt = None;
+      matlab = None;
+      matlab_aux = None ;
+      matlab_jacobian = None ;
+      matlab_size = None ;
+      matlab_obs = None ;
+      matlab_activity = None;
+      matlab_init = print_matlab_init }
   in
   let _ = pprint_ODE_head print_ODE print_ODE_matlab_obs print_ODE_matlab_activity file_ODE_matlab_aux file_ODE_matlab_jacobian file_ODE_matlab_size file_ODE_matlab_act file_ODE_matlab_obs in 
   let _ = dump_line 429 in  
@@ -3224,78 +3255,78 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		map),
 	      ((i,ag,s),(i',ag',s'))::rel)
 	    solution.Solution.links (map,[]) in
-	 let map = 
+	 let map = (* map each integer to the list of views at this position*) 
 	   IntMap.fold
 	    (fun i c m -> 
 	      IntMap.add i 
 		(let ag = IntMap.find i specie_map in
-		List.fold_left 
-		  (fun l site_set -> 
-		    let delta_c = 
-		      List.filter
-			(fun (b,bool) -> 
-			  match b with 
-			    AL((_,_,s),_) 
-			  | B(_,_,s) 
-			  | M((_,_,s),_) -> StringSet.mem s site_set.kept_sites
-			  | _ -> false)
-			c in
-		    let (old_c:bool BMap.t) = 
-		      StringSet.fold 
-			(fun s  (bmap:bool BMap.t) -> 
-			  let (bmap:bool BMap.t) = 
-			    List.fold_left 
-			      (fun bmap m -> 
-				BMap.add (M((ag,ag,s),m)) false bmap)
-			      bmap 
-			      (
-			    try
-			      String2Map.find (ag,s) 
-				(match cpb.Pb_sig.cpb_mark_site with 
-				  Some a -> a | None -> 
-				    error 2735 )
-
-			    with 
-			      Not_found -> []) 
-			  in 
-			  let linklist = 
-			     try
-			      String2Map.find (ag,s) 
-				(match cpb.Pb_sig.cpb_contact with 
-				  Some a -> a | None -> error 2744 )
-			    with 
-			      Not_found -> [] in 
-			  let (bmap:bool BMap.t) = 
-			    List.fold_left
-				(fun bmap l -> 
-				  BMap.add (AL((ag,ag,s),l)) false bmap)
-			      (BMap.add (B(ag,ag,s)) false bmap)
-			      (linklist) in 
-			  (bmap:bool BMap.t))
-			(site_set.kept_sites:StringSet.t) 
-			(BMap.empty:bool BMap.t)
-		    in
-		    let new_c = 
-		      List.fold_left
-			(fun bmap (b,bool) -> 
-			  try let _ = BMap.find b bmap in 
-                              BMap.add b bool bmap
-			  with Not_found -> bmap)
-			
-			old_c delta_c in
-		    let c = 
-		      BMap.fold 
-			(fun b bool l -> (b,bool)::l)
-			new_c [] in 
-		    let c = List.sort compare c in
-		    (site_set.kept_sites,
-		     try (StringBListMap.find  (ag,c) views_data_structures.blist_to_template)
-		     with Not_found ->
-			  pprint_newline print_debug ;
-		       List.iter (fun (x,bool) -> 
-			 pprint_string print_debug (string_of_b x);
-			 pprint_string print_debug (if bool then "T" else "F"))
-			    c;unsafe_frozen None None None (Some "line 1582") (fun () -> 1))::l)
+		   List.fold_left 
+		     (fun l site_set -> 
+			let delta_c = 
+			  List.filter
+			    (fun (b,bool) -> 
+			       match b with 
+				   AL((_,_,s),_) 
+				 | B(_,_,s) 
+				 | M((_,_,s),_) -> StringSet.mem s site_set.kept_sites
+				 | _ -> false)
+			    c in
+			let (old_c:bool BMap.t) = 
+			  StringSet.fold 
+			    (fun s  (bmap:bool BMap.t) -> 
+			       let (bmap:bool BMap.t) = 
+				 List.fold_left 
+				   (fun bmap m -> 
+				      BMap.add (M((ag,ag,s),m)) false bmap)
+				   bmap 
+				   (
+				     try
+				       String2Map.find (ag,s) 
+					 (match cpb.Pb_sig.cpb_mark_site with 
+					      Some a -> a | None -> 
+						error 2735 )
+					 
+				     with 
+					 Not_found -> []) 
+			       in 
+			       let linklist = 
+				 try
+				   String2Map.find (ag,s) 
+				     (match cpb.Pb_sig.cpb_contact with 
+					  Some a -> a | None -> error 2744 )
+				 with 
+				     Not_found -> [] in 
+			       let (bmap:bool BMap.t) = 
+				 List.fold_left
+				   (fun bmap l -> 
+				      BMap.add (AL((ag,ag,s),l)) false bmap)
+				   (BMap.add (B(ag,ag,s)) false bmap)
+				   (linklist) in 
+				 (bmap:bool BMap.t))
+			    (site_set.kept_sites:StringSet.t) 
+			    (BMap.empty:bool BMap.t)
+			in
+			let new_c = 
+			  List.fold_left
+			    (fun bmap (b,bool) -> 
+			       try let _ = BMap.find b bmap in 
+				 BMap.add b bool bmap
+			       with Not_found -> bmap)
+			    
+			    old_c delta_c in
+			let c = 
+			  BMap.fold 
+			    (fun b bool l -> (b,bool)::l)
+			    new_c [] in 
+			let c = List.sort compare c in
+			  (site_set.kept_sites,
+			   try (StringBListMap.find  (ag,c) views_data_structures.blist_to_template)
+			   with Not_found ->
+			     pprint_newline print_debug ;
+			     List.iter (fun (x,bool) -> 
+					  pprint_string print_debug (string_of_b x);
+					  pprint_string print_debug (if bool then "T" else "F"))
+			       c;unsafe_frozen None None None (Some "line 1582") (fun () -> 1))::l)
 		    [] 
 		    (try StringMap.find ag annotated_contact_map.subviews
 		    with Not_found -> 
@@ -3304,25 +3335,156 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		      error 2777))
 		m)
 	    map IntMap.empty in 
-	IntMap.fold 
-	  (fun i l sol -> 
-	    List.fold_left 
-	      (fun sol (_,a) -> 
-		let key,_ = hash_subspecies (plug_views_in_subspecies "" a empty_species) in 
-		let old = 
-		  try
-		    Arraymap.find key sol 
-		  with 
-		    Not_found -> 
-		      0
+	 let links_map = 
+	   Solution.PA.fold 
+	     (fun (i1,s1) (i2,s2) map -> 
+		let ig1 = 
+		  try (IntMap.find i1 specie_map) 
+		  with Not_found -> error 3312
 		in
-		Arraymap.add key (old+1) sol) 
-	      sol l)
-	      map 
-	      (Arraymap.create 0) in 
+		let ig2 = 
+		  try (IntMap.find i2 specie_map) 
+		  with Not_found -> error 3316
+		in 
+		  if keep_this_link (ig1,s1) (ig2,s2) 
+		  then 
+		    IntStringMap.add (i1,s1) (i2,s2) 
+		      (IntStringMap.add (i2,s2) (i1,s1) 
+			 map)
+		  else
+		    map)
+	     solution.Solution.links IntStringMap.empty
+	 in
+	 let list_sub_species = 
+	   IntMap.fold 
+	     (fun (i:int) 
+		(list_v:((StringSet.t * int) list)) 
+		list -> 
+		  List.fold_left 
+		    (fun 
+		       list
+		       (a,l) 
+		       -> 
+			 let (key:F.subspecies) = 
+			   plug_views_in_subspecies 
+			     (string_of_int i) 
+			     l 
+			   empty_species 
+			 in 
+			 let interface  = 
+			   StringSet.fold 
+			     (fun (site:string) liste -> 
+				if 
+				  try 
+				    let _ = IntStringMap.find (i,site) links_map 
+				    in true
+				  with Not_found -> false 
+				then 
+				  IntStringSet.add (i,site) liste
+				else liste)
+			     a 
+			     IntStringSet.empty 
+			 in 
+			 (key,interface)::list)
+		  list
+		  list_v
+	     )
+	     map
+	     []
+	 in 
+	 let _ = dump_line 3364 in 
+	 let _ = 
+	   if debug then 
+	     begin
+	       let _ = print_string "LINKS?" in 
+	       let _ = print_newline () in 
+	       let _ = 
+		 IntStringMap.iter 
+		   (fun (i,s) (i',s') -> 
+		      print_int i;
+		      print_string ".";
+		      print_string s;
+		      print_string "-";
+		      print_string s';
+		      print_string ".";
+		      print_int i';
+		      print_newline ())
+		   links_map
+	       in
+	       let _ = print_string "VIEWS?" in 
+	       let _ = 
+		 IntMap.iter 
+		   (fun i c -> 
+		      print_string "COMPONENT:";
+		      print_int i;
+		      List.iter 
+			(fun (a,i) -> print_int i;print_string ",")
+			c;
+		      print_newline ())
+		   map in 
+	       let _ = print_string "SUBSPECIES?" in 
+	       let _ = 
+		 List.iter 
+		   (fun (b,a) -> 
+		      print_string "interface:";
+		      IntStringSet.iter 
+			(fun (i,s) -> print_int i;print_string ".";print_string s;print_string ",")
+			a;
+		      print_species b)
+		   list_sub_species 
+	       in ()
+		      
+	     end
+	 in
+	 let rec vide working map = 
+	   match working with 
+	       (t,s)::q -> 
+		 if IntStringSet.is_empty s 
+		 then 
+		   let key,_ = hash_subspecies t in
+		   let old = 
+		     try 
+		       Arraymap.find key map
+		     with 
+			 Not_found -> 0
+		   in
+		     vide 
+		       q
+		       (Arraymap.add key (old+1) map)
+		 else
+		   let head = IntStringSet.min_elt s in
+		   let left = IntStringSet.remove head s in 
+		   let head' = IntStringMap.find  head links_map in 
+		   let q' = 
+		     List.fold_left 
+		       (fun sol (t',s')  -> 
+			  if IntStringSet.mem head' s' 
+			  then
+			    let t'' = add_bond_to_subspecies 
+			      (merge t t')
+			      (string_of_int (fst head),snd head)
+			      (string_of_int (fst head'),snd head')
+			    in 
+   			    let s'' = 
+			      IntStringSet.union 
+				(IntStringSet.remove head' s')
+			        left
+			    in 
+			      (t'',s'')::(t',s')::sol
+			  else
+			    (t',s')::sol)
+		      [] q 
+		   in vide 
+			q'
+			map
+		     
+	     | [] -> map
+	 in 
+	   vide list_sub_species (Arraymap.create 0)
+    in 
 
 
-    let init = 	
+    let init_expr,init_def,init_string,ninit = 	
       let _ = 
 	if !Config_complx.trace_rule_iteration 
 	then 
@@ -3334,28 +3496,36 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	    print_int (size ());
 	    print_string " fragments so far";
 	    print_newline ()
-	  end  in 
+	  end  
+      in 
       List.fold_left 
-	(fun sol (a,k) -> 
-	  if k=0 then sol
-	  else 
-	    let b = proj_solution a in
-	    Arraymap.map2
-	      (fun _ j -> j)
-	      (fun _ j -> k*j)
-	      (fun _ i j -> i+k*j)
-	      sol b)
-	(Arraymap.create 0) 
+	(fun (sol,map,init_def,fresh) (a,k) -> 
+	   let b = proj_solution a in
+	   let b = Arraymap.map (fun x -> Const x) b in 
+	     (Arraymap.map2
+		(fun _ (j:Arithmetics.expr) -> j)
+		(fun _ j -> Mult(VarInit fresh,j))
+		(fun _ i j -> Plus(i,Mult(VarInit fresh,j)))
+		sol 
+		b),
+	   Arraymap.add fresh k map,
+	   Arraymap.add fresh (Solution.kappa_of_solution a) init_def,
+	   fresh+1)
+
+	(Arraymap.create (Const 0),
+	 Arraymap.create 0,
+	 Arraymap.create "",
+	 1) 
 	 (match pb.Pb_sig.simplx_encoding with Some (a,b,c) -> b 
 	 | None -> error 2809 )
     in
     let (init:expr Arraymap.t) = 
       Arraymap.fold2 
 	(fun i _ map -> Arraymap.add i (Const 0) map)
-	(fun i j map -> Arraymap.add i (Const j) map)
-	(fun i _ j map -> Arraymap.add i (Const j) map)
+	(fun i j map -> Arraymap.add i j map)
+	(fun i _ j map -> Arraymap.add i j map)
 	(Arraymap.map (fun x -> 0) merge_prod)
-	init 
+	init_expr 
 	(Arraymap.create (Const 0))
 
 	
@@ -3380,7 +3550,13 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     let _ = 
       dump_prod 
 	(merge_prod,jacobian) 
-	init 
+	(Arraymap.fold2 
+	   (fun i a sol -> Arraymap.add i (Const a,"") sol )
+	   (fun i a sol -> Arraymap.add i (Const 0,a) sol)
+	   (fun i a b sol  -> Arraymap.add i (Const a,b) sol)
+	   init_def 
+	   init_string
+	   (Arraymap.create (Const 0,"")))
 	obs
 	(let i,f = !Config_complx.ode_init_time,!Config_complx.ode_final_time in 
 	let a = !Config_complx.ode_points in 
@@ -3399,6 +3575,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	file_data_foot
         file_ODE_matlab_aux 
 	file_ODE_matlab_jacobian  
+	file_ODE_matlab_init 
 	(size ())
 	(string_of_int nobs) 
     in 
@@ -3414,6 +3591,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		   with Not_found -> (print_string r;error 3322)
 		 end)
 	pb_obs in 
+    let _ = print_init_in_matlab print_ODE_matlab_init file_ODE_matlab_init init in 
     let _ = print_obs_in_matlab  print_ODE_matlab_obs file_ODE_matlab_obs activity_map pb_obs   in 
     let _ = print_activity print_ODE_matlab_activity file_ODE_matlab_act activity_map in 
     let chanset = 

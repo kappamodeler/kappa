@@ -22,4 +22,5 @@ type print_desc =
      matlab_jacobian: print option;
      matlab_size: print option;
      matlab_activity: print option;
-     matlab_obs:print option}
+     matlab_obs:print option;
+     matlab_init:print option }
