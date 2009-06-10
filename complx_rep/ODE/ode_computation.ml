@@ -3563,6 +3563,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
         file_ODE_matlab_aux 
 	file_ODE_matlab_jacobian  
 	file_ODE_matlab_init 
+	file_ODE_matlab_obs
 	(size ())
 	(string_of_int nobs) 
     in 
