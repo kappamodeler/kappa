@@ -446,7 +446,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       data=None;
       kappa = None; 
       mathematica = None;
-      latex = print_latex_obs;
+      latex = None;
       txt = None;
       matlab = None;
       matlab_aux = None ;
@@ -1391,7 +1391,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		   let _ = print_expr print_ODE_act true true (Const 0) in 
 		   let _ = pprint_string print_ODE_act ",\n" in 
 		   let _ = pprint_vart print_ODE in 
-		   let _ = pprint_assign print_ODE in 
+		   let _ = pprint_assign_plus print_ODE in 
 		   let _ = print_expr print_ODE true true l in 
 		   let grad = grad l in 
 		   let jacobian = 
@@ -3162,7 +3162,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				      a.print_string ("dydt("^(string_of_int i)^")=dydt("^(string_of_int i)^")+" )
 			      in 
 			      let _ = pprint_vart print_ODE in 
-			      let _ = pprint_assign {print_ODE with matlab_aux = None} in 
+			      let _ = pprint_assign_plus {print_ODE with matlab_aux = None} in 
 			      let expr = simplify_expr l in 
 			      let _ = print_expr print_ODE true true expr in 
 			      let grad = grad expr in 

@@ -76,7 +76,7 @@ let print_intermediar_var print var rule  =
     match print.latex with 
       None -> ()
     | Some latex -> 
-	(latex.print_string "\\oderv";
+	(latex.print_string "\\odediff";
 	 latex.print_string "{";
 	 latex.print_string var;
 	 latex.print_string "}{";
@@ -292,7 +292,22 @@ let pprint_assign print =
     match print.mathematica with 
       Some print -> print.print_string "="
     | None -> ()
-  in pprint_string print "=" 
+  in 
+  pprint_string print "=" 
+
+let pprint_assign_plus print = 
+  let _ = 
+    match print.mathematica with 
+      Some print -> print.print_string "="
+    | None -> ()
+  in 
+  let _ = 
+    match print.latex with 
+	Some print -> print.print_string "\\odeequalplus"
+      | None -> ()
+  in 
+  pprint_string {print with latex = None} "=" 
+
 
 let remove_latex print = {print with latex = None} 
 let keep_latex print = {print with matlab = None ; matlab_aux=None;matlab_jacobian = None ; mathematica = None ;matlab_size = None;matlab_obs=None;matlab_activity=None;matlab_init = None} 
@@ -791,7 +806,6 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
        false 
        obs in
  
-   let _ = pprint_string print_latex "}" in 
    let _ = pprint_ODE_middle2 print_ODE file_jac file_aux file_init file_obs nfragments nobs in 
    let _ = 
      List.fold_left
