@@ -377,7 +377,7 @@ let options = List.rev
 "--output-ODE-obs-latex","_plx_ODE_obs.tex";
 "--output-ODE-latex","_plx_ODE_system.tex";
 "--output-ODE-contact","_plx_ODE_contact.dot";
-"--output-ODE-mathematica","_plx_ODE_system.nb";
+(*"--output-ODE-mathematica","_plx_ODE_system.nb";*)
 "--output-ODE-matlab-aux","_plx_ODE_system_aux.m";
 "--output-ODE-matlab-init","_plx_ODE_system_init.m";
 "--output-ODE-matlab-size","_plx_ODE_system_size.m";

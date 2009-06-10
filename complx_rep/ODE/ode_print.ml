@@ -444,7 +444,7 @@ let pprint_ODE_middle2 print aux_file jac_file init_file nfrag nobs =
 	    a.print_string ("soln = ode2r(@"^(Tools.cut aux_file)^",[tinit tend],"^(Tools.cut init_file)^",options);\n\nt = linspace(tinit, tend, num_t_point+1);\n\n")
 	  in
 	  let _ = 
-	    a.print_string ("nrows = rows(soln.x);\nnobs = "^nobs^";\nnfragments = "^nfrag^";\ntmp = zeros(nfragments,1);\nobs = zeros (nrows,nobs);\n\nfor j=1:nrows\n   for i=1:nfragments\n      z(i)=soln.y(j,i);\n   end\n   h=essai_plx_ODE_system_obs(z);\n   for i=1:nobs\n      obs(j,i)=h(i);\n  end\nend\n\n y = interp1(soln.x, obs, t, 'pchip');\nplot(y)")
+	    a.print_string ("nrows = rows(soln.x);\nnobs = "^nobs^";\nnfragments = "^nfrag^";\ntmp = zeros(nfragments,1);\nobs = zeros (nrows,nobs);\n\nfor j=1:nrows\n   for i=1:nfragments\n      z(i)=soln.y(j,i);\n   end\n   h=essai_plx_ODE_system_obs(z);\n   for i=1:nobs\n      obs(j,i)=h(i);\n  end\nend\n\ny = interp1(soln.x, obs, t, 'pchip');\nplot(y)")
 	  in 	    
 	    ()
 
@@ -480,6 +480,11 @@ let print_comment print s =
   in 
   let _ = 
     match print.matlab_aux with 
+      None -> ()
+    | Some a -> a.print_string ("\n %"^s^"\n")
+  in 
+  let _ = 
+    match print.matlab_jacobian with 
       None -> ()
     | Some a -> a.print_string ("\n %"^s^"\n")
   in 
@@ -704,7 +709,7 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
   let _ = pprint_newline print_main in 
   let _ = pprint_newline print_main in
    
-  let _ = pprint_string print_aux ("function dydt="^(Tools.cut file)^"(t,y)\n\n\nglobal k;\n\n\n") in 
+  let _ = pprint_string print_aux ("function dydt="^(Tools.cut file)^"(t,y)\n\n\nglobal k;\n\n\ndydt=zeros(@"^size^",1);") in 
   let _ = pprint_string print_jac ("function Jac="^(Tools.cut file_jac)^"(t,y)\n\nJac = sparse(@"^size^",@"^size^");\n\nglobal k;\n\n\n") in 
   let _ = pprint_string print_latex "\\odebeforeequs\n" in 
   let _ = pprint_string print_size "function Size=" in
@@ -721,7 +726,7 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
    let print_latex = keep_latex print_ODE_mathematica in 
    let print_ODE_wo_latex = remove_latex print_ODE_mathematica in 
     
-  let _ = pprint_ODE_head' print_ODE in
+(*  let _ = pprint_ODE_head' print_ODE in
   let _ = pprint_string print_latex "\\odesystem{" in 
   let bool  = 
     Arraymap.fold 
@@ -745,7 +750,7 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
 		 true) 
 	    false b in 
 	    true)
-       prod  false in
+       prod  false in*)
      (*
    let bool  = 
      Arraymap.fold 
@@ -769,9 +774,9 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
 	      let _ = print_expr print_ODE true false  (Const 0) in () in  
 	    true)
        init bool  in *)
-   let _ = 
+(*   let _ = 
      if bool then pprint_string print_latex "}"
-   in 
+   in *)
    let _ = pprint_ODE_middle1 print_ODE_wo_latex in
    let print_ODE = print_ODE_wo_latex in 
      
@@ -861,7 +866,7 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
   let _ = pprint_ODE_middle1 print_ODE in
   let _ = pprint_ODE_middle2 print_ODE file_aux file_jac file_init nfragments nobs in 
     
-  let print_ODE = print_ODE_matlab_aux in 
+(*  let print_ODE = print_ODE_matlab_aux in 
   let _ = pprint_ODE_head' print_ODE in 
   let _   = 
     Arraymap.fold
@@ -881,8 +886,8 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
 	  true)
 	prod  false in
 
-    let _ = pprint_string print_ODE "];\n" in 
-    let _ = pprint_ODE_foot print_ODE in 
+    let _ = pprint_string print_ODE "];\n" in *)
+(*    let _ = pprint_ODE_foot print_ODE in 
     let print_ODE = print_ODE_matlab_jac in 
     let _ = pprint_string print_ODE "\n\n" in 
     let _   = 
@@ -906,7 +911,7 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
 	   let _ = pprint_string print_ODE ";" in 
 	   let _ = pprint_newline print_ODE in ())
 
-	jac   in
+	jac   in*)
 
     let _ = pprint_ODE_foot print_ODE in 
     let print_ODE = print_ODE_matlab_size in  
@@ -969,12 +974,13 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
      ( ) 
 
 
-let print_diff print_ODE i j flag expr = 
+let print_diff print_ODE bool i j flag expr = 
   match print_ODE.matlab_jacobian with None -> () 
     | Some print -> 
-	let var = "d"^(string_of_int i)^"_d"^(string_of_int j)^"r"^flag in 
+	let var = "Jac("^(string_of_int i)^","^(string_of_int j)^")" in 
 	let _ = print.print_string var in 
 	let _ = print.print_string "=" in 
+	let _ = if bool then print.print_string (var^"+") in 
 	let print_ODE = {print_ODE with matlab = None ; mathematica = None ; latex = None ; matlab_aux = None} in 
 	let _ = print_expr print_ODE true true  expr in 
 	let _ = print.print_string ";\n" in 

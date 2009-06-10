@@ -1074,15 +1074,15 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       |	Some a -> a in 
   
 
-    let mainprod = Arraymap.create (Const 0)   in   
-    let jacobian = Int2Map.empty in 
+    let mainprod = IntSet.empty in 
+    let jacobian = Int2Set.empty in 
     let activity_map = IntMap.empty in 
     let rate_map = IntMap.empty in 
     let flag_map = (StringMap.empty,IntMap.empty) in 
     let activity = 
       List.fold_left  
-	(fun ((mainprod:(int*expr) list Arraymap.t),
-	      (jacobian:expr list Int2Map.t),
+	(fun ((mainprod:IntSet.t),
+	      (jacobian:Int2Set.t),
 	      (activity_map:expr IntMap.t),
 	      (rate_map:float IntMap.t),
 	      (flag_map:int StringMap.t * string IntMap.t )) 
@@ -1145,6 +1145,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	    let _ = pprint_string print_ODE_latex "\\odegroup{" in 
 	    let _ = pprint_string print_ODE_latex "\\oderulename{" in 
 	    let _ = print_comment print_ODE_aux rule_id in
+	    let _ = print_comment print_ODE_jacobian rule_id in 
 	    let _ = print_comment print_ODE_latex "}{" in 
 	    let _ = print_comment print_ODE_latex (string_of_int rule_key) in 
 	    let _ = pprint_string print_ODE_latex "}}{" in 
@@ -1374,13 +1375,19 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			 a.print_string "function z = " in 
 		   let _ = pprint_string print_ODE_latex "\\odeequ{" in
 		   
-		   let _ = print_intermediar_var print_ODE flag (string_of_int i)   in
+		   let _ = print_intermediar_var (*{*)print_ODE (*with matlab_aux = None}*) flag (string_of_int i)   in
 		   let _ = 
 		     match print_ODE.matlab with 
 		       None -> ()
 		     |	Some a -> 
 			 a.print_string "(y) \n  z "
 		   in
+(*		   let _ = 
+		     match print_ODE.matlab_aux with 
+			 None -> () 
+		       | Some a -> 
+			   print_string ("dydt("^(string_of_int i)^")=dydt("^(string_of_int i)^"+")
+		   in *)
 		   let _ = print_expr print_ODE_act true true (Const 0) in 
 		   let _ = pprint_string print_ODE_act ",\n" in 
 		   let _ = pprint_vart print_ODE in 
@@ -1390,25 +1397,14 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		   let jacobian = 
 		     IntMap.fold 
 		       (fun j expr jacobian -> 
-			  let _ = print_diff print_ODE_jacobian i j flag expr in 
-			  let l = 
-			    try 
-			      Int2Map.find (i,j) jacobian 
-			    with 
-				Not_found -> [] 
-			  in 
-			    Int2Map.add (i,j) ((Vardi(i,flag,j))::l) jacobian)
+			  let _ = print_diff print_ODE_jacobian (Int2Set.mem (i,j) jacobian) i j flag expr in 
+			    Int2Set.add (i,j) jacobian)
 		       grad jacobian 
 		   in 
 		   let _ = pprint_commandsep print_ODE in 
 		   let _ = pprint_string print_ODE_latex "}" in 
 		   let _ = pprint_newline print_ODE in
-		   let l = 
-		     try Arraymap.find i mainprod
-		     with Not_found -> [] in 
-		   let mainprod = 
-		     Arraymap.add i ((1,Vari(i,flag))::l) mainprod in 
-		    
+		   let mainprod = IntSet.add i mainprod in 
 		     (mainprod,jacobian))
 		 prod  
 		 (mainprod,jacobian)  in 
@@ -3136,7 +3132,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		       let x = 
 			 Intmap.fold 
 			   (fun i l 
-			      ((mainprod: (int*expr) list Arraymap.t),jacobian) ->
+			      (mainprod,jacobian) ->
 			      let l = 
 				List.fold_left 
 				  (fun a (i,j) -> 
@@ -3152,37 +3148,33 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					  a.print_string "function z = " in 
 			      let _ = pprint_string print_ODE_latex "\\odeequ{" in
 				
-			      let _ = print_intermediar_var print_ODE flag (string_of_int i)   in
+			      let _ = print_intermediar_var {print_ODE with matlab_aux = None} flag (string_of_int i)   in
 			      let _ = 
 				match print_ODE.matlab with 
 				    None -> ()
 				  |	Some a -> 
 					  a.print_string "(y) \n global e \n z "
 			      in
+			      let _ = 
+				match print_ODE.matlab_aux with 
+				    None -> ()
+				  | Some a -> 
+				      a.print_string ("dydt("^(string_of_int i)^")=dydt("^(string_of_int i)^")+" )
+			      in 
 			      let _ = pprint_vart print_ODE in 
-			      let _ = pprint_assign print_ODE in 
+			      let _ = pprint_assign {print_ODE with matlab_aux = None} in 
 			      let expr = simplify_expr l in 
 			      let _ = print_expr print_ODE true true expr in 
 			      let grad = grad expr in 
 			      let _ = pprint_commandsep print_ODE in 
 			      let _ = pprint_string print_ODE_latex "}"in 
 			      let _ = pprint_newline print_ODE in
-			      let l = 
-				try Arraymap.find i mainprod
-				with Not_found -> [] in 
-			      let mainprod = 
-				Arraymap.add i ((1,Vari(i,flag))::l) mainprod in 
+			      let mainprod = IntSet.add i mainprod in 
 			      let jacobian = 
 				IntMap.fold 
 				  (fun j expr jacobian -> 
-				     let _ = print_diff print_ODE_jacobian  i j flag expr in 
-				     let l = 
-				       try 
-					 Int2Map.find (i,j) jacobian 
-				       with 
-					   Not_found -> [] 
-				     in 
-				       Int2Map.add (i,j) ((Vardi(i,flag,j))::l) jacobian)
+				     let _ = print_diff print_ODE_jacobian  (Int2Set.mem (i,j) jacobian) i j flag expr in 
+				       Int2Set.add (i,j)  jacobian)
 				  grad jacobian 
 			      in 
 			      let jacobian = jacobian in 
@@ -3520,15 +3512,14 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	 | None -> error 2809 )
     in
     let (init:expr Arraymap.t) = 
-      Arraymap.fold2 
-	(fun i _ map -> Arraymap.add i (Const 0) map)
-	(fun i j map -> Arraymap.add i j map)
-	(fun i _ j map -> Arraymap.add i j map)
-	(Arraymap.map (fun x -> 0) merge_prod)
+      IntSet.fold 
+	(fun i map -> 
+	   try 
+	     let _ = Arraymap.find i map in map 
+	   with 
+	       Not_found -> Arraymap.add i (Const 0) map)
+	merge_prod 
 	init_expr 
-	(Arraymap.create (Const 0))
-
-	
     in
     let l  = chrono (prefix',snd prefix)  "ODE computation" l in 
     let _ = 
@@ -3538,13 +3529,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 (*	views_data_structures.interface_map *) in
   
     let obs = 
-       Arraymap.fold2
+       Arraymap.fold
 	 (fun a _ obs -> (Var a)::(obs))
-	 (fun a _ obs -> (Var a)::(obs))
-	 (fun a _ _ obs -> (Var a)::(obs))
-	 merge_prod 
 	 init 
-
 	[] in 
     let _ = dump_rate_map print_ODE rate_map (snd flag_map) in 
     let _ = 

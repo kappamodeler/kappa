@@ -1311,12 +1311,6 @@ let apply_blist_with_species ode_handler data_structure keep_link rule_id  speci
        (fun (update,subspecies) ((rp,a,s),(rp',s')) ->
 	 try 
 	   let agent_type,v = get rp' update in 
-	   let _ = print_string "FRAGMENTS 1312" in 
-	   let _ = print_string agent_type in 
-	   let _ = print_string s' in 
-	   let _ = print_string a in 
-	   let _ = print_string s in 
-	   let _ = print_newline () in 
 	   let v' = BMap.add (B(agent_type,agent_type,s')) false v in 
 	   let v' = BMap.add (AL((agent_type,agent_type,s'),(a,s))) false v' in 
 	   RPathMap.add 
