@@ -92,7 +92,7 @@ let inhibition = ref false
 let ode_points = ref 1000 
 let ode_init_time = ref 0.
 let ode_final_time = ref 1.
-let ode_ulp = ref 0.00001
+let ode_init_step = ref 0.000001
 let memory_limit = ref 0 
 let hashinit= ref 20000
 let hash_cons = ref true
@@ -626,7 +626,7 @@ let options = List.rev
 
   "--initial-time",Float ode_init_time,"initial time for ODE integration",["ODE"],Normal;
   "--final-time",Float ode_final_time,"final time for ODE integration",["ODE"],Normal;
-  "--epsilon-value",Float ode_ulp,"smallest number>0",["ODE"],Normal;
+  "--initial-step",Float ode_init_step,"initial time step for ODE integration",["ODE"],Normal;
   "--flat-ode",Bool flat_ode,"Compute the ODE for the flat system",["ODE"],Normal;
   "--plots",Int ode_points,"number of plots in the data file",["ODE"],Normal;
   "--ode-memoization-level",Int ode_memoization_level,

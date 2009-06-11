@@ -1868,7 +1868,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					       in 
 					       let bmap = 
 						 List.fold_left 
-						   (fun bmap (b,bool) -> BMap.add b bool bmap)
+						   (fun bmap (b,bool) -> BMap.add (downgrade_b b) bool bmap)
 						   bmap blist 
 					       in 
 					       let blist = 
@@ -3318,13 +3318,13 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			     List.iter (fun (x,bool) -> 
 					  pprint_string print_debug (string_of_b x);
 					  pprint_string print_debug (if bool then "T" else "F"))
-			       c;unsafe_frozen None None None (Some "line 1582") (fun () -> 1))::l)
+			       c;unsafe_frozen None None None (Some "line 3321") (fun () -> 1))::l)
 		    [] 
 		    (try StringMap.find ag annotated_contact_map.subviews
 		    with Not_found -> 
 		      pprint_string print_debug  ag;
 		      pprint_newline print_debug;
-		      error 2777))
+		      error 3327))
 		m)
 	    map IntMap.empty in 
 	 let links_map = 
@@ -3492,17 +3492,20 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       in 
       List.fold_left 
 	(fun (sol,map,init_def,fresh) (a,k) -> 
-	   let b = proj_solution a in
-	   let b = Arraymap.map (fun x -> Const x) b in 
-	     (Arraymap.map2
-		(fun _ (j:Arithmetics.expr) -> j)
-		(fun _ j -> Mult(VarInit fresh,j))
-		(fun _ i j -> Plus(i,Mult(VarInit fresh,j)))
-		sol 
-		b),
-	   Arraymap.add fresh k map,
-	   Arraymap.add fresh (Solution.kappa_of_solution a) init_def,
-	   fresh+1)
+	   if k=0
+	   then (sol,map,init_def,fresh)
+	   else 
+	     let b = proj_solution a in
+	     let b = Arraymap.map (fun x -> Const x) b in 
+	       ((Arraymap.map2
+		  (fun _ (j:Arithmetics.expr) -> j)
+		  (fun _ j -> Mult(VarInit fresh,j))
+		  (fun _ i j -> Plus(i,Mult(VarInit fresh,j)))
+		  sol 
+		  b),
+		Arraymap.add fresh k map,
+		Arraymap.add fresh (Solution.kappa_of_solution a) init_def,
+		fresh+1))
 
 	(Arraymap.create (Const 0),
 	 Arraymap.create 0,
@@ -3576,11 +3579,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	     | Some r -> 
 		 begin 
 		   try (Some (StringMap.find r (fst flag_map)))
-		   with Not_found -> (print_string r;error 3322)
+		   with Not_found -> None
 		 end)
 	pb_obs in 
     let _ = print_init_in_matlab print_ODE_matlab_init file_ODE_matlab_init init in 
-    let _ = print_obs_in_matlab  print_ODE_matlab_obs file_ODE_matlab_obs activity_map pb_obs   in 
+    let (l,m) = print_obs_in_matlab  print_ODE_matlab_obs file_ODE_matlab_obs activity_map (size ()) pb_obs (l,m)  in 
     let _ = print_activity print_ODE_matlab_activity file_ODE_matlab_act activity_map in 
     let chanset = 
       List.fold_left

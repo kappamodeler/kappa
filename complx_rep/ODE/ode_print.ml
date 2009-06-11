@@ -453,7 +453,7 @@ let pprint_ODE_middle2 print aux_file jac_file init_file obs_file nfrag nobs =
     | Some a -> 
 	begin
 	  let _ = 
-	    a.print_string ("\n\n\noptions = odeset('RelTol', 1e-3,\n                 'AbsTol', 1e-3,\n                 'MaxStep', tend,\n                 'Jacobian', @"^(Tools.cut jac_file)^");\n\n")
+	    a.print_string ("\n\n\noptions = odeset('RelTol', 1e-3,\n                 'AbsTol', 1e-3,\n                 'InitialStep', initialstep,\n                 'MaxStep', tend,\n                 'Jacobian', @"^(Tools.cut jac_file)^");\n\n")
 	  in
           let _ =
 	    a.print_string ("soln = ode2r(@"^(Tools.cut aux_file)^",[tinit tend],@"^(Tools.cut init_file)^"(),options);\n\nt = linspace(tinit, tend, num_t_point+1);\n\n")
@@ -703,7 +703,8 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
   let _ = pprint_string print_main "% \n" in 
   let _ = pprint_string print_main "% init - the initial abundances of each fragment \n" in
   let _ = pprint_string print_main "% tinit - the initial simulation time (likely 0) \n" in 
-  let _ = pprint_string print_main "% tfinal - the final simulation time \n" in 
+  let _ = pprint_string print_main "% tend - the final simulation time \n" in 
+  let _ = pprint_string print_main "% initialstep - initial time step at the beginning of numerical integration\n" in 
   let _ = pprint_string print_main "% num_t_point - the number of time points to return \n" in 
   let _ = pprint_string print_main "\n" in 
   let _ = pprint_string print_main "tinit" in 
@@ -714,6 +715,11 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
   let _ = pprint_string print_main  "tend" in 
   let _ = pprint_assign print_main in 
   let _ = pprint_float print_main (!Config_complx.ode_final_time) in
+  let _ = pprint_commandsep print_main in
+  let _ = pprint_newline print_main in 
+  let _ = pprint_string print_main  "initialstep" in 
+  let _ = pprint_assign print_main in 
+  let _ = pprint_float print_main (!Config_complx.ode_init_step) in
   let _ = pprint_commandsep print_main in
   let _ = pprint_newline print_main in 
   let size = Tools.cut file_size^"()" in 
@@ -1016,28 +1022,46 @@ let print_activity print file activity_map =
       
 	 
   
-let print_obs_in_matlab print file activity_map obsset = 
+let print_obs_in_matlab print file activity_map nfrag obsset (l,m) = 
   let _ = pprint_string print ("function Observable="^(Tools.cut file)^"(y)\nglobal k;\n\n\nObservable = [\n") in 
   let _ = 
-    IntMap.fold
-      (fun i j bool -> 
-	 try 
-	   begin 
-	     let i' = 
-	       match j 
+    if IntMap.is_empty obsset
+    then 
+      let rec vide k = 
+	if k>nfrag then (k>1,l,m)
+	else 
+	  let _ = if k>1 then pprint_string print ",\n" in 
+	  let _ = print_expr print true true (Var(k))
+	  in vide (k+1)
+      in  vide 1
+    else
+      IntMap.fold
+	(fun i j (bool,l,m) -> 
+	   try 
+	     begin 
+	       let i' = 
+		 match j 
 	       with None -> i
-		 | Some k -> k in 
-	     let _ = 
-	       if bool then pprint_string print ",\n"
-	     in
-	     let _ = print_expr print true true (try IntMap.find i' activity_map with Not_found -> raise Exit) in true 
-										   
-										   
-	   end
+		 | Some k -> k 
+	       in 
+	       let _ = 
+		 if bool then pprint_string print ",\n"
+	       in
+	       let l,m,expr = 
+		 try 
+		   l,m,IntMap.find i' activity_map 
+		 with 
+		     Not_found -> 
+		       l,"Dead rule in observables"::m,Const 0 
+	       in 
+	       let _ = print_expr print true true expr in 
+		 (true,l,m) 
+	     end
 	 with 
-	     Not_found -> bool)
-      obsset false in 
-  let _ = pprint_string print "];\n" in () 
+	     Not_found -> (bool,l,m))
+      obsset (false,l,m) 
+  in 
+  let _ = pprint_string print "\n];\n" in (l,m) 
 				    
 let print_init_in_matlab print file activity_map = 
   let _ = pprint_string print ("function Init="^(Tools.cut file)^"()\nglobal init;\n\n\nInit = [\n") in 

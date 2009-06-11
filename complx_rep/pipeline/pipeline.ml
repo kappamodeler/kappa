@@ -74,7 +74,7 @@ type 'a pipeline = {
     unmarshallize: file_name -> prefix -> output_channel -> 'a internal_encoding*output_channel;
     marshallize: file_name -> 'a step;
     build_pb: simplx_encoding -> prefix -> 'a internal_encoding; 
-    build_obs: simplx_encoding -> prefix -> int  -> 'a internal_encoding * string option IntMap.t;
+    build_obs: simplx_encoding -> prefix -> int  -> 'a internal_encoding * string option IntMap.t ;
     translate: interface -> 'a step;
     dump_ckappa: file_name -> compile -> 'a step;
     compile: interface -> compile -> 'a step;
@@ -247,6 +247,75 @@ module Pipeline =
 		 print_newline ()) in 
 	 let _ = dump_chrono prefix l in ()
        and build_pb a prefix = Some {pb_init with simplx_encoding = a}
+       and purge (cpb_species,cpb_contact,cpb_mark) rule (l,m) = 
+	 let rule = List.hd rule.Pb_sig.rules in 
+	 let label = List.hd rule.Pb_sig.labels in 
+	 let flag = name_of_rule label in 
+	 let blist = rule.Pb_sig.injective_guard in 
+	 let warn s x = 
+	   let (already,m,bool) = x in 
+	   if StringSet.mem s already 
+	   then x 
+	   else 
+	     (StringSet.add s already,s::m,false)
+	 in 
+	 let good_species a x = 
+	  if  
+	    List.mem a cpb_species
+	  then 
+	    x
+	  else 
+	    (warn ("Unknown species "^a^" in observable "^flag) x)
+	 in 
+	 let good_site (a,s) x = 
+	   try 
+	     let _ = 
+	       String2Map.find (a,s) cpb_contact 
+	     in x 
+	   with 
+     	       Not_found -> 
+		 warn ("Unknown site "^s^" in species "^a^" in observable "^flag) x
+	 in 
+	 let good_mark (a,s) m x  = 
+	   try 
+	     let _ = List.mem m (String2Map.find (a,s) cpb_mark)
+	     in x
+	   with 
+	       Not_found -> 
+		 warn ("Unknown mark "^m^" in site "^s^" of "^a^" in observable "^flag) x 
+	 in 
+	 let good_link (a,s) (a',s') x =
+	   try 
+	     let _ =  List.mem (a',s') (String2Map.find (a,s) cpb_contact)
+	     in x
+	   with 
+	       Not_found -> 
+		 warn ("Invalid bond between sites ("^a^"."^s^") and ("^a'^","^s'^") in observable "^flag) x 
+	 in 
+	 begin 
+	   let _,m,bool = 
+	     List.fold_left 
+	       (fun x (b,_) -> 
+		  match b with 
+		      H(_,a)   -> good_species a x
+		    | B(_,a,s) -> good_site (a,s) (good_species a x)
+		    | M((_,a,s),m) -> good_mark (a,s) m (good_site (a,s) (good_species a x))
+		    | AL((_,a,s),(a',s')) | L((_,a,s),(_,a',s')) -> 
+			let x' = (good_site (a,s) 
+				     (good_species a
+					(good_site (a',s')
+					   (good_species a' x)))) in 
+			  if compare (a,s) (a',s') <= 0 
+			  then 
+			    good_link (a,s) (a',s') x'
+			  else 
+			    good_link (a',s') (a,s) x' 
+		    | _ -> x)
+	       (StringSet.empty,m,true)
+	       blist 
+	   in 
+	     (bool,(l,m))
+	 end 
        and build_obs a prefix n = 
 	 match a with None -> None,IntMap.empty 
 	   | Some (a,b,c) -> 
@@ -1403,7 +1472,10 @@ module Pipeline =
 		   None -> pb,(l,m) 
 		 | Some a -> 
 		     let pb,(l,m),boolean = get_boolean_encoding None prefix' a (l,m) in 
+		     let pb,(l,m),cpb = get_intermediate_encoding None  prefix' a (l,m) in 
 		     let pb,(l,m),auto = get_auto prefix' pb (l,m) in 
+		     let pb,(l,m),contact = get_best_res_contact_map prefix pb (l,m) in 
+
 		     (match pb.bdd_sub_views with None -> Some pb,(l,m)
 		     | Some sub ->
 			 let nrule = List.length boolean.system in 
@@ -1411,13 +1483,38 @@ module Pipeline =
 			   match pb' with 
 			       None -> pb',(l,m)
 			     |Some a' -> 
-				let pb',(l,m),boolean_obs = get_boolean_encoding 
-				  None 
-				  prefix' 
-				  a' (l,m) in 
+				let pb',(l,m),boolean_obs = get_boolean_encoding None prefix' a' (l,m) in 
+				let purge,obs_map,(l,m) = 
+				  let list,obs_map,(l,m) =
+				    List.fold_left
+				      (fun (list,obs_map,(l,m)) r -> 
+					 let b,(l,m) = 
+					   purge (cpb.Pb_sig.cpb_species,
+						  (match cpb.Pb_sig.cpb_contact with None -> String2Map.empty | Some a -> a),
+						  (match cpb.Pb_sig.cpb_mark_site with None -> String2Map.empty | Some a -> a)) 
+					     r (l,m)
+					 in
+					   if b then (r::list),obs_map,(l,m)
+					   else 
+					     begin 
+					         let key = (List.hd (List.hd r.Pb_sig.rules).Pb_sig.labels).Pb_sig.r_simplx.Rule.id in 
+						   (list,IntMap.remove key obs_map,(l,m))
+					     end)
+				      ([],obs_map,(l,m))
+				      boolean_obs.system 
+				  in List.rev list,obs_map,(l,m)
+				in
+				let pb' = 
+				  {pb' 
+				   with 
+				     boolean_encoding =
+				      (match pb.boolean_encoding 
+				       with None -> None
+					 | Some a -> Some {a with system = purge})}
+				in 
 				let pb',(l,m),obs_auto = get_auto prefix' pb' (l,m) in 
 				let auto = IntMap.fold IntMap.add obs_auto auto in 
-				let boolean = {boolean with system = boolean.system@boolean_obs.system} in 
+				let boolean = {boolean with system = (List.rev boolean.system)@(List.rev purge)} in 
 				let opt,(l,m)  = 
 				  Ode_computation.compute_ode
 				    file0 
@@ -1469,7 +1566,8 @@ module Pipeline =
 			 in 
 			 let l = chrono prefix "dumping fragments" l in 
 			   Some {pb with nfrag = nfrag},(l,m))
-		       ))
+									       
+	       ))
 	   
        and 
 	   marshallize  = 
