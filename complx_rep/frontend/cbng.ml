@@ -119,7 +119,7 @@ module CBnG =
 
 
 	   
-    let translate_control_update pb irule map t  (context_control,uncontext_control) = 
+    let translate_control_update pb irule map cpb_map t  (context_control,uncontext_control) = 
     match t with 
       No_Pol | No_Helix -> (context_control,uncontext_control) 
     | Bind ((i1,s1),(i2,s2)) -> 
@@ -130,7 +130,9 @@ module CBnG =
 	  let i',ig = irule.id_mapping i in 
 	  StringSet.fold  
 	    (fun m' sol -> (M((i',ig,s),m'),m'=m)::sol)
-	    (StringSet.add m (try (IntStringMap.find (i,s) map) with _ -> StringSet.empty))
+	    (StringSet.add m 
+	       (try (IntStringMap.find (i,s) map) with _ -> 
+		  String2Map.find (ig,s) cpb_map))
             context_control,uncontext_control
       | Release ((i1,s1),(i2,s2)) ->
 	  let i1',ig1 = irule.id_mapping i1 in 
@@ -834,6 +836,18 @@ List.map (rename_test f) b)) r.cpb_guard;
     let translate_problem  pb' pb  f =
       let _ = trace_print "TRANSLATE_INIT" in 
       let init = translate_init pb.cpb_init in 
+      let cpb_map = 
+	match pb.cpb_mark_site 
+	with None -> String2Map.empty 
+	  | Some a -> 
+	      String2Map.map 
+		(fun  a -> 
+		   List.fold_left 
+		     (fun set a -> StringSet.add a set)
+		     StringSet.empty 
+		     a)
+		a 
+      in 
       let _ = trace_print "POSSIBLE_LINKS" in 
       let possible_links,possible_linksb  = 
 	match  pb.cpb_contact with None  -> 
@@ -916,16 +930,13 @@ List.map (rename_test f) b)) r.cpb_guard;
 			      r.cpb_equal in
 	     l
 	      ;
-                     (* an id in the injective encoding is mapped to the set of its copy in the expanded version *)
-		(*    mapping_exp_to_inj = (fun x -> x);(*TODO*)
-                      
-		   mapping_inj_to_exp = fun x -> [] (*TODO*)*)}::sol,map)
+		  }::sol,map)
 		r.cpb_guard ([],IntStringMap.empty) in 
 	    
 	    let control = 
 	      let context,uncontext = 
 		list_fold 
-		  (translate_control_update pb ir map )
+		  (translate_control_update pb ir map cpb_map)
                   r.cpb_control.cpb_update
 		  ([],[]) in
 	      let context = 
