@@ -635,10 +635,20 @@ module BddBool =
 	  (fun sol (k,(bool,map),h) -> 
 	    if (not bool) then sol
 	    else 
-	      let a,b,c = print_pretty string_handler k (fun _ -> true) 
-			    ((StringMap.add k map StringMap.empty),1) 
-			    h 
-		  print_any "" (fun x -> x) (fun x -> x) None log 
+	      let pretty = StringMap.add k map StringMap.empty in 
+	      let a,b,c = 
+		print_pretty 
+		  string_handler 
+		  k 
+		  (fun _ -> true) 
+		  ((pretty,pretty),1) 
+		  h 
+		  print_any 
+		  "" 
+		  (fun x -> x) 
+		  (fun x -> x) 
+		  None 
+		  log 
 	      in 
 	      if  a
 	      then (print_option empty_prefix log "\n")
@@ -829,18 +839,23 @@ module BddBool =
 	List.fold_left 
 	  (fun sol (s,map) -> 
             let _,string,_ = 
-	      StringMap.fold (fun a b (bool,l,n) -> 
-		if StringSet.mem a s then (bool,l,n)  
-		else 
-		  let a,b,c = 
-		    print_pretty string_handler 
-		      a (fun _ -> true)
-		      map 
-		    tuple_known
-		      print_any 
-		      (if bool then !Config_complx.solution_separator else "")
-		      (fun x -> x) (fun x -> x) None log 
-		  in (a,b::l,c))
+	      StringMap.fold 
+		(fun a b (bool,l,n) -> 
+		   if StringSet.mem a s then (bool,l,n)  
+		   else 
+		     let a,b,c = 
+		       print_pretty string_handler 
+			 a 
+			 (fun _ -> true)
+			 ((fst map,fst map),snd map) 
+			 tuple_known
+			 print_any 
+			 (if bool then !Config_complx.solution_separator else "")
+			 (fun x -> x) 
+			 (fun x -> x) 
+			 None 
+			 log 
+		     in (a,b::l,c))
 		(fst map) (false,[],snd map) in		
 	    print_option empty_prefix log "\n";
 	    let rep = 
@@ -865,7 +880,7 @@ module BddBool =
 			 print_pretty 
 			   string_handler 
 			   a (fun _ -> true)
-			   map 
+			   ((fst map,fst map),snd map) 
 			   tuple_data
 			   print_any 
 			   (if bool then !Config_complx.solution_separator else "")
@@ -874,7 +889,8 @@ module BddBool =
 		       in (a,b::l
 			   
 			     ,c))
-                   (fst map) (false,[],snd map) in
+                   (fst map) 
+		     (false,[],snd map) in
 	
 	   (* print_option empty_prefix log "\n";*)
 		 let rep = 

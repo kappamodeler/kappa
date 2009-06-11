@@ -1693,12 +1693,13 @@ let pretty_print
       (fun _ (ag,tuple) bool -> 
 	let _ = 
 	  if bool then () in 
+	let pretty = StringMap.add ag  tuple StringMap.empty in 
 	let l = 
 	  print_pretty 
 	    handler 
 	    ag
 	    (fun x->true)
-	    (StringMap.add ag  tuple StringMap.empty,0)
+	    ((pretty,pretty),0)
 	    tuple_known
 	    empty
 	    (if bool then handler.agent_separator () else "")

@@ -320,7 +320,7 @@ module Kleenean_expr =
 			      &&
 				(not (List.exists (fun x' -> x=x')
 					c.remove)))
-			      (pretty,n) 
+			      ((pretty,pretty''),n) 
 		              tuple_data print_any
 			      (if bool then 
 				(if (IntSet.mem (g k) set) 
@@ -355,7 +355,7 @@ module Kleenean_expr =
 				with Not_found -> false)&&
 				((List.exists (fun x' -> x=x')
 				    c.remove)))
-			      (pretty,n) tuple_data print_any
+			      ((pretty,pretty),n) tuple_data print_any
 			      (if bool then 
 				(if (IntSet.mem (g k) set)
 				then 
@@ -412,7 +412,7 @@ module Kleenean_expr =
 			    with Not_found -> false) &&
 			    not ((List.exists (fun x' -> x=x')
 				    c.remove) or List.exists (fun x' -> x=x') c.add)  )
-			  (pretty',n) 
+			  ((pretty',pretty'),n) 
 			  tuple_data 
 			  print_any 
 			  (if bool then 
@@ -444,7 +444,7 @@ module Kleenean_expr =
 			      let _ = StringMap.find x c' in true 
 			    with Not_found -> false) &&
 			  List.exists (fun x' -> x=x') c.add)
-			  (pretty',n) tuple_data print_any 
+			  ((pretty',pretty'),n) tuple_data print_any 
 			  (if bool 
 			  then 
 			    (if (IntSet.mem (g k) set) then 

@@ -114,6 +114,7 @@ let string_latex =
 
 
 let print_pretty string_handler a which_ag (pretty_map,n) tuple_f print_any pref sigma sigma2 hash log =
+  let pretty_map,pretty_map2 = pretty_map in 
   let sol = ref [] in 
   let print_string1 s = 
     match log with None -> ()
@@ -128,17 +129,22 @@ let print_pretty string_handler a which_ag (pretty_map,n) tuple_f print_any pref
   if which_ag a
   then 
     let l = 
-      StringMap.fold 
-	(fun a b sol -> (a,b)::sol) 
+      StringMap.fold2
+	(fun a b sol -> (a,b,b)::sol)
+	(fun a b sol -> sol)
+	(fun a b c sol -> (a,b,c)::sol) 
 	(StringMap.find a pretty_map) 
+	(try StringMap.find a pretty_map2
+	 with Not_found -> StringMap.find a pretty_map)
 	[]
     in 
     let bool = 
       list_fold 
-	(fun (x,tuple) (bool,(n:int)) -> 
+	(fun (x,tuple,tuple2) (bool,(n:int)) -> 
 	  let port = (a,x) in 
-	  if (not (interesting tuple tuple_f))
-	  then 
+	  if (not (interesting tuple tuple_f)) && 
+	     (not (interesting tuple2 tuple_f))
+ 	  then 
 	    begin
 	      (bool,n)
 	    end

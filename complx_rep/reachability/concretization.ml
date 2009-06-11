@@ -62,8 +62,21 @@ let print_complexe complexe spec log =
 	let p = a.path in 
 	let b = StringListMap.find p pretty_map_with_links in 
 	let n = (StringListMap.find p name_of_path) in 
+	let pretty = StringMap.add n b StringMap.empty in 
 	let a,token,c = 
-	  print_pretty string_txt n (fun _ -> true) (StringMap.add n b StringMap.empty,k) tuple_known (Some "()") (if bool then (!Config_complx.solution_separator) else "") (fun x -> x) (fun x->x) None log in 
+	  print_pretty 
+	    string_txt 
+	    n 
+	    (fun _ -> true) 
+	    ((pretty,pretty),k)
+	    tuple_known 
+	    (Some "()") 
+	    (if bool then (!Config_complx.solution_separator) else "") 
+	    (fun x -> x) 
+	    (fun x->x) 
+	    None 
+	    log 
+	in 
 	a,((List.rev token)::complexe),c)
       complexe.agents (false,[],k) in 
   List.rev l,complexe.card
@@ -74,7 +87,20 @@ let print_spec spec log =
   match log with None -> ()
   | Some log -> 
   IntMap.iter (fun i c ->
-    let a,_,b = print_pretty string_txt c.name (fun _ -> true) (StringMap.add c.name (c.phospho_site) StringMap.empty,1) tuple_known (Some "()") "" (fun x-> x) (fun x -> x) None (Some log) in 
+		 let pretty = StringMap.add c.name (c.phospho_site) StringMap.empty in 
+		 let a,_,b = 
+		   print_pretty 
+		     string_txt 
+		     c.name 
+		     (fun _ -> true) 
+		     ((pretty,pretty),1)
+		     tuple_known 
+		     (Some "()") 
+		     "" 
+		     (fun x-> x) 
+		     (fun x -> x) 
+		     None 
+		     (Some log) in 
     if a 
     then 
       (Printf.fprintf log "\n")

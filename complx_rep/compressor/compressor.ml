@@ -881,10 +881,16 @@ module Compressor =
 			   print_opt !Config_complx.comment;
 			   print_opt "simplified  rule:";
 			   print_opt "\n";
+			   let step  = 
+			     if b = ["Cannot be applied"]
+			     then 
+			       (print_opt !Config_complx.comment;
+				1)
+			     else 0 in 
 			   let _ = 
 			     try (print_opt 
 				    (String.make 
-				       (oldflaglength - new_flaglength)
+				       (max 0 (oldflaglength - new_flaglength - step))
 				       ' '))
 			     with _ -> () in 	
 			   let _ = 
