@@ -274,7 +274,13 @@ module Pipeline =
 	     in x 
 	   with 
      	       Not_found -> 
-		 warn ("Unknown site "^s^" in species "^a^" in observable "^flag) x
+		 try 
+		   let _ = 
+		     String2Map.find (a,s) cpb_mark 
+		   in x
+		 with 
+		     Not_found -> 
+		       warn ("Unknown site "^s^" in species "^a^" in observable "^flag) x
 	 in 
 	 let good_mark (a,s) m x  = 
 	   try 
