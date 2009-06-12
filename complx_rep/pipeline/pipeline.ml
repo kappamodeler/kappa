@@ -247,7 +247,7 @@ module Pipeline =
 		 print_newline ()) in 
 	 let _ = dump_chrono prefix l in ()
        and build_pb a prefix = Some {pb_init with simplx_encoding = a}
-       and purge (cpb_species,cpb_contact,cpb_mark) rule (l,m) = 
+       and purge (cpb_species,cpb_contact,cpb_mark,cpb_sites) rule (l,m) = 
 	 let rule = List.hd rule.Pb_sig.rules in 
 	 let label = List.hd rule.Pb_sig.labels in 
 	 let flag = name_of_rule label in 
@@ -268,19 +268,12 @@ module Pipeline =
 	    (warn ("Unknown species "^a^" in observable "^flag) x)
 	 in 
 	 let good_site (a,s) x = 
-	   try 
-	     let _ = 
-	       String2Map.find (a,s) cpb_contact 
-	     in x 
-	   with 
-     	       Not_found -> 
-		 try 
-		   let _ = 
-		     String2Map.find (a,s) cpb_mark 
-		   in x
-		 with 
-		     Not_found -> 
-		       warn ("Unknown site "^s^" in species "^a^" in observable "^flag) x
+	   if 
+	       Pb_sig.String2Set.mem (a,s) cpb_sites
+	   then 
+	     x 
+	   else
+	     warn ("Unknown site "^s^" in species "^a^" in observable "^flag) x
 	 in 
 	 let good_mark (a,s) m x  = 
 	   try 
@@ -1497,7 +1490,8 @@ module Pipeline =
 					 let b,(l,m) = 
 					   purge (cpb.Pb_sig.cpb_species,
 						  (match cpb.Pb_sig.cpb_contact with None -> String2Map.empty | Some a -> a),
-						  (match cpb.Pb_sig.cpb_mark_site with None -> String2Map.empty | Some a -> a)) 
+						  (match cpb.Pb_sig.cpb_mark_site with None -> String2Map.empty | Some a -> a),
+						 match cpb.Pb_sig.cpb_sites with None -> Pb_sig.String2Set.empty | Some a->a) 
 					     r (l,m)
 					 in
 					   if b then (r::list),obs_map,(l,m)

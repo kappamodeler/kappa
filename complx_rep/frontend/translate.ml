@@ -581,7 +581,21 @@ let translate_rule_list l init interface  messages =
   
  
   
-  {Pb_sig.cpb_marks = StringSet.fold (fun a b -> a::b) marks [];
+  {Pb_sig.cpb_sites = 
+      Some 
+	begin 
+	  StringMap.fold  
+	    (fun s l sol -> 
+	       StringSet.fold 
+		 (fun site sol  -> String2Set.add (s,site) sol)
+		 l
+		 sol 
+		 )
+	    linkable_sites
+	    String2Set.empty
+	end;
+	
+    Pb_sig.cpb_marks = StringSet.fold (fun a b -> a::b) marks [];
     Pb_sig.cpb_species = species ;
     Pb_sig.cpb_with_dots = with_dots;
     Pb_sig.cpb_interface = interface;

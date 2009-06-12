@@ -244,6 +244,7 @@ type 'a cpb =
     cpb_with_dots:bool;
     cpb_species: agent list;
     cpb_contact: (string *string) list String2Map.t option; 
+    cpb_sites: String2Set.t option;
     cpb_mark_site: (string list) String2Map.t option;
     cpb_interface: (agent*cpb_site list*cpb_site list) list;
     cpb_marks: mark list;

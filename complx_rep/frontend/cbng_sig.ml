@@ -101,6 +101,27 @@ let dump_species channel x =
    let _ = print "\n\n" in 
    () 
 
+let dump_sites channel x =
+   let print x = Printf.fprintf channel x in 
+   let _ = 
+     match x.cpb_sites
+     with None -> () 
+       | Some a -> 
+	   begin 
+	     let _ = print "Species: " in 
+	     let _ = 
+	       Pb_sig.String2Set.fold 
+		 (fun (a,s) bool  -> 
+                    (if bool then print ",");
+                    print "%s.%s" a s;true)
+		 a
+		 false 
+	     in 
+	     let _ = print "\n\n" in 
+	       () 
+	   end
+   in ()
+
 let dump_marks  channel x =
    let print x = Printf.fprintf channel x in 
    let _ = print "Marks: " in 
@@ -253,6 +274,7 @@ let cbng_dump fic x =
            let print x = Printf.fprintf channel x in 
            let _ = print "Cbng encoding:\n\n" in 
            let _ = dump_species channel x in 
+	   let _ = dump_sites channel x in 
            let _ = dump_marks channel x in
            let _ = begin if x.cpb_with_dots then print "The (BNG)-dot operator is used.\n\n" 
                                 else print "The (BNG)-dot operaor is not used.\n\n"
