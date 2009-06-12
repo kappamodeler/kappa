@@ -40,10 +40,12 @@ Bullshititem :
   NextLine {"\\\n"}
 
 Comment_rule :
-    Rule C {let (a,b,c)=$1 in {arrow=fst b;flag=None;lhs=a;rhs=c;dir=snd b;comments=$2}}
-|   Rule   {let (a,b,c)=$1 in {arrow=fst b;flag=None;lhs=a;rhs=c;dir=snd b;comments=""}}
-|   Flag FlagIdent Flag Rule {let (a,b,c)=$4 in {arrow=fst b;flag=Some $2;lhs=a;rhs=c;dir=snd b;comments=""}}
-|   Flag FlagIdent Flag Rule C {let (a,b,c)=$4 in {arrow=fst b;flag=Some $2;lhs=a;rhs=c;dir=snd b;comments=$5}}
+    Rule C {let (a,b,c)=$1 in {pref="";arrow=fst b;flag=None;lhs=a;rhs=c;dir=snd b;comments=$2}}
+|   Rule   {let (a,b,c)=$1 in {pref="";arrow=fst b;flag=None;lhs=a;rhs=c;dir=snd b;comments=""}}
+|   Flag FlagIdent Flag Rule {let (a,b,c)=$4 in {pref="";arrow=fst b;flag=Some $2;lhs=a;rhs=c;dir=snd b;comments=""}}
+|   Flag FlagIdent Flag Rule C {let (a,b,c)=$4 in {pref="";arrow=fst b;flag=Some $2;lhs=a;rhs=c;dir=snd b;comments=$5}}
+|   Ident Flag FlagIdent Flag Rule {let (a,b,c)=$5 in {pref=$1;arrow=fst b;flag=Some $3;lhs=a;rhs=c;dir=snd b;comments=""}}
+|   Ident Flag FlagIdent Flag Rule C {let (a,b,c)=$5 in {pref=$1;arrow=fst b;flag=Some $3;lhs=a;rhs=c;dir=snd b;comments=$6}}
 
 Line :
   D EOL {let _ = succ () in Decl($1)}

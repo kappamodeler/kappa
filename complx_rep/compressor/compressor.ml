@@ -837,8 +837,10 @@ module Compressor =
 		     1+(if nspace = 0 then 1 else nspace)
 		     + (max 1 (match a.flag with None -> 0
 		     | Some s -> 2+(String.length (s))))
+		       + String.length a.pref 
 		   in 
 		   let new_flaglength = String.length name + 1 in 
+		   let _ = print_opt a.pref in 
 		   let _ = 
 		     try (print_opt 
 		       (String.make 

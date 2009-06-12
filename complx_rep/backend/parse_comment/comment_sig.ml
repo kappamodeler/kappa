@@ -1,5 +1,6 @@
 type commented_rule = 
-    {flag:string option;
+    {pref:string;
+      flag:string option;
     arrow:string;
     lhs:string;
       rhs:string;
