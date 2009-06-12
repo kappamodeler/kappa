@@ -1375,23 +1375,23 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			 a.print_string "function z = " in 
 		   let _ = pprint_string print_ODE_latex "\\odeequ{" in
 		   
-		   let _ = print_intermediar_var (*{*)print_ODE (*with matlab_aux = None}*) flag (string_of_int i)   in
+		   let _ = print_intermediar_var {print_ODE with matlab_aux = None} flag (string_of_int i)   in
 		   let _ = 
 		     match print_ODE.matlab with 
 		       None -> ()
 		     |	Some a -> 
 			 a.print_string "(y) \n  z "
 		   in
-(*		   let _ = 
+		   let _ = 
 		     match print_ODE.matlab_aux with 
 			 None -> () 
 		       | Some a -> 
-			   print_string ("dydt("^(string_of_int i)^")=dydt("^(string_of_int i)^"+")
-		   in *)
+			   a.print_string ("dydt("^(string_of_int i)^")=dydt("^(string_of_int i)^")+")
+		   in 
 		   let _ = print_expr print_ODE_act true true (Const 0) in 
 		   let _ = pprint_string print_ODE_act ",\n" in 
 		   let _ = pprint_vart print_ODE in 
-		   let _ = pprint_assign_plus print_ODE in 
+		   let _ = pprint_assign_plus {print_ODE with matlab_aux = None} in 
 		   let _ = print_expr print_ODE true true l in 
 		   let grad = grad l in 
 		   let jacobian = 
