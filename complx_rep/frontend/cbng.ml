@@ -47,7 +47,7 @@ module CBnG =
 	  try (StringMap.find s c)
 	  with Not_found -> 1 in
 	   (i::l,
-	    IntMap.add i (s^(string_of_int c'),s) m',
+	    IntMap.add i (s^"%"^(string_of_int c'),s) m',
 	    StringMap.add s 
 	      (i::(try (StringMap.find s m'') with Not_found -> [])) m'', 
 	    StringMap.add s (c'+1) c))
