@@ -1024,7 +1024,7 @@ let print_activity print file activity_map =
   
 let print_obs_in_matlab print file activity_map nfrag obsset (l,m) = 
   let _ = pprint_string print ("function Observable="^(Tools.cut file)^"(y)\nglobal k;\n\n\nObservable = [\n") in 
-  let _ = 
+  let (_,l,m) = 
     if IntMap.is_empty obsset
     then 
       let rec vide k = 
@@ -1041,19 +1041,21 @@ let print_obs_in_matlab print file activity_map nfrag obsset (l,m) =
 	     begin 
 	       let i' = 
 		 match j 
-	       with None -> i
-		 | Some k -> k 
+		 with None -> i
+		   | Some k -> k 
 	       in 
 	       let _ = 
 		 if bool then pprint_string print ",\n"
 	       in
-	       let l,m,expr = 
+	       let expr = 
 		 try 
-		   l,m,IntMap.find i' activity_map 
+		   IntMap.find i' activity_map 
 		 with 
 		     Not_found -> 
-		       l,"Dead rule in observables"::m,Const 0 
+		       Const 0 
 	       in 
+	       let m=if expr = Const 0 then "Dead rule in observables"::m else m in 
+		 
 	       let _ = print_expr print true true expr in 
 		 (true,l,m) 
 	     end

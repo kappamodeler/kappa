@@ -1349,6 +1349,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			  (prod,Const 0))
 		     in prod,Mult(Div(kyn_factor,Const 2),rate)
 	       in 
+	       let activity = simplify_expr activity in 
 	       let activity_map = 
 		 IntMap.add  rule_key activity activity_map 
 	       in 
@@ -1387,8 +1388,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		       | Some a -> 
 			   a.print_string ("dydt("^(string_of_int i)^")=dydt("^(string_of_int i)^")+")
 		   in 
-		   let _ = print_expr print_ODE_act true true (Const 0) in 
-		   let _ = pprint_string print_ODE_act ",\n" in 
+(*		   let _ = print_expr print_ODE_act true true (Const 0) in 
+		   let _ = pprint_string print_ODE_act ",\n" in *)
 		   let _ = pprint_vart print_ODE in 
 		   let _ = pprint_assign_plus {print_ODE with matlab_aux = None} in 
 		   let _ = print_expr print_ODE true true l in 
@@ -3625,7 +3626,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       List.fold_left
 	(fun set x -> channel_set x set)
 	CSet.empty
-	[print_ODE;print_obs;print_debug;print_obs_latex] in 
+	[print_ODE_matlab;print_ODE_matlab_aux;print_ODE_matlab_activity;print_ODE_matlab_init;print_ODE_matlab_obs;print_ODE_matlab_aux;print_ODE;print_obs;print_debug;print_obs_latex] in 
     let chanset = 
       CSet.remove stdout chanset in 
     let _ = CSet.iter  close_out chanset in
