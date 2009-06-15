@@ -16,7 +16,6 @@ open Ode_print
 open Views 
 open Error_handler 
 
-let explicit = false
 let debug = false
 let log_step = false
 let memory = true
@@ -1599,20 +1598,24 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					      begin 
 						print_string "COMPATIBLE_VIEWS";
 						print_string a;
+						print_newline ();
 						List.iter 
 						  (fun x -> print_int x;print_newline ())
 						  tp_list;
 						print_newline ();
+						print_string "BLIST\n";
 						List.iter 
 						  (fun (x,bool) -> print_string 
 						     (string_of_b x);print_string (if bool then "T\n" else "F\n"))
 						  blist;
 						print_newline ();
+						print_string "RBLIST\n";
 						List.iter 
 						  (fun (x,bool) -> print_string 
 						     (string_of_b x);print_string (if bool then "T\n" else "F\n"))
 						  restricted_blist;
 						print_newline ();
+						print_string "BMAP\n";
 						BMap.iter 
 						  (fun x bool -> 
 						     print_string 
@@ -2008,6 +2011,15 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 									     | L((b',_,_),(c',_,_)) when b'=a or c'=a -> true 
 									     | _ -> false)
 									blist in
+								    let bmap = 
+								      BMap.fold 
+									(fun b bool sol -> 
+									   match b,bool with 
+									       H(b',_),false| B(b',_,_),_ | AL((b',_,_),_),_ | M((b',_,_),_),_ when b' = a -> BMap.add (downgrade_b b) bool sol 
+									     | _ -> sol)
+									bmap
+									BMap.empty 
+								    in   
 								    let tp_list = 
 								      compute_compatible_views_id 
 									blist 
@@ -2015,9 +2027,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 									bmap 
 									a 
 									(specie_of_id,agent_to_int_to_nlist,view_of_tp_i,ode_handler)  in 
-								      
-								      
-								      
 								    let bound_agent_list_same_class,
 								      bound_agent_list_other_class = 
 								      List.fold_left 
@@ -2376,11 +2385,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 						 | (bvar,bool)::q -> 
 						     match ode_handler.b_of_var bvar with 
 						       B(ag',_,s) 
-						       when ag'=agt && StringSet.mem s int ->( try (bool = BMap.find (B(agt,agt,s)) b2) with Not_found -> true) && check_compatibility q
+						       when ag'=agt && StringSet.mem s int ->( try (bool = BMap.find (B(ag,agt,s)) b2) with Not_found -> true) && check_compatibility q
 						     |	AL((ag',_,s),t) 
-						       when ag'=agt && StringSet.mem s int ->( try (bool = BMap.find (AL((agt,agt,s),t)) b2) with Not_found -> true)  && check_compatibility q 
+						       when ag'=agt && StringSet.mem s int ->( try (bool = BMap.find (AL((ag,agt,s),t)) b2) with Not_found -> true)  && check_compatibility q 
 						     |	M((ag',_,s),m) 
-						       when ag'=agt && StringSet.mem s int -> (try (bool = BMap.find (M((agt,agt,s),m)) b2)  with Not_found -> true) && check_compatibility q 
+						       when ag'=agt && StringSet.mem s int -> (try (bool = BMap.find (M((ag,agt,s),m)) b2)  with Not_found -> true) && check_compatibility q 
 						     |  _ -> 
 							 check_compatibility q in 
 					       let filtered_a = 
@@ -2457,9 +2466,10 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					     StringMap.iter
 					       (fun a i -> 
 						 pprint_string print_debug a;
-						 pprint_string print_debug (string_of_int i);
-						 pprint_string print_debug ": ";
-						 pprint_newline print_debug)
+						  pprint_string print_debug ": ";
+						  pprint_string print_debug (string_of_int i);
+						  pprint_string print_debug ": ";
+						  pprint_newline print_debug)
 					       a;
 					     List.iter
 					       (fun ((a,b,c),(d,e)) -> 
