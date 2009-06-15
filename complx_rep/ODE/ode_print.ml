@@ -459,7 +459,7 @@ let pprint_ODE_middle2 print aux_file jac_file init_file obs_file nfrag nobs =
 	    a.print_string ("soln = ode2r(@"^(Tools.cut aux_file)^",[tinit tend],@"^(Tools.cut init_file)^"(),options);\n\nt = linspace(tinit, tend, num_t_point+1);\n\n")
 	  in
 	  let _ = 
-	    a.print_string ("nrows = rows(soln.x);\nnobs = "^nobs^";\nnfragments = "^nfrag^";\ntmp = zeros(nfragments,1);\nobs = zeros (nrows,nobs);\n\nfor j=1:nrows\n   for i=1:nfragments\n      z(i)=soln.y(j,i);\n   end\n   h="^(Tools.cut obs_file)^"(z);\n   for i=1:nobs\n      obs(j,i)=h(i);\n  end\nend\n\ny = interp1(soln.x, obs, t, 'pchip');\nplot(y)")
+	    a.print_string ("nrows = rows(soln.x);\nnobs = "^nobs^";\nnfragments = "^nfrag^";\ntmp = zeros(nfragments,1);\nobs = zeros (nrows,nobs);\n\nfor j=1:nrows\n   for i=1:nfragments\n      z(i)=soln.y(j,i);\n   end\n   h="^(Tools.cut obs_file)^"(z);\n   for i=1:nobs\n      obs(j,i)=h(i);\n  end\nend\n\ny = interp1(soln.x, obs, t, 'pchip');\nplot(t,y)")
 	  in 	    
 	    ()
 
