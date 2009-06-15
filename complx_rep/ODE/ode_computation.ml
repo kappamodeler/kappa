@@ -1483,14 +1483,14 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			     (fun map (b,bool) -> 
 			       match b,bool with 
 				 B(_),_ | H(_),false 
-			       | AL(_),_ | M(_),_ -> BMap.add (downgrade_b b) bool map 
+			       | AL(_),_ | M(_),_ -> BMap.add ((*downgrade_b*) b) bool map 
 			       | L((a,b,c),(d,e,f)),_ -> 
 				   if bool then 
 				     BMap.add 
-				       (downgrade_b (AL((a,b,c),(e,f))))
+				       ((*downgrade_b*) (AL((a,b,c),(e,f))))
 				       bool
 				       (BMap.add 
-					  (downgrade_b (AL((d,e,f),(b,c)))) 
+					  ((*downgrade_b*) (AL((d,e,f),(b,c)))) 
 					  bool
 					  map)
 				   else
@@ -1577,6 +1577,15 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 						| L((b',_,_),(c',_,_)),_ when b'=a or c'=a -> true 
 						| _ -> false)
 					      blist in
+					  let bmap = 
+					    BMap.fold 
+					      (fun b bool sol -> 
+						 match b,bool with 
+						   H(b',_),false| B(b',_,_),_ | AL((b',_,_),_),_ | M((b',_,_),_),_ when b' = a -> BMap.add (downgrade_b b) bool sol 
+						| _ -> sol)
+					      bmap
+					      BMap.empty 
+					  in   
 					  let tp_list = 
 					    compute_compatible_views_id 
 					      blist 
@@ -1593,6 +1602,23 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 						List.iter 
 						  (fun x -> print_int x;print_newline ())
 						  tp_list;
+						print_newline ();
+						List.iter 
+						  (fun (x,bool) -> print_string 
+						     (string_of_b x);print_string (if bool then "T\n" else "F\n"))
+						  blist;
+						print_newline ();
+						List.iter 
+						  (fun (x,bool) -> print_string 
+						     (string_of_b x);print_string (if bool then "T\n" else "F\n"))
+						  restricted_blist;
+						print_newline ();
+						BMap.iter 
+						  (fun x bool -> 
+						     print_string 
+						     (string_of_b x);print_string (if bool then "T\n" else "F\n"))
+						  bmap;
+						print_newline ();
 						print_newline ()
 					      end in 
 					  
