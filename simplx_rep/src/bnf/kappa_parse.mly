@@ -85,12 +85,14 @@
        intra = u_opt 
       }
 
+  let is_defined_flag flag = Hashtbl.mem flag_env flag
+
   let check_flag_obs flag = 
     let flg_type = 
       try Hashtbl.find flag_env flag 
       with Not_found -> error_found 80 ("observation "^flag^" is undefined")
     in
-      if flg_type = 0 then error_found 82 (flag^" is a rule name, expecting an observation name") else ()
+      if flg_type = 0 then error_found 82 (flag^" is a rule name, expecting an observable name") else ()
 	
   let check_flag_rule flag = 
     let flg_type = 
@@ -100,13 +102,13 @@
       if flg_type > 0 then 
 	error_found 90 (flag^" is an observation name, expecting a rule name")
 %}
-%token INIT_LINE  OBS_LINE  STORY_LINE NEWLINE MODIF_LINE GEN_LINE CONC_LINE EOF
-%token MULT DIVIDE AND PLUS MINUS COMMA SEMICOLON GREATER SMALLER SET EQUAL INFINITY SEP
+%token INIT_LINE  OBS_LINE  STORY_LINE NEWLINE MODIF_LINE GEN_LINE CONC_LINE EOF VAR_LINE
+%token MULT DIVIDE AND PLUS MINUS COMMA SEMICOLON GREATER SMALLER SET EQUAL INFINITY SEP MIXTURE PAUSE KILL DUMP
 %token DO AT TIME
-%token KAPPA_LNK KAPPA_WLD KAPPA_SEMI KAPPA_LRAR KAPPA_RAR
+%token KAPPA_LNK KAPPA_WLD KAPPA_SEMI KAPPA_LRAR KAPPA_RAR IMPLY
 %token OP_PAR CL_PAR OP_CONC CL_CONC OP_ACC CL_ACC
-%token <int> INT REF
 %token <float> FLOAT 
+%token <int> INT
 %token <string> ID KAPPA_MRK LABEL
 %left PLUS MINUS
 %left COMMA
@@ -119,14 +121,15 @@
 %% /*Grammar rules*/
 
   line: 
-| INIT_LINE init_expr {hsh_add !env $2}
+| INIT_LINE init_expr {if (!compilation_opt land _PARSE_INIT)=_PARSE_INIT then hsh_add !env $2 else ()}
 | OBS_LINE obs_expr {obs_l := $2::(!obs_l)}
+| VAR_LINE var_expr {obs_l := $2::(!obs_l)}
 | STORY_LINE story_expr {obs_l := $2::(!obs_l)}
 | MODIF_LINE modif_expr {exp := Experiment.add $2 (!exp)}
 | GEN_LINE gen_expr {}
 | CONC_LINE gen_expr {}
 | NEWLINE {()}
-| named_rule_expr {rules := (List.fold_left (fun rules r -> r::rules) (!rules) $1)} 
+| named_rule_expr {if (!compilation_opt land _PARSE_RULES)=_PARSE_RULES then rules := (List.fold_left (fun rules r -> r::rules) (!rules) $1) else ()} 
 | EOF {let sol = sol_of_hsh !env in
          init := sol ;
 	 raise End_of_file}
@@ -162,6 +165,7 @@
 			  in
 			    Some (dep::dep_list,test::test_list,str^" AND "^str')
 			 }
+;
 
   assignement: 
 | LABEL SET assign_expr {let assgn = $3 
@@ -239,24 +243,30 @@
 				 let str = (Experiment.string_of_ast c1)^"<"^(Experiment.string_of_ast c2) in
 				   (dep,test,str)
 			      }
-| TIME GREATER FLOAT {let t0 = $3 in
-		      let test _ = true 
-		      and dep = Experiment.CURR_TIME t0
-		      in
-		      let str = "current time > "^(string_of_float t0) in
-			(dep,test,str)
-		     }
-| TIME GREATER INT {let t0 = float_of_int $3 in
-		    let test _ = true 
-		    and dep = Experiment.CURR_TIME t0
-		    in
-		    let str = "current time > "^(string_of_float t0) in
-		      (dep,test,str)
-		   }
+| TIME GREATER real_number {let t0 = $3 in
+			    let test _ = true 
+			    and dep = Experiment.GREATER_TIME t0
+			    in
+			    let str = "current time > "^(string_of_float t0) in
+			      (dep,test,str)
+			   }
+
+| TIME SMALLER real_number {let t0 = $3 in
+			    let test _ = true 
+			    and dep = Experiment.LESSER_TIME t0
+			    and str = "current time < "^(string_of_float t0) 
+			    in
+			      (dep,test,str)
+			   }
+
 | TIME error {error_found 247 "invalid precondition"}
   ;
 
-  conc_expr:
+  real_number: 
+| FLOAT {$1}
+| INT {float_of_int $1}
+
+      conc_expr:
 | OP_PAR conc_expr CL_PAR {$2}
 | conc_val MULT conc_expr {Experiment.Mult($1,$3)}
 | conc_val DIVIDE conc_expr {Experiment.Div ($1,$3)}
@@ -439,11 +449,34 @@
 | ne_sol_expr EOF {error_found 415 "missing end of line"}
   ;
 
+  var_expr: 
+| LABEL ne_sol_expr NEWLINE {Hashtbl.replace flag_env ("["^$1^"]") 1 ;
+			     let (semi_bounds,_,sol) = $2 in 
+			       if IntMap.is_empty semi_bounds then Solution.Variable ("["^$1^"]",sol)
+			       else 
+				 let str =  
+				   String.concat "," 
+				     (IntMap.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
+				 in
+				   error_found 412 (Printf.sprintf "dangling bound(s): {%s}." str)
+			    } 
+| LABEL EOF {error_found 414 "missing end of line"}
+| ne_sol_expr EOF {error_found 415 "missing end of line"}
+  ;
+
+
   story_expr: 
-| LABEL NEWLINE {let flag = $1 in (check_flag_rule flag ; Solution.Story flag)} 
+| LABEL NEWLINE {let flag = $1 in if is_defined_flag flag then Solution.Story (StringSet.empty,flag) else error_found 469 (Printf.sprintf "undefined flag: %s" flag)} 
+| OP_ACC rule_label_set CL_ACC IMPLY LABEL NEWLINE {Solution.Story ($2,$5)}  
 | LABEL EOF {error_found 420 "missing end of line"}
   ;
   
+  rule_label_set: /*empty*/ {StringSet.empty}
+| LABEL {let flag = $1 in check_flag_rule flag ; StringSet.singleton flag}
+| LABEL COMMA rule_label_set {let flag = $1 in check_flag_rule flag ; StringSet.add flag $3}
+;
+
+
   named_rule_expr:
 | LABEL rule_expr NEWLINE { match $2 with
 				[r';r] -> (
@@ -489,6 +522,7 @@
   constraint_expr: /*empty*/ {[]}
 | OP_CONC cstr_list CL_CONC {$2}
   ;
+
   cstr_list: /*empty*/ {[]}
 | ID {match $1 with "NO_HELIX" -> [Rule.NO_HELIX] | "NO_POLY" -> [Rule.NO_POLY] | s -> error_found 469 (Printf.sprintf "Unkown constraint %s" s)}
 | ID SEMICOLON cstr_list {let hd=
@@ -521,23 +555,25 @@
 | OP_PAR FLOAT CL_PAR {Some $2}
 | OP_PAR INT CL_PAR {Some (float_of_int $2)}
 | OP_PAR INFINITY CL_PAR {error_found 499 "infinite rate for implicit unary rule is not allowed"}
-
+;
   gen_expr : 
-    agent_expr NEWLINE {Some $1,None,None,[]}
-|   ID EQUAL ID NEWLINE {None,Some $1,Some $3,[]}
-|   ID EQUAL ID OP_CONC instruction_list CL_CONC NEWLINE {None,Some $1,Some $3,$5}
+| agent_expr NEWLINE {Some $1,None,None,[]}
+| ID EQUAL ID NEWLINE {None,Some $1,Some $3,[]}
+| ID EQUAL ID OP_CONC instruction_list CL_CONC NEWLINE {None,Some $1,Some $3,$5}
+  ;
 
   instruction_list: 
-    /*empty*/ {[]}
+  /*empty*/ {[]}
 | instruction instruction_list {$1::$2}
-
+;
   instruction:
 | PLUS ID {}
 | MINUS ID {}
 | ID DIVIDE OP_ACC id_list CL_ACC {}
 | ID DIVIDE ID {}
+  ;
 
   id_list: 
-    /*empty*/ {[]}
+  /*empty*/ {[]}
 | ID id_list {$1::$2} 
 

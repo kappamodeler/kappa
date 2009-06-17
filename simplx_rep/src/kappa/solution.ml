@@ -1133,26 +1133,29 @@ let to_dot2 title sol_map =
     Printf.sprintf "digraph G {size=\"5,4\" ; \n label=%s \n %s \n %s %s\n}" 
       graph_label (String.concat "\n" clusters) fake_clusters (String.concat "\n" edges)
 
-type observation = Concentration of (string * t) | Occurrence of string | Story of string
+type observation = Variable of (string * t) | Concentration of (string * t) | Occurrence of string | Story of (StringSet.t * string)
 
-type marshalized_obs = FConcentration of (string * marshalized_t) | FOccurrence of string | FStory of string
+type marshalized_obs = FVariable of (string * marshalized_t) | FConcentration of (string * marshalized_t) | FOccurrence of string | FStory of (StringSet.t * string)
 
 let marshal_obs obs = match obs with
     Concentration (s,sol) -> FConcentration (s,marshal sol)
+  | Variable (s,sol) -> FVariable (s,marshal sol)
   | Occurrence s -> FOccurrence s
-  | Story s -> FStory s
+  | Story (set,s) -> FStory (set,s)
 
 let unmarshal_obs obs = match obs with
     FConcentration (s,f_sol) -> Concentration (s,unmarshal f_sol)
+  | FVariable (s,f_sol) -> Variable (s,unmarshal f_sol)
   | FOccurrence s -> Occurrence s
-  | FStory s -> Story s
+  | FStory (set,s) -> Story (set,s)
 
 
 let str_of_obs obs = 
   match obs with
       Concentration (s,sol) -> Printf.sprintf "%s:%s" s (kappa_of_solution sol)
+    | Variable (s,sol) -> Printf.sprintf "V(%s)=%s" s (kappa_of_solution sol)
     | Occurrence s -> s
-    | Story s -> s
+    | Story (set,s) -> Printf.sprintf "%s => %s" (string_of_set (fun s -> s) StringSet.fold set) s
 
 let sol_of_init no_mult init_list = 
   let sol = empty() in

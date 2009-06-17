@@ -182,8 +182,10 @@ let graph_of_network net =
   in
   let preds_star = (*IntMap.fold*)
     EventArray.fold (fun i e preds_star -> 
-		       let set = preds_closure net (IntSet.singleton i) in
-			 IntMap.add i set preds_star
+		       let opt = preds_closure net (IntSet.singleton i) IntSet.empty in
+			 match opt with 
+			     Some set -> IntMap.add i set preds_star
+			   | None -> Error.runtime (None,None,None) "Session.dot_of_network: empty closure!"
 		    ) net.events IntMap.empty 
   in
   let graph_connections = 
@@ -382,18 +384,14 @@ let xmlns = "\"http://plectix.synthesisstudios.com/schemas/kappasession\""
 let xmlns_xsi = "\"http://www.w3.org/2001/XMLSchema-instance\""
 
 let finalize xml_file ?xml_content log code = 
-(*MOD1 JF*)  
-  let _ = 
-  if (not !save_sim_data) && (!max_iter>1) then 
-    try Sys.remove !serialized_sim_data_file 
-    with _ -> () else () 
+  let _ = Data.cleanup_tmp_file()
   in
   let _ = 
     match !prob_desc with 
 	Some d -> close_out d
       | None -> ()
   in
-(*I have put a protection to prevent crashes *)
+    (*I have put a protection to prevent crashes *)
   let _ = if !Mods2.bench_mode then Gc.print_stat stdout else () in 
   let commandLine = 
     let com = String.concat " " (Array.to_list Sys.argv) in
@@ -412,7 +410,7 @@ let finalize xml_file ?xml_content log code =
   let log = (* adding the exception that are caught by complx in the log *)
     List.fold_left 
       (fun log error -> 
-        add_log_entry 2 (Error_handler.string_of_error error) log)
+         add_log_entry 2 (Error_handler.string_of_error error) log)
       log (!Error_handler_common.error_list) 
   in
   let rec dump_longstrings desc l =
@@ -460,7 +458,7 @@ let finalize xml_file ?xml_content log code =
     in
       Printf.fprintf d "\n%s\n</SimplxSession>\n" (xml_of_log log) ;
       close_out d ;
-            Gc.full_major() ; (*to collect remaining dead memory*)
+      Gc.full_major() ; (*to collect remaining dead memory*)
       exit code
 
 let output_data ?(with_gnuplot=false) data_file rules data_map obs_ind time_map (*concentrations*) = 
@@ -552,6 +550,6 @@ let output_data ?(with_gnuplot=false) data_file rules data_map obs_ind time_map 
 let snapshot (curr_sol,curr_time,snapshot_counter) =
   let species = Species.of_sol curr_sol in
   let (ls_head,ls_core,ls_tail) = ls_of_species species curr_time in
-  let d = open_out_bin (!serialized_snapshots^(string_of_int snapshot_counter)) in
+  let d = open_out_bin (!serialized_snapshot_file^(string_of_int snapshot_counter)) in
     Marshal.to_channel d (ls_head,ls_core,ls_tail) [] ;
     close_out d 

@@ -33,7 +33,9 @@ type sim_data_type = {(*fresh_ind:int ;*)
   min_rate:float ;
   lab: Experiment.t ;
   inf_list: IntSet.t; (*indices of rules with current infinite rate*)
-  oo: IntSet.t (*rules which have to be put to inf_list when instances>0*)
+  oo: IntSet.t ; (*rules which have to be put to inf_list when instances>0*)
+  incompressible: IntSet.t ;(*rule ids that should not be compressed when storifying*)
+  task_list: (float*instruction) list 
 }
 
 (*Marshalization of sim_data*)
@@ -56,9 +58,9 @@ type marshalized_sim_data_t = {
   f_net:Network.marshalized_t ;
   f_n_ag:int ;
   f_min_rate:float ;
-  f_lab: Experiment.t ;
   f_inf_list: IntSet.t;
-  f_oo: IntSet.t
+  f_oo: IntSet.t ;
+  f_incompressible : IntSet.t
 }
 
 let marshal sim_data = 
@@ -88,9 +90,9 @@ let marshal sim_data =
     f_net = Network.marshal sim_data.net ; 
     f_n_ag = sim_data.n_ag ; 
     f_min_rate = sim_data.min_rate ; 
-    f_lab = sim_data.lab ;
     f_inf_list = sim_data.inf_list ;
-    f_oo = sim_data.oo
+    f_oo = sim_data.oo ;
+    f_incompressible = sim_data.incompressible 
   }
 
 let unmarshal f_sd = 
@@ -129,9 +131,11 @@ let unmarshal f_sd =
       net = Network.unmarshal f_sd.f_net ; 
       n_ag = f_sd.f_n_ag ; 
       min_rate = f_sd.f_min_rate ; 
-      lab = f_sd.f_lab ;
+      lab = Experiment.empty ;
       inf_list = f_sd.f_inf_list ;
-      oo = f_sd.f_oo
+      oo = f_sd.f_oo ;
+      incompressible = f_sd.f_incompressible ;
+      task_list = []
     }
   with _ -> 
     let s = "Simulation.unmarshal: uncaught exception" in
@@ -158,7 +162,9 @@ let sd_empty() = {
   min_rate = (-1.0) ;
   lab = Experiment.empty ;
   inf_list = IntSet.empty ;
-  oo = IntSet.empty 
+  oo = IntSet.empty ;
+  incompressible = IntSet.empty ;
+  task_list = []
 }
 
 type sim_parameters = {
@@ -177,73 +183,35 @@ type sim_parameters = {
 
 type sim_counters = {curr_iteration:int;
 		     curr_step:int;
+		     t0:float;
 		     curr_time:float;
+		     curr_tick:int;
 		     skipped:int;
 		     compression_log: (Network.t * Network.t * Network.t * int * float) list;
 		     drawers:Iso.drawers ;
 		     concentrations: (float IntMap.t) IntMap.t ;
 		     time_map : float IntMap.t (*step -> time*) ;
-		     ticks : IntSet.t ;
 		     clock_precision : int ;
-		     snapshot_time : float list ;
-		     snapshot_counter : int 
+		     snapshot_counter : int ;
+		     deadlock : bool ;
+		     restart: bool ;
 		    }
 
 let empty_counters = {curr_iteration=0;
 		      curr_step=0;
+		      curr_tick = 0;
+		      t0 = 0.0;
 		      curr_time=0.0;
 		      skipped=0;
 		      drawers=Iso.empty_drawers 0;
 		      compression_log=[];
 		      concentrations=IntMap.empty;
 		      time_map=IntMap.empty;
-		      ticks=IntSet.empty;
 		      clock_precision=0 ;
-		      snapshot_time = [] ;
 		      snapshot_counter = 0 ;
+		      deadlock = false ;
+		      restart = false ;
 		     }
-
-
-let init_counters sim_data = 
-  let rec init_ticks n = 
-    if n > !clock_precision then (prerr_string "\n"; flush stderr;flush stdout ; IntSet.empty)
-    else 
-      begin
-	prerr_string "_" ; flush stderr ;
-	IntSet.add n (init_ticks (n+1))
-      end
-  in
-    {curr_iteration = 0; 
-     curr_step = 0 ;
-     curr_time = 0.0;
-     skipped = 0;
-     drawers = Iso.empty_drawers !max_iter ;
-     compression_log = [] ; 
-     concentrations = 
-	begin
-	  let obs_map = 
-	    IntSet.fold (fun ind_obs map ->
-			   let r_obs,inst_obs = Rule_of_int.find ind_obs sim_data.rules in
-			   let automorphisms = 
-			     match r_obs.automorphisms with 
-				 None -> (failwith "Automorphisms not computed") 
-			       | Some i -> float_of_int i 
-			   in
-			   let act_obs = (inst_obs *. r_obs.kinetics) /. automorphisms
-			   in 
-			     IntMap.add ind_obs act_obs map
-			) sim_data.obs_ind IntMap.empty 
-	  in
-	    IntMap.add 0 obs_map IntMap.empty (*slot 0 is mapped to time 0.0 and contains initial obs*)
-	end ;
-     time_map = IntMap.add 0 0.0 IntMap.empty ;
-     ticks = init_ticks 1 ;
-     clock_precision = !clock_precision ;
-     snapshot_time = !Data.snapshot_time ;
-     snapshot_counter = 0 
-    }
-
-exception Deadlock of (sim_data_type * sim_parameters * sim_counters)
 
 let print_injections only_obs sim_data =
   InjArray.iter (fun coord (_,_,assoc_map) ->
@@ -274,16 +242,22 @@ let print_rules rules inf_list =
 			| Some i -> if not (i=1) then (Printf.sprintf "/%d" i) else ""
 		      in
 		      let act = r.kinetics *. inst in
-			if r.input = "" then
+			if r.input = "obs" then
 			  match r.flag with
 			      Some flg ->
 				(Printf.printf "obs[%d]: %s %f%s\n" i flg act auto; flush stdout)
 			    | None -> Error.warning (Printf.sprintf "Simulation.print_rules: observation r[%d] has no flag nor input string" i) 
 			else
-			  if IntSet.mem i inf_list then
-			    Printf.printf "r[%d]: %s $INF\n" i r.input
+			  if r.input = "var" then
+			    match r.flag with
+				Some flg ->
+				  (Printf.printf "var[%d]: %s %f%s\n" i flg act auto; flush stdout)
+			      | None -> Error.warning (Printf.sprintf "Simulation.print_rules: variable r[%d] has no flag nor input string" i) 
 			  else
-			    Printf.printf "r[%d]: %s %f%s\n" i r.input act auto; 
+			    if IntSet.mem i inf_list then
+			      Printf.printf "r[%d]: %s $INF\n" i r.input
+			    else
+			      Printf.printf "r[%d]: %s %f%s\n" i r.input act auto; 
 			flush stdout ;
 		   ) rules
 
@@ -297,14 +271,47 @@ let print sim_data =
     print_injections only_obs sim_data
     (*if not only_obs then print_lift sim_data.lift *)
 
+let init_counters init_time sim_data = 
+  {curr_iteration = 0; 
+   curr_step = 0 ;
+   curr_tick = 0 ;
+   t0 = init_time ;
+   curr_time = init_time;
+   skipped = 0;
+   drawers = Iso.empty_drawers !max_iter ;
+   compression_log = [] ; 
+   concentrations = 
+      begin
+	let obs_map = 
+	  IntSet.fold (fun ind_obs map ->
+			 let r_obs,inst_obs = Rule_of_int.find ind_obs sim_data.rules in
+			   if r_obs.input = "var" then map
+			   else
+			     let automorphisms = 
+			       match r_obs.automorphisms with 
+				   None -> (failwith "Automorphisms not computed") 
+				 | Some i -> float_of_int i 
+			     in
+			     let act_obs = (inst_obs *. r_obs.kinetics) /. automorphisms
+			     in 
+			       IntMap.add ind_obs act_obs map
+		      ) sim_data.obs_ind IntMap.empty 
+	in
+	  IntMap.add 0 obs_map IntMap.empty (*slot 0 is mapped to init_time and contains initial obs*)
+      end ;
+   time_map = IntMap.add 0 init_time IntMap.empty ;
+   clock_precision = !clock_precision ;
+   snapshot_counter = 0 ;
+   deadlock = false ;
+   restart = false
+  }
 
-(****************TODO HERE ASSOC_MAP <- AssocArray + modif Solution.cmo********************)
 let add_rule is_obs r sim_data = 
   let sol_init = sim_data.sol
   and indice_r = r.id 
   in
-  let is_fake = (r.input = "") in
-  let obs_ind = if is_obs or is_fake then IntSet.add indice_r sim_data.obs_ind else sim_data.obs_ind
+  let is_fake = (r.input = "var") or (r.input = "obs") in
+  let obs_ind = if is_obs (*rule activity observed*) or is_fake (*number of agents*) then IntSet.add indice_r sim_data.obs_ind else sim_data.obs_ind
   in
   let injs,lift,instances = 
     IntMap.fold 
@@ -378,7 +385,7 @@ let add_rule is_obs r sim_data =
   (*(<<) is the activation relation defined in module Rule*)
   (*(%>) is the inhibition relation defined in module Rule*)
   let flow,conflict = 
-    if !cplx_hsh or !load_map then (IntMap.empty,IntMap.empty)
+    if !cplx_hsh then (IntMap.empty,IntMap.empty)
     else
       let flow = 
 	let set = try IntMap.find indice_r sim_data.flow with Not_found -> IntSet.empty in
@@ -601,211 +608,261 @@ let concretize sim_data abs_pos_map abs_neg_map log =
     (pos_map,neg_map,log)
 
 (*sim_data initialisation*)
-let init log (rules,init,(sol_init:Solution.t),obs_l,exp) =
-  let flag_obs = List.fold_right (fun obs set ->
-				    match obs with
-					Solution.Occurrence flg -> if !story_mode then set else StringSet.add flg set
-				      | Solution.Story flg -> if !story_mode then StringSet.add flg set else set
-				      | _ -> set 
-				 ) obs_l StringSet.empty 
-  in
-  let r_id = (List.length rules)+1 in
-  let fake_rules,_ = 
-    List.fold_right (fun obs (cont,fresh_id) ->
-		       match obs with
-			   Solution.Concentration (flg,sol) -> 
-			     let actions = IntMap.empty
-			     and lhs = Solution.split sol
-			     in
-			     let precompil = 
-			       IntMap.fold (fun i cc_i map -> 
-					      IntMap.add i (Solution.recognitions_of_cc cc_i) map
-					   ) lhs IntMap.empty 
-			     in
-			     let r =
-			       {lhs = lhs ;
-				rhs = sol ; (*identity*)
-				precompil = precompil ;
-				add = IntMap.empty ;
-				actions = actions;
-				corr_ag = 0 ;
-				rate = -1 (*really geekish!*);
-				input = "" ; (*fake rule*)
-				flag = Some flg ;
-				constraints = [] ;
-				kinetics = 1.0 ;
-				boost = 1.0 ;
-				automorphisms = None ;
-				n_cc = IntMap.size lhs ;
-				id = fresh_id;
-				infinite = false;
-				abstraction = None;
-				intra = None
-			       }
-			     in
-			       (r::cont,fresh_id+1)
-			 | _ -> (cont,fresh_id)
-		    ) obs_l ([],r_id)
-  in
+let init log (rules,init,sol_init,obs_l,exp) =
+  if !load_sim_data then
+    try 
+      let log = Session.add_log_entry 0 
+	(Printf.sprintf "--Loading simulation state from %s..." !serialized_sim_data_file) log 
+      in
+      let d = open_in_bin (!serialized_sim_data_file) in 
+      let time,f_sd = (Marshal.from_channel d: float * marshalized_sim_data_t) in
+      let p = {max_failure = !Data.max_clashes;
+	       init_sd = Some !serialized_sim_data_file ;
+	       compress_mode = true ;
+	       iso_mode = false ;
+	       gc_alarm_high = false ;
+	       gc_alarm_low = false 
+	      }
+      in
+      let sd = unmarshal f_sd in
+      let c = init_counters time sd  in
+      let log = Session.add_log_entry 0 "--Initial state successfully loaded." log in
+	close_in d ;
+	(log,p,{sd with lab = exp},{c with curr_time = time})
+    with 
+	exn -> 
+	  let s = (Printf.sprintf "Could not load %s: %s" !serialized_sim_data_file (Printexc.to_string exn)) in
+	    Error.runtime (None,None,None) s
+  else
+    let flag_obs,incomp = (*set of observable names and incompressible rule flags for storification*)
+      List.fold_right (fun obs (obs_flg,incmp_flg) ->
+			 match obs with
+			     Solution.Occurrence flg -> if !story_mode then (obs_flg,incmp_flg) else (StringSet.add flg obs_flg,incmp_flg)
+			   | Solution.Story (ncmp,flg) -> 
+			       if !story_mode then 
+				 let set = StringSet.add flg ncmp in
+				   (StringSet.add flg obs_flg,StringSet.union set incmp_flg) 
+			       else (obs_flg,incmp_flg)
+			   | _ -> (obs_flg,incmp_flg)
+		      ) obs_l (StringSet.empty,StringSet.empty)
+    in
+    let r_id = (List.length rules)+1 in
+    let fake_rules,_ = 
+      List.fold_right (fun obs (cont,fresh_id) ->
+			 match obs with
+			     Solution.Concentration (flg,sol) -> 
+			       let actions = IntMap.empty
+			       and lhs = Solution.split sol
+			       in
+			       let precompil = 
+				 IntMap.fold (fun i cc_i map -> 
+						IntMap.add i (Solution.recognitions_of_cc cc_i) map
+					     ) lhs IntMap.empty 
+			       in
+			       let r =
+				 {lhs = lhs ;
+				  rhs = sol ; (*identity*)
+				  precompil = precompil ;
+				  add = IntMap.empty ;
+				  actions = actions;
+				  corr_ag = 0 ;
+				  rate = -1 (*really geekish!*);
+				  input = "obs" ; 
+				  flag = Some flg ;
+				  constraints = [] ;
+				  kinetics = 1.0 ;
+				  boost = 1.0 ;
+				  automorphisms = None ;
+				  n_cc = IntMap.size lhs ;
+				  id = fresh_id;
+				  infinite = false;
+				  abstraction = None;
+				  intra = None
+				 }
+			       in
+				 (r::cont,fresh_id+1)
+			   | Solution.Variable (flg,sol) -> 
+			       let actions = IntMap.empty
+			       and lhs = Solution.split sol
+			       in
+			       let precompil = 
+				 IntMap.fold (fun i cc_i map -> 
+						IntMap.add i (Solution.recognitions_of_cc cc_i) map
+					     ) lhs IntMap.empty 
+			       in
+			       let r =
+				 {lhs = lhs ;
+				  rhs = sol ; (*identity*)
+				  precompil = precompil ;
+				  add = IntMap.empty ;
+				  actions = actions;
+				  corr_ag = 0 ;
+				  rate = -1 (*really geekish!*);
+				  input = "var" ; 
+				  flag = Some flg ;
+				  constraints = [] ;
+				  kinetics = 1.0 ;
+				  boost = 1.0 ;
+				  automorphisms = None ;
+				  n_cc = IntMap.size lhs ;
+				  id = fresh_id;
+				  infinite = false;
+				  abstraction = None;
+				  intra = None
+				 }
+			       in
+				 (r::cont,fresh_id+1)
+			   | _ -> (cont,fresh_id)
+		      ) obs_l ([],r_id)
+    in
 
+    (************COMPLX INTERACTIONS**************)
 
-  (************COMPLX INTERACTIONS**************)
+    let pipeline_methods = Pipeline.methods () in 
+    let _ = Config_complx.inhibition:=false in 
+      (*converting simplx data structure to the complx one*)
+    let cplx_log = pipeline_methods.Pipeline.empty_channel in 
 
-  let pipeline_methods = Pipeline.methods () in 
-  let _ = Config_complx.inhibition:=false in 
-    (*converting simplx data structure to the complx one*)
-  let cplx_log = pipeline_methods.Pipeline.empty_channel in 
+    (*computing influence maps*)
+    let (cplx_simplx:Pipeline.simplx_encoding) = 
+      Some (fake_rules@rules,
+	    init (*JK: list of pairs (sol,n) where n is the multiplication coef of sol*),
+	    []   (*obs for ODE*)
+	   )  
+    in
+    let pb = pipeline_methods.Pipeline.build_pb cplx_simplx (add_suffix (add_suffix Tools.empty_prefix "") "")  
+    in 
+    let abs_pos_map,abs_neg_map,log,pb = 
+      if (not !cplx_hsh) then (Data_structures.IntMap.empty,Data_structures.IntMap.empty,log,pb)
+      else
+	let pt = Unix.times() in
+	let t = pt.Unix.tms_utime +. pt.Unix.tms_stime +. pt.Unix.tms_cutime +. pt.Unix.tms_cstime in
+	let log = Session.add_log_entry 0 "--Computing abstraction of wake-up map..." log in
+	let _ = Config_complx.dump_chrono:=false in 
+	let _ = Config_complx.inhibition:=!Data.build_conflict in (*build negative map too*)
+	  
+	let pb,cplx_log = pipeline_methods.Pipeline.build_influence_map  "" "" 
+	  (add_suffix (add_suffix (add_suffix Tools.empty_prefix "") "") "")  pb cplx_log 
+	in 
+	let log = Session.convert_cplx_log cplx_log log in
+	let pt = Unix.times() in
+	let t' = pt.Unix.tms_utime +. pt.Unix.tms_stime +. pt.Unix.tms_cutime +. pt.Unix.tms_cstime in
+	let log = Session.add_log_entry 0 (Printf.sprintf "--Abstraction: %f sec. CPU" (t'-.t)) log in
+	  match pb with 
+	      None -> 
+		let s="Simulation.init: complx did not return any maps, aborting" in
+		  runtime
+		    (Some "simulation2.ml",
+		     Some 672,
+		     Some s)
+		    s
+	    | Some pb' -> 
+		let pos_map = 
+		  match pb'.Pb_sig.wake_up_map with 
+		      Some map -> map  
+		    | None -> 
+			let s="Simulation.init: no positive map, aborting" in
+			  runtime
+			    (Some "simulation2.ml",
+			     Some 683,
+			     Some s)
+			    s
+		and neg_map = 
+		  match pb'.Pb_sig.inhibition_map with
+		      Some map -> map  
+		    | None -> Data_structures.IntMap.empty
+		in
+		  (pos_map,neg_map,log,pb) 
+    in
 
- (*computing influence maps*)
-  let (cplx_simplx:Pipeline.simplx_encoding) = 
-    Some (fake_rules@rules,
-	  init (*JK: list of pairs (sol,n) where n is the multiplication coef of sol*),
-	  []   (*obs for ODE*)
-	 )  
-  in
-  let pb = pipeline_methods.Pipeline.build_pb cplx_simplx (add_suffix (add_suffix Tools.empty_prefix "") "")  
-  in 
-  let abs_pos_map,abs_neg_map,log,pb = 
-    if !load_map or (not !cplx_hsh) then (Data_structures.IntMap.empty,Data_structures.IntMap.empty,log,pb)
-    else
-      let pt = Unix.times() in
-      let t = pt.Unix.tms_utime +. pt.Unix.tms_stime +. pt.Unix.tms_cutime +. pt.Unix.tms_cstime in
-      let log = Session.add_log_entry 0 "--Abstracting influence map..." log in
-      let _ = Config_complx.dump_chrono:=false in 
-      let _ = Config_complx.inhibition:=!Data.build_conflict in (*build negative map too*)
-	
-      let pb,cplx_log = pipeline_methods.Pipeline.build_influence_map  "" "" 
-	(add_suffix (add_suffix (add_suffix Tools.empty_prefix "") "") "")  pb cplx_log 
+    (*computing refinement quotient and automorphisms for real rules*)
+    let (cplx_simplx:Pipeline.simplx_encoding) = 
+      Some (rules,init,[])  
+    in
+    let pb = pipeline_methods.Pipeline.build_pb cplx_simplx (add_suffix (add_suffix Tools.empty_prefix "") "")  
+    in 
+    let rules,log,pb = 
+      let enriched_rules,pb,cplx_log = 
+	pipeline_methods.Pipeline.export_refinement_relation_maximal_and_automorphism_number 
+	  (add_suffix (add_suffix (add_suffix Tools.empty_prefix "") "") "")
+	  pb (pipeline_methods.Pipeline.empty_channel)
       in 
-      let log = Session.convert_cplx_log cplx_log log in
-      let pt = Unix.times() in
-      let t' = pt.Unix.tms_utime +. pt.Unix.tms_stime +. pt.Unix.tms_cutime +. pt.Unix.tms_cstime in
-      let log = Session.add_log_entry 0 (Printf.sprintf "--Abstraction: %f sec. CPU" (t'-.t)) log in
-	match pb with 
-	    None -> 
-	      let s="Simulation.init: complx did not return any maps, aborting" in
-	      runtime
+      let rules = (*replacing rules with enriched ones if computed*)
+	match enriched_rules with
+	    Some en_rules -> en_rules
+	  | None -> let s="Simulation.init: failed to compute automorphisms for rules" in
+	      Error.runtime
 		(Some "simulation2.ml",
-		 Some 672,
+		 Some 718,
 		 Some s)
 		s
-	  | Some pb' -> 
-	      let pos_map = 
-		match pb'.Pb_sig.wake_up_map with 
-		    Some map -> map  
-		  | None -> 
-		      let s="Simulation.init: no positive map, aborting" in
-		      runtime
-			(Some "simulation2.ml",
-			 Some 683,
-			 Some s)
-			s
-	      and neg_map = 
-		match pb'.Pb_sig.inhibition_map with
-		    Some map -> map  
-		  | None -> Data_structures.IntMap.empty
-	      in
-		(pos_map,neg_map,log,pb) 
-  in
-
-  (*computing refinement quotient and automorphisms for real rules*)
-  let (cplx_simplx:Pipeline.simplx_encoding) = 
-    Some (rules,init,[])  
-  in
-  let pb = pipeline_methods.Pipeline.build_pb cplx_simplx (add_suffix (add_suffix Tools.empty_prefix "") "")  
-  in 
-  let rules,log,pb = 
-    let enriched_rules,pb,cplx_log = 
-      pipeline_methods.Pipeline.export_refinement_relation_maximal_and_automorphism_number 
-	(add_suffix (add_suffix (add_suffix Tools.empty_prefix "") "") "")
-	pb (pipeline_methods.Pipeline.empty_channel)
-    in 
-    let rules = (*replacing rules with enriched ones if computed*)
-      match enriched_rules with
-	  Some en_rules -> en_rules
-	| None -> let s="Simulation.init: failed to compute automorphisms for rules" in
-	  Error.runtime
-	    (Some "simulation2.ml",
-	     Some 718,
-	     Some s)
-	    s
-    in
-    let log = Session.convert_cplx_log cplx_log log in
-      (rules,log,pb)
-  in
-
-(*computing automorphism for observables (fake rules)*)
-  let (cplx_simplx:Pipeline.simplx_encoding) = 
-    Some (fake_rules,init,[])
-  in
-  let pb = pipeline_methods.Pipeline.build_pb cplx_simplx (add_suffix (add_suffix Tools.empty_prefix "") "")  
-  in 
-  let fake_rules,log,pb = 
-    let enriched_rules,pb,cplx_log = 
-      pipeline_methods.Pipeline.export_automorphism_number 	
-	(add_suffix (add_suffix (add_suffix Tools.empty_prefix "") "") "")
-	pb (pipeline_methods.Pipeline.empty_channel)
-    in 
-    let fake_rules = (*replacing rules with enriched ones if computed*)
-      match enriched_rules with
-	  Some en_rules -> en_rules
-	| None -> 
-	    let s="Simulation.init: failed to compute automorphisms for observables" in
-	    Error.runtime
-	      (Some "simulation2.ml",
-	       Some 751,
-	       Some s)
-	      s
-    in
-    let log = Session.convert_cplx_log cplx_log log in
-      (fake_rules,log,pb)
-  in
-
-  (*****End COMPLX interactions***********)
-
-  let _ = Gc.full_major() in
-  let rule_list = fake_rules@rules in 
-  let nrule = List.length rule_list in
-  let sim_data = {(sd_empty ()) with rules = Rule_of_int.empty nrule} in
-  let sim_data = List.fold_left (fun sd r -> 
-				   match r.flag with
-				       None -> add_rule false r sd 
-				     | Some flg -> (*might be a fake rule*)
-					 if StringSet.mem flg flag_obs then (*to be observed*)
-					   add_rule true r sd 
-					 else (*rule with a name but not to be observed*)
-					   add_rule false r sd 
-				) {sim_data with sol = sol_init} rule_list
-  in
-    (*Positive and negative map construction*)
-  let log,sim_data = 
-    if !load_map then 
-      let d = open_in_bin !serialized_map_file in
-      let (flow,conflict)=(Marshal.from_channel d : Mods2.IntSet.t Mods2.IntMap.t * Mods2.IntSet.t Mods2.IntMap.t)
       in
-      let log = Session.add_log_entry 0 (Printf.sprintf "--%s successfully loaded" !serialized_map_file) log 
+      let log = Session.convert_cplx_log cplx_log log in
+	(rules,log,pb)
+    in
+
+    (*computing automorphism for observables (fake rules)*)
+    let (cplx_simplx:Pipeline.simplx_encoding) = 
+      Some (fake_rules,init,[])
+    in
+    let pb = pipeline_methods.Pipeline.build_pb cplx_simplx (add_suffix (add_suffix Tools.empty_prefix "") "")  
+    in 
+    let fake_rules,log,pb = 
+      let enriched_rules,pb,cplx_log = 
+	pipeline_methods.Pipeline.export_automorphism_number 	
+	  (add_suffix (add_suffix (add_suffix Tools.empty_prefix "") "") "")
+	  pb (pipeline_methods.Pipeline.empty_channel)
+      in 
+      let fake_rules = (*replacing rules with enriched ones if computed*)
+	match enriched_rules with
+	    Some en_rules -> en_rules
+	  | None -> 
+	      let s="Simulation.init: failed to compute automorphisms for observables" in
+		Error.runtime
+		  (Some "simulation2.ml",
+		   Some 751,
+		   Some s)
+		  s
       in
-	close_in d;
-	(log,{sim_data with flow = flow ; conflict = conflict})
-    else 
+      let log = Session.convert_cplx_log cplx_log log in
+	(fake_rules,log,pb)
+    in
+
+    (*****End COMPLX interactions***********)
+
+    let _ = Gc.full_major() in
+    let rule_list = fake_rules@rules in 
+    let nrule = List.length rule_list in
+    let sim_data = {(sd_empty ()) with rules = Rule_of_int.empty nrule} in
+    let sim_data = List.fold_left (fun sd r -> 
+				     match r.flag with
+					 None -> add_rule false r sd 
+				       | Some flg -> (*might be a fake rule*)
+					   if StringSet.mem flg flag_obs then (*to be observed*)
+					     add_rule true r sd 
+					   else (*rule with a name but not to be observed*)
+					     add_rule false r sd 
+				  ) {sim_data with sol = sol_init} rule_list
+    in
+      (*Positive and negative map construction*)
+    let log,sim_data = 
       if not !cplx_hsh then (log,sim_data) (*done in add_rule*)
       else
 	let pos_map,neg_map,log = concretize sim_data abs_pos_map abs_neg_map log in
 	let log = Session.add_log_entry 0 (Printf.sprintf "--Influence map computed") log 
 	in
 	  (log,{sim_data with flow = pos_map ; conflict = neg_map})
-  in
-  let log = 
-    (*Saving maps if required*)
-    if !save_map then 
-      let file = Filename.concat !output_dir !serialized_map_file in
-      let d = open_out_bin file in 
-	Marshal.to_channel d (sim_data.flow,sim_data.conflict) [] ;
-	close_out d;
-	Session.add_log_entry 0 (Printf.sprintf "-%s successfully saved" file) log
-    else log
-  in
-    (log,{sim_data with n_ag = sol_init.Solution.fresh_id ; lab = exp})
+    in
+    let p = {max_failure = !Data.max_clashes;
+	     init_sd = None;
+	     compress_mode = true ;
+	     iso_mode = false ;
+	     gc_alarm_high = false ;
+	     gc_alarm_low = false 
+	    }
+    in
+    let incomp_ids = StringSet.fold (fun flg set -> IntSet.add (StringMap.find flg sim_data.rule_of_name) set) incomp IntSet.empty in
+      (log,p,{sim_data with n_ag = sol_init.Solution.fresh_id ; lab = exp ; incompressible = IntSet.union sim_data.incompressible incomp_ids}, init_counters 0.0 sim_data)
 
 let mult_kinetics flg mult sim_data =
   try
@@ -827,7 +884,7 @@ exception Unary
 let rec bologna (abst_r,abst_ind) (conc_r,conc_ind) (i_phi,nb_phi,phi) (i_psi,nb_psi,psi) sim_data log = 
   let try_intra = test_intra conc_r in
   let _ = 
-    if !debug_mode then (Printf.printf "[*] Entering Bologna procedure for application of injections [%d,%d,%d],[%d,%d,%d]\n" 
+    if !debug_mode then (Printf.printf "[*] Checking validity of injections [%d,%d,%d],[%d,%d,%d]\n" 
 			   abst_ind i_psi nb_psi abst_ind i_phi nb_phi) else ()
   in
     (*0. COMPUTING P_INTRA*)
@@ -879,7 +936,8 @@ let rec bologna (abst_r,abst_ind) (conc_r,conc_ind) (i_phi,nb_phi,phi) (i_psi,nb
   (*1. CHECKING FOR PURE COLLISION*)
   let phi_psi_opt = try Some (merge_injections phi psi) with Not_found -> None 
   in
-    if not try_intra && (conc_r.Rule.constraints = []) then  (*if not looking for depolymerization, then no clash is enough to answer*)
+    if not try_intra && (match conc_r.Rule.constraints with ([Rule.ROOTED_STORY _]|[]) -> true | _ -> false)
+    then  (*if not looking for depolymerization, then no clash is enough to answer*)
       match phi_psi_opt with
 	  Some inj -> 
 	    if boost > conc_r.kinetics then 
@@ -969,6 +1027,7 @@ let rec bologna (abst_r,abst_ind) (conc_r,conc_ind) (i_phi,nb_phi,phi) (i_psi,nb
 						 match cstr with
 						     NO_HELIX -> (true,no_poly)
 						   | NO_POLY -> (no_helix,true)
+						   | _ -> (no_helix,no_poly)
 					      ) (false,false) conc_r.constraints
 	in
 	let clash = Paths.clashing_on_names ~debug:(!debug_mode) (no_helix,no_poly) paths_psi paths_phi
@@ -1123,7 +1182,7 @@ let rec bologna (abst_r,abst_ind) (conc_r,conc_ind) (i_phi,nb_phi,phi) (i_psi,nb
 			    let _ = if !debug_mode then (Printf.printf "Reject (p_intra = %f)\n" p_intra ; flush stdout) else () 
 			    in
 			      ([],log,Some p_intra,boost)
-			    
+
 exception Not_applicable of int*Rule.t
 exception Found of int*Rule.t
 exception Assoc of int IntMap.t
@@ -1223,15 +1282,6 @@ let select log sim_data p c =
 			s
 	  end
       in
-      let _ = 
-	if abst_r.input = "" then 
-	  let s="Simulation.select: cannot apply fake rule" in 
-	    Error.runtime 
-	      (Some "simulation2.ml",
-	       Some 1218,
-	       Some s) 
-	      s 
-      in  
 	if conc_r.infinite then (*selection of an instance of an infinitely fast rule*)
 	  let assoc_map_list = 
 	    IntMap.fold (fun i lhs_i cont ->
@@ -1432,7 +1482,7 @@ let consistency_check assoc assoc_map =
     
 
     
-let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is the indice of the abstract rule when quotient_refs is enabled !!*)
+let update warn r_ind assoc upd_quarks assoc_add sol sim_data p c = (*!! r_ind is the indice of the abstract rule when quotient_refs is enabled !!*)
   if !debug_mode then Printf.printf "modified quarks: %s\n" (Mods2.string_of_set string_of_port PortSet.fold upd_quarks) ;
 
   (*negative update*)
@@ -1503,14 +1553,7 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 			       let mod_obs = 
 				 (*CORRECTION BUG 11 dec 2007*)
 				 if IntSet.mem rule_ind sim_data.obs_ind then 
-				   match r.flag with 
-				       Some s -> StringSet.add s mod_obs
-				     | None -> let s="Rule.update: obs invariant violation" in
-					 Error.runtime
-					   (Some "simulation2.ml",
-					    Some 1495,
-					    Some s)
-					   s
+				   IntSet.add rule_ind mod_obs
 				 else mod_obs
 				   (*FIN CORRECTION BUG 11 dec 2007*)
 			       in
@@ -1538,7 +1581,7 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 		 ) upd_quarks (sim_data.lift,sim_data.injections,sim_data.rules,
 			       [], (*rm_coord*)
 			       (Implementation_choices.Clean_solution.alloc_solution solution_AA_create), (*mod_ids*)
-			       StringSet.empty (*mod_obs*),
+			       IntSet.empty (*mod_obs*),
 			       sim_data.inf_list
 			      )
   in
@@ -1720,17 +1763,8 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
 						     ) r.lhs 1.0
 			   in
 			   let mod_obs = 
-			     if IntSet.mem r_i sim_data.obs_ind then 
-			       match r.flag with 
-				   Some s -> StringSet.add s mod_obs
-				 | None -> 
-				     let s = "Rule.update: obs invariant violation" in
-				       Error.runtime
-					 (Some "simulation2.ml",
-					  Some 1714,
-					  Some s) 
-					 s
-			     else mod_obs
+			     if IntSet.mem r_i sim_data.obs_ind then IntSet.add r_i mod_obs
+		     	     else mod_obs
 			   in
 			     (*boosting rule kinetics if necessary*)
 			   let boost = 
@@ -1791,39 +1825,48 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p = (*!! r_ind is 
   in
   let lab = sim_data.lab in
   let sim_data = 
-    StringSet.fold (fun flag sim_data ->
-		      try
-			let indices_pert = StringMap.find flag lab.name_dep in
-			let sim_data,perts,indices = 
-			  IntSet.fold (fun i (sim_data,perts,indices) ->
-					 let pert_i = IntMap.find i lab.perturbations in
-					 let do_apply = List.for_all (fun test -> test (sim_data.rule_of_name,sim_data.rules)) pert_i.test_list in
-					   if not do_apply then (sim_data,perts,indices)
-					   else
-					     (
-					       if !debug_mode then 
-						 Printf.printf "Applying %s\n" (string_of_perturbation pert_i) ;
-					       let (oo,inf_list,rules) = 
-						 pert_i.modif (sim_data.oo,sim_data.inf_list,sim_data.rule_of_name,sim_data.rules) 
-					       and perts = IntMap.remove i perts
-					       and indices = IntSet.remove i indices 
-					       in
-						 if !debug_mode then (
-						   print_string "**********\n";
-						   print_rules rules sim_data.inf_list;
-						   print_string "**********\n"
-						 ) ;
-						 ({sim_data with rules = rules ; oo=oo ; inf_list = inf_list},perts,indices)
-					     )
-				      ) indices_pert (sim_data,lab.perturbations,indices_pert)
-			in
-			let name_dep = 
-			  if IntSet.is_empty indices then StringMap.remove flag lab.name_dep
-			  else StringMap.add flag indices lab.name_dep
-			in
-			  {sim_data with lab = {lab with perturbations = perts ; name_dep = name_dep}}
-		      with Not_found -> sim_data (*perturbation not depending on the observable*)
-		   ) mod_obs sim_data
+    IntSet.fold (fun obs_ind sim_data ->
+		   try
+		     let r,_ = Rule_of_int.find obs_ind sim_data.rules in
+		     let flag = Rule.name r in
+		     let indices_pert = StringMap.find flag lab.name_dep in
+		     let sim_data,perts,indices = 
+		       IntSet.fold (fun i (sim_data,perts,indices) ->
+				      try
+					let pert_i = IntMap.find i lab.perturbations in
+					let do_apply = List.for_all (fun test -> test (sim_data.rule_of_name,sim_data.rules)) pert_i.test_list in
+					  if not do_apply then (sim_data,perts,indices)
+					  else
+					    (
+					      if !debug_mode then 
+						Printf.printf "Applying %s\n" (string_of_perturbation pert_i) ;
+					      let (oo,inf_list,rules) = 
+						pert_i.modif (sim_data.oo,sim_data.inf_list,sim_data.rule_of_name,sim_data.rules) 
+					      and perts = IntMap.remove i perts
+					      and indices = IntSet.remove i indices 
+					      in
+						if !debug_mode then (
+						  print_string "**********\n";
+						  print_rules rules sim_data.inf_list;
+						  print_string "**********\n"
+						) ;
+						({sim_data with rules = rules ; oo=oo ; inf_list = inf_list},perts,indices)
+					    )
+				      with
+					  Not_found -> 
+					    let perts = IntMap.remove i perts
+					    and indices = IntSet.remove i indices
+					    in
+					      (sim_data,perts,indices)
+				   ) indices_pert (sim_data,lab.perturbations,indices_pert)
+		     in
+		     let name_dep = 
+		       if IntSet.is_empty indices then StringMap.remove flag lab.name_dep
+		       else StringMap.add flag indices lab.name_dep
+		     in
+		       {sim_data with lab = {lab with perturbations = perts ; name_dep = name_dep}}
+		   with Not_found -> sim_data (*perturbation not depending on the observable*)
+		) mod_obs sim_data
   in
   let _ = if !bench_mode then Bench.pos_upd := !Bench.pos_upd +. (chrono t_pos) in
     (sim_data,mod_obs)
@@ -1834,392 +1877,286 @@ let get_time_range p f =
 
 let get_step_range p s = (s / !step_sample)
 
-let rec apply_exp p curr_time sim_data =
-  match sim_data.lab.time_dep with
-      (t0,i)::tl -> 
-	if t0 <= curr_time then
-	  let pert_i = IntMap.find i sim_data.lab.perturbations in
-	  let do_apply = List.for_all (fun test -> test (sim_data.rule_of_name,sim_data.rules)) pert_i.test_list in
-	    if not do_apply then (*time is ok but not concentrations*)
-	      let name_dep = (*adding concentration dependencies for pert_i to the lab for future wake-up*)
-		List.fold_left (fun name_dep dep ->
-				   match dep with
-				       CURR_TIME t -> name_dep (*ignoring time dependencies now*)
-				     | RULE_FLAGS l -> 
-					 List.fold_right (fun flg map -> 
-							    let set = try StringMap.find flg map with Not_found -> IntSet.empty in
-							      StringMap.add flg (IntSet.add i set) map
-							 ) l name_dep
-			       ) sim_data.lab.name_dep pert_i.dep_list
-	      in
-	      let lab = {sim_data.lab with
-			   name_dep = name_dep ;
-			   time_dep = tl
-			}
-	      in
-		{sim_data with lab = lab}
-	    else
-	      let (oo,inf_list,rules) = pert_i.modif (sim_data.oo,sim_data.inf_list,sim_data.rule_of_name,sim_data.rules) in
-	      let lab = {sim_data.lab with 
-			   perturbations = IntMap.remove i sim_data.lab.perturbations ; 
-			   time_dep = tl
-			}
-	      in
-		if !debug_mode then (
-		  Printf.printf "Applying %s\n" (string_of_perturbation pert_i) ;
-		  print_string "**************\n";
-		  print_rules rules sim_data.inf_list;
-		  print_string "**************\n";
-		) ;
-		apply_exp p curr_time {sim_data with rules = rules ; lab = lab ; oo = oo ; inf_list = inf_list}
-	else sim_data
-    | [] -> sim_data
-
-let rec ticking clock c = 
-  if IntSet.mem clock c.ticks then 
-    begin
-      print_string Data.tick_string ; flush stdout ; 
-      ticking (clock-1) {c with ticks = IntSet.remove clock c.ticks}
-    end
-  else (flush stderr ; c)
+let ticking c = 
+  let p = float_of_int !clock_precision 
+  and mx_i = float_of_int !max_iter
+  and mx_e = float_of_int !max_step
+  and mx_t = !max_time
+  and x_e = float_of_int c.curr_step 
+  and x_t = c.curr_time
+    (* and x_i = float_of_int c.curr_iteration*)
+  in
+  let event_tick = if (mx_e>0.0) then  x_e/.mx_e else 0.0
+  and time_tick = if (mx_t>0.0) then x_t/.mx_t else 0.0
+  in
+  let y = int_of_float ((p/.mx_i) *. (max event_tick time_tick))
+  and x = int_of_float (p/.mx_i)
+  in
+  let n = if c.restart then max 0 (x - c.curr_tick) else max 0 (y - c.curr_tick) in
+  let rec display t = 
+    if t<0 then failwith "Simulation2.ticking: negative value"
+    else
+      if t=0 then flush stdout 
+      else
+	(print_string Data.tick_string ; display (t-1))
+  in
+    display n ;
+    {c with curr_tick = c.curr_tick + n}
       
-  
-let rec iter log sim_data p c =
-  let p,log = 
-    match !gc_mode with
-	Some HIGH -> 
-	  if p.gc_alarm_high then (p,log) 
-	  else 
-	    let log = Session.add_log_entry 1 "Free memory is low, shifting to strong garbage collection" log in
-	      ({p with gc_alarm_high=true ; gc_alarm_low=false},log)
-      | Some LOW ->
-	  if p.gc_alarm_low then (p,log) 
-	  else 
-	    let log = Session.add_log_entry 4 "Using low garbage collection" log in
-	      ({p with gc_alarm_high=false ; gc_alarm_low=true},log)
-      | None -> (p,log)
+(*Main event loop*)      
+let event log sim_data p c story_mode =
+  if !debug_mode then Printf.printf "%d:(%d,%f)\n" c.curr_iteration c.curr_step c.curr_time ; flush stdout;
+  let stop_test curr_step curr_time  = 
+    ((!max_time > 0.0) && (curr_time > !max_time)) or ((!max_step>0) && (curr_step > !max_step))
   in
-  let clock =
-    let c_story = 
-      if !story_mode then (c.clock_precision * c.curr_iteration) / !max_iter
-      else 0
-    in
-    let c_sim = 
-      if !story_mode then 0 
-      else
-	let t = 
-	  if !max_time > 0.0 then
-	    int_of_float ((float_of_int c.clock_precision *. c.curr_time) /. !max_time)
-	  else 0
-	and e = 
-	  if !max_step > 0 then
-	    (c.clock_precision * c.curr_step) / !max_step
-	  else 0
-	in
-	  max e t
-    in
-      max c_story c_sim
-  in
-  let c = ticking clock c in
-  let _ = if !debug_mode then print sim_data else () in
-    if !story_mode && (c.curr_iteration = !max_iter) then (*testing stop conditions for story mode*)
-      begin (*exiting event loop*)
-	Printf.printf "\n"; flush stdout ;
-	let log = Session.add_log_entry 0 (Printf.sprintf "-Exiting storification after %d iteration(s)" c.curr_iteration) log in
-	  (0 (*termination*),log,sim_data,p,c)
-      end
-    else       
-      (*Testing stop conditions for simulation mode*)
-      if ((!max_time >= 0.0) && (c.curr_time > !max_time)) or ((!max_step >= 0) && (c.curr_step > !max_step)) then 
-	begin (*exiting event loop*)
-	  Printf.printf "\n";
-	  flush stdout; 
-	  let log = Session.add_log_entry 0 (Printf.sprintf "-Event loop terminated at t=%f (%d events)" c.curr_time (c.curr_step-1)) log in
-	    (0 (*termination*),log,sim_data,p,c)
-	end
-      else
-	(*Continuing event loop*)
-	let sim_data = apply_exp p c.curr_time sim_data in
-	let sim_data,p =
-	  if !story_mode && (!init_time <= c.curr_time) && (Network.is_empty sim_data.net) then 
-	    let net = init_net Network.empty sim_data.sol in
-	    let sd = {sim_data with net = net} in
-	      (sd, p (*{p with init_sd = copy_sd sd}*))
-	  else
-	    (sim_data,p)
-	in
-	let c,log= 
-	  if !Data.snapshot_mode then
-	    begin
-	      match c.snapshot_time with
-		  x::tl -> 
-		    if (x<=c.curr_time) then 
-		      let log =
-			(
-			  Session.snapshot (sim_data.sol,c.curr_time,c.snapshot_counter) ;
-			  Session.add_log_entry (-1) (Printf.sprintf "Taking snapshot at t=%f" c.curr_time) log 
-			)
-		      in
-			({c with snapshot_time = tl ; snapshot_counter = c.snapshot_counter+1},log)
-		    else (c,log)
-		| [] -> (c,log)
-	    end
-	  else (c,log)
-	in
-	let t_select = chrono 0.0 in
-	let (log,inj_list,sim_data,clashes) = select log sim_data p c in
-	  if !bench_mode then Bench.rule_select_time := !Bench.rule_select_time +. (chrono t_select) ;
-	  match inj_list with
-	      None -> (
-		let log = Session.add_log_entry 1 
-		  (Printf.sprintf "Deadlock found (activity = %f)" (Rule_of_int.accval sim_data.rules)) log
+    
+  let t_select = chrono 0.0 in
+  let (log,inj_list,sim_data,clashes) = select log sim_data p c in
+    if !bench_mode then Bench.rule_select_time := !Bench.rule_select_time +. (chrono t_select) ;
+    match inj_list with
+	None -> 
+	  let log = Session.add_log_entry 1 
+	    (Printf.sprintf "Deadlock found (activity = %f)" (Rule_of_int.accval sim_data.rules)) log
+	  in
+	    (log,sim_data,p,{c with deadlock = true}) 
+      | Some (abst_ind,r_ind,assoc_list) ->
+	  let activity = Rule_of_int.accval sim_data.rules in
+	  let dt = 
+	    if !Data.no_random_time then 1./. activity (*expectency*)
+	    else Mods2.random_time_advance activity clashes 
+	  in (*sums clashes+1 time advance according to activity*)
+	  let _ = if !debug_mode then Printf.printf "dt=%f\n" dt in
+	  let curr_time = 
+	    if IntSet.mem r_ind sim_data.oo then c.curr_time 
+	    else
+	      c.curr_time +. dt 
+	  in
+	    
+	  let r_abst,_ = Rule_of_int.find abst_ind sim_data.rules in
+	  let r_ref,_ = Rule_of_int.find r_ind sim_data.rules in
+	  let _ =
+	    if !debug_mode then 
+	      begin
+		Printf.printf "%f,r[%d]: %s\n" curr_time r_ind (Rule.name r_ref); flush stdout;
+		Printf.printf "INF: %s\n" (string_of_set string_of_int IntSet.fold sim_data.inf_list) ;
+	      end
+	  in
+	  let t_apply = chrono 0.0 in
+	  let (mq,rmq,tq,assoc_add,sol',warn) = Rule.apply r_abst assoc_list sim_data.sol in (*passing r_abst in order to have a mq,rmq,tq as small as possible*)
+	  let _ = if !bench_mode then Bench.rule_apply_time := !Bench.rule_apply_time +. (chrono t_apply) in
+	  let log = 
+	    if warn then
+	      Session.add_log_entry 4 ("Application of rule ["^(Rule.name r_abst)^"] was contextual") log  (*application of r_abst might be contextual when of r_ref would not*)
+	    else log
+	  in
+	    (*merge modif quarks and removed quarks*)
+	  let upd_q = PortMap.fold (fun q _ pset -> PortSet.add q pset) mq rmq in
+	  let t_update = chrono 0.0 in
+	  let assoc = 
+	    match assoc_list with
+		[phi] -> phi
+	      | [phi1;phi2] -> 
+		  let union,_ = IntMap.fold (fun i j (union,image) ->
+					       if IntSet.mem j image then let s = "Simulation2.iter: intras are clashing!" in
+						 Error.runtime 
+						   (Some "simulation2.ml",
+						    Some 1980,
+						    Some s)
+						   s
+					       else
+						 (IntMap.add i j union,IntSet.add j image)
+					    ) phi1 (phi2,IntSet.empty)
+		  in
+		    union
+	      | _ -> let s = "Simulation2.iter: invalid number of intras" in
+		  Error.runtime 
+		    (Some "simulation2.ml",
+		     Some 1991,
+		     Some s)
+		    s
+	  in
+	  let sim_data,mod_obs = update warn abst_ind assoc upd_q assoc_add sol' sim_data p {c with curr_time = curr_time} (*update abst_ind is equal to original rule*)
+	  in
+	  let _ = if !bench_mode then Bench.update_time := !Bench.update_time +. (chrono t_update) in
+
+	    (*story sampling mode*)
+	    if story_mode then 
+	      let net',modifs = 
+		let modifs = PortMap.fold (fun quark test_modif pmap ->
+					     PortMap.add quark test_modif pmap
+					  ) tq mq
 		in
-		  match sim_data.lab.time_dep with
-		      [] -> (1 (*deadlocked*),log,sim_data,p,c) (*no more perturbation to execute*)
-		    | (t0,_)::_ -> iter log sim_data p {c with 
-							  curr_time = t0 ; (*go directly to next time*) 
-							  curr_step = c.curr_step+1
-						       } 
-	      )
-	    | Some (abst_ind,r_ind,assoc_list) ->
-		let activity = Rule_of_int.accval sim_data.rules in
-		let dt = 
-		  if !Data.no_random_time then 1./. activity (*expectency*)
-		  else Mods2.random_time_advance activity clashes 
-		in (*sums clashes+1 time advance according to activity*)
-		let _ = if !debug_mode then Printf.printf "dt=%f\n" dt in
-		let curr_time = 
-		  if IntSet.mem r_ind sim_data.oo then c.curr_time 
+		let modifs = PortSet.fold (fun quark pmap ->
+					     let old = 
+					       try 
+						 PortMap.find quark pmap 
+					       with 
+						   Not_found -> [] 
+					     in
+					       PortMap.add quark (Rule.Remove::old) pmap
+					  ) rmq modifs 
+		in 
+		  if IntSet.mem r_ind sim_data.incompressible then (*rule is to be observed, so don't backtrack it!*)
+		    (Network.add sol' sim_data.net (r_ref,modifs) !debug_mode false, modifs)
 		  else
-		    c.curr_time +. dt 
-		in
+		    (Network.add sol' sim_data.net (r_abst,modifs) !debug_mode p.compress_mode, modifs)
+	      in
+	      let sim_data = {sim_data with sol = sol' ; net = net'} in
+
+		if (IntSet.mem r_ind sim_data.obs_ind) then (*if applied rule triggers storification*)
 		  
-		let r_abst,_ = Rule_of_int.find abst_ind sim_data.rules in
-		let r_ref,_ = Rule_of_int.find r_ind sim_data.rules in
-		let _ =
-		  if !debug_mode then 
-		    begin
-		      Printf.printf "%f,r[%d]: %s\n" curr_time r_ind (Rule.name r_ref); flush stdout;
-		      Printf.printf "INF: %s\n" (string_of_set string_of_int IntSet.fold sim_data.inf_list) ;
-		    end
-		in
-		let t_apply = chrono 0.0 in
-		let (mq,rmq,tq,assoc_add,sol',warn) = Rule.apply r_abst assoc_list sim_data.sol in (*passing r_abst in order to have a mq,rmq,tq as small as possible*)
-		let _ = if !bench_mode then Bench.rule_apply_time := !Bench.rule_apply_time +. (chrono t_apply) in
-		let log = 
-		  if warn then
-		    Session.add_log_entry 4 ("Application of rule ["^(Rule.name r_abst)^"] was contextual") log  (*application of r_abst might be contextual when of r_ref would not*)
-		  else log
-		in
-		  (*merge modif quarks and removed quarks*)
-		let upd_q = PortMap.fold (fun q _ pset -> PortSet.add q pset) mq rmq in
-		let t_update = chrono 0.0 in
-		let assoc = 
-		  match assoc_list with
-		      [phi] -> phi
-		    | [phi1;phi2] -> 
-			let union,_ = IntMap.fold (fun i j (union,image) ->
-						     if IntSet.mem j image then let s = "Simulation2.iter: intras are clashing!" in
-						     Error.runtime 
-						       (Some "simulation2.ml",
-							Some 1980,
-							Some s)
-						       s
-						     else
-						       (IntMap.add i j union,IntSet.add j image)
-						  ) phi1 (phi2,IntSet.empty)
-			in
-			  union
-		    | _ -> let s = "Simulation2.iter: invalid number of intras" in
-		      Error.runtime 
+		  let flg = match r_ref.flag with Some flg -> flg | _ -> 
+		    let s = "Simulation.iter: obs has no flag" in
+		      runtime
 			(Some "simulation2.ml",
-			 Some 1991,
+			 Some 2020,
 			 Some s)
 			s
-		in
-		let sim_data,mod_obs = update warn abst_ind assoc upd_q assoc_add sol' sim_data p (*update abst_ind is equal to original rule*)
-		in
-		let _ = if !bench_mode then Bench.update_time := !Bench.update_time +. (chrono t_update) in
-
-		  (*story sampling mode*)
-		  if !story_mode && (!init_time <= c.curr_time) then 
-		    let net',modifs = 
-		      let modifs = PortMap.fold (fun quark test_modif pmap ->
-						   PortMap.add quark test_modif pmap
-						) tq mq
+		  in
+		  let roots = Rule.roots_for_story r_ref in
+		  let h_opt = Network.cut net' (roots,flg) in
+		    match h_opt with
+			None -> 
+			  let limit_reached = stop_test (c.curr_step+1) curr_time in
+			    (log,sim_data,p,{c with 
+					       curr_iteration = if limit_reached then c.curr_iteration + 1 else c.curr_iteration ;
+					       curr_step = c.curr_step + 1 ; 
+					       curr_time = curr_time ;
+					       restart = limit_reached
+					    }
+			    ) 
+		      | Some h ->
+			  begin
+			    if !debug_mode then print_string "Causal trace found, checking whether constraints are satisfied\n" ; flush stdout ;
+			    let h = 
+			      {h with 
+				 Network.name_of_agent = 
+				  let n = Solution.AA.size sol'.Solution.agents in
+				  let vect = Array.make n "" in
+				  let rec aux k = 
+				    if k = n then ()
+				    else 
+				      ((vect.(k) <- 
+					  try 
+					    (let ag = 
+					       Solution.AA.find k sol'.Solution.agents in Agent.name ag) with _ -> "");
+				       aux (k+1))
+				  in
+				  let _ = aux 0 in
+				    Some vect} 
+			    in
+			    let opt = Story_compressor.compress h !Data.story_compression_mode Data.WEAK in
+			      match opt with
+				  None -> 
+				    let log = Session.add_log_entry 4 "-Causal trace does not satisfy constraints after compression" log in
+				    let limit_reached = stop_test (c.curr_step+1) curr_time in
+				      (log,sim_data,p,{c with 
+							 curr_iteration = if limit_reached then c.curr_iteration + 1 else c.curr_iteration ;
+							 curr_step = c.curr_step + 1 ; 
+							 curr_time = curr_time ;
+							 restart = limit_reached
+						      }
+				      ) 
+				| Some compressed_h ->
+				    let drawers = (Iso.classify (compressed_h,curr_time) c.drawers p.iso_mode) 
+				    in
+				    let log = Session.add_log_entry 4 "-Causal trace found!" log in
+				      (log,sim_data,p,{c with 
+							 curr_iteration = c.curr_iteration+1 ; 
+							 drawers = drawers ; 
+							 restart = true
+						      }) 
+			  end
+		else (*last rule was not observable for stories*)
+		  let limit_reached = stop_test (c.curr_step+1) curr_time in
+		    (log,sim_data,p,{c with 
+				       curr_iteration = if limit_reached then c.curr_iteration + 1 else c.curr_iteration ;
+				       curr_step = c.curr_step + 1 ; 
+				       curr_time = curr_time ;
+				       restart = limit_reached
+				    }
+		    ) 
+		      
+	    else 
+	      if not !ignore_obs then (*if !ignore_obs is true there is no need to take data points*)
+		begin
+		  (*Simulation mode*)
+		  let t_data = chrono 0.0 in (*for benchmarking*)
+		  let t = 
+		    if !time_mode then get_time_range p curr_time (*get the time interval corresponding to current time*)
+		    else get_step_range p (c.curr_step+1) (*get the event interval corresponding to current event*)
+		  in
+		    if (!init_time <= curr_time) then (*take measures only if passed init time*)
+		      let obs_map = 
+			try IntMap.find t c.concentrations 
+			with Not_found -> IntMap.empty 
 		      in
-		      let modifs = PortSet.fold (fun quark pmap ->
-			let old = 
-			  try 
-			    PortMap.find quark pmap 
-			  with 
-			    Not_found -> [] 
-			in
-			  PortMap.add quark (Rule.Remove::old) pmap
-						) rmq modifs 
-		      in 
-			if (IntSet.mem r_ind sim_data.obs_ind) then (*rule is to be observed, so don't backtrack it!*)
-			  (Network.add sol' sim_data.net (r_ref,modifs) !debug_mode false, modifs)
-			else
-			  (Network.add sol' sim_data.net (r_abst,modifs) !debug_mode p.compress_mode, modifs)
-		    in
-		      if (IntSet.mem r_ind sim_data.obs_ind) then (*if applied rule triggers storification*)
-			let flg = match r_ref.flag with Some flg -> flg | _ -> 
-			  let s = "Simulation.iter: obs has no flag" in
-			  runtime
-			    (Some "simulation2.ml",
-			     Some 2020,
-			     Some s)
-			    s
-			in
-			let h = Network.cut net' flg in
-			let h = {h with Network.name_of_agent = 
-			    let n = Solution.AA.size sol'.Solution.agents in
-			    let vect = Array.make n "" in
-			    let rec aux k = 
-			      if k = n then ()
-			      else 
-				((vect.(k) <- 
-				    try 
-				      (let ag = 
-					 Solution.AA.find k sol'.Solution.agents in Agent.name ag) with _ -> "");
-				 aux (k+1))
-			    in
-			    let _ = aux 0 in
-			      Some vect} 
-			in
-			let drawers = (Iso.classify (h,curr_time) c.drawers p.iso_mode) 
-			in
-			let log = Session.add_log_entry (-1) "-Causal trace computed" log in
-			let init_sd = 
-			  match p.init_sd with
-			      None -> sim_data (*No more stories to compute*)
-			    | Some serialized_sim_data ->
-				let d = open_in_bin serialized_sim_data in 
-				let f_init_sd = (Marshal.from_channel d : marshalized_sim_data_t) in
-				let _ = close_in d in
-				  unmarshal f_init_sd 
-			in
-			  iter log (init_sd) p {c with 
-						  curr_iteration = c.curr_iteration+1 ; 
-						  drawers = drawers ; 
-						  curr_time = 0.0 (*!init_time*); 
-						  curr_step = 0
-					       } 
-		      else (*last rule was not observable for stories*)
-			let sim_data = {sim_data with sol = sol' ; net = net'} in
-
-			  if ((!max_time >= 0.0) && (curr_time > !max_time)) or ((!max_step >= 0) && (c.curr_step+1 > !max_step)) then
-			    (*if time or event limit is reached, discarding network*)
-			    let log = Session.add_log_entry 4 "-No story could be found within the given limit!" log in
-			    let init_sd = 
-			      match p.init_sd with
-				  None -> sim_data (*for type checking*)
-				| Some serialized_sim_data ->
-				    let d = open_in_bin serialized_sim_data in 
-				    let f_init_sd = (Marshal.from_channel d : marshalized_sim_data_t) in
-				    let _ = close_in d in
-				      unmarshal f_init_sd 
-			    in
-			      iter log (init_sd) p {c with 
-						      curr_iteration = c.curr_iteration+1 ; 
-						      curr_time = 0.0 (*!init_time*); 
-						      curr_step = 0
-						   }
-			  else			      
-			    (*limit is not reached continuing with the same network*)
-			    iter log sim_data p {c with 
-						   curr_step = c.curr_step + 1 ; 
-						   curr_time = curr_time
-						} 
-			      (*End story sampling mode*)
-		  else 
-		    if not !ignore_obs then (*if !ignore_obs is true there is no need to take data points*)
-		      begin
-			(*Simulation mode*)
-			let t_data = chrono 0.0 in (*for benchmarking*)
-			let t = 
-			  if !time_mode then get_time_range p curr_time (*get the time interval corresponding to current time*)
-			  else get_step_range p (c.curr_step+1) (*get the event interval corresponding to current event*)
-			in
-			  if (!init_time <= curr_time) then (*take measures only if passed init time*)
-			    let obs_map = 
-			      try IntMap.find t c.concentrations 
-			      with Not_found -> IntMap.empty 
-			    in
-			    let mod_obs = 
-			      if c.curr_step = 0 then (*if first event*)
-				IntSet.fold (fun i cont -> 
-					       let r_obs,_ = Rule_of_int.find i sim_data.rules in
-						 match r_obs.flag with
-						     None -> 
-						       let s="Simulation.iter: rule has no name" in
-						       runtime
-							 (Some "simulation2.ml",
-							  Some 2108,
-							  Some s)
-							 s
-						   | Some flg -> (*Printf.printf "init %s\n" flg ;*) StringSet.add flg cont
-					    ) sim_data.obs_ind StringSet.empty
-			      else mod_obs
-			    in
-			    let obs_map =
-			      StringSet.fold (fun flg obs_map ->
-						let i = StringMap.find flg sim_data.rule_of_name in
-						let r_obs,inst_obs = 
-						  try Rule_of_int.find i sim_data.rules 
-						  with Not_found -> 
-						    let s = "Simulation.iter: obs not found"  in
-						    runtime
-						      (Some "simulation2.ml",
-						       Some 2124,
-						       Some s)
-						      s
-						in
-						  (*automorphism correction for obs and activity for rules*)
-						let automorphisms = 
-						  match r_obs.automorphisms with 
-						      None -> (failwith "Automorphisms not computed") 
-						    | Some i -> float_of_int i 
-						in
-						let act_obs = (inst_obs *. r_obs.kinetics) /. automorphisms
-									     (**. (!rescale) Correction after Walter's class*)
-						in 
-						  (*Printf.printf "%s -> %f\n" flg act_obs ; flush stdout ;*)
-						  IntMap.add i act_obs obs_map
-
-					     ) mod_obs obs_map
-			    in
-			      if !bench_mode then Bench.data_time := !Bench.data_time +. (chrono t_data) ;
-			      iter log {sim_data with sol = sol'} p 
-				{c with 
-				   concentrations = IntMap.add t obs_map c.concentrations;
-				   curr_step = c.curr_step + 1 ;
-				   curr_time = curr_time ;
-				   time_map = 
-				    if IntMap.mem t c.time_map then c.time_map 
-				    else
-				      IntMap.add t curr_time c.time_map
-				} 
-			  else
-			    iter log {sim_data with sol = sol'} p 
-			      {c with 
-				 curr_step = c.curr_step + 1 ;
-				 curr_time = curr_time ;
-				 time_map = 
-				  if IntMap.mem t c.time_map then c.time_map 
-				  else
-				    IntMap.add t curr_time c.time_map
-			      } 
-		      end
-			(*end simulation mode*)
+		      let mod_obs = 
+			if c.curr_step = 0 then (*if first event*)
+			  IntSet.fold (fun i cont -> 
+					 let r_obs,_ = Rule_of_int.find i sim_data.rules in
+					   if not (r_obs.input = "var") then IntSet.add i cont else cont
+				      ) sim_data.obs_ind IntSet.empty
+			else mod_obs
+		      in
+		      let obs_map =
+			IntSet.fold (fun i obs_map ->
+				       let r_obs,inst_obs = 
+					 try Rule_of_int.find i sim_data.rules 
+					 with Not_found -> 
+					   let s = "Simulation.iter: obs not found"  in
+					     runtime
+					       (Some "simulation2.ml",
+						Some 2124,
+						Some s)
+					       s
+				       in
+					 (*automorphism correction for obs and activity for rules*)
+				       let automorphisms = 
+					 match r_obs.automorphisms with 
+					     None -> (failwith "Automorphisms not computed") 
+					   | Some i -> float_of_int i 
+				       in
+				       let act_obs = (inst_obs *. r_obs.kinetics) /. automorphisms
+					 (**. (!rescale) Correction after Walter's class*)
+				       in 
+					 (*Printf.printf "%s -> %f\n" flg act_obs ; flush stdout ;*)
+					 IntMap.add i act_obs obs_map
+				    ) mod_obs obs_map
+		      in
+			if !bench_mode then Bench.data_time := !Bench.data_time +. (chrono t_data) ;
+			(log,{sim_data with sol = sol'},p, 
+			 {c with 
+			    concentrations = IntMap.add t obs_map c.concentrations;
+			    curr_step = c.curr_step + 1 ;
+			    curr_time = curr_time ;
+			    time_map = 
+			     if IntMap.mem t c.time_map then c.time_map 
+			     else
+			       IntMap.add t curr_time c.time_map
+			 } 
+			)
 		    else
-		      (*no observation mode*)
-		      iter log {sim_data with sol = sol'} p 
-			{c with 
-			   curr_step = c.curr_step + 1 ;
-			   curr_time = curr_time 
-			} 
+		      (log,{sim_data with sol = sol'},p,
+		       {c with 
+			  curr_step = c.curr_step + 1 ;
+			  curr_time = curr_time ;
+			  time_map = 
+			   if IntMap.mem t c.time_map then c.time_map 
+			   else
+			     IntMap.add t curr_time c.time_map
+		       }
+		      )
+		end
+		  (*end simulation mode*)
+	      else
+		(*no observation mode*)
+		(log,{sim_data with sol = sol'},p, 
+		 {c with 
+		    curr_step = c.curr_step + 1 ;
+		    curr_time = curr_time 
+		 } 
+		)
 		      (*end no observation mode*)
 
 let build_data concentrations time_map obs_ind =

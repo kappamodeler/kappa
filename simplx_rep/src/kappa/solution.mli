@@ -180,9 +180,9 @@ val fuse_cc : t Mods2.IntMap.t -> t
 (**[cc_of_id id sol] returns the solution corresponding to the connected component of id in sol*)
 val cc_of_id : int -> t -> Mods2.IntSet.t -> (t * Mods2.IntSet.t)
 
-type observation = Concentration of (string * t) | Occurrence of string | Story of string
+type observation = Variable of (string * t) | Concentration of (string * t) | Occurrence of string | Story of (Mods2.StringSet.t * string)
 
-type marshalized_obs = FConcentration of (string * marshalized_t) | FOccurrence of string | FStory of string
+type marshalized_obs = FVariable of (string * marshalized_t) | FConcentration of (string * marshalized_t) | FOccurrence of string | FStory of (Mods2.StringSet.t * string)
 
 val marshal_obs : observation -> marshalized_obs
 val unmarshal_obs : marshalized_obs -> observation 

@@ -37,6 +37,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     | "%mod:" {MODIF_LINE}
     | "%gen:" {GEN_LINE}
     | "%conc:" {CONC_LINE}
+    | "%var:" {VAR_LINE}
     | "do" {DO}
     | "\\\n" {incr_line lexbuf ; token lexbuf} 
     | '\n' {incr_line lexbuf ; NEWLINE}
@@ -65,12 +66,16 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     | "<->" {KAPPA_LRAR}
     | '>' {GREATER}
     | '<' {SMALLER}
-    | "$T" {TIME}
     | ":=" {SET}
-    | "=" {EQUAL} 
+    | "=" {EQUAL}
+    | "=>" {IMPLY} 
     | '&' {AND}
-    | '$' (integer as i) {REF(int_of_string i)}
-    | "$INF" {flush stdout ; INFINITY}
+    | "$INF" {INFINITY}
+    | "$T" {TIME}
+    | "$M" {MIXTURE}
+    | "!PAUSE" {PAUSE}
+    | "!STOP" {KILL}
+    | "!DUMP" {DUMP}
     | blank  {token lexbuf}
     | eof {EOF}
     | _ as c {return_error lexbuf (Printf.sprintf "invalid use of character %c" c)}
@@ -88,7 +93,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     | eof {EOF}
     | _ {comment lexbuf}
 
-{
+{ 
   let init_val = 
     fun () -> 
       begin
@@ -96,6 +101,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
 	rules:=[]; 
 	init:=[];
 	obs_l:=[] ;
+	exp:=Experiment.empty ;
 	env := Hashtbl.create 100 
       end
 	
@@ -111,15 +117,53 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
 	    with 
 		Error.Found msg -> return_error lexbuf msg 
 	  done ; 
-	let s = "Lexer.compile: unexpected end of loop" in
-	Error.runtime
-	  (Some "kappa_lex.mll",
-	   Some 112,
-	   Some s)
-	  s
-      with End_of_file -> (close_in d ; (!rules,!init,!obs_l,!exp))
+	  let s = "Lexer.compile: unexpected end of loop" in
+	    Error.runtime
+	      (Some "kappa_lex.mll",
+	       Some 112,
+	       Some s)
+	      s
+      with End_of_file -> (close_in d ; 
+			   let rules = 
+			     if (!compilation_opt land _PARSE_RULES) = _PARSE_RULES then !rules (*serialized file contains true rules*)
+			     else
+			       if !load_sim_data then []
+			       else
+				 try
+				   let d = open_in_bin (!serialized_rule_file) in
+				   let f_rules = (Marshal.from_channel d:Rule.marshalized_t list)
+				   in
+				     print_string ("-Reading rule set from "^(!serialized_mixture_file)^"...") ;
+				     close_in d;
+				     List.map (fun f_r -> Rule.unmarshal f_r) f_rules
+				 with
+				     exn -> 
+				       let s = (Printf.sprintf "Lexer.compile: could not load %s (returned %s)" !serialized_rule_file (Printexc.to_string exn)) in
+					 Error.runtime (None,None,None) s
+			   and init =
+			     if (!compilation_opt land _PARSE_INIT) = _PARSE_INIT then !init
+			     else 
+			       if !load_sim_data then []
+			       else
+				 if Sys.file_exists !serialized_mixture_file then
+				   let d = open_in_bin !serialized_mixture_file in
+				   let f_init = (Marshal.from_channel d:(Solution.marshalized_t * int) list) in
+				     print_string ("-Reading initial mixture from "^(!serialized_mixture_file)^"...") ;
+				     close_in d;
+				     List.map (fun (f_sol,n) -> (Solution.unmarshal f_sol,n)) f_init
+				 else Error.runtime (None,None,None) ("Cannot find "^(!serialized_mixture_file))
+			   and obs_l = if !load_sim_data then [] else !obs_l
+			   in
+			   let _ = 
+			     if !save_rules then
+			       let d = open_out_bin !serialized_rule_file in
+				 print_string ("-Saving rule set in "^(!serialized_rule_file)^"...") ;
+				 Marshal.to_channel d (List.map (fun r -> Rule.marshal r) rules) [];
+				 close_out d
+			   in
+			     (rules,init,obs_l,!exp)
+			  )
     
-	
   let make_rule rule_str = 
     init_val() ;
     try

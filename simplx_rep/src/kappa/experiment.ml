@@ -2,7 +2,7 @@ open Mods2
 open Error
 open Rule
 
-type dep = CURR_TIME of float | RULE_FLAGS of (string list)
+type dep = LESSER_TIME of float | RULE_FLAGS of (string list) | GREATER_TIME of float
 
 (*test = fun fake_rules_indices -> bool*)
 (*modif = [(flg_1,mult_1);...;(flg_n;mult_n)]*)
@@ -15,13 +15,15 @@ type perturbation = {dep_list: dep list;
 type t = {
   fresh_pert:int;
   name_dep: IntSet.t StringMap.t ; (*pert_dep: [obs_name -> {pert_indices}] *)
-  time_dep: (float*int) list ; (*time_stack: sorted list (t_0,pert_0)::...::(t_n,pert_n)::[]*) 
+  time_on: float IntMap.t ; (*activate time_on: pert_id -> time*) 
+  time_off: float IntMap.t ; (*remove time_of: pert_id -> time*) 
   perturbations: perturbation IntMap.t ; (*[pert_indice -> perturbation]*) 
 }
 
 let empty = {fresh_pert = 0 ; 
 	     name_dep = StringMap.empty ; 
-	     time_dep = [] ;
+	     time_on = IntMap.empty ;
+	     time_off = IntMap.empty ;
 	     perturbations = IntMap.empty
 	    }
 
@@ -161,11 +163,31 @@ let add pert experiment =
   let name_dep,settime =
     List.fold_left (fun (name_dep,settime) dep -> 
 		      match dep with
-			  CURR_TIME t -> 
+			| LESSER_TIME t -> 
 			    begin
 			      match settime with
-				  None -> (experiment.name_dep, Some t) 
-				| Some t' -> let t0 = max t t' in (experiment.name_dep,Some t0) 
+				  None -> (experiment.name_dep, Some (-1.,t)) (*-1 for initial time*) 
+				| Some (t0,t1) -> 
+				    if t<t0 then (
+				      Printf.fprintf stderr "*Warning* precondition of modification \"%s\" is never satisfied!\n" (string_of_perturbation pert) ;
+				      (experiment.name_dep,None)
+				    )
+				    else
+				      let t1' = if t1 < 0.0 then t else min t t1 in
+					(experiment.name_dep,Some (t0,t1')) 
+			    end
+			| GREATER_TIME t -> 
+			    begin
+			      match settime with
+				  None -> (experiment.name_dep, Some (t,-1.))  (*-1 for infinity*)
+				| Some (t0,t1) -> 
+				    if (t>t1) && (t1>0.0) then (
+				      Printf.fprintf stderr "*Warning* precondition of modification \"%s\" is never satisfied!\n" (string_of_perturbation pert) ;
+				      (experiment.name_dep,None)
+				    )
+				    else
+				      let t0' = max t0 t in 
+					(experiment.name_dep,Some (t0',t1)) 
 			    end
 			| RULE_FLAGS l -> 
 			    match settime with 
@@ -181,10 +203,14 @@ let add pert experiment =
 		   ) (experiment.name_dep,None) dep_list 
       
   in
-  let time_dep = match settime with None -> experiment.time_dep | Some t -> sorted_insert (t,fresh) experiment.time_dep
+  let time_on,time_off = match settime with 
+      None -> (experiment.time_on,experiment.time_off) 
+    | Some (t0,t1) -> 
+	(IntMap.add fresh t0 experiment.time_on,IntMap.add fresh t1 experiment.time_off)
   in
     {fresh_pert = fresh+1 ; 
      name_dep = name_dep ; 
-     time_dep = time_dep ; 
+     time_on = time_on ; 
+     time_off = time_off ;
      perturbations = IntMap.add fresh pert experiment.perturbations
     }

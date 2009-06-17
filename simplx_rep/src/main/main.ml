@@ -1,4 +1,4 @@
-
+open Rule
 open Printf
 open Error
 open Mods2
@@ -12,52 +12,74 @@ let version_msg = "SIMulator by PLectiX: "^version^"\n"^key_version
 
 let main =
   let options = [ 
-    ("-W", Arg.Unit (fun () -> verbose:=true), "output all warnings on standard error channel (very verbose)") ;
-    ("--sim", Arg.String (fun s -> fic := s), "name of the kappa file to simulate");
-    ("--compile", Arg.String (fun s -> compile_mode:=true; fic := s), "name of the kappa file to compile");
-    ("--storify", Arg.String (fun s -> story_mode := true ; fic := s), "name of the kappa file to storify");
-    ("--generate-map", Arg.String (fun s -> map_mode :=true ; fic := s), "name of the kappa file for which the influence map should be computed");
     ("--version", Arg.Unit (fun () -> print_string (version_msg^"\n") ; flush stdout ; exit 0), "print simplx version");
+
+    (*Simulation*)
+    ("--sim", Arg.String (fun s -> fic := s), "name of the kappa file to simulate");
     ("--time", Arg.Float (fun f -> time_mode:=true ; max_time := f), "(infinite): time units of computation");
     ("--event", Arg.Int (fun i -> time_mode :=false ; max_step := i), "(infinite): number of rule applications");
     ("--points", Arg.Int (fun i -> data_points := i), "number of data points per plots)");
-    ("--iteration", Arg.Int (fun i -> max_iter := i), 
-     "(1): number of stories to be searched for (with --storify option only)");
     ("--rescale", Arg.Float (fun f -> rescale := f), "(1.0): rescaling factor (eg. '10.0' or '0.10')") ;
-    ("--init", Arg.Float (fun f -> init_time := f), "(0.0): start taking measures (stories) at indicated time");
     ("--output-final-state",Arg.Unit (fun () -> output_final:=true),"output final state") ;
+    ("--plot",Arg.String (fun s -> Config.auto_plot:=true; data_file:=s), "Creates a file containing the simulation data in space separated format");
+    
+    ("--compile", Arg.String (fun s -> compile_mode:=true; fic := s), "name of the kappa file to compile");
+
+    (*Causality analysis*)
+    ("--storify", Arg.String (fun s -> story_mode := true ; fic := s), "name of the kappa file to analyse");
+    ("--no-compression",Arg.Unit (fun () -> story_compression:=false),"do not compress stories");
+    ("--weak-compression",Arg.Unit (fun () -> strong_compression:=false),"use only weak compression to classify stories");
+    ("--iteration", Arg.Int (fun i -> 
+			       if i>1 then (Data.tasks := Data.add_task (-1.0,Data.SAVE_STATE) !Data.tasks ; max_iter := i)
+			       else
+				 if i<0 then (Printf.fprintf stderr "Iteration should be greater than 0!\n" ; exit 1)
+				 else
+				   max_iter := i), 
+     "(1): number of stories to be searched for (with --storify option only)");
+    ("--init", Arg.Float (fun f -> init_time := f), "(0.0): start taking measures (stories) at indicated time");
+    ("--no-arrow-closure",Arg.Unit (fun () -> closure:=false),
+     "do not perform arrows transitive closure when displaying stories");
+    ("--quotient-refinements", Arg.Unit (fun () -> quotient_refs:=true), "replace each rule by the most general rule it is a refinement of when computing stories");
+    ("--dot-output",Arg.Unit (fun () -> dot_output:=true), "dot output for stories") ;
+
+    ("--generate-map", Arg.String (fun s -> map_mode :=true ; fic := s), "name of the kappa file for which the influence map should be computed");
     ("--no-inhibition-map",Arg.Unit (fun () -> build_conflict:=false),"do not construct inhibition map");
     ("--no-activation-map",Arg.Unit (fun () -> build_cause:=false),"do not construct activation map");
     ("--no-maps",Arg.Unit (fun () -> build_conflict:=false ; build_cause:=false),
      "do not construct inhibition/activation maps");
     ("--merge-maps",Arg.Unit (fun () -> merge_maps:=true),"also constructs inhibition maps");
-    ("--output-scheme", Arg.String (fun s -> output_dir := Filename.concat (Filename.current_dir_name) s), 
+
+    ("--output-dir", Arg.String (fun s -> output_dir := Filename.concat (Filename.current_dir_name) s), 
      "(current dir) directory on which to put computed data"); 
-    ("--set-snapshot-time", Arg.Float (fun f -> snapshot_mode:=true ; snapshot_time := (!snapshot_time)@[f]),
-     "takes a snapshot of solution at specified time unit (may use option several times)");
-    ("--no-arrow-closure",Arg.Unit (fun () -> closure:=false),
-     "do not perform arrows transitive closure when displaying stories");
     ("--seed",Arg.Int (fun i -> seed:=Some i), "seed the random generator using given integer (same integer will generate the same random number sequence)");
     ("--no-measure", Arg.Unit (fun () -> ignore_obs:=true), "causes simplx to ignore observables") ;
-    ("--quotient-refinements", Arg.Unit (fun () -> quotient_refs:=true), "replace each rule by the most general rule it is a refinement of when computing stories");
     ("--memory-limit",Arg.Int (fun i -> memory_limit:=i), "limit the usage of the memory (in Mb). Default is infinite (0)");
+    
+    (*Tasks*)
+    ("--snapshot-file-scheme", Arg.String (fun s -> serialized_snapshot_file:=s), 
+     "set name for the temporary snapshots file (default ~tmp_snapshots)");
+    ("--snapshot-at", Arg.Float (fun f -> snapshot_mode:=true ; Data.tasks := Data.add_task (f,Data.TAKE_SNAPSHOT) !Data.tasks),
+     "takes a snapshot of solution at specified time unit (may use option several times)");
+    ("--mixture-file-scheme" , Arg.String (fun s -> serialized_mixture_file := s), "(~tmp_mixture_[t]) Naming scheme for serialization of mixtures") ;
+    ("--save-mixture-at", Arg.Float (fun f -> Data.tasks := Data.add_task (f,Data.SAVE_MIXTURE) !Data.tasks), 
+     "Save mixture at specified time (can be used multiple times)") ;
+    ("--load-mixture", Arg.String (fun s -> compilation_opt:= !compilation_opt land (lnot _PARSE_INIT) ; serialized_mixture_file :=s), 
+     "Use given mixture file as initial conditions (%init instructions in the kappa file will be ignored)") ;
+    ("--state-file-scheme" , Arg.String (fun s -> serialized_sim_data_file := s), "(~tmp_state_[t]) Naming scheme for serialization of simulation state") ;
+    ("--save-state-at", Arg.Float (fun f -> Data.tasks := Data.add_task (f,Data.SAVE_STATE) !Data.tasks),
+     "Save simulation state at specified time (can be used multiple times)");
+    ("--load-state", Arg.String (fun s -> compilation_opt := 0; load_sim_data:=true ; serialized_sim_data_file := s), 
+     "Load given simulation state (only %mod instruction will be parsed from the kappa file)");
+    
+    ("--max-clashes", Arg.Int (fun i -> max_clashes := i), "(10000) max number of consecutive clashes before aborting"); 
     (*expert mode options*)
-    ("--max-clashes", Arg.Int (fun i -> max_clashes := i), "[expert] (infinite) max number of consecutive clashes before aborting"); 
+    
     ("--key", Arg.String (fun s -> key := s), "[expert] name of the file containing the key for the crypted version");
-    ("--save-map", Arg.String (fun s -> save_map:=true ; serialized_map_file := s), 
+    ("--save-rules", Arg.String (fun s -> save_rules := true ; serialized_rule_file := s), 
      "[expert] name of the file in which to save influence map");
-    ("--load-map", Arg.String (fun s -> load_map:=true ; serialized_map_file := s), 
-     "[expert] name of the serialized map file to load");
-    ("--load-compilation", Arg.String (fun s -> load_compilation:=true ; serialized_kappa_file := s),
-     "[expert] name of the serialized kappa file compilation to load");
-    ("--save-compilation", Arg.String (fun s -> save_compilation:=true ; serialized_kappa_file := s), 
-     "[expert] name of the file in which to save the kappa file compilation");
-    ("--load-all", Arg.String (fun s -> load_sim_data:=true ; serialized_sim_data_file := s),
-     "[expert] name of the serialized init file compilation to load");
-    ("--save-all", Arg.String (fun s -> save_sim_data:=true ; serialized_sim_data_file := s), 
-     "[expert] name of the file in which to save the whole initialization's marshalling (including influence maps)");
-    ("--clock-precision",Arg.Int (fun i -> clock_precision:=i) , 
-     "[expert] (60) clock precision (number of ticks per run)");
+    ("--load-rules", Arg.String (fun s -> compilation_opt := !compilation_opt land (lnot _PARSE_RULES) ; serialized_rule_file := s), 
+     "[expert] name of the serialized rule file to load (rules will not be parsed from the kappa file)");  
+    ("--clock-precision",Arg.Int (fun i -> clock_precision:=i) , "[expert] (60) clock precision (number of ticks per run)");
     ("--debug",Arg.Unit (fun () -> debug_mode:=true), "[expert] debug mode (very verbose!)");
     ("--QA",Arg.Unit (fun () -> sanity_check:=true), "[expert] QA mode (slower, but performs more sanity checks)");
     ("--profile",Arg.Unit (fun () -> Mods2.bench_mode:=true), "[expert] to produce profiling.");
@@ -65,11 +87,8 @@ let main =
     "[expert] (90) triggers strong garbage collection when memory usage is above the given percentage of memory limit" ;
     ("--gc-low"),Arg.Int (fun i -> if i>100 then gc_low:=1.0 else gc_low:=(float_of_int i)/.100.) , 
     "[expert] (70) faster garbage collection when memory usage is below the given percentage of memory limit" ;
-    ("--set-gc-overhead",Arg.Int (fun i -> gc_overhead:=i),"[expert] (80) tune the gc speed. Value below 80 will result in better gc but poorer performances and values above 80 will increase performances but result in big memory consumption") ;
-    ("--snapshot-tmp-file", Arg.String (fun s -> serialized_snapshots:=s), 
-     "[expert] set name for the temporary snapshots file (default ~tmp_snapshots)");
-    ("--data-tmp-file", Arg.String (fun s -> serialized_data_file:=s), 
-     "[expert] set name for the temporary file for serializing data (default ~tmp_data)");
+    ("--set-gc-overhead",Arg.Int (fun i -> gc_overhead:=i),
+     "[expert] (80) tune the gc speed. Value below 80 will result in better gc but poorer performances") ;
     ("--xml-session-name",Arg.String (fun s -> xml_session:=s),
      "name of the xml file containing results of the current session (default simplx.xml)");
     ("--deadlock-threshold",
@@ -77,14 +96,17 @@ let main =
     ("--plot-prob-intra", Arg.String (fun s -> plot_p_intra:=true ; p_intra_fic:=s), "[expert] Plot the evolution of the proba of intra during time in given file name");
 
     (*temporary options*)
+    ("--set-snapshot-time", Arg.Float (fun f -> snapshot_mode:=true ; Data.tasks := Data.add_task (f,Data.TAKE_SNAPSHOT) !Data.tasks),
+     "[deprecated]");
+    ("--no-compress-stories",Arg.Unit (fun () -> story_compression:=false),"[deprecated]");
+    ("--no-use-strong-compression",Arg.Unit (fun () -> strong_compression:=false),
+     "[deprecated] as --no-strong-compression (for backward compatibility)");
+    ("--snapshot-tmp-file", Arg.String (fun s -> serialized_snapshot_file:=s), "as --snapshot-file-scheme (for backward compatibility)");
     ("--light-xml", Arg.Unit (fun () -> skip_xml:=true), "[temporary] prevent simplx from building xml structures for results") ;
     ("--no-seed",Arg.Unit (fun () -> seed:=Some 0),"[temporary] equivalent to --seed 0. Kept for compatibilty issue") ; 
     ("--compress-stories",Arg.Unit (fun () -> story_compression:=true),"[temporary] compression of stories");
-    ("--no-compress-stories",Arg.Unit (fun () -> story_compression:=false),"[temporary] do not compress stories");
     ("--use-strong-compression",Arg.Unit (fun () -> strong_compression:=true),
      "[temporary] use strong compression to classify stories");
-    ("--no-use-strong-compression",Arg.Unit (fun () -> strong_compression:=false),
-     "[temporary] do not use strong compression to classify stories");
     ("--forward",Arg.Unit (fun () -> forward:=true), "[temporary] do not consider backward rules" );
     ("--show-steps-in-compression",Arg.Unit (fun () -> show_steps_in_compression:=true),
      "[temporary] display all step of story compressions in the standard output");
@@ -100,11 +122,8 @@ let main =
      "[temporary] use the multi-set of depths to compare stories in strong compression");
     ("--use-linear-order",Arg.Unit (fun () -> reorder_by_depth:=false;use_multiset_in_strong_compression:=false),
      "[temporary] use linear-order to compare stories in strong compression");
-    ("--html-output",Arg.Unit (fun () -> html_mode:=true), "[temporary] html rendering") ;
-    ("--dot-output",Arg.Unit (fun () -> dot_output:=true), "[temporary] dot output for stories") ;
+    ("--html-output",Arg.Unit (fun () -> html_mode:=true), "[temporary] html rendering") ;    
     ("--no-rules",Arg.Unit (fun () -> Config.build_rules:=false), "[temporary] no recomputation of html rule rendering");
-    ("--plot",Arg.String (fun s -> Config.auto_plot:=true; data_file:=s), 
-     "[temporary] Creates a file containing the simulation data in clear text");
     ("--no-abstraction",Arg.Unit (fun () -> cplx_hsh:=false), 
      "[temporary] deactivate complx abstraction (will slow down influence map generation for large systems)") ;
     ("--no-random-time",Arg.Unit (fun () -> no_random_time:=true), "[temporary] use time advance expectency only")
@@ -116,7 +135,7 @@ let main =
   in
     Arg.parse options (fun _ -> Arg.usage visible_options usage_msg ; exit 1) usage_msg ;
     if !fic = "" then (Arg.usage visible_options usage_msg ; exit 1) ;
-    if not (good_key !key) then (exit 1) ;
+    if not (good_key !key) then (print_string "Invalid licence key\n" ; flush stdout ; exit 1) ;
     
     base_dir := Sys.getcwd();
 
@@ -167,106 +186,45 @@ let main =
     let _ = 
       try 
 	let log,warn,rules,init,sol_init,obs_l,exp =
-	  if !load_sim_data then
-	    let rules=[]
-	    and init=[]
-	    and sol_init = Solution.empty()
-	    and obs_l=[]
-	    and exp=Experiment.empty
-	    in
-	      (log,0,rules,init,sol_init,obs_l,exp)
-	  else
-	    let log,t_compil = 
-	      if !load_compilation then 
-		(Session.add_log_entry 0 (sprintf "-Loading %s..." !serialized_kappa_file) log,0.0)
-	      else (Session.add_log_entry 0 "-Compilation..." log, Mods2.gettime()) 
-	    in
-	      if !load_compilation then 
-		begin
-		  let d = open_in_bin (!serialized_kappa_file) in 
-		  let (f_r,f_i,f_s,f_o,e) = 
-		    (Marshal.from_channel d:
-		       (Rule.marshalized_t list 
-			* ((Solution.marshalized_t * int) list) 
-			* Solution.marshalized_t 
-			* Solution.marshalized_obs list 
-			* Experiment.t)
-		    ) 
-		  in
-		    close_in d ; 
-		    let r = List.map Rule.unmarshal f_r 
-		    and i = List.map (fun (f_s,i) -> (Solution.unmarshal f_s,i)) f_i
-		    and s = Solution.unmarshal f_s 
-		    and o = List.map Solution.unmarshal_obs f_o
-		    in
-		    let log = Session.add_log_entry 0 
-		      (sprintf "-%s succesfully loaded" !serialized_kappa_file) log
-		    in
-		      (log,0,r,i,s,o,e)
-		end
-	      else 
-		(*compute rules,sol_init,obs_l and exp from a kappa file*)
-		begin
-		  try
-		    let (r,i,o,e) = Kappa_lex.compile (!fic) in
-		    let s = Solution.sol_of_init !compile_mode i in
-		    let log = 
-		      Session.add_log_entry 0 (sprintf "-Compilation: %f sec. CPU" (Mods2.gettime()-.t_compil)) log 
-		    in
-		      if !save_compilation then 
-			let log = 
-			  let file = Filename.concat !output_dir !serialized_kappa_file in
-			  let d = open_out_bin file in
-			    begin
-			      Marshal.to_channel d 
-				(List.map Rule.marshal r,List.map (fun (s,i) -> (Solution.marshal s,i)),
-				 Solution.marshal s,List.map Solution.marshal_obs o,e) [] ;
-			      let log = Session.add_log_entry 0 
-				(sprintf "-%s succesfully saved" file) log
-			      in 
-				close_out d ;
-				log
-			    end
-			in
-	      		  (log,0,r,i,s,o,e)
-		      else (log,0,r,i,s,o,e)
-		  with
-		      Error.Syntax (msg,line) -> 
-			let log = Session.add_log_entry 2 msg ~line:line log in
-			  (log,2,[],[],Solution.empty(),[],Experiment.empty)
-		end
+	  let log,t_compil = (Session.add_log_entry 0 "-Compilation..." log, Mods2.gettime()) 
+	  in
+	    (*compute rules,sol_init,obs_l and exp from a kappa file*)
+	    try
+	      let (r,i,o,e) = Kappa_lex.compile (!fic) in
+	      let s = Solution.sol_of_init !compile_mode i in
+	      let log = 
+		Session.add_log_entry 0 (sprintf "-Compilation: %f sec. CPU" (Mods2.gettime()-.t_compil)) log 
+	      in
+		(log,0,r,i,s,o,e)
+	    with
+		Error.Syntax (msg,line) -> 
+		  let log = Session.add_log_entry 2 msg ~line:line log in
+		    (log,2,[],[],Solution.empty(),[],Experiment.empty)
 	in
 	  if (warn > 1) or (!compile_mode) then 
 	    begin
 	      (************* TEMP RENDERING OF RULES***************)
-	      if !html_mode && (warn < 2) && !Config.build_rules then (
-		printf "-Compiling rule page (may take a while)...\n"; flush stdout ;
-		let rules_file = Filename.concat !output_dir (HTML.rename "rules_" (!fic) "html") in
-		  HTML.html_of_rules rules_file rules 
-	      ) 
-	      else 
-		(
-		  List.fold_right (fun r _ -> Rule.print_compil ~filter:((warn>1) && (not !compile_mode)) r) rules ();
-		  Experiment.print exp ;
-		  Printf.printf "INITIAL SOLUTION:\n" ;
-		  List.iter (fun (sol,n) -> 
-			       let str = Solution.kappa_of_solution sol in
-				 Printf.printf "-%d*[%s]\n" n str
-			    ) init
-		) ;
+	      (
+		List.fold_right (fun r _ -> Rule.print_compil ~filter:((warn>1) && (not !compile_mode)) r) rules ();
+		Experiment.print exp ;
+		Printf.printf "INITIAL SOLUTION:\n" ;
+		List.iter (fun (sol,n) -> 
+			     let str = Solution.kappa_of_solution sol in
+			       Printf.printf "-%d*[%s]\n" n str
+			  ) init
+	      ) ;
 	      (************* TEMP RENDERING OF RULES***************)
 	      Session.finalize xml_file log warn  
 	    end
 	  else
-	    if !story_mode && (not !load_sim_data) then 
+	    if !story_mode then  (*checking story observable was defined*)
 	      if not (List.exists (fun obs -> match obs with Solution.Story _ -> true | _ -> false) obs_l)
 	      then 
 		let log = Session.add_log_entry 2 ("No story observation defined in "^(!fic)^". Aborting") log in
 		  Session.finalize xml_file log 2
 	      else () ;
 
-	  let t_init = Mods2.gettime() in
-	  let log = Session.add_log_entry 0 "-Initialization..." log in
+	  (*Seeding random number generator*)
 	  let log = 
 	    if (not !map_mode) then
 	      match !seed with
@@ -279,74 +237,36 @@ let main =
 	    else log
 	  in
 
-	  let log,p_sd = 
-	    (***********Loading simulation data from marshalized file**********)
-	    if !load_sim_data then
-	      begin 
-		try 
-		  let log = Session.add_log_entry 0 
-		    (sprintf "--Loading initial state from %s..." !serialized_sim_data_file) log 
-		  in
-		  let d = open_in_bin (!serialized_sim_data_file) in 
-		  let f_sd = (Marshal.from_channel d:Simulation2.marshalized_sim_data_t) in
-		  let p = {max_failure = !Data.max_clashes;
-			   init_sd = Some !serialized_sim_data_file ;
-			   compress_mode = true ;
-			   iso_mode = false ;
-			   gc_alarm_high = false ;
-			   gc_alarm_low = false 
-			  }
-		  in
-		  let log = Session.add_log_entry 0 "--Initial state successfully loaded." log in
-		    (log,Some(p,Simulation2.unmarshal f_sd))
-		with 
-		    _ -> 
-		      let s = (Printf.sprintf "Could not load %s" !serialized_sim_data_file) in
-		      Error.runtime
-			(Some "main.ml",
-			 Some 304,
-			 Some s)
-			s
-	      end
-	    else
-	      (log,None) 
-	  in 
-	  let log,p,sd = 
-	    match p_sd 
-	    with 
-		Some (p,sd) -> (log,p,sd)
-	      | None -> 
-		  begin 
-		    (***************Creating simulation data*****************)
-		    let log = Session.add_log_entry 0 "--Computing initial state" log 
-		    in
-		    let log,sd = Simulation2.init log (rules,init,sol_init,obs_l,exp)  
-		    in
-		    let log,serialized = 
-		      if !save_sim_data or (!max_iter >1) then 
-			let file = Filename.concat !output_dir !serialized_sim_data_file in
-			let log = Session.add_log_entry 0 (sprintf "--Saving initial state to %s..." file) log 
-			in
-			let d = open_out_bin file in
-			let f_sd = Simulation2.marshal sd in
-			  begin
-			    Marshal.to_channel d f_sd [Marshal.Closures] ;
-			    let log = Session.add_log_entry 0 "--Initial state succesfully saved" log
-			    in 
-			      close_out d ;
-			      (log,true)
-			  end
-		      else (log,false)
-		    in
-		      (log,{ max_failure = !Data.max_clashes;
-			     init_sd = if serialized then Some (Filename.concat !output_dir !serialized_sim_data_file) else None;
-			     compress_mode = true ;
-			     iso_mode = false ;
-			     gc_alarm_high = false ;
-			     gc_alarm_low = false 
-			   },sd
-		      )
-		  end 
+	  (***************INITIALIZATION*****************************)
+	  let t_init = Mods2.gettime() in
+	  let log = Session.add_log_entry 0 "-Initialization..." log in
+	  let log,p,sd,c = 
+	    
+	    let log = Session.add_log_entry 0 "--Computing initial state" log 
+	    in
+	      Simulation2.init log (rules,init,sol_init,obs_l,exp)  
+	  in
+	  let sd = 
+	    if !story_mode then (*adding constraints to stories*)
+	      List.fold_left (fun sd obs ->
+				match obs with
+				    Solution.Story (set,flg) ->
+				      begin
+					try
+					  let i = StringMap.find flg sd.rule_of_name in
+					  let r,a = Rule_of_int.find i sd.rules in
+					  let rids = StringSet.fold (fun flg set -> 
+								       let i = StringMap.find flg sd.rule_of_name in
+									 IntSet.add i set
+								    ) set IntSet.empty 
+					  in
+					  let r = {r with constraints = (ROOTED_STORY rids)::r.constraints} in
+					    {sd with rules = Rule_of_int.add i (r,a) sd.rules}
+					with Not_found -> failwith "Main: flag doesn't correspond to any rule"
+				      end
+				  | _ -> sd
+			     ) sd obs_l
+	    else sd
 	  in
 	  let msg = sprintf "-Initialization: %f sec. CPU" (Mods2.gettime() -. t_init) in
 	  let log = Session.add_log_entry 0 msg log in
@@ -355,24 +275,151 @@ let main =
 	  let log,sd,p,c = 
 	    if not !map_mode then
 	      begin
-		let log = Session.add_log_entry 0 "-Simulation..." log in
+		let log = Session.add_log_entry 0 (sprintf "-Simulation (t=%f)..."c.curr_time) log in
 		let t_sim = Mods2.gettime() in
-		let (deadlocked,log,sd,p,c) = iter log sd p (Simulation2.init_counters sd) in
-		let log,drawers,compress_log  = 
-		  Iso.compress_drawers log c.drawers p.iso_mode (fun a b c -> Session.add_log_entry a b c) 
-		in 		 
-		let c = 
-		  {c with drawers = drawers ;
-		     compression_log = compress_log } in 
-		  
-		let log = 
-		  if (deadlocked=1) then 
-		    (Session.add_log_entry 1 "-Simulation was interrupted because no rule could be applied anymore!" log)
-		  else 
-		    log
+		let task_list = 
+		  IntMap.fold (fun i t task_list -> 
+				 let t = if t<0. then c.t0 else t in
+				   Data.add_task (t,Data.ACTIVATE_PERTURBATION i) task_list
+			      ) sd.lab.Experiment.time_on !Data.tasks 
 		in
-		  (Session.add_log_entry 0 (sprintf "-Simulation: %f sec. CPU" (Mods2.gettime() -. t_sim)) log,
-		   sd,p,c)
+		let task_list = 
+		  IntMap.fold (fun i t task_list ->
+				 if t>0. then Data.add_task (t,Data.CANCEL_PERTURBATION i) task_list
+				 else task_list 
+			      ) sd.lab.Experiment.time_off task_list
+		in
+		let rec print_bar n =
+		  if n=0 then (print_newline() ; flush stdout) 
+		  else
+		    (print_string "_" ; print_bar (n-1))
+		in
+		let _ = print_bar !Data.clock_precision in
+
+		(*************************************************************************************************)
+		(**************************************begin loop function****************************************)
+		(*************************************************************************************************)
+		let rec loop log sd p c = 
+		  (*Progress bar*)
+		  let c = ticking c in
+		    
+		  (*Stop conditions*)
+		  let log,sd,p,c,stop =
+		    if c.restart then
+		      if c.curr_iteration >= !max_iter then
+			begin (*exiting event loop*)
+			  Printf.printf "\n"; flush stdout ;
+			  let log = Session.add_log_entry 0 (Printf.sprintf "-Exiting storification after %d iteration(s)" c.curr_iteration) log in
+			    (log,sd,p,{c with 
+					 curr_tick = 0 ;
+					 curr_time = 0.0 ;
+					 curr_step = 0 ;
+					 restart = false
+				      },true)
+			end
+		      else (*not the last iteration*)
+			let init_sd,c,log = 
+			  match p.init_sd with
+			      None -> Error.runtime (None,None,None) "Cannot find marshalized simulation data file!"
+			    | Some serialized_sim_data ->
+				let log = Session.add_log_entry 4 ("-Loading initial state from "^serialized_sim_data^"...") log in
+				  compilation_opt := 0 ; load_sim_data := true;
+				  let _,_,_,exp = Kappa_lex.compile !fic in
+				  let task_list = 
+				    IntMap.fold (fun i t task_list -> 
+						   let t = if t<0. then c.t0 else t in
+						     Data.add_task (t,Data.ACTIVATE_PERTURBATION i) task_list
+						) exp.Experiment.time_on []
+				  in
+				  let task_list = 
+				    IntMap.fold (fun i t task_list ->
+						   if t>0. then Data.add_task (t,Data.CANCEL_PERTURBATION i) task_list
+						   else task_list 
+						) exp.Experiment.time_off task_list
+				  in
+				  let d = open_in_bin serialized_sim_data in 
+				  let _,f_init_sd = (Marshal.from_channel d : float * marshalized_sim_data_t) in
+				  let _ = close_in d in
+				  let sd = unmarshal f_init_sd in
+				    ({sd with lab = exp ; task_list = task_list},{c with 
+										    curr_tick = 0 ;
+										    curr_time = 0.0 ;
+										    curr_step = 0 ;
+										    restart = false
+										 },log)
+			in
+			  Gc.compact() ;
+			  (log,init_sd,p,c,false)
+		    else (*no restart needed*)
+		      if c.deadlock && Data.is_empty task_list then 
+			begin
+			  Printf.printf "\n"; flush stdout ;
+			  let log = Session.add_log_entry 1 (Printf.sprintf "-Stalled system at time %f (after %d events)..." c.curr_time c.curr_step) log
+			  in
+			    (log,sd,p,c,true)
+			end
+		      else
+			if (!max_time >= 0.0) && (c.curr_time > !max_time) or ((!max_step >= 0) && (c.curr_step > !max_step)) then (*time or event limit reached*)
+			  begin (*exiting event loop*)
+			    Printf.printf "\n"; flush stdout ;
+			    let log = Session.add_log_entry 0 (Printf.sprintf "-Exiting simulation at time %f (after %d events)" c.curr_time c.curr_step) log in
+			      (log,sd,p,c,true)
+			  end
+			else (*time or event limit not reached*)
+			  (log,sd,p,c,false)
+		  in
+		    if stop then (log,sd,p,c)
+		    else
+		      
+		      (*loop should go on!*)
+		      let sd,c,p,log = Monitor.apply sd c p log
+		      in
+		      let p,log =
+			match !gc_mode with
+			    Some HIGH -> 
+			      if p.gc_alarm_high then (p,log) 
+			      else 
+				let log = Session.add_log_entry 1 "Free memory is low, shifting to strong garbage collection" log in
+				  ({p with gc_alarm_high=true ; gc_alarm_low=false},log)
+			  | Some LOW ->
+			      if p.gc_alarm_low then (p,log) 
+			      else 
+				let log = Session.add_log_entry 1 "Using low garbage collection" log in
+				  ({p with gc_alarm_high=false ; gc_alarm_low=true},log)
+			  | None -> (p,log)
+		      in
+			
+		      let _ = if !debug_mode then print sd else () in
+
+		      let sd,p,story_mode =
+			if !story_mode && (!init_time <= c.curr_time) && (Network.is_empty sd.net) then 
+			  (
+			    if !debug_mode then Printf.printf "Initializing network\n" ; flush stdout ;
+			    let net = init_net Network.empty sd.sol in
+			    let sd = {sd with net = net} in
+			      (sd,p,true)
+			  )
+			else
+			  (sd,p,!story_mode && (!init_time <= c.curr_time))
+		      in
+			
+		      let (log,sd,p,c) = event log sd p c story_mode in
+			loop log sd p c 
+		in
+		  (*************************************************************************************************)
+		  (**************************************end loop function******************************************)
+		  (*************************************************************************************************)
+		  
+		let log,sd,p,c = loop log {sd with task_list = task_list} p c in
+		  (*
+		    let log,drawers,compress_log  = 
+		    Iso.compress_drawers log c.drawers p.iso_mode (fun a b c -> Session.add_log_entry a b c) 
+		    in 		 
+		    let c = 
+		    {c with drawers = drawers ;
+		    compression_log = compress_log } in 
+		  *)
+		  (Session.add_log_entry 0 (sprintf "-Simulation: %f sec. CPU" (Mods2.gettime() -. t_sim)) log,sd,p,c)
 	      end 
 	    else (log,sd,p,Simulation2.empty_counters)
 	  in
@@ -464,34 +511,17 @@ let main =
 		      in
 			gather_snapshots file (counter-1) (xmls,log)
 		  in
-		    gather_snapshots !Data.serialized_snapshots (c.snapshot_counter-1) ([],log)
+		    gather_snapshots !Data.serialized_snapshot_file (c.snapshot_counter-1) ([],log)
 		end
 	      else ([],log)
 	    in
 	    let xml_stories,log = 
 	      if !story_mode then 
-		if c.curr_iteration - c.skipped = 0 then 
-		  let log = Session.add_log_entry 1 "no stories found" log in
-		  let drawers = Iso.empty_drawers 1 in
-		  let drawers = Iso.classify (sd.net,c.curr_time) drawers false in
-		    if !output_final then 
-		      begin
-			let log = Session.add_log_entry 0 "-Outputting deadlocked configuration as required" log in
-
-			  (****************TEMP RENDERING OF STORIES************)
-			  if !html_mode then 
-			    (HTML.dot_of_network ~story:false "config_dump.dot" (sd.net,1,c.curr_time) ;
-			     fprintf stderr "-Dumping final configuration (may take a while)...\n" ; flush stderr ;
-			     let _ = HTML.image_of_dot "config_dump.dot" in ()
-			    );
-			  (*****************************************************) 
-
-			  ([Session.xml_of_stories ~deadlock:true drawers],log)
-		      end
-		    else ([],log)
-		else 
+		if Iso.nb_stories c.drawers = 0 then
+		  let log = Session.add_log_entry 1 "-No causal trace was found withing given time or event limits!" log in ([],log)
+		else
 		  begin
-		    let log = Session.add_log_entry 0 "-Outputting stories" log in
+		    let log = Session.add_log_entry 0 (Printf.sprintf "-found %d causal trace(s), now outputting..." (Iso.nb_stories c.drawers)) log in
 		      if !dot_output && (not !html_mode) then
 			begin
 			  let cpt = ref 0 in
@@ -510,13 +540,23 @@ let main =
 		  end
 	      else ([],log)
 	    in
-	    let data_map = Simulation2.build_data c.concentrations c.time_map sd.obs_ind in
+	    let filtered_obs_ind = IntSet.filter (fun i -> 
+						    try
+						      let r,_ = Rule.Rule_of_int.find i sd.rules in
+							not (r.Rule.input = "var")
+						    with
+							Not_found -> 
+							  Error.runtime (None,None,None) ("Cannot find obs "^(string_of_int i))
+						 ) sd.obs_ind
+	    in
+	    let data_map = Simulation2.build_data c.concentrations c.time_map filtered_obs_ind
+	    in
 	    let log = Session.add_log_entry 0 ("-Sampling data...") log 
 	    in
 	    let t0 = Mods2.gettime() in
 	    let ls_sim = 
 	      if !story_mode or !map_mode then []
-	      else [Session.ls_of_simulation sd.rules sd.obs_ind 
+	      else [Session.ls_of_simulation sd.rules filtered_obs_ind
 		      c.time_map data_map c.curr_step c.curr_time]
 	    in
 	    let log = 
@@ -532,9 +572,9 @@ let main =
 		    Session.add_log_entry 0 ("-Outputting simulation data in "^data_file) log 
 		  in
 		    (*************TEMP DATA RENDERING**************)
-		    HTML.print_data data_file sd.rules data_map sd.obs_ind c.time_map ;
+		    HTML.print_data data_file sd.rules data_map filtered_obs_ind c.time_map ;
 		    (**********************************************)
-		    Session.output_data data_file sd.rules data_map sd.obs_ind c.time_map ;
+		    Session.output_data data_file sd.rules data_map filtered_obs_ind c.time_map ;
 		    (*sd.obs_ind c.time_map c.concentrations*) 
 		    let log = 
 		      Session.add_log_entry 0 (sprintf "-End of data outputting %.4f s CPU" (Mods2.gettime()-.t0)) log 

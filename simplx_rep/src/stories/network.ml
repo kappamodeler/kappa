@@ -330,18 +330,21 @@ type t = {fresh_id:eid; (*new event identifier*)
 	  events: int EventArray.t ;
 	  s_preds:IntSet.t IntMap.t;  (*preds: eid -> {eids} -- set of identifiers that precede pid*)
 	  w_preds: IntSet.t IntMap.t; (*weak predecessors of eid*)
+	  rid_preds: IntSet.t IntMap.t; (*set of rule id that belong to s_preds(eid)*)
 	  wires:Wire.t PortMap.t; (*wires: (i,s) -> Wire.t = [Test;Test;...;Bound (i,s);....]*)
 	  last: IntSet.t ;
 	 } 
 
 let strong_preds eid net = try IntMap.find eid net.s_preds with Not_found -> IntSet.empty
 let weak_preds eid net = try IntMap.find eid net.w_preds with Not_found -> IntSet.empty
+let rid_preds eid net = try IntMap.find eid net.rid_preds with Not_found -> IntSet.empty
 
 type marshalized_t = {f_fresh_id:eid; (*new event identifier*)
 		      f_name_of_agent:string list ;
 		      f_events: (int*event) list ;
 		      f_s_preds:IntSet.t IntMap.t;  (*preds: eid -> {eids} -- set of identifiers that precede pid*)
 		      f_w_preds: IntSet.t IntMap.t ;
+		      f_rid_preds: IntSet.t IntMap.t ;
 		      f_wires:Wire.t PortMap.t; (*wires: (i,s) -> Wire.t = [Test;Test;...;Bound (i,s);....]*)
 		      f_last: IntSet.t ;
 		     }
@@ -357,6 +360,7 @@ let marshal net =
    f_events = EventArray.fold (fun i e cont -> (i,e)::cont) net.events [] ;
    f_s_preds = net.s_preds ;
    f_w_preds = net.w_preds ;
+   f_rid_preds = net.rid_preds ;
    f_wires = net.wires ; 
    f_last = net.last
   }
@@ -372,6 +376,7 @@ let unmarshal f_net =
    events = List.fold_left (fun ar (i,e) -> let ar = EventArray.add i e ar in ar) (EventArray.create 1) f_net.f_events ;
    s_preds = f_net.f_s_preds ;
    w_preds = f_net.f_w_preds ;
+   rid_preds = f_net.f_rid_preds ;
    wires = f_net.f_wires ; 
    last = f_net.f_last
   }
@@ -382,6 +387,7 @@ let empty() =
    wires = PortMap.empty;
    s_preds = IntMap.empty ;  
    w_preds = IntMap.empty ;
+   rid_preds = IntMap.empty ;
    last = IntSet.empty;
    name_of_agent = None;
   } 
@@ -452,21 +458,27 @@ let add_intro (str,modifs) safe net =
   in
     {net with fresh_id = net.fresh_id+1}
 
-let preds_closure net closure = 
-  let rec f net closure preds = 
-    let news =
-      IntSet.fold (fun i set -> 
+let preds_closure net closure with_rids = 
+  let rec f net closure (todo_set,rids) = 
+    let news,rids =
+      IntSet.fold (fun i (set,rids) -> 
 		     let p_i = strong_preds i net in  
-		       IntSet.fold (fun i set -> 
-				      if IntSet.mem i closure then set 
-				      else IntSet.add i set
-				   ) p_i set
-		  ) preds IntSet.empty
+		       IntSet.fold (fun i (set,rids) -> 
+				      if IntSet.mem i closure then (set,rids)
+				      else 
+					let e = event_of_id i net in
+					  (IntSet.add i set, IntSet.remove e.r.Rule.id rids)
+				   ) p_i (set,rids)
+		  ) todo_set (IntSet.empty,rids)
     in
-      if IntSet.is_empty news then closure
-      else f net (IntSet.union preds (IntSet.union news closure)) news
+      if IntSet.is_empty news then if IntSet.is_empty rids then (Some closure) else None 
+      else f net (IntSet.union todo_set (IntSet.union news closure)) (news,rids)
   in
-    f net closure closure
+    f net closure (closure,IntSet.fold (fun eid rids -> 
+					  let e = event_of_id eid net in 
+					  let r_id = e.r.Rule.id in
+					    IntSet.remove r_id rids
+				       ) closure with_rids)
       
 (*returns immediate predecessors of eid, whether weak or strong, which are maximal if eid is removed*)
 let immediate_preds eid net =
@@ -512,21 +524,25 @@ let add_event ?(replay=false) eid (r,modifs) add_wire net =
     PortMap.fold (fun (i,s) modif_list net -> 
 		    List.fold_right (fun state net ->
 				       if Rule.contains_test [state] then (*adding a test node*)
-					 let preds_eid,weak_preds = (*predecessors are modifications of wires of eid*)
+					 let preds_eid,weak_preds,rid = (*predecessors are modifications of wires of eid*)
 					   let w_is = try PortMap.find (i,s) net.wires with Not_found -> Wire.empty in
 					   let l_test = if Rule.contains_modif [state] then Wire.testing w_is else [] in
 					   let l_mod = try [Wire.last_mod w_is] with Not_found -> [] (*event modif. (i,s)*)
 					   and old_strong = strong_preds eid net
 					   and old_weak = weak_preds eid net
+					   and old_rid = rid_preds eid net
 					   in
-					   let strong,weak = List.fold_right (fun j (strong,weak) -> 
-										if j=eid then (strong,weak) (*if event has multiple modifs*)
-										else 
-										  let weak = IntSet.remove j weak
-										  and strong = IntSet.add j strong
-										  in
-										    (strong,weak)
-									     ) l_mod (old_strong,old_weak)
+					   let strong,weak,rid = List.fold_right (fun j (strong,weak,rid) -> 
+										    if j=eid then (strong,weak,rid) (*if event has multiple modifs*)
+										    else 
+										      let weak = IntSet.remove j weak
+										      and strong = IntSet.add j strong
+										      and rid = 
+											let e = event_of_id j net in 
+											  IntSet.add (e.r.Rule.id) rid
+										      in
+											(strong,weak,rid)
+										 ) l_mod (old_strong,old_weak,old_rid)
 					   in
 					   let weak = 
 					     List.fold_right (fun j set -> 
@@ -535,13 +551,14 @@ let add_event ?(replay=false) eid (r,modifs) add_wire net =
 								  IntSet.add j set
 							     ) l_test weak
 					   in
-					     (strong,weak)
+					     (strong,weak,rid)
 					 in
 					 let wires = add_wire (i,s) (eid,state) net.wires
 					 in
 					   {net with
 					      s_preds = IntMap.add eid preds_eid net.s_preds;
 					      w_preds = IntMap.add eid weak_preds net.w_preds;
+					      rid_preds = IntMap.add eid rid net.rid_preds;
 					      wires = wires
 					   }
 				       else (*Pure modif of a quark does not genereate precedence but may generate non permutation*)
@@ -572,11 +589,11 @@ let add_event ?(replay=false) eid (r,modifs) add_wire net =
 	else 
 	  let s = "QA failed in Network.event_add: weak and strong precedence should have an emtpy intersection" 
 	  in
-	  Error.runtime
-	    (Some "network.ml",
-	     Some 575,
-	     Some s)
-	    s
+	    Error.runtime
+	      (Some "network.ml",
+	       Some 575,
+	       Some s)
+	      s
     else () 
   in
   let s_d,g_d,last = 
@@ -593,11 +610,11 @@ let add_event ?(replay=false) eid (r,modifs) add_wire net =
 		     let s = 
 		       ("Network.add: event "^(string_of_int i)^" not found in predecessors of "^(string_of_int eid))
 		     in
-		     Error.runtime 
-		       (Some "network.ml",
-			Some 596,
-			Some s)
-		       s
+		       Error.runtime 
+			 (Some "network.ml",
+			  Some 596,
+			  Some s)
+			 s
 		) (IntSet.union strong weak) (0,0,net.last)
   in
   let e = {r=r;
@@ -628,12 +645,12 @@ let add sol net (r,modifs) debug compress =
 			  then candidates (*if List.hd contains modif than so other actions in List.tl*)
 			  else
 			    let w_is = try PortMap.find (i,s) net.wires with Not_found -> 
-			      let s = (Printf.sprintf "Network.add: Wire (%d,%s) not found" i s) in
-			      Error.runtime
-				(Some "network.ml",
-				 Some 632,
-				 Some s)
-				s
+			      let s = (Printf.sprintf "Network.add: Wire (%d,%s) not found!" i s) in
+				Error.runtime
+				  (Some "network.ml",
+				   Some 632,
+				   Some s)
+				  s
 			    in 
 			    let opt_eid_state = (try Some (Wire.top_event w_is) with Wire.Empty -> None) in
 			      match opt_eid_state with
@@ -656,11 +673,11 @@ let add sol net (r,modifs) debug compress =
 			) candidates
 	  with Not_found -> 
 	    let s = "Network.add: event not found" in
-	    Error.runtime 
-	      (Some "network.ml",
-	       Some 659,
-	       Some s)
-	      s
+	      Error.runtime 
+		(Some "network.ml",
+		 Some 659,
+		 Some s)
+		s
       else ()
     in
     let eid = net.fresh_id in
@@ -668,11 +685,11 @@ let add sol net (r,modifs) debug compress =
 	 add_event eid (r,modifs) (add_wire (Printf.sprintf "%s_%d" r.Rule.input eid)) net (*If there is no trivial compression*)
        with Not_found -> 
 	 let s = "Network.add_event: not found raised" in
-	 Error.runtime
-	   (Some "network.ml",
-	    Some 671,
-	    Some s)
-	   s)
+	   Error.runtime
+	     (Some "network.ml",
+	      Some 671,
+	      Some s)
+	     s)
   with
       Rule.Opposite nodes -> (**When added event can collapse nodes in [nodes]*)
 	begin
@@ -701,34 +718,34 @@ let add sol net (r,modifs) debug compress =
 						  in
 						    Printf.printf "last:%s\n" (string_of_set string_of_int IntSet.fold net.last) ; flush stdout ;
 						    let s = (msg^"\n"^msg2) in
-						    Error.runtime 
-						      (Some "network.ml",
-						       Some 704,
-						       Some s)
-						      s
+						      Error.runtime 
+							(Some "network.ml",
+							 Some 704,
+							 Some s)
+							s
 						end
 					  | None -> Some eid
 				 ) nodes None
 	  in
 	  let rm_eid =
 	    match opt with 
-	      None -> 
-		let s = "Network.add: invalid argument" in
-		Error.runtime 
-		  (Some "network.ml",
-		   Some 715,
-		   Some s)
-		  s
-	    | Some eid -> eid in
+		None -> 
+		  let s = "Network.add: invalid argument" in
+		    Error.runtime 
+		      (Some "network.ml",
+		       Some 715,
+		       Some s)
+		      s
+	      | Some eid -> eid in
 	  let _ = 
 	    if IntSet.mem rm_eid net.last then () 
 	    else 
 	      let s = "Network.add: removed event is not maximal" in
-	      Error.runtime 
-		(Some "network.ml",
-		 Some 727,
-		 Some s)
-		s
+		Error.runtime 
+		  (Some "network.ml",
+		   Some 727,
+		   Some s)
+		  s
 	  in
 	  let preds_rm = immediate_preds rm_eid net in (*try IntMap.find rm_eid net.preds with Not_found -> IntSet.empty in*)
 	  let events,preds,w_preds =
@@ -744,21 +761,21 @@ let add sol net (r,modifs) debug compress =
 		IntMap.fold (fun eid set _ -> 
 			       if IntSet.mem rm_eid set then 
 				 let s = (Printf.sprintf "QA failed in Network.add: removed eid is a weak predecessor of event %d" eid) in
-				 Error.runtime 
-				   (Some "network.ml",
-				    Some 747,
-				    Some s)
-				   s
+				   Error.runtime 
+				     (Some "network.ml",
+				      Some 747,
+				      Some s)
+				     s
 			       else ()
 			    ) net.w_preds () ;
 		IntMap.fold (fun eid set _ -> 
 			       if IntSet.mem rm_eid set then 
 				 let s = (Printf.sprintf "QA failed in Network.add: removed eid is a strong predecessor of event %d" eid) in
-				 Error.runtime
-				   (Some "network.ml",
-				    Some 757,
-				    Some s)
-				   s
+				   Error.runtime
+				     (Some "network.ml",
+				      Some 757,
+				      Some s)
+				     s
 				     
 			       else ()
 			    ) net.s_preds ()
@@ -774,18 +791,18 @@ let add sol net (r,modifs) debug compress =
 			      with 
 				  Wire.Empty -> 
 				    let msg = Printf.sprintf "Wire (%d,%s) is empty" i s in
-				    Error.runtime 
-				      (Some "network.ml",
-				       Some 777,
-				       Some msg)
-				      msg 
+				      Error.runtime 
+					(Some "network.ml",
+					 Some 777,
+					 Some msg)
+					msg 
 				| Not_found -> 
 				    let msg=Printf.sprintf "Wire (%d,%s) not found" i s in
 				      Error.runtime 
-				      (Some "network.ml",
-				       Some 784,
-				       Some msg) 
-				      msg
+					(Some "network.ml",
+					 Some 784,
+					 Some msg) 
+					msg
 			    in
 			      {net with wires=wires}
 			 ) nodes {net with events=events;s_preds=preds; w_preds=w_preds ; fresh_id=net.fresh_id+1}
@@ -797,11 +814,11 @@ let add sol net (r,modifs) debug compress =
 	end
     | Not_found -> 
 	let s = "Network.add: not found raised" in
-	Error.runtime
-	  (Some "network.ml",
-	   Some 800,
-	   Some s)
-	  s
+	  Error.runtime
+	    (Some "network.ml",
+	     Some 800,
+	     Some s)
+	    s
 
 let re_add net (r,modifs) safe  =
   let add_wire = if safe then (add_wire r.Rule.input) else unsafe_add_wire in 
@@ -864,66 +881,69 @@ let re_add_rename sigma  net (r,modifs) safe  =
       end
     with _ -> (net,sigma,false)  
     		 
-let cut net (*port_obs*) obs_str =
+let cut net (rids,obs_str) =
   let ids = 
     IntSet.singleton (net.fresh_id-1) (*if flagged rule then obs is simply the last event*)
   in
-  let preds_star =  preds_closure net ids
+  let opt =  preds_closure net ids rids
   in
-  let h =
-    IntSet.fold (fun i h ->
-		   let e = 
-		     try EventArray.find i net.events 
-		     with Not_found -> 
-		       let s = "Network.cut: event not bound" in
-		       Error.runtime 
-			 (Some "network.ml",
-			  Some 879,
-			  Some s)
-			 s
-		   in 
-		     {h with 
-			events = EventArray.add i e h.events ;
-			s_preds = IntMap.add i (strong_preds i net) h.s_preds ;  
-			w_preds = 
-			 begin
-			   let w_ids = weak_preds i net in
-			      (*only adding weak arrows that are internal to the story*)
-			   let w_ids = 
-			     IntSet.fold (fun eid set ->
-					    if IntSet.mem eid preds_star then
-					      IntSet.add eid set
-					    else set
-					 ) w_ids IntSet.empty
-			   in
-			     IntMap.add i w_ids h.w_preds
-			 end;
-			fresh_id = if (i >= h.fresh_id) then (i+1) else h.fresh_id ;
-			last = if IntSet.mem i net.last then IntSet.add i h.last else h.last ;
-		     }
-		) preds_star {(empty()) with wires = net.wires}
-  in
-    (*if port_obs = [] then *)
-  let id_obs = 
-    try IntSet.choose h.last with Not_found -> 
-      let s = "Network.cut: empty story" in
-      Error.runtime
-	(Some "network.ml",
-	 Some 910,
-	 Some s)
-	s
-  in (*should be only one*)
-  let e_obs = (*IntMap.find id_obs h.events *) 
-    try EventArray.find id_obs h.events 
-    with Not_found -> 
-      let s = "Network.cut: empty story" in
-      Error.runtime 
-	(Some "network.ml",
-	 Some 920,
-	 Some s)
-	s
-  in
-    {h with events = EventArray.add id_obs {e_obs with kind=2} h.events}
+    match opt with
+	None -> None (*returns None is preds_closure doesn't contain rules specified by rids*)
+      |	Some preds_star -> 
+	  let h =
+	    IntSet.fold (fun i h ->
+			   let e = 
+			     try EventArray.find i net.events 
+			     with Not_found -> 
+			       let s = "Network.cut: event not bound" in
+				 Error.runtime 
+				   (Some "network.ml",
+				    Some 879,
+				    Some s)
+				   s
+			   in 
+			     {h with 
+				events = EventArray.add i e h.events ;
+				s_preds = IntMap.add i (strong_preds i net) h.s_preds ;  
+				w_preds = 
+				 begin
+				   let w_ids = weak_preds i net in
+				     (*only adding weak arrows that are internal to the story*)
+				   let w_ids = 
+				     IntSet.fold (fun eid set ->
+						    if IntSet.mem eid preds_star then
+						      IntSet.add eid set
+						    else set
+						 ) w_ids IntSet.empty
+				   in
+				     IntMap.add i w_ids h.w_preds
+				 end;
+				fresh_id = if (i >= h.fresh_id) then (i+1) else h.fresh_id ;
+				last = if IntSet.mem i net.last then IntSet.add i h.last else h.last ;
+			     }
+			) preds_star {(empty()) with wires = net.wires}
+	  in
+	    (*if port_obs = [] then *)
+	  let id_obs = 
+	    try IntSet.choose h.last with Not_found -> 
+	      let s = "Network.cut: empty story" in
+		Error.runtime
+		  (Some "network.ml",
+		   Some 910,
+		   Some s)
+		  s
+	  in (*should be only one*)
+	  let e_obs = (*IntMap.find id_obs h.events *) 
+	    try EventArray.find id_obs h.events 
+	    with Not_found -> 
+	      let s = "Network.cut: empty story" in
+		Error.runtime 
+		  (Some "network.ml",
+		   Some 920,
+		   Some s)
+		  s
+	  in
+	    (Some {h with events = EventArray.add id_obs {e_obs with kind=2} h.events})
       
 
 let obs_story h = 

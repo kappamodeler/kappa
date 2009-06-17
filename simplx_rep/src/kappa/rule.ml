@@ -2,7 +2,7 @@ open Error
 open Mods2
 open Solution
 
-type constraints = NO_HELIX | NO_POLY
+type constraints = NO_HELIX | NO_POLY | ROOTED_STORY of IntSet.t
 
 type t = {lhs:Solution.t IntMap.t;
 	  rhs:Solution.t;
@@ -136,7 +136,7 @@ module Rule_of_int =
       let compare = compare 
       let to_f = 
 	fun (r,inst) ->
-	  if r.input = "" then 0.0 
+	  if r.input = "var" or r.input = "obs" then 0.0 
 	  else
 	    let automorphisms = 
 	      match r.automorphisms with 
@@ -191,6 +191,7 @@ let print_compil ?(filter=false) ?(with_warning=false) r =
     match constraints with
 	NO_HELIX::tl -> (print_string "No type intersection allowed" ; print_constraints tl)
       | NO_POLY::tl -> (print_string "No polymerisation allowed" ; print_constraints tl)
+      | (ROOTED_STORY set)::tl -> (Printf.printf "Story has to contain rules %s" (string_of_set string_of_int IntSet.fold set) ; print_constraints tl)
       | [] -> print_newline()
   in
   let print_rate() = 
@@ -851,4 +852,12 @@ let subs_rule sigma (rule,modif) =
 	 PortMap.add ((f i,a)) (subs_act sigma  act))
       modif PortMap.empty 
   in rule',modif' 
-
+      
+let roots_for_story r = 
+  let rec find_roots constraints =
+    match constraints with
+	(ROOTED_STORY set)::_ -> set
+      | _::tl -> find_roots constraints
+      | [] -> IntSet.empty
+in
+  find_roots r.constraints

@@ -1,7 +1,7 @@
 (**Module for managing rule-based operations*)
 
 (**Type for rule constraints*)
-type constraints = NO_HELIX | NO_POLY
+type constraints = NO_HELIX | NO_POLY | ROOTED_STORY of Mods2.IntSet.t
 
 (**Type of rules*)
 type t = {
@@ -121,3 +121,4 @@ val subs_act : Mods2.IntMap.key Mods2.IntMap.t -> modif_type -> modif_type
 val subs_rule :
   Mods2.IntMap.key Mods2.IntMap.t ->
   'a * modif_type Mods2.PortMap.t -> 'a * modif_type Mods2.PortMap.t
+val roots_for_story : t -> Mods2.IntSet.t

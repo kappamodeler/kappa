@@ -84,6 +84,9 @@ struct
 end
 
 type drawers = {hsh:(Sign.t,(t*int*float) list) Hashtbl.t; nb:int;  (*hsh: sg_i R (net_i*freq_i)*)} 
+
+let nb_stories drawers = drawers.nb 
+
 let empty_drawers n = {hsh=Hashtbl.create n; nb=0}
 
 (*let cpt = ref 1 *)
@@ -147,16 +150,14 @@ let compress_drawers log drawers test_iso_mode add_log_entry =
 			   print_string "\n * Initial weak compression * ";
 			   print_string "\n **************************** ";
 			   print_string "\n\n\n") in 
-		      let net'',log  = 
+		      let net'' = 
 			Story_compressor.compress 
 			  (if Data.ignore_story_compression or !Data.log_compression
 			   then Network.copy net'
 			   else net')  
 			  (!Data.story_compression_mode) 
 			  Data.WEAK 
-			  log
-			  add_log_entry
-		      in 
+		      in
 		      let net_weak = 
 			if !Data.log_compression 
 			then 
@@ -183,24 +184,24 @@ let compress_drawers log drawers test_iso_mode add_log_entry =
 				  if debug_compress () && k<nevents 
 				  then 
 				    begin
-				    let _ = print_string "\n **********************" in
+				      let _ = print_string "\n **********************" in
 
-				    let _ = print_string "\n * Strong compression *" in 
-				    let _ = print_string "\n **********************" in
-				    let _ = print_string "\n\n" in 
-				    let _ = print_string "Current story has  " in
-				    let _ = print_int nevents in
-				    let _ = print_string " events \n" in 
-				    let _ = if k=0 then 
-				      let _ = print_string "The current story is the following: \n" in 
-				      let _ = Story_compressor.print_network 
+				      let _ = print_string "\n * Strong compression *" in 
+				      let _ = print_string "\n **********************" in
+				      let _ = print_string "\n\n" in 
+				      let _ = print_string "Current story has  " in
+				      let _ = print_int nevents in
+				      let _ = print_string " events \n" in 
+				      let _ = if k=0 then 
+					let _ = print_string "The current story is the following: \n" in 
+					let _ = Story_compressor.print_network 
 					  (let a,_,_ = Story_compressor.Convert.convert net Data.WEAK in a) in 
-				      let _ = print_string "\n\n\n" in 
-				      () in 
-				    let _ = print_string "trying substitution just after  the event " in 
-				    let _ = print_int k in 
-				    let _ = print_newline () in
-				    ()
+					let _ = print_string "\n\n\n" in 
+					  () in 
+				      let _ = print_string "trying substitution just after  the event " in 
+				      let _ = print_int k in 
+				      let _ = print_newline () in
+					()
 				    end
 				in
 				  if k>=nevents then 
@@ -209,86 +210,84 @@ let compress_drawers log drawers test_iso_mode add_log_entry =
 				      then 
 					print_string "No more compression found\n"
 				    in
-				    net 
-				    
+				      net 
+					
 				  else
 				    let perm_list = Story_compressor.Convert.try_permutation net k in
 				    let perm_list = 
 				      List.filter 
 					(fun x -> 
-					  match x with None -> false
-					  | Some (_,b) -> 
-					  not (IntMap.empty = b))
+					   match x with None -> false
+					     | Some (_,b) -> 
+						 not (IntMap.empty = b))
 					perm_list in 
-					    
+				      
 				    let _ = 
 				      if debug_compress () 
 				      then 
 					let _ = print_int (List.length perm_list) in 
 					let _ = print_string " potential permutation(s) found\n" in 
-					() in 
+					  () in 
 				    let rec aux2 l = 
 				      if not (Story_compressor.test_time ()) 
 				      then 
 					(let _ = if debug_compress ()
-					then print_string "time out !!!\n" in net)
+					 then print_string "time out !!!\n" in net)
 				      else 
 					match l with 
-					      [] -> aux net (k+1)
-					    | (Some (t,sigma))::q -> 
-						let _ = 
-						  if debug_compress ()
-						  then 
-						    let _ = print_string "Trying the following substitution:\n" in 
-						    let _ = 
-						      if sigma = IntMap.empty 
-						      then 
-							print_string "Identity\n"
-						      else IntMap.iter 
-							  (fun i j -> 
-							    print_int j ;
-							    print_string "<-";
-							    print_int i ;
-							    print_newline ())
-							  sigma 
-						    in
-						    let _ = print_string "just after event " in 
-						    let _ = print_int k in 
-						    let _ = print_newline () in 
-						    let _ = print_newline () in 
+					    [] -> aux net (k+1)
+					  | (Some (t,sigma))::q -> 
+					      let _ = 
+						if debug_compress ()
+						then 
+						  let _ = print_string "Trying the following substitution:\n" in 
+						  let _ = 
+						    if sigma = IntMap.empty 
+						    then 
+						      print_string "Identity\n"
+						    else IntMap.iter 
+						      (fun i j -> 
+							 print_int j ;
+							 print_string "<-";
+							 print_int i ;
+							 print_newline ())
+						      sigma 
+						  in
+						  let _ = print_string "just after event " in 
+						  let _ = print_int k in 
+						  let _ = print_newline () in 
+						  let _ = print_newline () in 
 						    () in 
 						(match 
-						  (try (Story_compressor.compress 
-							  t (!Data.story_compression_mode)
-							  (Data.WEAK) log add_log_entry)
-						  with _ -> 
-                                                   (None,log))
-						with Some net',_ ->
-						  let nevent' = Network.weigth net' in
-						  let nevents' = net'.Network.fresh_id in
-						  if (
-						    if !Data.use_multiset_in_strong_compression then compare_net nevent' nevent < 0  
-						    else nevents' < nevents
-							) then 
-						    (let _ = if debug_compress () 
-						     then 
-						       print_string "Better compression found!\n" in 
-						       aux net' 0)
-						  else 
-						    (let _ = if debug_compress () 
-						     then print_string "Compression is not valid because the depth of some events has increased, or the story has not been compressed.\n" in 
-						       aux2 q)
-						| _ -> 
-						    let _ = 
-						      if debug_compress () 
-						      then print_string "No valid compression found. \n" 
-						    in aux2 q)
-					    | None::q -> 
-						let _ = 
-						  if debug_compress () 
-						  then print_string "No permutation\n" 
-						in aux2 q 
-					in aux2 perm_list
+						   (try (Story_compressor.compress t (!Data.story_compression_mode) (Data.WEAK),log)
+						    with _ -> 
+                                                      (None,log))
+						 with Some net',_ ->
+						   let nevent' = Network.weigth net' in
+						   let nevents' = net'.Network.fresh_id in
+						     if (
+						       if !Data.use_multiset_in_strong_compression then compare_net nevent' nevent < 0  
+						       else nevents' < nevents
+						     ) then 
+						       (let _ = if debug_compress () 
+							then 
+							  print_string "Better compression found!\n" in 
+							  aux net' 0)
+						     else 
+						       (let _ = if debug_compress () 
+							then print_string "Compression is not valid because the depth of some events has increased, or the story has not been compressed.\n" in 
+							  aux2 q)
+						   | _ -> 
+						       let _ = 
+							 if debug_compress () 
+							 then print_string "No valid compression found. \n" 
+						       in aux2 q)
+					  | None::q -> 
+					      let _ = 
+						if debug_compress () 
+						then print_string "No permutation\n" 
+					      in aux2 q 
+				    in aux2 perm_list
 			    in 
 			      aux net' 0 in 
 			    net'',log 

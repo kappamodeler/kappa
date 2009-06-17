@@ -1,7 +1,7 @@
 (**Data references*)
 
-let version_main = 3
-let version_cpt = 9 (*imporved perturbation language*)
+let version_main = 4
+let version_cpt = 0 
 let version_svn = Svn_number.svn_number
 let version_branch = ""
 let arch_type = string_of_int Sys.word_size
@@ -58,14 +58,13 @@ let output_dir = ref Filename.current_dir_name
 let base_dir = ref ""                          
                              
 (**<h3> serialized file to save or load </h3>*)
-let serialized_kappa_file = ref "~tmp_kappa"
-let serialized_map_file = ref "~tmp_map"
+let serialized_rule_file = ref "~tmp_rules"
+let serialized_mixture_file = ref "~tmp_mixture"
 let serialized_sim_data_file = ref "~tmp_sd"
-let save_map = ref false
-let load_map = ref false
-let save_compilation = ref false
-let load_compilation = ref false
-let save_sim_data = ref false
+let serialized_snapshot_file = ref "~tmp_snapshot"
+
+let save_rules = ref false
+let load_rules = ref false
 let load_sim_data = ref false
 
 (**<h3>simulation data</h3>*)
@@ -95,7 +94,7 @@ let init_time = ref 0.0
 let clock_precision = ref 60
 
 (**max number of successive clashes*)
-let max_clashes = ref (-1) (**Infinite by default*)
+let max_clashes = ref 10000 (**-1 for infinity by default*)
 
 (**Deadlocked activity threshold (default 0.0)*)
 let deadlock_sensitivity = ref 0.0
@@ -150,8 +149,6 @@ let ignore_obs = ref false
 
 (**snapshot mode*)
 let snapshot_mode = ref false
-let (snapshot_time:float list ref) = ref []
-let serialized_snapshots = ref "~tmp_snapshots"
 
 (**<h3>talkativity</h3>*)
 
@@ -173,7 +170,23 @@ let gc_overhead = ref 80 (*ocaml default*)
 (**Verbose mode: output all warnings on standard error channel (default false)*)
 let verbose = ref false
 
+(**List of temporary files*)
+let tmp_file:string list ref = ref []
+let cleanup_tmp_file = 
+  fun _ -> List.iter (fun file ->
+			try
+			  Sys.remove file
+			with _ -> ()
+		     ) !tmp_file
+
 (**<h3>parser results</h3>*)  
+
+(**Compile options*)
+
+let _PARSE_INIT = 1
+let _PARSE_RULES = 2
+let _PARSE_OBS = 4
+let compilation_opt = ref (_PARSE_INIT lor _PARSE_RULES lor _PARSE_OBS) (*7*) 
 
 (**List of rules*)
 let (rules:Rule.t list ref) = ref []
@@ -189,7 +202,20 @@ let (init:(Solution.t*int) list ref) = ref []
 let parse_coef = ref true
 
 (**Experiment*)
+type instruction = SAVE_MIXTURE | SAVE_STATE | ACTIVATE_PERTURBATION of int | CANCEL_PERTURBATION of int | TAKE_SNAPSHOT 
+
+let tasks:(float * instruction) list ref = ref []
 let exp = ref Experiment.empty
+let rec is_empty tasks = (tasks = [])
+
+let rec add_task e tasks = 
+  let comp (t,tsk) (t',tsk') = 
+    if t<t' then (-1) else (if t=t' then 0 else 1)
+  in
+    match tasks with
+	e'::tl -> if comp e e' = (-1) then e::(e'::tl) else e'::(add_task e tl) (*not tail rec!*)
+      | [] -> [e]
+
 
 let max_sol_display = 1000
 

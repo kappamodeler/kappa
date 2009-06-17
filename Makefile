@@ -205,6 +205,7 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(SIMPLXREP)/src/main/memory_control.cmo \
 	./$(SIMPLXREP)/src/tools/bench.cmo \
 	./$(SIMPLXREP)/src/main/simulation2.cmo \
+	./$(SIMPLXREP)/src/main/monitor.cmo \
 	./$(SIMPLXREP)/src/html_config/HTML.cmo \
 
 SIMPLX_MAIN = ./$(SIMPLXREP)/src/main/main.ml
