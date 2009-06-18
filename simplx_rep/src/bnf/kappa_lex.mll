@@ -34,6 +34,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     | "%init:" {INIT_LINE}
     | "%obs:"  {OBS_LINE}
     | "%story:" {STORY_LINE}
+    | "%causal:" {STORY_LINE}
     | "%mod:" {MODIF_LINE}
     | "%gen:" {GEN_LINE}
     | "%conc:" {CONC_LINE}

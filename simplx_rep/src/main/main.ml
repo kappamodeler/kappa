@@ -7,7 +7,7 @@ open Data
 open Key
 open Error_handler 
 
-let usage_msg = "SimPlx "^version^": \n"^"Usage is simplx --[sim|compile|storify] file.ka "
+let usage_msg = "SimPlx "^version^": \n"^"Usage is simplx --[sim|compile|cflow] file.ka "
 let version_msg = "SIMulator by PLectiX: "^version^"\n"^key_version
 
 let main =
@@ -22,11 +22,12 @@ let main =
     ("--rescale", Arg.Float (fun f -> rescale := f), "(1.0): rescaling factor (eg. '10.0' or '0.10')") ;
     ("--output-final-state",Arg.Unit (fun () -> output_final:=true),"output final state") ;
     ("--plot",Arg.String (fun s -> Config.auto_plot:=true; data_file:=s), "Creates a file containing the simulation data in space separated format");
-    
+    ("--deadlock-threshold",
+     Arg.Float (fun i -> deadlock_sensitivity:=i),"[expert] Defines the activity of a deadlocked system (default 0.0)");
     ("--compile", Arg.String (fun s -> compile_mode:=true; fic := s), "name of the kappa file to compile");
 
     (*Causality analysis*)
-    ("--storify", Arg.String (fun s -> story_mode := true ; fic := s), "name of the kappa file to analyse");
+    ("--cflow", Arg.String (fun s -> story_mode := true ; fic := s), "name of the kappa file to analyse");
     ("--no-compression",Arg.Unit (fun () -> story_compression:=false),"do not compress stories");
     ("--weak-compression",Arg.Unit (fun () -> strong_compression:=false),"use only weak compression to classify stories");
     ("--iteration", Arg.Int (fun i -> 
@@ -56,8 +57,6 @@ let main =
     ("--memory-limit",Arg.Int (fun i -> memory_limit:=i), "limit the usage of the memory (in Mb). Default is infinite (0)");
     
     (*Tasks*)
-    ("--snapshot-file-scheme", Arg.String (fun s -> serialized_snapshot_file:=s), 
-     "set name for the temporary snapshots file (default ~tmp_snapshots)");
     ("--snapshot-at", Arg.Float (fun f -> snapshot_mode:=true ; Data.tasks := Data.add_task (f,Data.TAKE_SNAPSHOT) !Data.tasks),
      "takes a snapshot of solution at specified time unit (may use option several times)");
     ("--mixture-file-scheme" , Arg.String (fun s -> serialized_mixture_file := s), "(~tmp_mixture_[t]) Naming scheme for serialization of mixtures") ;
@@ -70,15 +69,10 @@ let main =
      "Save simulation state at specified time (can be used multiple times)");
     ("--load-state", Arg.String (fun s -> compilation_opt := 0; load_sim_data:=true ; serialized_sim_data_file := s), 
      "Load given simulation state (only %mod instruction will be parsed from the kappa file)");
-    
     ("--max-clashes", Arg.Int (fun i -> max_clashes := i), "(10000) max number of consecutive clashes before aborting"); 
     (*expert mode options*)
     
     ("--key", Arg.String (fun s -> key := s), "[expert] name of the file containing the key for the crypted version");
-    ("--save-rules", Arg.String (fun s -> save_rules := true ; serialized_rule_file := s), 
-     "[expert] name of the file in which to save influence map");
-    ("--load-rules", Arg.String (fun s -> compilation_opt := !compilation_opt land (lnot _PARSE_RULES) ; serialized_rule_file := s), 
-     "[expert] name of the serialized rule file to load (rules will not be parsed from the kappa file)");  
     ("--clock-precision",Arg.Int (fun i -> clock_precision:=i) , "[expert] (60) clock precision (number of ticks per run)");
     ("--debug",Arg.Unit (fun () -> debug_mode:=true), "[expert] debug mode (very verbose!)");
     ("--QA",Arg.Unit (fun () -> sanity_check:=true), "[expert] QA mode (slower, but performs more sanity checks)");
@@ -90,18 +84,20 @@ let main =
     ("--set-gc-overhead",Arg.Int (fun i -> gc_overhead:=i),
      "[expert] (80) tune the gc speed. Value below 80 will result in better gc but poorer performances") ;
     ("--xml-session-name",Arg.String (fun s -> xml_session:=s),
-     "name of the xml file containing results of the current session (default simplx.xml)");
-    ("--deadlock-threshold",
-     Arg.Float (fun i -> deadlock_sensitivity:=i),"[expert] Defines the activity of a deadlocked system (default 0.0)");
+     "[expert] name of the xml file containing results of the current session (default simplx.xml)");
     ("--plot-prob-intra", Arg.String (fun s -> plot_p_intra:=true ; p_intra_fic:=s), "[expert] Plot the evolution of the proba of intra during time in given file name");
-
+    ("--data-tmp-file", Arg.String (fun s -> serialized_data_file:=s), 
+     "[expert] set name for the temporary file for serializing data (default ~tmp_data)");
+    ("--snapshot-tmp-file", Arg.String (fun s -> serialized_snapshot_file:=s), 
+     "[expert] set name for the temporary snapshots file (default ~tmp_snapshots)");
+    
     (*temporary options*)
+    ("--storify", Arg.String (fun s -> story_mode := true ; fic := s), "[deprecated]");
     ("--set-snapshot-time", Arg.Float (fun f -> snapshot_mode:=true ; Data.tasks := Data.add_task (f,Data.TAKE_SNAPSHOT) !Data.tasks),
      "[deprecated]");
     ("--no-compress-stories",Arg.Unit (fun () -> story_compression:=false),"[deprecated]");
     ("--no-use-strong-compression",Arg.Unit (fun () -> strong_compression:=false),
      "[deprecated] as --no-strong-compression (for backward compatibility)");
-    ("--snapshot-tmp-file", Arg.String (fun s -> serialized_snapshot_file:=s), "as --snapshot-file-scheme (for backward compatibility)");
     ("--light-xml", Arg.Unit (fun () -> skip_xml:=true), "[temporary] prevent simplx from building xml structures for results") ;
     ("--no-seed",Arg.Unit (fun () -> seed:=Some 0),"[temporary] equivalent to --seed 0. Kept for compatibilty issue") ; 
     ("--compress-stories",Arg.Unit (fun () -> story_compression:=true),"[temporary] compression of stories");
