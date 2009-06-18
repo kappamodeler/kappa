@@ -1,0 +1,153 @@
+\documentclass{article}
+\usepackage{mystyle}
+
+\title{\texttt{Simplx 4} release documentation}
+\author{J. Krivine\thanks{jean.krivine@plectix.com}}
+\begin{document}
+\maketitle
+
+\section{The command line arguments}
+
+\subsection{General options}
+
+\paragraph{Miscellaneous}
+\ITE{
+\item[]\texttt{--version} print simplx version
+\item[]\texttt{--output-dir [dir]} (by default current directory) directory in which to output any produced file. Directory should already exist or Simplx raises an error.
+\item[]\texttt{--compile [kappa\_file]} Parses the given file an pretty print the result as well as possible compilation errors.
+\item[]\texttt{--xml-session-name [name]} name for the xml file that will contain the results of the current session (default simplx.xml)
+\item[]\texttt{--generate-map [kappa\_file]} name of the kappa file for which the influence map should be computed. 
+\item[]\texttt{--no-maps} do not output inhibition/activation maps in the xml file.
+\item[]\texttt{--merge-maps} will compute negative and positive influence map in the xml output.
+}
+
+\subsection{Simulations}
+
+\paragraph{Generic options}
+\ITE{
+\item[]\texttt{--time [time]} (by default infinite) set maximum simulation time (in rate dependent time units).
+\item[]\texttt{--event [integer]} (by default infinite) set maximum number of rule applications per simulation.
+\item[]\texttt{--rescale [real]} rescaling factor (eg. '10.0' or '0.10') --binary kinetic rates are corrected accordingly.
+\item[]\texttt{--seed [integer]} seed the random generator using given integer (same integer will generate the same random number sequence)
+\item[]\texttt{--max-clashes [integer]} Maximum number of null events before aborting simulation (default is 10000), use -1 for infinite.
+\item[]\texttt{--memory-limit [MB]} limit the usage of the memory (in Mb). Default is infinite.
+}
+
+\paragraph{Time courses}
+\ITE{
+\item[]\texttt{--sim [kappa\_file]} name of the kappa file containing the kappa-rules and possibly observables, perturbations and initial conditions. 
+\item[]\texttt{--points [integer]} (default 1000) number of data points per plots. The points will be regularly placed on the time axis. 
+\item[]\texttt{--plot [name]} In addition of the xml output, this option will trigger the creation of a file containing the simulation data in space separated format together with a [file].gplot containing the gnuplot commands for displaying time course.
+}
+
+\paragraph{Causal flows}
+
+\ITE{
+\item[]\texttt{--cflow [kappa\_file]} name of the kappa file containing the kappa rules as well as at least one causal target (instruction \texttt{\%causal:}).
+\item[]\texttt{--dot-output} is addition of the xml output, this option will cause simplx to output causal flows as graphs in dot format (requires dot viewer like graphviz).
+\item[]\texttt{--iteration [integer]}: number of attempts to obtain causal flows. Any simulation reaching successfully the observable, or reaching time or event limit (see \texttt{--event} and \texttt{--time} options) will trigger a new attempt.
+\item[]\texttt{--no-compression} By default outputed causal flows are compressed. Use this option to disable compression (will increase causal simulation efficiency).
+\item[]\texttt{--weak-compression} Uses a weak form of compression for causal flows (fastet than the strong one by default).
+\item[]\texttt{--init [time]} Start to analyse the causal flow of the simulation at given time (in kinetic dependent time units).
+\item[]\texttt{--no-arrow-closure} do not perform arrows transitive closure when displaying causal flows.
+\item[]\texttt{--quotient-refinements} when the refinement of a rule $r$ is applied during the causal analysis it will be replace $r$ in the compuation of the flow (note that $r$ has to exist in the kappa file).
+}
+
+\paragraph{Saving computations.}
+
+\ITE{
+\item[]\texttt{--snapshot-at [time]} takes a snapshot current mixture at specified time unit (may use option several times). Snapshots are included in the xml file after the tag \texttt{<FinalState>}.
+\item[]\texttt{--mixture-file-scheme [name]} Naming scheme for the files used to save mixtures 
+\item[]\texttt{--save-mixture-at [time]} Save mixture at specified time (can be used multiple times). The file is not human readable but can be loaded as initial state for a simulation using the option \texttt{--load-mixture}.
+\item[]\texttt{--load-mixture [mixture\_file]} Use given mixture file as initial conditions (\texttt{\%init:} instructions in the kappa file will be ignored)
+\item[]\texttt{--state-file-scheme [name]} Naming scheme for files used to save simulation states.
+\item[]\texttt{--save-state-at [time]} Save simulation state at specified time (can be used multiple times). The file is not human readable but can be loaded for continuing the simulation using the option \texttt{--load-state}.
+\item[]\texttt{--load-state [state\_file]} Load given simulation state (only \texttt{\%mod:} instruction will be parsed from the kappa file, the rest will be ignored).
+} 
+
+\section{The Kappa file}
+
+Below is an example of kappa file content:
+\begin{verbatim}
+
+#rules
+
+'AB' a(x),b(x) -> a(x!1),b(x!1)  @ 0.01
+'A..B' a(x!1),b(x!1) -> a(x),b(x) @ 1
+'C@s2' a(x),c(x~p,y~u) -> a(x),c(y~p,x~p) @ 0.01
+'C@s1' a(x!1),b(x!1),c(x~u) -> a(x!1),b(x!1),c(x~p) @ 0.01
+
+#initial mixture
+
+%init: 1000 * (a(x),b(x),c(x~u,y~u))
+
+#observables and variables
+
+%obs: 'C**' c(y~p) 
+%obs: a(x!_)
+%obs: 'C*' c(x~p,y~u)
+%obs: 'A..B'
+%var: 'C' c()
+
+#causal flow analysis
+
+%causal: 'C@s2'
+%causal: {'A..B','C@s1'} => 'C@s2' 
+
+#perturbation
+%mod: (['C*'] > 2*['C']/5) & ($T>0.4) do 'A..B':= 100.0 
+
+\end{verbatim}
+
+\subsection{Rules}
+The kappa file contains rules that can be \emph{named} or \emph{anonymous}. When one wants to plot the activity of a rule (the number of instances it has multiplied by its kinetic rate) in a time course, this rule has to be named. For instance, in the kappa file above, the instruction \texttt{\%obs:'A..B'} is making the activity of the dissociation rule \texttt{'A..B'} observable (\ie plotted in the time course).  Note also that named rule kinetic rate can be modified by perturbations (see Perturbations section below). The rules are ignored in case the option \texttt{--load-state} is used.
+
+\subsection{Initial conditions}
+The instruction \texttt{\%init:} followed by a multiplication factor and a kappa expression allows one to declare the initial mixture to which the rules will be applied. This instruction is ignored in case the options \texttt{--load-mixture} or \texttt{--load-state} are used. Note that several \texttt{\%init} lines can be used in which case mixture will be added together to form the initial state.
+
+\subsection{Time course observables and variables}
+Instruction \texttt{\%obs:} followed by a kappa expression $E$ declares that the number of instances of $E$ should be plotted in the time course. The instruction \texttt{\%var:} followed by a named kappa expression $E$ simply binds the name to $E$ for further reference in perturbations (see Perturbations section below). Note that a named observable, as:
+%
+\begin{verbatim}
+%obs:'C**' c(y~p)}
+\end{verbatim}
+%
+in the above kappa file declares the kappa expression to be at the same time an observable and a variable. Variable and observable instructions are ignored if option \texttt{--load-state} is used. 
+
+\subsection{Causal flow analysis}
+The instruction \texttt{\%causal:} is used when a causal flow analysis is required (\texttt{--cflow} argument in the command line). In the above kappa file, the line:
+\begin{verbatim}
+%causal: {'A..B','C@s1'} => 'C@s2' 
+\end{verbatim}
+declares that one is interested to obtain causal flows containing rule applications of \texttt{'A..B'} and \texttt{'C@s1'}, leading to the application of rule \texttt{'C@s2'}. Note that the instruction:%
+\begin{verbatim}
+%causal: 'C@s2' 
+\end{verbatim}
+is short for:
+\begin{verbatim}
+%causal: {} => 'C@s2' 
+\end{verbatim}
+that does not require any particular rule to be in the computed flow for \texttt{'C@s2'}.
+
+\subsection{Perturbations}
+Instruction \texttt{\%mod:} allows one to define perturbations that will be applied during simulation, when given preconditions are matched. For instance, in the above kappa file, the line:
+\begin{verbatim}
+%mod: (['C*'] > 2*['C']/5) & ($T>0.4) do 'A..B':= 100.0 
+\end{verbatim}
+defines a perturbation that sets the dissociation rate of the complex \texttt{ab} to $100.0$ once the number of \texttt{'C*'}, previously defined by a named observable, reaches $2/5$ of the number of \texttt{'C'}s (also defined as a variable) and if the current time is greater than $0.4s$ (\texttt{\$T} is the symbol for time). Note that once the preconditions are matched, the perturbation is applied and discarded. For now (version 4.0), only perturbation that change the kinetics of an existing rule may be defined. Therefore, a perturbation that adds 1000 agents, say $d(x)$, at 3 sec should be declared as:
+\begin{verbatim}
+  'intro d'  -> d(x) @ 0.0 #introduction of d(x) at rate 0.0
+  
+  %var: 'D' d(x) #binding 'D' to d(x) 
+
+  %mod: $T>3 do 'intro d':=$INF  # when current time is greater \
+                                 than 3 sec. introduce D\
+                                 infinitely fast
+
+  %mod: &\tt ['D']>1000 do 'intro d':=0.0 # when 'D' reaches 1000\
+                                           units, stop \
+                                           introducing d(x)
+
+\end{verbatim}
+
+\end{document}
