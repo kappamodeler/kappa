@@ -268,8 +268,10 @@ let ls_of_simulation rules obs_ind time_map data_map curr_step curr_time =
 			 Some i -> [Printf.sprintf "GlobalId=\"%d\"" i]
 		       | None -> []
 		   and type_str = 
-		     if r.input = "" then ["Type=\"OBSERVABLE\""]
-		     else ["Type=\"RULE\""]
+		     if r.input = "obs" then ["Type=\"OBSERVABLE\""]
+		     else 
+		       if r.input = "var" then []
+		       else ["Type=\"RULE\""]
 		   and text_str = 
 		     match r.flag with
 			 Some flg -> [Printf.sprintf "Text=\"%s\"" flg]
@@ -319,16 +321,17 @@ let ls_of_simulation rules obs_ind time_map data_map curr_step curr_time =
 
 let xml_of_maps rules ?conflict flow = 
   let nodes = Rule_of_int.fold (fun id (r,_) nodes -> 
-				  {node_id=id;
-				   node_t= if r.input = "" then 2 (*obs*) else 1 (*rule*) ;
-				   node_text= (match r.flag with None -> r.input | Some flg -> flg);
-				   node_name = r.flag; 
-				   node_globalId = rule_global_id r ; 
-				   node_data=
-				      (if r.input = "" then Solution.kappa_of_solution (Solution.fuse_cc r.lhs) 
-				       else r.input) ;
-				   node_depth = None
-				  }::nodes
+				  if r.input = "var" then nodes 
+				  else
+				    {node_id=id;
+				     node_t= if (r.input = "obs") then 2 (*obs*) else 1 (*rule*) ;
+				     node_text= (match r.flag with None -> r.input | Some flg -> flg);
+				     node_name = r.flag; 
+				     node_globalId = rule_global_id r ; 
+				     node_data= (if (r.input = "obs") then Solution.kappa_of_solution (Solution.fuse_cc r.lhs) 
+						 else r.input) ;
+				     node_depth = None
+				    }::nodes
 			       ) rules []
   and pos_edges = 
     IntMap.fold (fun id succ edges -> 

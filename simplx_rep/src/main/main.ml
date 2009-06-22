@@ -147,6 +147,12 @@ let main =
       (*end log creation*)
       
     let xml_file = Filename.concat !output_dir !xml_session in 
+
+      (*Redefining CTRL+C for cleaning up temp files*)
+    let sigint_handle = fun _ ->
+      raise Error.Interrupted 
+    in
+    let _ = Sys.set_signal Sys.sigint (Sys.Signal_handle sigint_handle) in
       
     (*Computing event or time sample based on arguments*)
     let log = 
@@ -285,13 +291,14 @@ let main =
 				 else task_list 
 			      ) sd.lab.Experiment.time_off task_list
 		in
+		  
 		let rec print_bar n =
 		  if n=0 then (print_newline() ; flush stdout) 
 		  else
 		    (print_string "_" ; print_bar (n-1))
 		in
 		let _ = print_bar !Data.clock_precision in
-
+		  
 		(*************************************************************************************************)
 		(**************************************begin loop function****************************************)
 		(*************************************************************************************************)
@@ -364,11 +371,13 @@ let main =
 			else (*time or event limit not reached*)
 			  (log,sd,p,c,false)
 		  in
-		    if stop then (log,sd,p,c)
+		    if stop then 
+		      let sd,c,p,log = Monitor.apply sd c p log true in
+			(log,sd,p,c)
 		    else
 		      
 		      (*loop should go on!*)
-		      let sd,c,p,log = Monitor.apply sd c p log
+		      let sd,c,p,log = Monitor.apply sd c p log false
 		      in
 		      let p,log =
 			match !gc_mode with
@@ -380,7 +389,7 @@ let main =
 			  | Some LOW ->
 			      if p.gc_alarm_low then (p,log) 
 			      else 
-				let log = Session.add_log_entry 1 "Using low garbage collection" log in
+				let log = Session.add_log_entry 4 "Using low garbage collection" log in
 				  ({p with gc_alarm_high=false ; gc_alarm_low=true},log)
 			  | None -> (p,log)
 		      in
@@ -623,6 +632,9 @@ let main =
 	| Too_expensive -> 
 	    let msg = "Memory limit reached" in
 	    let log = Session.add_log_entry 2 msg log in Session.finalize xml_file log 2
+	| Interrupted ->
+	    let msg = "Simulation interrupted by user" in
+	    let log = Session.add_log_entry 1 msg log in Session.finalize xml_file log Sys.sigint
 	| exn -> let log = Session.add_log_entry 2 (Printexc.to_string exn) log in Session.finalize xml_file log 2
     in 
       if !Mods2.bench_mode then (Gc.print_stat stdout;print_newline ()) else ()

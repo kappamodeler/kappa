@@ -4,7 +4,7 @@ exception Runtime2 of string
 exception Found of string
 exception Too_expensive 
 exception Not_handled_yet of string 
-
+exception Interrupted 
 
 (*JF:  to provide debugging information to complx *)
 let store_error_info ((file_name:string option),(line:int option),(message:string option)) = 
