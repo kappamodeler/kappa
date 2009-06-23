@@ -195,6 +195,7 @@ type sim_counters = {curr_iteration:int;
 		     snapshot_counter : int ;
 		     deadlock : bool ;
 		     restart: bool ;
+		     last_measure : int
 		    }
 
 let empty_counters = {curr_iteration=0;
@@ -211,6 +212,7 @@ let empty_counters = {curr_iteration=0;
 		      snapshot_counter = 0 ;
 		      deadlock = false ;
 		      restart = false ;
+		      last_measure = -1
 		     }
 
 let print_injections only_obs sim_data =
@@ -303,7 +305,8 @@ let init_counters init_time sim_data =
    clock_precision = !clock_precision ;
    snapshot_counter = 0 ;
    deadlock = false ;
-   restart = false
+   restart = false ;
+   last_measure = -1
   }
 
 let add_rule is_obs r sim_data = 
@@ -355,6 +358,7 @@ let add_rule is_obs r sim_data =
 					       let set1 = 
 						 try (*PortMap.find quark1 lift*)
 						   CoordSetArray.find quark1 lift
+
 						 with Not_found -> CoordSet.empty
 					       and set2 =
 						 try (*PortMap.find quark2 lift*)
@@ -1329,7 +1333,7 @@ let select log sim_data p c =
 				       rules = Rule_of_int.add conc_ind (conc_r,0.0) sim_data.rules 
 				    } max_failure cpt
 	      | (m,_)::_ -> 
-		  let log = Session.add_log_entry 1 (Printf.sprintf "Applying infinitely fast rule r[%d]" conc_ind) log 
+		  let log = Session.add_log_entry 4 (Printf.sprintf "Applying infinitely fast rule r[%d]" conc_ind) log 
 		  in
 		    (log,Some (abst_ind,conc_ind,[m]),sim_data,cpt) (*cpt doesn't matter since infinite rate rule and time advance is null*)
 	else
@@ -1903,7 +1907,10 @@ let ticking c =
     display n ;
     {c with curr_tick = c.curr_tick + n}
       
-(*Main event loop*)      
+(********************************************************************************************************)
+(***********************************************EVENT LOOP***********************************************)
+(********************************************************************************************************)
+	    
 let event log sim_data p c story_mode =
   if !debug_mode then Printf.printf "%d:(%d,%f)\n" c.curr_iteration c.curr_step c.curr_time ; flush stdout;
   let stop_test curr_step curr_time  = 
@@ -1979,7 +1986,10 @@ let event log sim_data p c story_mode =
 	  in
 	  let _ = if !bench_mode then Bench.update_time := !Bench.update_time +. (chrono t_update) in
 
-	    (*story sampling mode*)
+	    (********************************************************************************************************************)
+	    (***********************************************CAUSALITY ANALYSIS MODE**********************************************)
+	    (********************************************************************************************************************)
+	      
 	    if story_mode then 
 	      let net',modifs = 
 		let modifs = PortMap.fold (fun quark test_modif pmap ->
@@ -2078,9 +2088,12 @@ let event log sim_data p c story_mode =
 		    ) 
 		      
 	    else 
+	      (*************************************************************************************************************)
+	      (***********************************************TIME COURSE MODE**********************************************)
+	      (*************************************************************************************************************)
+	      
 	      if not !ignore_obs then (*if !ignore_obs is true there is no need to take data points*)
 		begin
-		  (*Simulation mode*)
 		  let t_data = chrono 0.0 in (*for benchmarking*)
 		  let t = 
 		    if !time_mode then get_time_range p curr_time (*get the time interval corresponding to current time*)
@@ -2120,7 +2133,6 @@ let event log sim_data p c story_mode =
 				       let act_obs = (inst_obs *. r_obs.kinetics) /. automorphisms
 					 (**. (!rescale) Correction after Walter's class*)
 				       in 
-					 (*Printf.printf "%s -> %f\n" flg act_obs ; flush stdout ;*)
 					 IntMap.add i act_obs obs_map
 				    ) mod_obs obs_map
 		      in

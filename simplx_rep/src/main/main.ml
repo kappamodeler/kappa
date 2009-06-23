@@ -21,7 +21,7 @@ let main =
     ("--points", Arg.Int (fun i -> data_points := i), "number of data points per plots)");
     ("--rescale", Arg.Float (fun f -> rescale := f), "(1.0): rescaling factor (eg. '10.0' or '0.10')") ;
     ("--output-final-state",Arg.Unit (fun () -> output_final:=true),"output final state") ;
-    ("--plot",Arg.String (fun s -> Config.auto_plot:=true; data_file:=s), "Creates a file containing the simulation data in space separated format");
+    ("--plot",Arg.String (fun s -> Config.auto_plot:=true ; data_file:=s), "Creates a file containing the simulation data in space separated format");
     ("--deadlock-threshold",
      Arg.Float (fun i -> deadlock_sensitivity:=i),"[expert] Defines the activity of a deadlocked system (default 0.0)");
     ("--compile", Arg.String (fun s -> compile_mode:=true; fic := s), "name of the kappa file to compile");
@@ -86,14 +86,14 @@ let main =
     ("--xml-session-name",Arg.String (fun s -> xml_session:=s),
      "[expert] name of the xml file containing results of the current session (default simplx.xml)");
     ("--plot-prob-intra", Arg.String (fun s -> plot_p_intra:=true ; p_intra_fic:=s), "[expert] Plot the evolution of the proba of intra during time in given file name");
-    ("--data-tmp-file", Arg.String (fun s -> serialized_data_file:=s), 
-     "[expert] set name for the temporary file for serializing data (default ~tmp_data)");
     ("--snapshot-tmp-file", Arg.String (fun s -> serialized_snapshot_file:=s), 
      "[expert] set name for the temporary snapshots file (default ~tmp_snapshots)");
     
     (*temporary options*)
     ("--storify", Arg.String (fun s -> story_mode := true ; fic := s), "[deprecated]");
     ("--set-snapshot-time", Arg.Float (fun f -> snapshot_mode:=true ; Data.tasks := Data.add_task (f,Data.TAKE_SNAPSHOT) !Data.tasks),
+     "[deprecated]");
+    ("--data-tmp-file", Arg.String (fun s -> serialized_data_file:=s), 
      "[deprecated]");
     ("--no-compress-stories",Arg.Unit (fun () -> story_compression:=false),"[deprecated]");
     ("--no-use-strong-compression",Arg.Unit (fun () -> strong_compression:=false),
@@ -106,8 +106,6 @@ let main =
     ("--forward",Arg.Unit (fun () -> forward:=true), "[temporary] do not consider backward rules" );
     ("--show-steps-in-compression",Arg.Unit (fun () -> show_steps_in_compression:=true),
      "[temporary] display all step of story compressions in the standard output");
-    ("--log-compression",Arg.Unit (fun () -> log_compression:=true),
-     "[temporary] display the before/after compression status in the html desktop");
     ("--backtrack-limit",Arg.Int (fun i -> max_backtrack:=i),"[temporary] limit the exploration when scanning for stories");
     ("--max-time-per-compression",
      Arg.Float (fun i -> max_time_per_compression:=i),"[temporary] limit the exploration when scanning for stories");
@@ -118,8 +116,6 @@ let main =
      "[temporary] use the multi-set of depths to compare stories in strong compression");
     ("--use-linear-order",Arg.Unit (fun () -> reorder_by_depth:=false;use_multiset_in_strong_compression:=false),
      "[temporary] use linear-order to compare stories in strong compression");
-    ("--html-output",Arg.Unit (fun () -> html_mode:=true), "[temporary] html rendering") ;    
-    ("--no-rules",Arg.Unit (fun () -> Config.build_rules:=false), "[temporary] no recomputation of html rule rendering");
     ("--no-abstraction",Arg.Unit (fun () -> cplx_hsh:=false), 
      "[temporary] deactivate complx abstraction (will slow down influence map generation for large systems)") ;
     ("--no-random-time",Arg.Unit (fun () -> no_random_time:=true), "[temporary] use time advance expectency only")
@@ -148,7 +144,7 @@ let main =
       
     let xml_file = Filename.concat !output_dir !xml_session in 
 
-      (*Redefining CTRL+C for cleaning up temp files*)
+    (*Redefining CTRL+C for cleaning up temp files*)
     let sigint_handle = fun _ ->
       raise Error.Interrupted 
     in
@@ -299,10 +295,15 @@ let main =
 		in
 		let _ = print_bar !Data.clock_precision in
 		  
+		let _ = data_desc := if !Config.auto_plot then Some (open_out (Filename.concat !output_dir !data_file)) else None in
+		  
 		(*************************************************************************************************)
 		(**************************************begin loop function****************************************)
 		(*************************************************************************************************)
 		let rec loop log sd p c = 
+		  (*Time course*)
+		  let c = Time_course.output_data_point data_desc sd p c in
+
 		  (*Progress bar*)
 		  let c = ticking c in
 		    
@@ -436,58 +437,18 @@ let main =
 		begin
 		  let log = Session.add_log_entry 0 "-Outputting influence map" log in
 		    if !merge_maps then 
-		      begin
-			(****************TEMP RENDERING OF INFLUENCE MAP*******************)
-			if !html_mode then ( 
-			  let flow_file = Filename.concat !output_dir (HTML.rename "influence_map_" (!fic) "dot") in
-			  let d = open_out flow_file in (
-			      fprintf d "%s" (HTML.dot_of_flow ~merge:true sd) ;
-			      fprintf stderr "-Compiling %s...\n" flow_file ; flush stderr ;
-			      close_out d ;
-			      let _ = HTML.image_of_dot flow_file in () 
-			    )
-			) ;
-			(******************************************************************)
-			
-			([Session.xml_of_maps sd.rules ~conflict:sd.conflict sd.flow],log)
-		      end
+		      ([Session.xml_of_maps sd.rules ~conflict:sd.conflict sd.flow],log)
 		    else 
-		      begin
-			(****************TEMP RENDERING OF WAKE UP MAP*********************)
-			if !html_mode then ( 
-			  let flow_file = Filename.concat !output_dir (HTML.rename "influence_map_" (!fic) "dot") in
-			  let d = open_out flow_file in (
-			      fprintf d "%s" (HTML.dot_of_flow sd) ;
-			      printf "-Compiling %s...\n" flow_file ; flush stdout ;
-			      close_out d ;
-			      let _ = HTML.image_of_dot flow_file in () 
-			    ) 
-			) ;
-			(******************************************************************)
-			
-			([Session.xml_of_maps sd.rules sd.flow],log)
-		      end
+		      ([Session.xml_of_maps sd.rules sd.flow],log)
 		end
 	      else ([],log)
 	    in
 	    let ls_sol,log = 
-	      if !output_final && not !story_mode then 
-		begin
-		  let log = Session.add_log_entry 0 "-Outputting final state as required" log in
-		  let species = Species.of_sol sd.sol in
-
-		    (************TEMP RENDERING OF FINAL STATE******************)
-		    if !html_mode then (
-		      let sol_file = Filename.concat !output_dir (HTML.rename "final_" (!fic) "dot") in
-			HTML.dot_of_solution sd.sol sol_file ;
-			printf "-Compiling %s (may take a while)...\n" sol_file ; flush stdout ;
-			let _ =
-			  HTML.image_of_dot ~neato:true sol_file in ()
-		    ) ;
-		    (***********************************************************)
-		    let (ls_head,ls_core,ls_tail) = Session.ls_of_species species c.curr_time in
-		      ([(ls_head,ls_core,ls_tail)],log)
-		end
+	      if !output_final then 
+		let log = Session.add_log_entry 0 "-Outputting final state as required" log in
+		let species = Species.of_sol sd.sol in
+		let (ls_head,ls_core,ls_tail) = Session.ls_of_species species c.curr_time in
+		  ([(ls_head,ls_core,ls_tail)],log)
 	      else ([],log)
 	    in
 	    let ls_snapshots,log = 
@@ -567,59 +528,16 @@ let main =
 	    let log = 
 	      Session.add_log_entry 0 (sprintf "-End of sampling %.4f s CPU" (Mods2.gettime()-.t0)) log 
 	    in
-	    let log = 
-	      if not (!data_file="") or (!html_mode && not !story_mode) then
-		begin
-		  if !data_file = "" then data_file := HTML.rename "" (!fic) "dat" ;
-		  let data_file = Filename.concat !output_dir !data_file in
-		  let t0 = Mods2.gettime() in
-		  let log = 
-		    Session.add_log_entry 0 ("-Outputting simulation data in "^data_file) log 
-		  in
-		    (*************TEMP DATA RENDERING**************)
-		    HTML.print_data data_file sd.rules data_map filtered_obs_ind c.time_map ;
-		    (**********************************************)
-		    Session.output_data data_file sd.rules data_map filtered_obs_ind c.time_map ;
-		    (*sd.obs_ind c.time_map c.concentrations*) 
-		    let log = 
-		      Session.add_log_entry 0 (sprintf "-End of data outputting %.4f s CPU" (Mods2.gettime()-.t0)) log 
-		    in
-		      log
-		end
-	      else log
+	    let _ = 
+	      let _ = 
+		match !data_desc with
+		    Some d -> close_out d
+		  | None -> ()
+	      in
+		if !Config.auto_plot then 
+		  Time_course.make_gnuplot_file (Filename.concat !output_dir !data_file) sd 
+		else ()
 	    in
-	      (****************HTML RENDERING************)
-	      if !html_mode then 
-		begin
-		  let rules = 
-		    if !Config.build_rules then 
-		      begin
-			fprintf stderr "-Compiling rule page (may take a while)...\n"; flush stderr ;
-			HTML.html_of_rules (Filename.concat !output_dir (HTML.rename "rules_" (!fic) "html")) rules ;
-			Some (Filename.concat !output_dir (HTML.rename "rules_" (!fic) "html"))
-		      end 
-		    else None 
-		  and compression_log = 
-		    if !Data.log_compression then 
-		      begin
-			fprintf stderr "-Compiling compression log (may take a while)...\n";flush stderr ;
-			HTML.html_of_compression_log (Filename.concat !output_dir (HTML.rename "compression_log_" (!fic) "html")) c.compression_log ;
-			Some (Filename.concat !output_dir (HTML.rename "compression_log_" (!fic) "html"))
-		      end
-		    else 
-		      None 
-		  and influence = 
-		    if !build_cause then Some (Filename.concat !output_dir (HTML.rename "influence_map_" (!fic) "dot")) 
-		    else None
-		  and data = if !story_mode then None else Some (Filename.concat !output_dir !data_file)
-		  and final = 
-		    if !output_final then Some (HTML.rename "final_" (!fic) "dot")
-		    else None
-		  and html_file = Filename.concat !output_dir (HTML.rename "" (!fic) "html") 
-		  in
-		    HTML.build_html html_file influence data rules compression_log final c ;
-		end ;
-	      (******************************************) 
 	      Session.finalize 
 		xml_file
 		~xml_content:(xml_map,ls_sol,ls_snapshots,xml_stories,ls_sim)

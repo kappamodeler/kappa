@@ -387,13 +387,23 @@ let xmlns = "\"http://plectix.synthesisstudios.com/schemas/kappasession\""
 let xmlns_xsi = "\"http://www.w3.org/2001/XMLSchema-instance\""
 
 let finalize xml_file ?xml_content log code = 
-  let _ = Data.cleanup_tmp_file()
-  in
   let _ = 
-    match !prob_desc with 
-	Some d -> close_out d
-      | None -> ()
+    try
+      Data.cleanup_tmp_file() ;
+      let _ = 
+	match !data_desc with
+	    Some d -> close_out d
+	  | None -> ()
+      in
+      let _ = 
+	match !prob_desc with 
+	    Some d -> close_out d
+	  | None -> ()
+      in
+	()
+    with _ -> ()
   in
+    
     (*I have put a protection to prevent crashes *)
   let _ = if !Mods2.bench_mode then Gc.print_stat stdout else () in 
   let commandLine = 
@@ -464,91 +474,6 @@ let finalize xml_file ?xml_content log code =
       Gc.full_major() ; (*to collect remaining dead memory*)
       exit code
 
-let output_data ?(with_gnuplot=false) data_file rules data_map obs_ind time_map (*concentrations*) = 
-  let d = open_out data_file in
-  let entete =
-    IntSet.fold (fun i cont -> 
-		   let r,_ = 
-		     try Rule_of_int.find i rules 
-		     with Not_found -> 
-		       let s = "Session.output_data" in
-		       Error.runtime 
-			 (Some "session.ml",
-			  Some 476,
-			  Some s)
-			 s
-		   in
-		   let s = 
-		     match r.flag with 
-			 Some flg -> flg 
-		       | None -> 
-			   let s = "Session.output_data" in
-			   Error.runtime
-			     (Some "session.ml",
-			      Some 487,
-			      Some s)
-			     s
-		   in
-		     s::cont
-		) obs_ind [] 
-  in
-    Printf.fprintf d "#t %s\n" (String.concat " " entete) ;
-    IntMap.iter (fun t m (*tmap,n*) -> 
-		   let time = 
-		     (*if !time_mode then string_of_float ((float_of_int t) *. !time_sample) 
-		     else*) string_of_float (IntMap.find t time_map)
-		   in
-		   let l = IntSet.fold (fun i cont -> 
-					  let v_i = IntMap.find i m in
-					    (string_of_float v_i)::cont
-				       ) obs_ind [] 
-		   in
-		   let str = String.concat " " (time::l) 
-		   in
-		     Printf.fprintf d "%s\n" str  
-		) data_map (*concentrations*) ;
-    close_out d ;
-    if with_gnuplot then 
-      let plot_file = ((chop_extension data_file)^".gplot") in
-      let d = open_out plot_file in
-	Printf.fprintf d "set xlabel 'Time'\n" ;
-	Printf.fprintf d "set ylabel 'Concentration/Activity'\n" ;
-	Printf.fprintf d "set autoscale\n" ;
-	let args = 
-	  let rescale_str = 
-	    if (!rescale < 1.0) or (!rescale > 1.0)
-	    then [Printf.sprintf "rescale=%.4f" !rescale] else [] in
-	  let sample_str = 
-	    if !time_mode then [Printf.sprintf "sample=%.4ft.u" !time_sample]
-	    else [Printf.sprintf "sample=%d event(s)" !step_sample]
-	  in
-	  let add_str = [!fic] in
-	    String.concat " " (add_str@rescale_str@sample_str)
-	in
-	let date = 
-	  let tm = Unix.localtime (Unix.time ()) 
-	  in
-	    Printf.sprintf "%d/%d/%d" 
-	      tm.Unix.tm_mday tm.Unix.tm_mon (tm.Unix.tm_year + 1900) 
-	in
-	  Printf.fprintf d "set title '%s %s'\n" date args ;
-	  let _ = 
-	    List.fold_left (fun c title ->
-			      let style = 
-				if String.contains title '[' then "w l"
-				else "w p"
-			      in
-				if c = 2 then (
-				  Printf.fprintf d "plot '%s' using 1:%d title '%s' %s\n" data_file c title style;
-				  c+1
-				)
-				else (
-				  Printf.fprintf d "replot '%s' using 1:%d title '%s' %s\n" data_file c title style;
-				  c+1
-				)
-			   ) 2 entete 
-	  in
-             close_out d 
 
 let snapshot (curr_sol,curr_time,snapshot_counter) =
   let species = Species.of_sol curr_sol in

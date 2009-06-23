@@ -1,7 +1,7 @@
 (**Data references*)
 
 let version_main = 4
-let version_cpt = 12 (*Bug in observable being declared as rules in xml file*)
+let version_cpt = 13 (*On the fly data output*)
 let version_svn = Svn_number.svn_number
 let version_branch = ""
 let arch_type = string_of_int Sys.word_size
@@ -14,6 +14,7 @@ let fic = ref ""
 
 (**Data files*)
 let data_file = ref ""
+let data_desc:out_channel option ref = ref None
 let serialized_data_file = ref "~tmp_data"
 
 (**For preventing simplx to run standalone*)
