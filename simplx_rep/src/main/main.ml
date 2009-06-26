@@ -21,9 +21,10 @@ let main =
     ("--points", Arg.Int (fun i -> data_points := i), "number of data points per plots)");
     ("--rescale", Arg.Float (fun f -> rescale := f), "(1.0): rescaling factor (eg. '10.0' or '0.10')") ;
     ("--output-final-state",Arg.Unit (fun () -> output_final:=true),"output final state") ;
-    ("--plot",Arg.String (fun s -> Config.auto_plot:=true ; data_file:=s), "Creates a file containing the simulation data in space separated format");
+    ("--plot",Arg.String (fun s -> on_the_fly:=true ; data_file:=s), "Creates a file containing the simulation data in space separated format");
     ("--deadlock-threshold",
      Arg.Float (fun i -> deadlock_sensitivity:=i),"[expert] Defines the activity of a deadlocked system (default 0.0)");
+    ("--gp",Arg.Unit (fun s -> gnuplot_plugin:=true), "Requires the creation of a gnuplot readable file at the end on the simulation");
     ("--compile", Arg.String (fun s -> compile_mode:=true; fic := s), "name of the kappa file to compile");
 
     (*Causality analysis*)
@@ -295,7 +296,7 @@ let main =
 		in
 		let _ = print_bar !Data.clock_precision in
 		  
-		let _ = data_desc := if !Config.auto_plot then Some (open_out (Filename.concat !output_dir !data_file)) else None in
+		let _ = data_desc := if !Data.on_the_fly then Some (open_out (Filename.concat !output_dir !data_file)) else None in
 		  
 		(*************************************************************************************************)
 		(**************************************begin loop function****************************************)
@@ -534,7 +535,7 @@ let main =
 		    Some d -> close_out d
 		  | None -> ()
 	      in
-		if !Config.auto_plot then 
+		if !Data.gnuplot_plugin then 
 		  Time_course.make_gnuplot_file (Filename.concat !output_dir !data_file) sd 
 		else ()
 	    in

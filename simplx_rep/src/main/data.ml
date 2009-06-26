@@ -1,7 +1,7 @@
 (**Data references*)
 
 let version_main = 4
-let version_cpt = 13 (*On the fly data output*)
+let version_cpt = 14 (*On the fly data output*)
 let version_svn = Svn_number.svn_number
 let version_branch = ""
 let arch_type = string_of_int Sys.word_size
@@ -147,6 +147,7 @@ let prob_desc:out_channel option ref = ref None
 
 (**ploting*)
 let ignore_obs = ref false
+let on_the_fly = ref false
 
 (**snapshot mode*)
 let snapshot_mode = ref false
