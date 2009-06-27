@@ -1,7 +1,7 @@
 (**Data references*)
 
 let version_main = 4
-let version_cpt = 14 (*On the fly data output*)
+let version_cpt = 15 (*Rule.name instead of Rule.input for computing story signature ENG-211*)
 let version_svn = Svn_number.svn_number
 let version_branch = ""
 let arch_type = string_of_int Sys.word_size

@@ -65,8 +65,8 @@ struct
 			 if e.kind = 0 then depth_map else
 			   let d = e.s_depth in
 			   let lab_map = try Mods2.IntMap.find d depth_map with Not_found -> Mods2.StringMap.empty in
-			   let freq = try Mods2.StringMap.find e.r.Rule.input lab_map with Not_found -> 0 in
-			     Mods2.IntMap.add d (Mods2.StringMap.add e.r.Rule.input (freq+1) lab_map) depth_map
+			   let freq = try Mods2.StringMap.find (Rule.name e.r) lab_map with Not_found -> 0 in
+			     Mods2.IntMap.add d (Mods2.StringMap.add (Rule.name e.r) (freq+1) lab_map) depth_map
 		      ) net.events Mods2.IntMap.empty
     in
       Mods2.IntMap.fold 
@@ -95,6 +95,7 @@ let iso x y = true (*to be implemented*)
 
 let classify (net,time) drawers test_iso_mode =
   let key_sgn = Sign.make net (*[]*) in
+    (*Printf.printf "story:%s\n" (Sign.str key_sgn) ; flush stdout ;*)
     try
       let nets_nb = Hashtbl.find drawers.hsh key_sgn 
       in
