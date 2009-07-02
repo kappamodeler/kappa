@@ -356,7 +356,7 @@ let main =
 			  Gc.compact() ;
 			  (log,init_sd,p,c,false)
 		    else (*no restart needed*)
-		      if c.deadlock && Data.is_empty task_list then 
+		      if c.deadlock && Data.is_empty sd.task_list then 
 			begin
 			  Printf.printf "\n"; flush stdout ;
 			  let log = Session.add_log_entry 1 (Printf.sprintf "-Stalled system at time %f (after %d events)..." c.curr_time c.curr_step) log
@@ -381,6 +381,7 @@ let main =
 		      (*loop should go on!*)
 		      let sd,c,p,log = Monitor.apply sd c p log false
 		      in
+
 		      let p,log =
 			match !gc_mode with
 			    Some HIGH -> 

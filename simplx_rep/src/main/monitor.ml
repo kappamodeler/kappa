@@ -21,10 +21,12 @@ let print_task_list task_list =
 let rec apply sd c p log finalize =
   match sd.task_list with
       (t,tsk)::tl -> 
-	if t >= c.curr_time then 
+	if t > c.curr_time then 
 	  if c.deadlock then 
-	    apply sd {c with curr_time = t ; deadlock = false} p 
-	      (Session.add_log_entry 1 (Printf.sprintf "-Task list not empty, moving time to %f" t) log) finalize
+	    begin
+	      apply sd {c with curr_time = t ; deadlock = false} p 
+		(Session.add_log_entry 1 (Printf.sprintf "-Task list not empty, moving time to %f" t) log) finalize
+	    end
 	  else
 	    ({sd with task_list = ((t,tsk)::tl)},c,p,log)
 	else

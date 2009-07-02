@@ -1,7 +1,7 @@
 (**Data references*)
 
 let version_main = 4
-let version_cpt = 15 (*Rule.name instead of Rule.input for computing story signature ENG-211*)
+let version_cpt = 16 (*Bug corrected: [ENG-214] Infinite loop upon deadlock with non empty task list*)
 let version_svn = Svn_number.svn_number
 let version_branch = ""
 let arch_type = string_of_int Sys.word_size
