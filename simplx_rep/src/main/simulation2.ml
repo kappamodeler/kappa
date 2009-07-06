@@ -745,7 +745,7 @@ let init log (rules,init,sol_init,obs_l,exp) =
 	let _ = Config_complx.dump_chrono:=false in 
 	let _ = Config_complx.inhibition:=!Data.build_conflict in (*build negative map too*)
 	  
-	let pb,cplx_log = pipeline_methods.Pipeline.build_influence_map  "" "" 
+	let pb,cplx_log = pipeline_methods.Pipeline.build_influence_map  "" "" "" 
 	  (add_suffix (add_suffix (add_suffix Tools.empty_prefix "") "") "")  pb cplx_log 
 	in 
 	let log = Session.convert_cplx_log cplx_log log in

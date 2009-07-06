@@ -534,6 +534,21 @@ let cut f =
     rep 
   with 
     _ -> "FAIL"^f
+
+let cut2 f = 
+  try 
+    let n = String.length f in 
+    let rec vide i rep = 
+      if i = n then rep 
+      else if String.get f i ='/' 
+      then vide (i+1) i 
+    else vide (i+1) rep 
+    in
+    let last_back = vide 0 (-1) in 
+  let rep = String.sub f (last_back+1) (n-last_back-1) in 
+    rep 
+  with 
+    _ -> "FAIL"^f
   
 let normalize_list l = 
   let a = List.sort compare l in 

@@ -442,7 +442,7 @@ let pprint_ODE_middle1 print =
   in ()
 
 
-let pprint_ODE_middle2 print aux_file jac_file init_file obs_file nfrag nobs = 
+let pprint_ODE_middle2 print aux_file jac_file init_file obs_file file_ODE_data  nfrag nobs = 
   let _ = 
     match print.mathematica with 
       None -> () 
@@ -459,7 +459,8 @@ let pprint_ODE_middle2 print aux_file jac_file init_file obs_file nfrag nobs =
 	    a.print_string ("soln = ode2r(@"^(Tools.cut aux_file)^",[tinit tend],@"^(Tools.cut init_file)^"(),options);\n\nt = linspace(tinit, tend, num_t_point+1);\n\n")
 	  in
 	  let _ = 
-	    a.print_string ("nrows = rows(soln.x);\nnobs = "^nobs^";\nnfragments = "^nfrag^";\ntmp = zeros(nfragments,1);\nobs = zeros (nrows,nobs);\n\nfor j=1:nrows\n   for i=1:nfragments\n      z(i)=soln.y(j,i);\n   end\n   h="^(Tools.cut obs_file)^"(z);\n   for i=1:nobs\n      obs(j,i)=h(i);\n  end\nend\n\ny = interp1(soln.x, obs, t, 'pchip');\nplot(t,y)")
+	    a.print_string ("nrows = rows(soln.x);\nnobs = "^nobs^";\nnfragments = "^nfrag^";\ntmp = zeros(nfragments,1);\nobs = zeros (nrows,nobs);\n\nfor j=1:nrows\n   for i=1:nfragments\n      z(i)=soln.y(j,i);\n   end\n   h="^(Tools.cut obs_file)^"(z);\n   for i=1:nobs\n      obs(j,i)=h(i);\n  end\nend\n\ny = interp1(soln.x, obs, t, 'pchip');\n\n
+filename = \""^(Tools.cut2 file_ODE_data)^"\";\nfid = fopen (filename,\"w\");\nfor j=1:nrows\n    fprintf(fid,\"%f\",soln.x(j));\n    for i=1:nobs\n      fprintf(fid,\" %f\",obs(j,i));\n    end\n    fputs(fid,\"\\n\");\nend\nfclose(fid);\n")
 	  in 	    
 	    ()
 
@@ -741,7 +742,7 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
     ()
 
 
- let dump_prod (prod,jac) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab print_ODE_matlab_aux print_ODE_matlab_jac print_ODE_matlab_size output_data file_aux file_jac  file_init file_obs size  nobs = 
+ let dump_prod (prod,jac) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab print_ODE_matlab_aux print_ODE_matlab_jac print_ODE_matlab_size output_data file_aux file_jac  file_init file_obs file_data size  nobs = 
    let nfragments = string_of_int size in 
    let print_ODE = print_ODE_mathematica in 
    let print_latex = keep_latex print_ODE_mathematica in 
@@ -812,7 +813,7 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
        false 
        obs in
  
-   let _ = pprint_ODE_middle2 print_ODE file_jac file_aux file_init file_obs nfragments nobs in 
+   let _ = pprint_ODE_middle2 print_ODE file_jac file_aux file_init file_obs file_data nfragments nobs in 
    let _ = 
      List.fold_left
        (fun bool c -> 
@@ -884,7 +885,7 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
   let _ = pprint_newline print_ODE in 
   let _ = pprint_newline print_ODE in  
   let _ = pprint_ODE_middle1 print_ODE in
-  let _ = pprint_ODE_middle2 print_ODE file_aux file_jac file_init file_obs nfragments nobs in 
+  let _ = pprint_ODE_middle2 print_ODE file_aux file_jac file_init file_obs file_data nfragments nobs in 
     
 (*  let print_ODE = print_ODE_matlab_aux in 
   let _ = pprint_ODE_head' print_ODE in 

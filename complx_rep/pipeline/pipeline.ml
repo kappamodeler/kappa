@@ -93,14 +93,15 @@ type 'a pipeline = {
     dump_contact_map_jpg: precision -> file_name -> 'a step;
     quarkification: 'a step;
     count_complexes: 'a step;
-    build_influence_map:  file_name ->  file_name -> 'a step;
+    build_influence_map:  file_name ->  file_name -> file_name -> 'a step;
     build_compression: Config_complx.compression_mode -> file_name -> file_name -> 'a step;
     build_enumeration: file_name -> 'a step;
     dump_session: file_name -> 'a step;
     dump_html_output: file_name -> 'a step;
     save_options: 'a step ;
     good_vertice: file_name -> prefix -> output_channel -> StringSet.t option * output_channel ;
-    template: file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> 'a step ;
+    template: file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> 'a step ;
+    integrate: file_name -> 'a step;
     dump_potential_cycles: precision -> 'a step;
     refine_system_to_avoid_polymers: 
 	file_name -> simplx_encoding option -> Avoid_polymere.mode -> int option -> float  -> ('a,('a rule_class list)) step_with_output; 
@@ -1025,7 +1026,7 @@ module Pipeline =
 			   List.map (quarkify cpb contact) cpb.cpb_rules};quarks=true},(chrono prefix "Quark computation" l,m)
 	       
        and
-	   build_influence_map file file2 prefix pb' (l,m) =
+	   build_influence_map file file2 file3 prefix pb' (l,m) =
 	 let prefix' = add_suffix prefix "build_influence_map" in 
 	 match pb' with 
 	   None -> (pb',(l,m))
@@ -1123,6 +1124,12 @@ module Pipeline =
 			       let _ = Printf.fprintf x "}\n" in 
 			 ())
 			 in 
+			 let _ = 
+			   if file2="" or file3 = "" 
+			   then ()
+			   else 
+			     let _ = Sys.command ("dot -Tjpg "^file2^" -o "^file3) in () in 
+     
 			 let l=chrono prefix "Influence map" l 
 			 in l 
 		       else l
@@ -1380,7 +1387,7 @@ module Pipeline =
 	 | Some a -> pb,(l,m),a 
 	   
      and template = 
-	 (fun file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 file11 file12  file13 file14 file15 file16 file17 prefix pb (l,m) ->
+	 (fun file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 file11 file12  file13 file14 file15 file16 file17 file18 file19 file20 file21 prefix pb (l,m) ->
 	   let prefix' = add_suffix prefix "template" in 
 	   let _ = print_option prefix (Some stdout) "Starting ODE generation\n" in
 	   
@@ -1447,25 +1454,30 @@ module Pipeline =
 	       then (
 		     let pb,log = reachability_analysis prefix' rep  (l,m) in
 		       template 
-		       file0 
-		       file1 
-		       file2 
-		       file3 
-		       file4 
-		       file5 
-		       file6 
-		       file7 
-		       file8 
-		       file9 
-		       file10 
-		       file11 
-		       file12 
-		       file13 
-		       file14
-		       file15
-		       file16	
-		       file17
+			 file0 
+			 file1 
+			 file2 
+			 file3 
+			 file4 
+			 file5 
+			 file6 
+			 file7 
+			 file8 
+			 file9 
+			 file10 
+			 file11 
+			 file12 
+			 file13 
+			 file14
+			 file15
+			 file16	
+			 file17
+			 file18 
+			 file19
+			 file20
+			 file21
 		       prefix pb  (l,m))
+
 	       else (
 		 match pb with 
 		   None -> pb,(l,m) 
@@ -1535,6 +1547,10 @@ module Pipeline =
 				    file15
 				    file16 
 				    file17
+				    file18 
+				    file19
+				    file20
+				    file21
 				    {project=A.project;
 				     export_ae = A.export_ae;
 				     restore = A.restore_subviews;
@@ -1570,7 +1586,15 @@ module Pipeline =
 	       ))
 	   
        and 
-	   marshallize  = 
+	 integrate = 
+	   (fun file prefix pb (l,m) -> 
+	      let prefix' = add_suffix prefix "integrate" in 
+	   let _ = print_option prefix (Some stdout) "Starting ODE integration\n" in
+	   let _ = Sys.command ("./"^(file))  in 
+	   let l = chrono prefix "ODE integration" l in
+	     pb,(l,m))
+       and 
+marshallize  = 
 	 (fun fic prefix pb (l,m) -> 
 	   if fic = "" 
 	   then pb,(l,m)
@@ -2022,7 +2046,7 @@ module Pipeline =
        dump_contact_map_dot= (fun a b -> handle_errors_step (Some "Complx") (Some "dump_contact_map_dot") (dump_contact_map_dot a b));
        dump_contact_map_ps = (fun a b -> handle_errors_step (Some "Complx") (Some "dump_contact_map_ps") (dump_contact_map_ps a b));
        dump_contact_map_jpg = (fun a b -> handle_errors_step (Some "Complx") (Some "dump_contact_map_jpg") (dump_contact_map_jpg a b));
-       build_influence_map= (fun a b -> handle_errors_step (Some "Complx") (Some "build_influence_map") (build_influence_map a b));
+       build_influence_map= (fun a b c -> handle_errors_step (Some "Complx") (Some "build_influence_map") (build_influence_map a b c));
        build_compression = (fun a b c -> handle_errors_step (Some "Complx") (Some "build_compression") (build_compression a b c));
        build_enumeration = (fun a -> handle_errors_step (Some "Complx") (Some "build_enumeration") (build_enumeration a));
        dump_packs_constraints  =(fun file -> triv_step);
@@ -2038,7 +2062,8 @@ module Pipeline =
 	 try good_vertice a b c 
 	 with 
 	   Exception _ -> None,c);
-       template = (fun a b c d e f g h i j k l m n o p q r -> handle_errors_step (Some "Complx") (Some "template") (template a b c d e f g h i j k l m n o p q r));
+       template = 
+	   (fun a b c d e f g h i j k l m n o p q r s t u v  -> handle_errors_step (Some "Complx") (Some "template") (template a b c d e f g h i j k l m n o p q r s t u v));
        find_potential_cycles = (fun a -> handle_errors_step (Some "Complx") (Some "find_potential_cycles") (find_potential_cycles a));
        dump_potential_cycles = (fun a -> handle_errors_step (Some "Complx") (Some "dump_potential_cycles") (dump_potential_cycles a)) ;
        find_connected_components = (fun a -> handle_errors_step (Some "Complx") (Some "find_connected_components") (find_connected_components a));
@@ -2058,6 +2083,7 @@ module Pipeline =
        dump_maximal_refinement_relation = 
        (fun file file2 -> handle_errors_step (Some "Complx") (Some "output_maximal_refinement_relation") (dump_maximal_refinement_relation file file2)) ;
        
+       integrate = (fun file -> handle_errors_step (Some "Complx") (Some "ODE integration") (integrate file));
        dump_latex_dictionary = 
        (fun file -> handle_errors_step (Some "Complx") (Some "latex dictionary") (dump_latex_dictionary file));
        

@@ -123,7 +123,14 @@ let output_xml channel   =
     (!Config_complx.output_xml) 
     "Xml session"
 
+let print_influence_map pb channel = 
+  let file = !Config_complx.output_influence_map_jpg_file  in 
+  if file = "" 
+  then null
+  else 
+    precomputed_data channel file "influence map (jpg)"
 
+      
 
 
 
@@ -150,6 +157,26 @@ let print_contact_map res pb channel =
        "Contact map (Low resolution)"
       else null
 
+let print_ODE_plot pb channel = 
+  if (!Config_complx.integrate_ODE)
+  then 
+    precomputed_data 
+      channel 
+      (!Config_complx.output_ODE_png)
+      "Differential trajectories (plot)"
+  else 
+    null 
+
+let print_ODE_system_matlab_data pb channel = 
+  if (!Config_complx.integrate_ODE)
+  then 
+    precomputed_data 
+      channel 
+      (!Config_complx.output_ODE_data)
+      "Diffenetial trajectories (data)"
+  else 
+    null 
+
 let print_dag_refinement pb channel = 
   if is_dag_refinement_relation_jpg pb (!Config_complx.output_dag_ref_jpg)
   then 
@@ -169,7 +196,7 @@ let print_maximal_refinement pb channel =
     null
 
 let print_ODE_system_mathematica pb channel = 
-  if !Config_complx.do_ODE 
+  if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
       (!Config_complx.output_ODE_mathematica) 
@@ -178,7 +205,7 @@ let print_ODE_system_mathematica pb channel =
     null 
 
 let print_ODE_system_matlab pb channel = 
-  if !Config_complx.do_ODE 
+  if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
       (!Config_complx.output_ODE_matlab)
@@ -187,7 +214,7 @@ let print_ODE_system_matlab pb channel =
     null 
 
 let print_ODE_system_matlab_aux pb channel = 
-  if !Config_complx.do_ODE 
+  if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
       (!Config_complx.output_ODE_matlab_aux)
@@ -196,7 +223,7 @@ let print_ODE_system_matlab_aux pb channel =
     null 
 
 let print_ODE_system_matlab_activity pb channel = 
-  if !Config_complx.do_ODE 
+  if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
       (!Config_complx.output_ODE_matlab_activity)
@@ -205,7 +232,7 @@ let print_ODE_system_matlab_activity pb channel =
     null 
 
 let print_ODE_system_matlab_obs pb channel = 
-  if !Config_complx.do_ODE 
+  if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
       (!Config_complx.output_ODE_matlab_obs)
@@ -214,7 +241,7 @@ let print_ODE_system_matlab_obs pb channel =
     null 
 
 let print_ODE_system_matlab_init pb channel = 
-  if !Config_complx.do_ODE 
+  if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
       (!Config_complx.output_ODE_matlab_init)
@@ -223,7 +250,7 @@ let print_ODE_system_matlab_init pb channel =
     null 
 
 let print_ODE_system_matlab_jacobian pb channel = 
-  if !Config_complx.do_ODE 
+  if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
       (!Config_complx.output_ODE_matlab_jacobian)
@@ -232,7 +259,7 @@ let print_ODE_system_matlab_jacobian pb channel =
     null 
 
 let print_ODE_system_matlab_size pb channel = 
-  if !Config_complx.do_ODE 
+  if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
       (!Config_complx.output_ODE_matlab_size)
@@ -242,7 +269,7 @@ let print_ODE_system_matlab_size pb channel =
 
 
 let print_ODE_alphabet pb channel = 
-  if !Config_complx.do_ODE 
+  if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
       (!Config_complx.output_ODE_alphabet) 
@@ -251,7 +278,7 @@ let print_ODE_alphabet pb channel =
     null
  
 let print_ODE_obs pb channel = 
-  if !Config_complx.do_ODE
+  if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
       (!Config_complx.output_ODE_obs)
@@ -362,6 +389,12 @@ let dump_html pb channel (l,m)  =
      command_line channel;
       log_title (l,m) channel;
       output_xml channel;
+      menutitle channel "Plot and Drawings";
+      print_contact_map Low pb channel ;
+      print_contact_map High pb channel;
+      print_influence_map pb channel; 
+      print_ODE_plot pb channel;
+
       menutitle channel "Kappa rules";
       print_rules pb channel ;
       print_ckappa Unsmashed pb channel ;
@@ -399,9 +432,11 @@ let dump_html pb channel (l,m)  =
      (if !Config_complx.do_ODE 
      then 
        [menutitle channel "Ordinary differential equations";
+	print_ODE_plot pb channel;
 	 print_ODE_alphabet pb channel;
 	 print_ODE_system_mathematica pb channel;
 	 print_ODE_system_matlab pb channel;
+	 print_ODE_system_matlab_data pb channel;
 	 print_ODE_system_matlab_aux pb channel;
 	 print_ODE_system_matlab_jacobian pb channel;
 	 print_ODE_system_matlab_activity pb channel;

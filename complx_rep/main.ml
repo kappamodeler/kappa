@@ -84,7 +84,7 @@ let main ()  =
   let pb,log =
     if !Config_complx.do_influence
     then 
-      methods.build_influence_map (!Config_complx.output_influence_map_txt_file) (!Config_complx.output_influence_map_dot_file) prefix pb log 
+      methods.build_influence_map (!Config_complx.output_influence_map_txt_file) (!Config_complx.output_influence_map_dot_file) (!Config_complx.output_influence_map_jpg_file) prefix pb log 
     else pb,log in 
   let pb,log = 
     if (*!Config_complx.do_qualitative_compression 
@@ -156,7 +156,8 @@ let main ()  =
   let pb,log = methods.save_options prefix pb log in 
   
   let pb,log = 
-    if !Config_complx.do_ODE then 
+    if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
+    then 
       methods.template 
 	(!Config_complx.output_ODE_contact) 
 	(!Config_complx.output_ODE_covering) 
@@ -175,12 +176,22 @@ let main ()  =
 	(!Config_complx.output_ODE_obs) 
 	(!Config_complx.output_ODE_obs_latex)  
 	(!Config_complx.output_ODE_obs_head) 
-	(!Config_complx.output_ODE_data) 
+	""
+	(!Config_complx.output_ODE_data)
+	(!Config_complx.output_ODE_gplot)
+	(!Config_complx.output_ODE_png)
+	(!Config_complx.output_ODE_script)
 	prefix 
 	pb 
 	log 
     else 
       pb,log in 
+  let pb,log = 
+    if !Config_complx.integrate_ODE 
+    then 
+      methods.integrate (!Config_complx.output_ODE_script) prefix pb log 
+    else
+      pb,log  in
   let pb,log = 
     if !Config_complx.do_dump_latex && (!Config_complx.output_latex_rule_system <> "") then 
       methods.dump_latex_rule_system 

@@ -63,6 +63,7 @@ let trace_abstract_rules = ref true   (* print compressed rules *)
 
 let complex_limit = ref 100000
 let do_ODE = ref false
+let integrate_ODE = ref false 
 let do_XML_session = ref true
 let do_HTML_session = ref true
 let do_marshalling = ref true 
@@ -175,7 +176,12 @@ let output_ODE_matlab_obs = ref ""
 let output_ODE_matlab_init = ref ""
 let output_ODE_alphabet = ref "" 
 let output_ODE_obs = ref ""
+let output_ODE_gplot = ref "" 
+let output_ODE_png = ref "" 
+let output_ODE_data = ref "" 
+let output_ODE_script = ref "" 
 let output_influence_map_dot_file = ref "" 
+let output_influence_map_jpg_file = ref "" 
 let output_marshalling = ref ""
 let output_influence_map_txt_file = ref ""
 let output_low_res_contact_dot_file = ref "" 
@@ -311,7 +317,8 @@ let options = List.rev
 	  "--do-high-res-contact-map";
 	  "--do-marshalling";
 	  "--do-LATEX";
-	  "--do-ODE";
+	  "--generate-ODE";
+	  "--integrate-ODE";
 	  "--do-HTML";
 	  "--do-XML";
 	  "--do-refine-to-force-cycles";
@@ -331,7 +338,8 @@ let options = List.rev
 	"--no-do-LATEX";
 	"--no-do-HTML";
 	"--no-do-XML";
-	"--no-do-ODE";
+	"--no-generate-ODE";
+	"--no-integrate-ODE";
 	"--no-do-refine-to-force-cycles";
 	"--no-do-compute-dag-refinement-relation";
 	"--no-do-compute-maximal-refinement-relation"
@@ -346,7 +354,9 @@ let options = List.rev
  "--compute-qualitative-compression",Bool do_qualitative_compression,"simplify the rules",["0_Actions";"Compression"],Normal;
   "--compute-quantitative-compression",Bool do_quantitative_compression,"simplify the rules",["0_Actions";"Compression"],Normal;
   "--do-LATEX",Bool do_dump_latex,"dump the LaTeX style file and the LaTeX document for the list of rules",["0_Actions";"LATEX"],Normal;
-  "--do-ODE",Bool do_ODE,"compute the ODE system",["0_Actions";"ODE"],Normal;
+  "--do-ODE",Bool do_ODE,"compute the ODE system",["0_Actions";"ODE"],Hidden;
+  "--generate-ODE",Bool do_ODE,"compute the ODE system",["0_Actions";"ODE"],Normal;
+  "--integrate-ODE",Bool integrate_ODE,"integrate the ODE_system",["0_Actions";"ODE"],Normal;
   "--do-refine-to-force-cycles",Bool force_cycle,"Refine the system to avoid polymere formation",["0_Actions";"Polymers prevention"],Normal;
   "--do-compute-dag-refinement-relation",Bool do_dag_refinement,"compute the DAG for the refinement relation",["0_Actions";"Refinement detection"],Normal; 
 "--do-compute-maximal-refinement-relation",Bool do_maximal_refinement,"compute the most abstract refinement of each rule",["0_Actions";"Refinement detection"],Normal;
@@ -390,10 +400,14 @@ let options = List.rev
 "--output-ODE-covering-latex","_plx_ODE_covering.tex";
 "--output-ODE-obs","_plx_ODE_obs";
 "--output-ODE-obs-head","_plx_head.data";
-"--output-ODE-data","_plx_foot.data";
+"--output-ODE-data","_plx.data";
+"--output-ODE-gplot","_plx_ODE.gplot";
+"--output-ODE-png","_plx_ODE.png";
+"--output-ODE-script","_plx_ODE.script";
 "--output-marshalling","_plx.marshalling";
 "--output-influence-map-txt","_plx_influence_map.txt";
 "--output-influence-map-dot","_plx_influence_map.dot";
+(*"--output-influence-map-jpg","_plx_influence_map.jpg";*)
 "--output-quantitative-compression","_plx_compressed_quantitative.ka";
 "--output-qualitative-compression","_plx_compressed_qualitative.ka";
 "--output-low-res-contact-map-dot","_plx_low_res_contact.dot";
@@ -432,6 +446,9 @@ let options = List.rev
 
 "--output-influence-map-txt",String output_influence_map_txt_file,
     "write the causality map with .txt format",["2_Output";"Influence map"],Normal; 
+"--output-influence-map-jpg",String output_influence_map_jpg_file,
+    "draw the influcence map in a jpg file",["2_Output";"Influence map"],Normal;
+
 "--output-influence-map-dot",String output_influence_map_dot_file,
   "write the causality map with .dot format",["2_Output";"Influence map"],Normal;
 "--output-low-res-contact-map-dot",String output_low_res_contact_dot_file,
@@ -501,6 +518,20 @@ let options = List.rev
   String output_ODE_latex,
   "write the ODE in latex mode",
   ["2_Output'";"ODE";"LATEX"],Normal;
+"--output-ODE-gplot",
+      String output_ODE_gplot,
+      "write the ODE gplot script",
+      ["2_Output'";"ODE"],Normal;
+"--output-ODE-png",
+      String output_ODE_png,
+      "write the ODE graphs",
+      ["2_Output'";"ODE"],Normal;
+
+"--output-ODE-script",
+      String output_ODE_script,
+      "write a script to (re)grenerate the plot",
+      ["2_Output'";"ODE"],Normal;
+
 "--output-ODE-obs-latex",
   String output_ODE_obs_latex,
   "write the observable in latex mode",
@@ -530,7 +561,7 @@ let options = List.rev
   "write the preamble of the data file",
   ["2_Output'";"ODE"],Normal;
 "--output-ODE-data",  String output_ODE_data,
-  "add the generation of the data file in the mathematica output",
+  "write plots coordinate",
   ["2_Output'";"ODE"],Normal;
 "--output-pack-constraints",
  String output_pack_value_file,

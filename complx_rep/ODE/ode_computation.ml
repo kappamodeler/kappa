@@ -141,7 +141,7 @@ let print_log s =
 
 
 
-let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_matlab_act file_ODE_matlab_obs file_ODE_matlab_init file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_obs_data_head file_data_foot ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs  (l,m) = 
+let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_matlab_act file_ODE_matlab_obs file_ODE_matlab_init file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_ODE_data_head file_data_foot file_ODE_data file_ODE_gplot file_ODE_png file_ODE_script ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs  (l,m) = 
   
  
   let prefix' = "-"^(fst prefix) in 
@@ -179,7 +179,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   let set_print = f in 
     
  
-  let print_data = f DATA file_obs_data_head in 
+  let print_data = f DATA file_ODE_data_head  in 
   let print_matlab = f MATLAB file_ODE_matlab in
   let print_matlab_aux = f MATLAB file_ODE_matlab_aux in 
   let print_matlab_jacobian = f MATLAB file_ODE_matlab_jacobian in 
@@ -3604,6 +3604,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	file_ODE_matlab_jacobian  
 	file_ODE_matlab_init 
 	file_ODE_matlab_obs
+	file_ODE_data
 	(size ())
 	(string_of_int nobs) 
     in 
@@ -3630,6 +3631,71 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     let chanset = 
       CSet.remove stdout chanset in 
     let _ = CSet.iter  close_out chanset in
-    Some (annotated_contact_map,activity,size ()),(l,m)
+    let pstring print = 
+      match print with None -> print_string 
+	| Some a -> a.print_string in 
+    let print = f DATA file_ODE_script in 
+    let _ = 
+      (pstring print) 
+	("octave "^(Tools.cut2 file_ODE_matlab)^"\ngnuplot "^(Tools.cut2 file_ODE_gplot)^"\n")
+    in 
+    let _ = List.iter close_out (match print with None -> [] | Some print ->  
+				   let _ = Sys.command ("chmod +x "^(file_ODE_script)) in 
+				     print.chan) in 
+    let print = f DATA file_ODE_gplot in 
+    let file_ODE_png = Tools.cut2 file_ODE_png in 
+    let _ = 
+      (pstring print) 
+	"set xlabel 'Time'\n"
+    in 
+    let _ = 
+      (pstring print) 
+	"set ylabel 'Concentration''\n"
+    in 
+    let _ = 
+      (pstring print) 
+	"set term png\n"
+    in 
+    let _ = 
+      (pstring print) 
+	"set autoscale\n"
+    in 
+    let _ = 
+      (pstring print) 
+	("set output '"^(file_ODE_png)^"'\n")
+    in 
+    let _ = 
+      (pstring print) 
+	"set title 'EGF'\n"
+    in 
+    let _ = 
+      (pstring print) 
+	("set xrange ["^(string_of_float (!Config_complx.ode_init_time))^":"^(string_of_float (!Config_complx.ode_final_time))^"]\n")
+    in 
+    let file_ODE_data = Tools.cut2 file_ODE_data in 
+    let rec vide k = 
+      if k>nobs then () 
+      else 
+	let _ = (pstring print) "set output '" in 
+	let _ = (pstring print) file_ODE_png in 
+	let _ = (pstring print) "'\n" in 
+	let _ = 
+	  if k=1 then 
+	    (pstring print) "plot"
+	  else  
+	    (pstring print) "replot"
+	in 
+	let _ = (pstring print) "'" in 
+	let _ = (pstring print) file_ODE_data in 
+	let _ = (pstring print) "'using 1:" in 
+	let _ = (pstring print) (string_of_int (k+1)) in 
+	let _ = (pstring print) "title '' w l\n" in 
+	  vide (k+1)
+    in 
+    let  _ = vide 1 in 
+    let _ = List.iter close_out  (match print with None -> [] | Some a -> a.chan) in 
+     
+  
+	 Some (annotated_contact_map,activity,size ()),(l,m)
       
       
