@@ -173,7 +173,7 @@ let print_ODE_system_matlab_data pb channel =
     precomputed_data 
       channel 
       (!Config_complx.output_ODE_data)
-      "Diffenetial trajectories (data)"
+      "Differential trajectories (data)"
   else 
     null 
 
@@ -433,19 +433,21 @@ let dump_html pb channel (l,m)  =
      then 
        [menutitle channel "Ordinary differential equations";
 	print_ODE_plot pb channel;
-	 print_ODE_alphabet pb channel;
-	 print_ODE_system_mathematica pb channel;
-	 print_ODE_system_matlab pb channel;
-	 print_ODE_system_matlab_data pb channel;
-	 print_ODE_system_matlab_aux pb channel;
-	 print_ODE_system_matlab_jacobian pb channel;
-	 print_ODE_system_matlab_activity pb channel;
-	 print_ODE_system_matlab_obs pb channel;
-	 print_ODE_system_matlab_init pb channel;
-	 print_ODE_system_matlab_size pb channel;
-	 print_ODE_obs pb channel] 
-     else 
-       []))
+	print_ODE_system_mathematica pb channel;
+	print_ODE_system_matlab_data pb channel;
+	print_ODE_system_matlab pb channel;
+	precomputed_data channel (!Config_complx.output_ODE_script)
+	  "script";
+	precomputed_data channel (!Config_complx.output_ODE_gplot)
+	  "gnuplot file";
+	print_ODE_system_matlab_aux pb channel;
+	print_ODE_system_matlab_jacobian pb channel;
+	print_ODE_system_matlab_activity pb channel;
+	print_ODE_system_matlab_obs pb channel;
+	print_ODE_system_matlab_init pb channel;
+	print_ODE_system_matlab_size pb channel]
+      else 
+	[]))
   in 
 
       
