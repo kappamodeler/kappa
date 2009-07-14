@@ -223,10 +223,21 @@ module Iterateur=
 	  s StringMap.empty in 
 	  set
 
-      let apply_control_add pb case sb f  potential_binding = 
-	sb,potential_binding
+      let apply_control_add pb case sb f  potential_binding live_agents = 
+	let control = case.control.add  in 
+	let sp = case.specie_of_id in 
+	 
+	sb,potential_binding,
+	List.fold_left 
+	  (fun sol a -> StringSet.add 
+	     (try StringMap.find a sp 
+	      with Not_found -> 
+		error_frozen 
+		  "unknown species" "apply_control_add" "" (fun () -> raise Exit))
+	     sol)
+	  live_agents control 
 	  
-      let close_semi_links  sb l = (* TO DO CORRECT THE BUG *)
+      let close_semi_links  sb l = 
 	StringMap.fold 
 	  (fun a l sb -> 
 	    let old = StringMap.find a sb in
@@ -340,11 +351,11 @@ module Iterateur=
 	  (a,rep)::sol
 	    ) sb []
 	  
-      let apply_rule abstract_lens id pb case inv  guard (sb,potential_binding)  sp = 
+      let apply_rule abstract_lens id pb case inv  guard (sb,potential_binding)  sp live_agents = 
 	let control = case.control in 
 	let b_of_id = case.b_of_id in 
 	let a = instancie_rule case sb relation sp in 
-	match a with None -> (RuleIdListMap.add id None abstract_lens,(false,potential_binding),sb)
+	match a with None -> (RuleIdListMap.add id None abstract_lens,(false,potential_binding),sb,live_agents)
 	| Some a -> 
 	    let _ = trace_print "INSTANCIED3" in 
 	    let a = if !Config_complx.refine_after_instanciation then inv a (fun x -> x) else a in 
@@ -352,12 +363,12 @@ module Iterateur=
 	    let rep = (teste_rule pb case guard potential_binding  a  relation) in 
 	    let abstract_lens = RuleIdListMap.add id rep abstract_lens in 
 	    match rep
-	    with None -> (abstract_lens,(false,potential_binding),sb)
+	    with None -> (abstract_lens,(false,potential_binding),sb,live_agents)
 	      |Some b ->  
 		begin
 		  let _ = trace_print "GUARD2" in 
 		  let b = if !Config_complx.refine_after_guard then inv b relation else b in
-		  let b,pot_b = apply_control_add pb case b relation potential_binding in 
+		  let b,pot_b,live_agents  = apply_control_add pb case b relation potential_binding live_agents  in 
 		  let c,pot_b = apply_control_context_update pb case  b  relation pot_b  in 
 		  let c,semi_links1 = apply_control_uncontext_update pb case c relation potential_binding in 
 		  let _ = trace_print "CONTROL" in 
@@ -375,11 +386,13 @@ module Iterateur=
 		  let sb2 = close_semi_links sb semi_links1   in 
 		  let sb2 = close_semi_links sb2 semi_links2 in 
 		  if b then 
-	    abstract_lens,(b,pot_b),sb2
-	  else if sb==sb2 or forall2 (fun _ _ -> false) (fun _ _ -> true) (fun _ x y -> AE.is_included x y && AE.is_included y x) sb sb2 then 
-	    abstract_lens,(false,pot_b),sb
-	  else 
-	    abstract_lens,(true,pot_b),sb2
+		    abstract_lens,(b,pot_b),sb2,live_agents
+		  else 
+		    if sb==sb2 or forall2 (fun _ _ -> false) (fun _ _ -> true) (fun _ x y -> AE.is_included x y && AE.is_included y x) sb sb2 
+		    then 
+		      abstract_lens,(false,pot_b),sb,live_agents
+		    else 
+		      abstract_lens,(true,pot_b),sb2,live_agents
 	end
 
 
@@ -388,7 +401,7 @@ module Iterateur=
 	  None -> cpb.cpb_marks
 	| Some map  -> 
 	    try String2Map.find (a,x) map
-	    with Not_found -> (print_string "M";print_string a;print_string x;[])
+	    with Not_found -> []
 
       let binding_of_site cpb (a,x) = 
 	match cpb.cpb_contact with 
@@ -449,82 +462,85 @@ module Iterateur=
 	  | Some a ->  a.init in 
 	match init with None -> 
 	  begin
-	    list_fold 
-	      (fun (a,b,c) sol -> 
-		StringMap.add a 
-		  (AE.list_conj 
-		     (list_fold 
-			(fun b l1 ->  
-		      list_fold 
-			    (fun m l2 ->
-			      if m="u" 
-			      then ((M((a,a,b),m),true)::l2)
-			      else ((M((a,a,b),m),false)::l2))
-			    (marks_of_site cpb (a,b))
-                            l1)
-			b
+	    (list_fold 
+	       (fun (a,b,c) sol -> 
+		  StringMap.add a 
+		    (AE.list_conj 
+		       (list_fold 
+			  (fun b l1 ->  
+			     list_fold 
+			       (fun m l2 ->
+				  if m="u" 
+				  then ((M((a,a,b),m),true)::l2)
+				  else ((M((a,a,b),m),false)::l2))
+			       (marks_of_site cpb (a,b))
+                               l1)
+			  b
 		    (list_fold 
 		       (fun c l2 -> 
-			 list_fold 
-			   (fun (a',c') l3 -> 
-			     let b = (AL((a,a,c),(a',c')),false) in 
+			  list_fold 
+			    (fun (a',c') l3 -> 
+			       let b = (AL((a,a,c),(a',c')),false) in 
 	      			 b::l3)
-			   (binding_of_site cpb (a,c))
-			   ((B(a,a,c),false)::l2))
+			    (binding_of_site cpb (a,c))
+			    ((B(a,a,c),false)::l2))
                        c [H(a,a),true])))  sol)
-	      cpb.cpb_interface
-	      StringMap.empty,contact_map_init
+	       cpb.cpb_interface
+	       StringMap.empty,contact_map_init),
+	    StringSet.empty 
 	  end
-	|  Some init -> 
+	  |  Some init -> 
 	    let init_def = 
 	      list_fold 
 		(fun (a,b,c) sol -> 
-		  StringMap.add a 
-		    (list_fold 
-		       (fun b l1 ->  
-			 list_fold 
-			   (fun m l2 -> BMap.add (M((a,a,b),m)) false l2)
+		   StringMap.add a 
+		     (list_fold 
+			(fun b l1 ->  
+			   list_fold 
+			     (fun m l2 -> BMap.add (M((a,a,b),m)) false l2)
 			   (marks_of_site cpb (a,b))
-                           l1)
-		       b
-		       (list_fold 
-			  (fun c l2 -> 
-			    list_fold 
-			      (fun (a',c') l3 -> 
-				BMap.add (AL((a,a,c),(a',c'))) false l3)
+                             l1)
+			b
+			(list_fold 
+			   (fun c l2 -> 
+			      list_fold 
+				(fun (a',c') l3 -> 
+				   BMap.add (AL((a,a,c),(a',c'))) false l3)
 				
 			      (binding_of_site cpb (a,c))
-			      (BMap.add (B(a,a,c)) false l2))
-			  c (BMap.add (H(a,a)) false BMap.empty)))  sol)
+				(BMap.add (B(a,a,c)) false l2))
+			   c (BMap.add (H(a,a)) false BMap.empty)))  sol)
 		cpb.cpb_interface
 		StringMap.empty in
 	    let init_f = StringMap.empty in 
 	    let fadd a new' m = 
 	      try (let old = StringMap.find a m in 
-	      StringMap.add a (AE.union old new') m) 
+		     StringMap.add a (AE.union old new') m) 
 	      with Not_found -> StringMap.add a new' m in 
-	    let init = 
+	    let init   = 
 	      list_fold
-		(fun (a,s) (sol,pot_bind) -> 
+		(fun (a,s) ((sol,pot_bind),live_agents) -> 
 		  let def = StringMap.find a init_def in 
+		  let live_agents = StringSet.add a live_agents in 
 		  let m = list_fold (fun (b,bool) -> BMap.add b bool) s def in
 		  let pot_bind = 
 		    list_fold 
 		      (fun (b,bool) pot_bind -> 
-			match b,bool with 
-			  AL((a,ga,sa),(gb,sb)),true -> 
-			    add_contact cpb.cpb_with_dots (ga,sa) (gb,sb) pot_bind
-			| _ -> pot_bind)
+			 match b,bool with 
+			     AL((a,ga,sa),(gb,sb)),true -> 
+			       add_contact cpb.cpb_with_dots (ga,sa) (gb,sb) pot_bind
+			   | _ -> pot_bind)
 		      s pot_bind in 
 		  let ae = 
 		    AE.list_conj 
 		      (BMap.fold (fun b bool l -> (b,bool)::l) m [])
 		  in 
-		  fadd a ae sol,pot_bind)
+		    (fadd a ae sol,pot_bind),live_agents)
 		init 
-		(init_f,
-		 contact_map_init) in 
-	    init
+		((init_f,
+		  contact_map_init),
+		 StringSet.empty ) in 
+	      init
 		  
 	  
      let print_subviews rep pb = 
@@ -560,7 +576,7 @@ module Iterateur=
 	  | Some a ->  a.system in 
 	let _ = trace_print "PARSED_sig" in 	
 	let abstract_lens = RuleIdListMap.empty in 
-	let s0,(potential_binding:contact_map) = init pb in 
+	let (s0,(potential_binding:contact_map)),live_agents = init pb in 
 	let sp = init_false pb in 
 	let s0 = StringMap.map2iz 
 	             (fun _ -> AE.union) s0 sp in 
@@ -585,36 +601,49 @@ module Iterateur=
 		   |_ -> {case with rules = lid}::sol)
 	    system [] in 
 	       
-	let rec aux (abstract_lens,s,potential_binding) = 
+	let rec aux (abstract_lens,s,potential_binding,live_agents) = 
 	  if !Config_complx.trace_iteration_number then (print_string "iteration";print_newline ();flush stdout);
-	  let abstract_lens,s,b =
+	  let abstract_lens,s,b,live_agents =
 	    list_fold
-	      (fun case (abstract_lens,sb,bool) -> 
+	      (fun case (abstract_lens,sb,bool,live_agents) -> 
 		list_fold
 
-		  (fun rule (abstract_lens,sb,b) -> 
+		  (fun rule (abstract_lens,sb,b,live_agents) -> 
 		   let g = rule.injective_guard in 
-		   let abstract_lens,(b',pt),sb' = 
+		   let abstract_lens,(b',pt),sb',live_agents = 
 		     apply_rule 
 		       abstract_lens 
 		       rule.labels 
 		       pb 
 		       case 
 		       inv 
-		       (List.rev_map (fun (a,b) -> AE.K.E.V.var_of_b a,b) g) (sb,snd b)  sp in
-		    if !Config_complx.trace_rule_iteration (*&& b' *)
-		    then (let _ = list_fold  (fun r b -> print_string (if b then (","^(name_of_rule r)) else (name_of_rule r));true) rule.labels false in 
-		    print_string " updated";print_newline ();flush stdout)
-			;
-		    (abstract_lens,sb',(b' or (fst b),pt))) 
+		       (List.rev_map 
+			  (fun (a,b) -> AE.K.E.V.var_of_b a,b) 
+			  g) 
+		       (sb,snd b)  
+		       sp 
+		       live_agents 
+		   in
+		   let _ = 
+		     if !Config_complx.trace_rule_iteration (*&& b' *)
+		     then 
+		       (let _ = 
+			  list_fold  
+			    (fun r b -> print_string (if b then (","^(name_of_rule r)) else (name_of_rule r));true) 
+			    rule.labels 
+			    false 
+			in 
+			  print_string " updated";print_newline ();flush stdout)
+		   in 
+		     (abstract_lens,sb',(b' or (fst b),pt),live_agents)) 
 		  case.rules 
-		  (abstract_lens,sb,bool)
+		  (abstract_lens,sb,bool,live_agents)
 	      )
 	      system 
-	      (abstract_lens,s,(false,potential_binding)) in
-	  if (fst b) then (aux (abstract_lens,s,snd b)) else  (abstract_lens,s,snd b)
+	      (abstract_lens,s,(false,potential_binding),live_agents) in
+	  if (fst b) then (aux (abstract_lens,s,snd b,live_agents)) else  (abstract_lens,s,snd b,live_agents)
 	in 
-	let rep = aux (abstract_lens,s0,potential_binding) in 
+	let rep = aux (abstract_lens,s0,potential_binding,live_agents) in 
 	rep,sp,pb,messages
 	  
 

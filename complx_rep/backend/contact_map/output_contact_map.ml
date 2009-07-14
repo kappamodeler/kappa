@@ -50,9 +50,9 @@ let restrict_contact_map contact binding set =
 	end
 
 
-let dump_contact_map_in_dot interface contact dotted fic = 
-  if fic = "" or (contact = [] && interface = [])
-  then ()
+let dump_contact_map_in_dot interface active contact dotted fic = 
+  if fic = "" or (contact = [] && interface = []  )
+  then (print_string "EMPTY")
   else
     let output=open_out fic in 
     let print s = Printf.fprintf output s in 
@@ -60,26 +60,34 @@ let dump_contact_map_in_dot interface contact dotted fic =
     let _ =
       List.iter 
 	(fun (a,b,c) ->
-	  let m1 = list_fold StringSet.add b StringSet.empty in 
-	  let m2 = list_fold StringSet.add c StringSet.empty in 
-	  let mall = StringSet.union m1 m2 in 
-	  let _ = print "subgraph cluster" in 
-	  let _ = print "%s" a in 
-	  let _ = print " {\n" in 
+	   if 
+	     match 
+	       active
+	     with 
+		 None -> true 
+	       | Some set -> 
+		   StringSet.mem a set
+	   then 
+	     let m1 = list_fold StringSet.add b StringSet.empty in 
+	     let m2 = list_fold StringSet.add c StringSet.empty in 
+	     let mall = StringSet.union m1 m2 in 
+	     let _ = print "subgraph cluster" in 
+	     let _ = print "%s" a in 
+	     let _ = print " {\n" in 
 	  let _ = 
 	    StringSet.iter 
 	      (fun s -> 
-		let _ = print "%s" a in 
-		      let _ = print "_" in
-		      let _ = print "%s" s in 
-		      let color = 
+		 let _ = print "%s" a in 
+		 let _ = print "_" in
+		 let _ = print "%s" s in 
+		 let color = 
 			match StringSet.mem s m1,StringSet.mem s m2 
 			with true,false -> !Config_complx.boolean_site_color
 			| true,true  -> !Config_complx.both_site_color
 			| false,true -> !Config_complx.boundable_site_color
 			| false,false -> raise Exit in 	
-		      let _ = print " [style = filled label = \"%s\"] [shape = %s] [size = %s] [fixedsize = true ] [color = %s]\n" s Config_complx.site_shape  (string_of_int Config_complx.site_size) color in 
-		      ())
+		 let _ = print " [style = filled label = \"%s\"] [shape = %s] [size = %s] [fixedsize = true ] [color = %s]\n" s Config_complx.site_shape  (string_of_int Config_complx.site_size) color in 
+		   ())
 	      mall 
 	  in 
 	  let size = StringSet.cardinal  mall in 
@@ -106,6 +114,16 @@ let print_contact_map_in_dot res  pb =
   then 
     begin
       let fic = !Config_complx.output_high_res_contact_dot_file in 
+      let act = 
+	match pb.contact_map 
+	with Some l -> Some l.live_agents
+	  | None -> None
+      in 
+      let _ = 
+	match act with None -> ()
+	  | Some s -> StringSet.iter print_string s 
+      in 
+
       let l = 
 	match pb.contact_map  
 	with Some l -> l.relation_list  
@@ -123,7 +141,10 @@ let print_contact_map_in_dot res  pb =
 	  if l = [] && interface = [] 
 	  then () 
 	  else 
-	    dump_contact_map_in_dot interface l (fun _ _ -> false) fic 
+	    dump_contact_map_in_dot 
+	      interface 
+	      act 
+	      l (fun _ _ -> false) fic 
 	end
     end
   else

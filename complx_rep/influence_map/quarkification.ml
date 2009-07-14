@@ -113,11 +113,11 @@ let quarkify cpb contact rule =
 		      
 		| FREE  -> QSet.add (QF(a,s)) test_pos
 		| LINK(a',s') -> 
-		    (QSet.add 
+		    QSet.add 
 		      (ql(a,s,specie a',s')) 
-		      test_pos)
+		      test_pos
 		| _ -> test_pos
-		      )
+	      )
 	      map test_pos)
 	  map QSet.empty in
       let test_pos = 
@@ -143,13 +143,12 @@ let quarkify cpb contact rule =
 	      Bind ((a,s),(a',s')) -> 
 		let aid = specie a in
 		let aid' = specie a' in
-		(QSet.add (ql(aid,s,aid',s')) mp) 
+		  (QSet.add (ql(aid,s,aid',s')) mp)
 		   ,
 		 let mn' = 
 		   if 
 		     (let q = get (a,s) map in
-		     q = FREE 
-		       or q = UNKNOWN)
+		     q = FREE or q = UNKNOWN)
 		   then
 		     (QSet.add (QF(aid,s)) mn)
 		   else mn
@@ -202,6 +201,19 @@ let quarkify cpb contact rule =
 	    | Check _ | Check_choice _  -> (mp,mn))
 	  (QSet.empty,QSet.empty) control.cpb_update
           in
+      let mod_pos = 
+	QSet.fold 
+	  (fun q sol -> 
+	     match q with 
+		 QL(a,s,a',s') -> 
+		   QSet.remove 
+		     (QF(a,s))
+		     (QSet.remove 
+			(QF(a',s'))
+			sol)
+	       | _ -> sol)
+	  mod_pos mod_pos 
+      in 
       let mod_pos,mod_neg = 
 	IntSet.fold 
 	  (fun a (mp,mn) ->

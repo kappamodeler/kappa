@@ -159,7 +159,8 @@ type contact_map =
       possible_linksb: b list;
       relation_set: String22Set.t ;
       relation_list: ((string * string) * (string*string)) list;
-      access: String2Set.t String2Map.t} 
+      access: String2Set.t String2Map.t;
+      live_agents:StringSet.t} 
 
 type drawers = 
     { mod_agent_to_rules:IntSet.t StringMap.t;

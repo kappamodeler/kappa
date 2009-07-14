@@ -629,6 +629,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   let _ = 
     dump_contact_map_in_dot 
       cpb.cpb_interface
+      (match pb.contact_map
+       with Some l -> (Some l.live_agents)
+	 | None -> None)
       (match pb.contact_map 
       with Some l -> l.relation_list
       | None -> [])

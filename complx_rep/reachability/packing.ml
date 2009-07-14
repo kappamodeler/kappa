@@ -51,7 +51,7 @@ let compute_pack pb =
 	  Not_found -> String2Set.empty in 
       let new' = String2Set.add b old in 
       StringMap.add (fst a) (String2Map.add a new'  oldmap) map
-  else map in 
+    else map in 
   let map = 
     List.fold_left 
       (fun map (a,b,c) -> 
@@ -61,12 +61,13 @@ let compute_pack pb =
   
   let var_of_g r spec = 
     List.fold_left 
-      (fun set rule  -> let b = rule.injective_guard in 
-	List.fold_left 
-	  (fun set (a,b) -> 
-	    match site_of_b a with 
-	      Some (a,s) -> String2Set.add (spec a,s) set
-	    | None -> set) set b)
+      (fun set rule  -> 
+	 let b = rule.injective_guard in 
+	   List.fold_left 
+	     (fun set (a,b) -> 
+		match site_of_b a with 
+		    Some (a,s) -> String2Set.add (spec a,s) set
+		  | None -> set) set b)
       String2Set.empty 
       r.rules in 
   let var_of_c r spec = 
@@ -84,10 +85,11 @@ let compute_pack pb =
 	    (fun map (a,b) -> StringMap.add a b map)
 	    StringMap.empty r.id in 
 	let spec x = StringMap.find x spec_of_id in 
-	String2Set.fold 
-	  (fun c map  -> 
-	    String2Set.fold (fadd c) (var_of_g r spec) (fadd c c map))
-	  (var_of_c r spec) map)
+	  String2Set.fold 
+	    (fun c map  -> 
+	       String2Set.fold (fadd c) (var_of_g r spec) (fadd c c map))
+	    (var_of_c r spec) 
+	    map)
       map system in 
   let close_dep = 
     StringMap.map 
@@ -117,11 +119,14 @@ let compute_pack pb =
 	  map StringListSet.empty)
      
       dep in 
- 
-  StringMap.map
-    (fun b -> 
-      StringListSet.fold (fun l sol -> l::sol) b [])
+  let close_dep = 
+    StringMap.map
+      (fun b -> 
+	 StringListSet.fold (fun l sol -> l::sol) b [])
+      close_dep 
+  in 
     close_dep 
+      
 
   
       

@@ -240,7 +240,7 @@ let print_rules channel pb  =
 	    ())
   with _ -> ()
       
-let print_contact_map channel pb set  = 
+let print_contact_map channel pb set   = 
   try (let cpb =
     match pb.intermediate_encoding with 
       None -> raise Exit
@@ -480,41 +480,42 @@ let print_contact_map channel pb set  =
   let _ = 
     match pb.contact_map  
     with None -> ()
-    | Some l -> 
-	let l = l.relation_list in 
+    | Some cp -> 
+	let l = cp.relation_list in 
 	begin
 	  let print s = Printf.fprintf channel s in 
 	  let _ = print "<ContactMap Name=\"High resolution\">\n" in 
 	  let _ = 
 	    List.iter 
 	      (fun (a,b,c) ->
-		let m1 = list_fold StringSet.add b StringSet.empty in 
-		let m2 = list_fold StringSet.add c StringSet.empty in 
-		let mall = StringSet.union m1 m2 in 
-		let _ = print "<Agent Name=\"%s\">\n" a in
-		let _ = print "<RuleSet Name=\"Mod\">\n" in 
-		let _ = iter_mod_ag a print_rule in 
-		let _ = print "</RuleSet>\n<RuleSet Name=\"Test\">\n" in 
-               	let _ = iter_tested_ag a print_rule in 
-		let _ = print "</RuleSet>" in 
-		let _ = 
-		  StringSet.iter 
-		    (fun site -> 
-		      let _ = print 
-			  "<Site Name=\"%s\" CanChangeState=\"%s\" CanBeBound=\"%s\">\n" 
-			  site 
+		 if StringSet.mem a cp.live_agents then 
+		   let m1 = list_fold StringSet.add b StringSet.empty in 
+		   let m2 = list_fold StringSet.add c StringSet.empty in 
+		   let mall = StringSet.union m1 m2 in 
+		   let _ = print "<Agent Name=\"%s\">\n" a in
+		   let _ = print "<RuleSet Name=\"Mod\">\n" in 
+		   let _ = iter_mod_ag a print_rule in 
+		   let _ = print "</RuleSet>\n<RuleSet Name=\"Test\">\n" in 
+               	   let _ = iter_tested_ag a print_rule in 
+		   let _ = print "</RuleSet>" in 
+		   let _ = 
+		     StringSet.iter 
+		       (fun site -> 
+			  let _ = print 
+			    "<Site Name=\"%s\" CanChangeState=\"%s\" CanBeBound=\"%s\">\n" 
+			    site 
 			   (if StringSet.mem site m1 then "true" else "false")
-			  (if StringSet.mem site m2 then "true" else "false")
-		      in 
-		      let _ = print "<RuleSet Name=\"Mod\">\n" in 
-		      let _ = iter_mod_sites (a,site) print_rule in 
-		      let _ = print "</RuleSet>\n<RuleSet Name=\"Test\">\n" in 
-               	      let _ = iter_tested_sites (a,site) print_rule in 
-		      let _ = print "</RuleSet>" in 
-		      let _ = print "</Site>\n" in 
-		      ())
+			    (if StringSet.mem site m2 then "true" else "false")
+			  in 
+			  let _ = print "<RuleSet Name=\"Mod\">\n" in 
+			  let _ = iter_mod_sites (a,site) print_rule in 
+			  let _ = print "</RuleSet>\n<RuleSet Name=\"Test\">\n" in 
+               		  let _ = iter_tested_sites (a,site) print_rule in 
+			  let _ = print "</RuleSet>" in 
+			  let _ = print "</Site>\n" in 
+			    ())
 		    mall in 
-		let _ = print "</Agent>\n" in ()) 
+		   let _ = print "</Agent>\n" in ()) 
 	      cpb.Pb_sig.cpb_interface in 
 	  let _ = 
 	    List.iter (fun ((a,b),(c,d)) ->

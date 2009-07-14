@@ -25,7 +25,8 @@ let contact_map_init =
    possible_linksb=[];
    relation_set = String22Set.empty;
    relation_list = [];
-   access = String2Map.empty}
+   access = String2Map.empty;
+   live_agents = StringSet.empty}
   
 let oriente (a1,s1) (a2,s2) = 
   match (l((a1,a1,s1),(a2,a2,s2)))
@@ -55,6 +56,7 @@ let add_contact with_dots (a1,s1) (a2,s2) cm =
   then cm
   else 
     { relation_set = String22Set.add k cm.relation_set;
+      live_agents = StringSet.add a1 (StringSet.add a2 cm.live_agents);
       relation_list = k::(cm.relation_list);
       possible_linksb = (L((k1,k1,k2),(k3,k3,k4)))::cm.possible_linksb;
       link_of_site = fadd_contact  (a1,s1) (a2,s2) cm.link_of_site;

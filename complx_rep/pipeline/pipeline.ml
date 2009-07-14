@@ -498,7 +498,7 @@ module Pipeline =
 	     with None -> error "line 355"
 	     | Some rep -> pb,log,rep
        and compile (interface:interface) mode prefix rep (l,m) =
-	 let title = 
+	   let title = 
 	   if mode = Smashed 
 	   then
 	     "Boolean encoding of the quotiented system"
@@ -575,7 +575,7 @@ module Pipeline =
 	 match pb.intermediate_encoding  with 
 	   None -> 
 	     let pb',log' = compile interface Unsmashed prefix (Some pb) log in 
-	     
+	     	     
 	     (match pb' 
 	     with None -> frozen_error "line 435" "Intermediate encoding cannot be built" "get_intermediate_encoding" (fun () -> raise Exit)
 	     |Some pb' -> 
@@ -621,7 +621,7 @@ module Pipeline =
 	     then
 	       begin 
 		 let pb,log,_ = get_intermediate_encoding None prefix' rep' (l,m)  in 
-		 (Some pb),log 
+		   (Some pb),log 
 	       end
 	     else
 	       (
@@ -765,7 +765,7 @@ module Pipeline =
 		 |  Some pb -> 
 		     let pb,(l,m),contact = get_high_res_contact_map prefix'  pb (l,m)  in 
 		     let _ = set_packs pb in  
-		 let (abstract_lens,rep1,rep2),sp,parsed_case,messages = Ite.itere pb m in
+		 let (abstract_lens,rep1,rep2,live_agents),sp,parsed_case,messages = Ite.itere pb m in
 		 let rep = rep1,rep2 in 
 		 let m,sol = 
 		   RuleIdListMap.fold 
@@ -786,7 +786,9 @@ module Pipeline =
 		     Pb_sig.unreachable_rules = Some sol;
 		     bdd_sub_views = Some (StringMap.map A.compute_subviews rep1);
 		     bdd_false = Some (StringMap.map A.compute_subviews sp);
-		     contact_map = Some (snd rep) } in 
+		     contact_map = 
+		       Some {(snd rep) with live_agents = live_agents} 
+		   } in 
 		 let l = chrono prefix "Reachability analysis" l in
 		 Some pb,(l,m) )
 
@@ -937,11 +939,10 @@ module Pipeline =
 			       match contact with 
 				 None -> () 
 			       |  Some contact -> 
-				   ((String2Map.iter 
+				    ((String2Map.iter 
 				       (fun a l ->
 					 List.iter 
 					   (fun b  -> 
-					     
 					     print "%s" (string_of_b (L((fst a,fst a,snd a),(fst b,fst b,snd b))));
 					     print "\n") l)
 				       contact

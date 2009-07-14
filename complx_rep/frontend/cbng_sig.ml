@@ -277,7 +277,7 @@ let cbng_dump fic x =
 	   let _ = dump_sites channel x in 
            let _ = dump_marks channel x in
            let _ = begin if x.cpb_with_dots then print "The (BNG)-dot operator is used.\n\n" 
-                                else print "The (BNG)-dot operaor is not used.\n\n"
+                                else print "The (BNG)-dot operator is not used.\n\n"
                    end in           
            let _ = dump_interface channel x in 
            let _ = dump_contact channel x in

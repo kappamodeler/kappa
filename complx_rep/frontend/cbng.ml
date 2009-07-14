@@ -123,26 +123,27 @@ module CBnG =
     match t with 
       No_Pol | No_Helix -> (context_control,uncontext_control) 
     | Bind ((i1,s1),(i2,s2)) -> 
-	  let i1',ig1 = irule.id_mapping i1 in 
-	  let i2',ig2 = irule.id_mapping i2 in 
+	let i1',ig1 = irule.id_mapping i1 in 
+	let i2',ig2 = irule.id_mapping i2 in 
 	  (AL((i1',ig1,s1),(ig2,s2)),true)::(AL((i2',ig2,s2),(ig1,s1)),true)::(l((i1',ig1,s1),(i2',ig2,s2)),true)::(B(i1',ig1,s1),true)::(B(i2',ig2,s2),true)::context_control,uncontext_control
-      | Mark ((i,s),m) -> 
-	  let i',ig = irule.id_mapping i in 
+    | Mark ((i,s),m) -> 
+	let i',ig = irule.id_mapping i in 
 	  StringSet.fold  
 	    (fun m' sol -> (M((i',ig,s),m'),m'=m)::sol)
 	    (StringSet.add m 
 	       (try (IntStringMap.find (i,s) map) with _ -> 
-		  String2Map.find (ig,s) cpb_map))
+		  try (String2Map.find (ig,s) cpb_map) 
+		  with Not_found -> StringSet.empty))
             context_control,uncontext_control
-      | Release ((i1,s1),(i2,s2)) ->
-	  let i1',ig1 = irule.id_mapping i1 in 
-	  let i2',ig2 = irule.id_mapping i2 in 
+    | Release ((i1,s1),(i2,s2)) ->
+	let i1',ig1 = irule.id_mapping i1 in 
+	let i2',ig2 = irule.id_mapping i2 in 
 	  (AL((i1',ig1,s1),(ig2,s2)),false)::(AL((i2',ig2,s2),(ig1,s1)),false)::(l((i1',ig1,s1),(i2',ig2,s2)),false)::(B(i1',ig1,s1),false)::(B(i2',ig2,s2),false)::context_control,uncontext_control
-      |	Check_choice _ | Check _ -> context_control,uncontext_control
-      | Break_half(i1,s1) -> 
-	  let i1,ig1 = irule.id_mapping i1 in 
+    | Check_choice _ | Check _ -> context_control,uncontext_control
+    | Break_half(i1,s1) -> 
+	let i1,ig1 = irule.id_mapping i1 in 
           (B(i1,ig1,s1),false)::context_control,(i1,ig1,s1)::uncontext_control																				    
-	   
+	    
 
     let translate_control_remove pb irule i sol = (fst (irule.id_mapping i))::sol
 
@@ -883,8 +884,8 @@ List.map (rename_test f) b)) r.cpb_guard;
 	List.rev_map 
 	  (fun r -> 
 	    let ir = rule_precomputation pb r in 
+	    let _ = trace_print "END_PRECOM" in 
 	    let idlist = list_fold (fun i l -> (ir.id_mapping i)::l) ir.id_list [] in 
-   
 	    let old_list_map,dotlist =
 	      let (m,dlist) = 
 		list_fold 
@@ -932,7 +933,6 @@ List.map (rename_test f) b)) r.cpb_guard;
 	      ;
 		  }::sol,map)
 		r.cpb_guard ([],IntStringMap.empty) in 
-	    
 	    let control = 
 	      let context,uncontext = 
 		list_fold 
@@ -943,15 +943,15 @@ List.map (rename_test f) b)) r.cpb_guard;
 		let (solt,solf,sol) = 
 		  list_fold 
 		    (fun x (solt,solf,sol) ->
-		      match x with 
-			B(_),true -> BSet.add (fst x) solt,solf,x::sol 
-		      | B(_),false -> solt,BSet.add (fst x) solf, sol
+		       match x with 
+			   B(_),true -> BSet.add (fst x) solt,solf,x::sol 
+			 | B(_),false -> solt,BSet.add (fst x) solf, sol
 		      |  _ -> solt,solf,x::sol)
 		    context (BSet.empty,BSet.empty,[]) in
-		BSet.fold
-		  (fun x sol ->
-		    if BSet.mem x solt then sol else (x,false)::sol)
-		  solf sol in 
+		  BSet.fold
+		    (fun x sol ->
+		       if BSet.mem x solt then sol else (x,false)::sol)
+		    solf sol in 
 	      let bound_site = 
 		List.fold_left
 		  (fun set a -> 
