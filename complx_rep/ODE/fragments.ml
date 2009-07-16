@@ -19,7 +19,7 @@ let merge_debug = false
 let map_debug = false
 let complete_debug = false
 let split_debug = false
-let apply_blist_debug = false
+let apply_blist_debug = true
 let release_debug = false
 let get_denum_debug = false
 

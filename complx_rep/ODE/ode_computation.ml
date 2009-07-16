@@ -2319,11 +2319,15 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				       (fun a map -> 
 					 let sp = specie_of_id a in 
 					 let site1,site2 = sites_of_agent sp in 
+					 
 					 let f = 
 					   List.fold_left 
 					     (fun map site -> fadd a site map)
 					 in 
-					 f (f map site1) site2 )
+					   if site1=[] & site2 = [] 
+					then (print_string a;
+					   StringMap.add a StringSet.empty map)
+					else f (f map site1) site2 )
 				       removed_agents
 				       modagents 
 				   in 
@@ -2353,16 +2357,19 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					 let skeletons = 
 					   List.filter 
 					     (fun x -> 
+						StringSet.is_empty site_list or
+						  (
 					       not 
 						 (StringSet.is_empty
 						    (StringSet.inter 
 						       x.kept_sites 
-						       site_list)))
+						       site_list))))
 					     skeletons in
 					 skeletons
 					   )
 				       modagents 
 				   in 
+				   
 				   let map =
 				  (* Map agent ids to the set of template piece ids that are compatible with lhs and that intersect modified sites *)
 				     StringMap.mapi
