@@ -1232,16 +1232,16 @@ let apply_blist_with_species ode_handler data_structure keep_link rule_id  speci
   let update = RPathMap.empty in
   let get a modified  = 
     try 
-      RPathMap.find a modified
+      Some (RPathMap.find a modified)
     with 
       Not_found ->
 	try
 	  let tp_i = RPathMap.find a  species.subspecies_views in
 	  let view = view_of_tp_i tp_i data_structure.interface_map in
-	  (view.agent,view.valuation_map)  
+	    Some (view.agent,view.valuation_map)  
 
 	with 
-	  Not_found -> error 881 None 
+	    Not_found -> None
   in 
   (* deal with blist *)
    let update,subspecies = 
@@ -1250,7 +1250,11 @@ let apply_blist_with_species ode_handler data_structure keep_link rule_id  speci
 	 let f b rp  modified = 
 	   let b' = downgrade_b b in 
 	   let ((agent_type:string),
-		(v:'a BMap.t)) = get rp modified in 
+		(v:'a BMap.t)) = 
+	     match get rp modified with 
+	      None -> error 1255 (Some "update blist")
+	       |Some rep -> rep 
+	   in 
 	   let v' = BMap.add b' bool v in
 	   RPathMap.add 
 	     rp 
@@ -1275,7 +1279,11 @@ let apply_blist_with_species ode_handler data_structure keep_link rule_id  speci
 		       (build_empty_path agent_id)
 		       species.bonds_map)
 		in
-		let (agent_type',v') = get rp' modified in 
+		let (agent_type',v') = 
+		  match get rp' modified 
+		  with None -> error 1284 None 
+		    |Some a -> a 
+		in 
 		let modified  = f (B(agent_type,agent_type,site))  rp modified in
 		let modified = f (AL((agent_type,agent_type,site),(agent_type',site'))) rp modified in 
 		let modified = f (B(agent_type',agent_type',site')) rp' modified in
@@ -1310,16 +1318,19 @@ let apply_blist_with_species ode_handler data_structure keep_link rule_id  speci
      List.fold_left 
        (fun (update,subspecies) ((rp,a,s),(rp',s')) ->
 	 try 
-	   let agent_type,v = get rp' update in 
-	   let v' = BMap.add (B(agent_type,agent_type,s')) false v in 
-	   let v' = BMap.add (AL((agent_type,agent_type,s'),(a,s))) false v' in 
-	   RPathMap.add 
-	     rp' 
-	     (agent_type,v') 
-	     update,
-	   subspecies
+	   let rep = get rp' update in 
+	     match rep 
+	     with Some (agent_type,v) -> 
+	       let v' = BMap.add (B(agent_type,agent_type,s')) false v in 
+	       let v' = BMap.add (AL((agent_type,agent_type,s'),(a,s))) false v' in 
+		 RPathMap.add 
+		   rp' 
+		   (agent_type,v') 
+		   update,
+	       subspecies
+	       | None -> update,subspecies
 	 with 
-	   Not_found -> update,subspecies)
+	   Not_found  -> update,subspecies)
        (update,subspecies) free_sites 
    in 
    let stringblist (x,bmap) = 
