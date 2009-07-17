@@ -54,7 +54,7 @@ module Iterateur=
 	else 
 	  (fun x -> x) 
 
-      let  teste_rule pb case guard cm sb  f  = 
+      let  teste_rule pb case guard cm sb live_agents  f  = 
 	let cpb = 
 	  match pb.intermediate_encoding with 
 	    None -> error_frozen "line 59" "intermediar encoding is missing" "teste_rule" (fun () -> raise Exit)
@@ -101,14 +101,16 @@ module Iterateur=
 	  StringMap.fold 
 	    (fun a l sb' ->
 	      let ae'=AE.conj (StringMap.find a sb) (AE.list_conj l) in 
-	      if AE.is_bot ae' 
-	      then (raise Exit)
-	      else 
-		StringMap.add 
-		  a ae'
-		sb')
-	  sl sb))
-	    with Exit -> None
+		if not (StringSet.mem a live_agents)
+		then raise Exit 
+		else if AE.is_bot ae' 
+		then raise Exit
+		else 
+		  StringMap.add 
+		    a ae'
+		    sb')
+	    sl sb))
+	with Exit -> None
 
 
       let apply_control_list pb case control sb f  potential_binding = 
@@ -355,12 +357,14 @@ module Iterateur=
 	let control = case.control in 
 	let b_of_id = case.b_of_id in 
 	let a = instancie_rule case sb relation sp in 
-	match a with None -> (RuleIdListMap.add id None abstract_lens,(false,potential_binding),sb,live_agents)
+	match a 
+	with None -> 
+	  (RuleIdListMap.add id None abstract_lens,(false,potential_binding),sb,live_agents)
 	| Some a -> 
 	    let _ = trace_print "INSTANCIED3" in 
 	    let a = if !Config_complx.refine_after_instanciation then inv a (fun x -> x) else a in 
 	    let _ = trace_print "GUARD" in 
-	    let rep = (teste_rule pb case guard potential_binding  a  relation) in 
+	    let rep = (teste_rule pb case guard potential_binding  a live_agents   relation) in 
 	    let abstract_lens = RuleIdListMap.add id rep abstract_lens in 
 	    match rep
 	    with None -> (abstract_lens,(false,potential_binding),sb,live_agents)
