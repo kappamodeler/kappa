@@ -7,7 +7,7 @@ complx_light:
 shell:
 	make TKREP=light TKINCLUDES="" TK_CMXA="" KEY="without_key" interplx
 
-full: simplx_full complx_full metaplx_full
+full: simplx_full complx_full 
 
 simplx_full: 
 	make simplx TKREP=full TKINCLUDES="-I +labltk" TK_CMXA="labltk.cmxa jpflib.cmxa frxlib.cmxa -cclib -lpthread -cclib -lXau -cclib -lXdmcp" KEY="without_key"
