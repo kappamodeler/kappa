@@ -317,10 +317,10 @@ toplx: $(MLI) $(CMI) $(LIBSC_CMA) $(LIB_BYTE)
 %.cmx : %.ml 
 	$(OCAMLOPT) $(OCAMLFLAGS) -c $<
 
-install: bin/simplx bin/complx bin/metaplx
+install: bin/simplx bin/complx
 	sudo ln -sf $(PWD)/bin/* $(INSTALL_DIR) 
 
-install_in_local: bin/simplx bin/complx bin/metaplx 
+install_in_local: bin/simplx bin/complx
 	 ln -sf $(PWD)/bin/* $(LOCAL_DIR) 
 
 uninstall_of_local: clean
