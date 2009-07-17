@@ -862,7 +862,7 @@ module Compressor =
 		   let _ = print_opt "\n" in 
 		   let rule=a in 
 		   try (
-		     let f lid  = 
+		     let f lid ext = 
 		       try (
 			 let id,lid = 
 			   match lid with t::q -> t,q 
@@ -899,7 +899,7 @@ module Compressor =
 			   (match rule.flag with 
 			     None -> ()
 			   | Some s -> (print "'";
-					print "%s" s;
+					print "%s" (s^ext);
 					print "' ")) in 
 			   let _ = 
 			     List.iter (fun x -> print "%s" x) (List.rev b) in
@@ -909,8 +909,8 @@ module Compressor =
 			   print "\n";lid) 
 			 with Not_found -> (print_opt "Cannot be applied \n";let id,lid = List.hd lid,List.tl lid in   lid) in 
 		     ((let lid = 
-				    if a.dir = 1 then f lid else 
-				    (let lid = f lid in f lid) in aux q lid)))
+				    if a.dir = 1 then f lid "" else 
+				    (let lid = f lid "" in f lid "_op") in aux q lid)))
 				with _ -> 
 				  error_frozen "line 871" "" "do_it" (fun () -> raise Exit)
 				    )
