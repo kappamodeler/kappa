@@ -167,7 +167,7 @@ let print_ODE_plot pb channel =
   else 
     null 
 
-let print_ODE_system_matlab_data pb channel = 
+let print_ODE_system_octave_data pb channel = 
   if (!Config_complx.integrate_ODE)
   then 
     precomputed_data 
@@ -204,66 +204,66 @@ let print_ODE_system_mathematica pb channel =
   else
     null 
 
-let print_ODE_system_matlab pb channel = 
+let print_ODE_system_octave pb channel = 
   if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
-      (!Config_complx.output_ODE_matlab)
-      "Main file (matlab)"
+      (!Config_complx.output_ODE_octave)
+      "Main file (octave)"
   else
     null 
 
-let print_ODE_system_matlab_aux pb channel = 
+let print_ODE_system_octave_aux pb channel = 
   if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
-      (!Config_complx.output_ODE_matlab_aux)
-      "Equations (matlab)"
+      (!Config_complx.output_ODE_octave_aux)
+      "Equations (octave)"
   else
     null 
 
-let print_ODE_system_matlab_activity pb channel = 
+let print_ODE_system_octave_activity pb channel = 
   if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
-      (!Config_complx.output_ODE_matlab_activity)
-      "Rules activity (matlab)"
+      (!Config_complx.output_ODE_octave_activity)
+      "Rules activity (octave)"
   else
     null 
 
-let print_ODE_system_matlab_obs pb channel = 
+let print_ODE_system_octave_obs pb channel = 
   if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
-      (!Config_complx.output_ODE_matlab_obs)
-      "Observable activity (matlab)"
+      (!Config_complx.output_ODE_octave_obs)
+      "Observable activity (octave)"
   else
     null 
 
-let print_ODE_system_matlab_init pb channel = 
+let print_ODE_system_octave_init pb channel = 
   if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
-      (!Config_complx.output_ODE_matlab_init)
-      "Initial solution (matlab)"
+      (!Config_complx.output_ODE_octave_init)
+      "Initial solution (octave)"
   else
     null 
 
-let print_ODE_system_matlab_jacobian pb channel = 
+let print_ODE_system_octave_jacobian pb channel = 
   if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
-      (!Config_complx.output_ODE_matlab_jacobian)
-      "Jacobian (matlab)"
+      (!Config_complx.output_ODE_octave_jacobian)
+      "Jacobian (octave)"
   else
     null 
 
-let print_ODE_system_matlab_size pb channel = 
+let print_ODE_system_octave_size pb channel = 
   if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
   then 
     precomputed_data channel 
-      (!Config_complx.output_ODE_matlab_size)
-      "System size (matlab)"
+      (!Config_complx.output_ODE_octave_size)
+      "System size (octave)"
   else
     null 
 
@@ -434,18 +434,18 @@ let dump_html pb channel (l,m)  =
        [menutitle channel "Ordinary differential equations";
 	print_ODE_plot pb channel;
 	print_ODE_system_mathematica pb channel;
-	print_ODE_system_matlab_data pb channel;
-	print_ODE_system_matlab pb channel;
+	print_ODE_system_octave_data pb channel;
+	print_ODE_system_octave pb channel;
 	precomputed_data channel (!Config_complx.output_ODE_script)
 	  "script";
 	precomputed_data channel (!Config_complx.output_ODE_gplot)
 	  "gnuplot file";
-	print_ODE_system_matlab_aux pb channel;
-	print_ODE_system_matlab_jacobian pb channel;
-	print_ODE_system_matlab_activity pb channel;
-	print_ODE_system_matlab_obs pb channel;
-	print_ODE_system_matlab_init pb channel;
-	print_ODE_system_matlab_size pb channel]
+	print_ODE_system_octave_aux pb channel;
+	print_ODE_system_octave_jacobian pb channel;
+	print_ODE_system_octave_activity pb channel;
+	print_ODE_system_octave_obs pb channel;
+	print_ODE_system_octave_init pb channel;
+	print_ODE_system_octave_size pb channel]
       else 
 	[]))
   in 

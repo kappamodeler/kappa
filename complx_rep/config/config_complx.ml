@@ -167,13 +167,13 @@ let output_ODE_covering = ref ""
 let output_ODE_covering_latex = ref "" 
 let output_ODE_contact = ref ""
 let output_ODE_mathematica = ref ""
-let output_ODE_matlab_size = ref "" 
-let output_ODE_matlab = ref "" 
-let output_ODE_matlab_aux = ref ""
-let output_ODE_matlab_jacobian = ref "" 
-let output_ODE_matlab_activity = ref ""
-let output_ODE_matlab_obs = ref "" 
-let output_ODE_matlab_init = ref ""
+let output_ODE_octave_size = ref "" 
+let output_ODE_octave = ref "" 
+let output_ODE_octave_aux = ref ""
+let output_ODE_octave_jacobian = ref "" 
+let output_ODE_octave_activity = ref ""
+let output_ODE_octave_obs = ref "" 
+let output_ODE_octave_init = ref ""
 let output_ODE_alphabet = ref "" 
 let output_ODE_obs = ref ""
 let output_ODE_gplot = ref "" 
@@ -388,13 +388,13 @@ let options = List.rev
 "--output-ODE-latex","_plx_ODE_system.tex";
 "--output-ODE-contact","_plx_ODE_contact.dot";
 (*"--output-ODE-mathematica","_plx_ODE_system.nb";*)
-"--output-ODE-matlab-aux","_plx_ODE_system_aux.m";
-"--output-ODE-matlab-init","_plx_ODE_system_init.m";
-"--output-ODE-matlab-size","_plx_ODE_system_size.m";
-"--output-ODE-matlab-jacobian","_plx_ODE_system_jacobian.m";
-"--output-ODE-matlab-activity","_plx_ODE_system_activity.m";
-"--output-ODE-matlab-obs","_plx_ODE_system_obs.m";
-"--output-ODE-matlab","_plx_ODE_system.m";
+"--output-ODE-octave-aux","_plx_ODE_system_aux.m";
+"--output-ODE-octave-init","_plx_ODE_system_init.m";
+"--output-ODE-octave-size","_plx_ODE_system_size.m";
+"--output-ODE-octave-jacobian","_plx_ODE_system_jacobian.m";
+"--output-ODE-octave-activity","_plx_ODE_system_activity.m";
+"--output-ODE-octave-obs","_plx_ODE_system_obs.m";
+"--output-ODE-octave","_plx_ODE_system.m";
 "--output-ODE-alphabet","_plx_ODE_alphabet";
 "--output-ODE-covering","_plx_ODE_covering";
 "--output-ODE-covering-latex","_plx_ODE_covering.tex";
@@ -485,34 +485,34 @@ let options = List.rev
   String output_ODE_mathematica,
   "write the ODE system in a mathematica file",
   ["2_Output'";"ODE"],Normal;
-"--output-ODE-matlab",
-  String output_ODE_matlab,
-  "write the ODE system in a matlab file",
+"--output-ODE-octave",
+  String output_ODE_octave,
+  "write the ODE system in a octave file",
   ["2_Output'";"ODE"],Normal;
-"--output-ODE-matlab-activity",
-  String output_ODE_matlab_activity,
-  "write the activity of rules in a matlab file",
+"--output-ODE-octave-activity",
+  String output_ODE_octave_activity,
+  "write the activity of rules in a octave file",
   ["2_Output'";"ODE"],Normal;
-"--output-ODE-matlab-init",
-  String output_ODE_matlab_init,
-  "write the initial concentration of fragments in a matlab file",
+"--output-ODE-octave-init",
+  String output_ODE_octave_init,
+  "write the initial concentration of fragments in a octave file",
   ["2_Output'";"ODE"],Normal;    
-"--output-ODE-matlab-obs",
-  String output_ODE_matlab_obs,
-  "write the activity of observables in a matlab file",
+"--output-ODE-octave-obs",
+  String output_ODE_octave_obs,
+  "write the activity of observables in a octave file",
   ["2_Output'";"ODE"],Normal;
 
-"--output-ODE-matlab-aux",
-  String output_ODE_matlab_aux,
-  "write the ODE auxilliary functions in a matlab file",
+"--output-ODE-octave-aux",
+  String output_ODE_octave_aux,
+  "write the ODE auxilliary functions in a octave file",
       ["2_Output'";"ODE"],Normal;
-"--output-ODE-matlab-jacobian",
-      String output_ODE_matlab_jacobian,
-      "write the ODE jacobian  in a matlab file",
+"--output-ODE-octave-jacobian",
+      String output_ODE_octave_jacobian,
+      "write the ODE jacobian  in a octave file",
       ["2_Output'";"ODE"],Normal;
-"--output-ODE-matlab-size",
-  String output_ODE_matlab_size,
-  "write the dimmension of the ODE in a matlab file",
+"--output-ODE-octave-size",
+  String output_ODE_octave_size,
+  "write the dimmension of the ODE in a octave file",
   ["2_Output'";"ODE"],Normal;
 "--output-ODE-latex",
   String output_ODE_latex,
