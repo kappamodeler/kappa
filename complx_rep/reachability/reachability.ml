@@ -84,7 +84,7 @@ module Iterateur=
 			  let l' = (a,b)::l in 
 			  StringMap.add top l' sl)
 		    (l1@l2) sl | _ -> sl)
-	      | t,b  -> 
+		| t,b  -> 
 		  let l = list_b_g (t,b)   in 
 		  list_fold 
 			(fun (a,b) sl -> 
@@ -101,7 +101,14 @@ module Iterateur=
 	  StringMap.fold 
 	    (fun a l sb' ->
 	      let ae'=AE.conj (StringMap.find a sb) (AE.list_conj l) in 
-		if not (StringSet.mem a live_agents)
+		if 
+		  List.exists 
+		    (fun (b,bool) -> 
+		       match b,bool 
+		       with 
+			   H(_,a),true -> not (StringSet.mem a live_agents)
+			 | _ -> false)
+		    l 
 		then raise Exit 
 		else if AE.is_bot ae' 
 		then raise Exit
