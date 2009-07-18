@@ -172,13 +172,13 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
 	./$(COMPLXREP)/abstract_expr/partition.cmo \
 	./$(COMPLXREP)/backend/parse_comment/yacc.cmo \
 	./$(COMPLXREP)/backend/parse_comment/lexeur.cmo \
-	./$(COMPLXREP)/compressor/compressor.cmo \
 	./$(COMPLXREP)/reachability/contact_map.cmo \
 	./$(COMPLXREP)/reachability/reachability.cmo \
 	./$(COMPLXREP)/frontend/cbng_sig.cmo \
 	./$(COMPLXREP)/frontend/cbng.cmo \
 	./$(SIMPLXREP)/src/bnf/kappa_parse.cmo \
         ./$(SIMPLXREP)/src/bnf/kappa_lex.cmo \
+	./$(COMPLXREP)/compressor/compressor.cmo \
 	./$(COMPLXREP)/frontend/translate.cmo \
 	./$(COMPLXREP)/reachability/packing.cmo \
 	./$(COMPLXREP)/influence_map/quarkification.cmo \

@@ -563,3 +563,28 @@ let normalize_list l =
 	  
 	    
     
+let concat_list_string l = 
+  let size = 
+    List.fold_left 
+      (fun size s -> size+(String.length s))
+      0 l in 
+  let s = String.create size  in 
+  let rec vide pos l  = 
+    match l with [] -> ()
+      | t::q -> 
+	  let size = String.length t  in 
+	  let rec aux i pos  = 
+	    if i=size then pos
+	    else 
+	      let _ = 
+		String.set 
+		  s 
+		  pos 
+		  (String.get t i) in 
+		aux (i+1) (pos+1) 
+	  in 
+	  let pos = aux 0 pos 
+	  in 
+	    vide pos q 
+  in 
+  let _ = vide 0 l in s

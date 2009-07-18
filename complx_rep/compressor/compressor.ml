@@ -564,7 +564,7 @@ module Compressor =
 	 print_string "------------\n")
 	 ars 
 
-     let do_it fic fic2 mode auto pb  messages  =     
+     let do_it fic fic2 mode auto pb  (messages:string list)  =     
        let solstring = ref [] in 
        let is_access = 
 	 match pb.unreachable_rules with 
@@ -801,15 +801,15 @@ module Compressor =
 			       a2)) 
 		      (m1,m2,idl) l1))
 		 (RuleIdMap.empty,RuleIdMap.empty,[]) rep in 
-	     let rec aux cl lid = 
+	     let rec aux cl lid messages = 
                match cl with 
 		 [] -> ()
 	       | (Decl a)::q -> 
 		   (
 		   print "%s" a;
-		   print "\n";aux q lid )
+		   print "\n";aux q lid messages )
 	       | (Mutt a)::q -> 
-		   (print_opt a;print_opt "\n";aux q  lid)
+		   (print_opt a;print_opt "\n";aux q  lid messages)
 	       | (Rgl a)::q -> (
 		   let name = 
 		     try ( 
@@ -889,20 +889,61 @@ module Compressor =
 			       (print_opt !Config_complx.comment;
 				1)
 			     else 0 in 
-			   let _ = 
-			     try (print_opt 
-				    (String.make 
-				       (max 0 (oldflaglength - new_flaglength - step))
-				       ' '))
-			     with _ -> () in 	
-			   let _ = 
-			   (match rule.flag with 
-			     None -> ()
-			   | Some s -> (print "'";
-					print "%s" (s^ext);
-					print "' ")) in 
-			   let _ = 
-			     List.iter (fun x -> print "%s" x) (List.rev b) in
+			   let pref1  = 
+			     try  
+			       String.make 
+				 (max 0 (oldflaglength - new_flaglength - step))
+				 ' '
+			     with _ -> "" in 	
+			   let pref2  = 
+			     (match rule.flag with 
+				  None -> ""
+				| Some s -> ("'"^s^ext^"' "))
+			   in 
+
+			   let s = Tools.concat_list_string (List.rev b) in 
+			   let messages = 
+			     if 
+			       try 
+				 let _ = Kappa_lex.make_rule s in true 
+			       with 
+				   _ -> false 
+			     then 
+			       (print "%s%s%s" pref1 pref2 s;messages)
+			     else
+			       (let messages = 	("Compression result "^s^" "^(match rule.flag with None -> "" | Some s -> s^ext^" ")^"is not well-formed\n")::messages in 
+				let _ = print_opt !Config_complx.comment in 
+				let pref1 = 
+				  if String.length pref1 > 0 
+				  then 
+				    String.sub pref1 1 ((String.length pref1)-1)
+				  else 
+				    pref1 
+				in 
+				let _ = print "%s%s%s\n" pref1 pref2 s in 
+				let _ = print_opt !Config_complx.comment in 
+				let _ = print "Compression result is discarded because it is not well-formed\n"  in 
+				let _ = (if nspace=0 then print_opt " ") in 
+				let _ = 
+				  if ext = "" then 
+				    let _ = print_opt pref2 in 
+				    let _ = print_opt  rule.lhs in 
+				    let _ = print_opt  "->" in 
+				    let _ = print_opt  rule.rhs in 
+				    let _ = print_opt  rule.comments in 
+				    let _ = print_opt "\n" in () 
+				  else 
+				    let _ = print_opt pref2 in 
+				    let _ = print_opt  rule.rhs in 
+				    let _ = print_opt  "->" in 
+				    let _ = print_opt  rule.lhs in 
+				    let _ = print_opt  rule.comments in 
+				    let _ = print_opt "\n" in () 
+				in 
+				  messages)
+
+
+			   in 
 			   print_opt " ";
 			   print_opt !Config_complx.comment;
 			   print_opt  id.r_id;
@@ -910,7 +951,7 @@ module Compressor =
 			 with Not_found -> (print_opt "Cannot be applied \n";let id,lid = List.hd lid,List.tl lid in   lid) in 
 		     ((let lid = 
 				    if a.dir = 1 then f lid "" else 
-				    (let lid = f lid "" in f lid "_op") in aux q lid)))
+				    (let lid = f lid "" in f lid "_op") in aux q lid messages)))
 				with _ -> 
 				  error_frozen "line 871" "" "do_it" (fun () -> raise Exit)
 				    )
@@ -921,7 +962,7 @@ module Compressor =
 	         Some l -> l 
 	       | None -> [] in
 	     
-	     let _ = aux cl l  in 
+	     let _ = aux cl l messages  in 
 	     let _ = print_opt "\n" in 
 	     let _ = close_out output in 
 	     () end 
