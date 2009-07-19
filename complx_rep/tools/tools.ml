@@ -588,3 +588,81 @@ let concat_list_string l =
 	    vide pos q 
   in 
   let _ = vide 0 l in s
+
+let remove_kin s = 
+  try 
+    let size = String.length s in 
+    let rec vide k = 
+      if k>=size then s
+      else if String.get s k = '@'
+      then String.sub s 0 k 
+      else vide (k+1)
+    in 
+      vide 0 
+  with _ -> s
+
+let keep_first s = 
+ try 
+   let size = String.length s in 
+   let rec vide_a k = 
+     if k>=size then k
+     else
+       if String.get s k = '@'
+       then k 
+       else
+	 vide_a (k+1) 
+  in 
+   let beg = vide_a 0 in 
+   let rec vide_space k = 
+     if k>=size then k
+     else
+       if String.get s k = ' ' or String.get s k = '\t' or String.get s k = '\\'
+       then vide_space (k+1)
+       else k 
+   in
+  let middle = vide_space beg in 
+  let rec vide_virg k = 
+    if k>=size then k
+    else
+      if String.get s k = ','  
+      then k
+      else 
+	vide_virg (k+1) 
+  in 
+  let middle2 = vide_virg middle in 
+  let middle3 = vide_space middle2 in 
+    (String.sub s beg (middle2-beg))
+ with _ -> s 
+
+let keep_second s = 
+  try 
+    let size = String.length s in 
+    let rec vide_a k = 
+      if k>=size then k
+      else
+	if String.get s k = '@'
+	then k 
+	else
+	  vide_a (k+1) 
+    in 
+    let beg = vide_a 0 in 
+    let rec vide_space k = 
+    if k>=size then k
+    else
+      if String.get s k = ' ' or String.get s k = '\t' or String.get s k = '\\'
+      then vide_space (k+1)
+      else k 
+    in
+    let middle = vide_space beg in 
+    let rec vide_virg k = 
+      if k>=size then k
+      else
+      if String.get s k = ','  
+      then k
+      else 
+	vide_virg (k+1) 
+    in 
+    let middle2 = vide_virg middle in 
+    let middle3 = vide_space middle2 in 
+      (String.sub s beg 1)^(String.sub s (middle2+1) (size-2-middle2))
+  with _ -> s

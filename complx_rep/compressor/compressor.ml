@@ -904,6 +904,8 @@ module Compressor =
 			   let s = Tools.concat_list_string (List.rev b) in 
 			   let messages = 
 			     if 
+			       b = ["Cannot be applied"]
+			       or 
 			       try 
 				 let _ = Kappa_lex.make_rule s in true 
 			       with 
@@ -925,19 +927,24 @@ module Compressor =
 				let _ = print "Compression result is discarded because it is not well-formed\n"  in 
 				let _ = (if nspace=0 then print_opt " ") in 
 				let _ = 
+				  let lhs = rule.lhs in 
+				  let rhs = Tools.remove_kin rule.rhs in 
 				  if ext = "" then 
+				    let kin = Tools.keep_first rule.rhs in 
 				    let _ = print_opt pref2 in 
-				    let _ = print_opt  rule.lhs in 
+				    let _ = print_opt  lhs in 
 				    let _ = print_opt  "->" in 
-				    let _ = print_opt  rule.rhs in 
+				    let _ = print_opt  rhs in 
+				    let _ = print_opt kin in 
 				    let _ = print_opt  rule.comments in 
 				    let _ = print_opt "\n" in () 
 				  else 
 				    let _ = print_opt pref2 in 
-				    let _ = print_opt  rule.rhs in 
-				    let _ = print_opt  "->" in 
-				    let _ = print_opt  rule.lhs in 
-				    let _ = print_opt  rule.comments in 
+				    let _ = print_opt rhs in 
+				    let _ = print_opt "->" in 
+				    let _ = print_opt lhs in 
+				    let _ = print_opt (Tools.keep_second  rule.rhs) in 
+				    let _ = print_opt rule.comments in 
 				    let _ = print_opt "\n" in () 
 				in 
 				  messages)
