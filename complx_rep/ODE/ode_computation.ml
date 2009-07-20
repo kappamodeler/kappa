@@ -3562,14 +3562,18 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	 | None -> error 2809 )
     in
     let (init:expr Arraymap.t) = 
-      IntSet.fold 
-	(fun i map -> 
-	   try 
-	     let _ = Arraymap.find i map in map 
-	   with 
-	       Not_found -> Arraymap.add i (Const 0) map)
-	merge_prod 
-	init_expr 
+      let rec vide k sol = 
+	if k>size ()
+	then sol 
+	else 
+	  let _ = 
+	    try 
+	      let _ = Arraymap.find k sol in sol
+	    with 
+		Not_found -> Arraymap.add k (Const 0) sol
+	  in 
+	    vide (k+1) sol 
+      in vide 1 init_expr 
     in
     let l  = chrono (prefix',snd prefix)  "ODE computation" l in 
     let _ = 
