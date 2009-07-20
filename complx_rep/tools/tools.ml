@@ -611,8 +611,7 @@ let keep_first s =
        then k 
        else
 	 vide_a (k+1) 
-  in 
-   let beg = vide_a 0 in 
+   in 
    let rec vide_space k = 
      if k>=size then k
      else
@@ -620,18 +619,39 @@ let keep_first s =
        then vide_space (k+1)
        else k 
    in
-  let middle = vide_space beg in 
-  let rec vide_virg k = 
-    if k>=size then k
+   let rec vide_virg k = 
+     if k>=size then k
     else
       if String.get s k = ','  
       then k
       else 
 	vide_virg (k+1) 
   in 
-  let middle2 = vide_virg middle in 
-  let middle3 = vide_space middle2 in 
-    (String.sub s beg (middle2-beg))
+   let rec get_space k = 
+     if k>=size then k 
+     else 
+       if String.get s k = ' ' or String.get s k = '\t' or String.get s k = '\\' 
+       then k 
+       else 
+	 get_space (k+1) 
+   in 
+   let beg = vide_a 0 in 
+   let middle = vide_space (beg+1) in 
+   let middle2 = vide_virg middle in 
+   let middle3 = vide_space (middle2+1) in 
+   let middle4 = get_space middle3 in 
+   let _ = print_int beg in 
+   let _ = print_string " " in 
+   let _ = print_int middle in 
+   let _ = print_string " " in 
+   let _ = print_int middle2 in
+   let _ = print_string " " in 
+   let _ = print_int middle3 in
+   let _ = print_string " " in 
+   let _ = print_int middle4 in
+   let _ = print_string " " in 
+   let _ = print_newline () in 
+    (String.sub s beg (middle2-beg))^(String.sub s middle4 (size-middle4))
  with _ -> s 
 
 let keep_second s = 
@@ -653,7 +673,7 @@ let keep_second s =
       then vide_space (k+1)
       else k 
     in
-    let middle = vide_space beg in 
+    let middle = vide_space (beg+1) in 
     let rec vide_virg k = 
       if k>=size then k
       else
@@ -663,6 +683,6 @@ let keep_second s =
 	vide_virg (k+1) 
     in 
     let middle2 = vide_virg middle in 
-    let middle3 = vide_space middle2 in 
-      (String.sub s beg 1)^(String.sub s (middle2+1) (size-2-middle2))
+    let middle3 = vide_space (middle2+1) in 
+      (String.sub s beg 1)^(String.sub s (middle2+1) (size-1-middle2))
   with _ -> s
