@@ -652,7 +652,7 @@ let keep_first s =
    let _ = print_string " " in 
    let _ = print_newline () in 
     (String.sub s beg (middle2-beg))^(String.sub s middle4 (size-middle4))
- with _ -> s 
+ with _ -> ""
 
 let keep_second s = 
   try 
@@ -684,5 +684,5 @@ let keep_second s =
     in 
     let middle2 = vide_virg middle in 
     let middle3 = vide_space (middle2+1) in 
-      (String.sub s beg 1)^(String.sub s (middle2+1) (size-1-middle2))
-  with _ -> s
+            (String.sub s beg 1)^(String.sub s (middle2+1) (size-1-middle2))
+  with _ -> ""

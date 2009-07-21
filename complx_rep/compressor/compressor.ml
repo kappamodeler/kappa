@@ -927,25 +927,33 @@ module Compressor =
 				let _ = print "Compression result is discarded because it is not well-formed\n"  in 
 				let _ = (if nspace=0 then print_opt " ") in 
 				let _ = 
-				  let lhs = rule.lhs in 
-				  let rhs = Tools.remove_kin rule.rhs in 
-				  if ext = "" then 
-				    let kin = Tools.keep_first rule.rhs in 
+				  if rule.dir = 1 then 
 				    let _ = print_opt pref2 in 
-				    let _ = print_opt  lhs in 
+				    let _ = print_opt  rule.lhs in 
 				    let _ = print_opt  "->" in 
-				    let _ = print_opt  rhs in 
-				    let _ = print_opt kin in 
+				    let _ = print_opt  rule.rhs in 
 				    let _ = print_opt  rule.comments in 
 				    let _ = print_opt "\n" in () 
-				  else 
-				    let _ = print_opt pref2 in 
-				    let _ = print_opt rhs in 
-				    let _ = print_opt "->" in 
-				    let _ = print_opt lhs in 
-				    let _ = print_opt (Tools.keep_second  rule.rhs) in 
-				    let _ = print_opt rule.comments in 
-				    let _ = print_opt "\n" in () 
+				  else
+				    let lhs = rule.lhs in 
+				    let rhs = Tools.remove_kin rule.rhs in 
+				      if ext = "" then 
+					let kin = Tools.keep_first rule.rhs in 
+					let _ = print_opt pref2 in 
+					let _ = print_opt  lhs in 
+					let _ = print_opt  "->" in 
+					let _ = print_opt  rhs in 
+					let _ = print_opt kin in 
+					let _ = print_opt  rule.comments in 
+					let _ = print_opt "\n" in () 
+				      else 
+					let _ = print_opt pref2 in 
+					let _ = print_opt rhs in 
+					let _ = print_opt "->" in 
+					let _ = print_opt lhs in 
+					let _ = print_opt (Tools.keep_second  rule.rhs) in 
+					let _ = print_opt rule.comments in 
+					let _ = print_opt "\n" in () 
 				in 
 				  messages)
 
@@ -957,11 +965,11 @@ module Compressor =
 			   print "\n";lid) 
 			 with Not_found -> (print_opt "Cannot be applied \n";let id,lid = List.hd lid,List.tl lid in   lid) in 
 		     ((let lid = 
-				    if a.dir = 1 then f lid "" else 
-				    (let lid = f lid "" in f lid "_op") in aux q lid messages)))
-				with _ -> 
-				  error_frozen "line 871" "" "do_it" (fun () -> raise Exit)
-				    )
+			 if a.dir = 1 then f lid "" else 
+			   (let lid = f lid "" in f lid "_op") in aux q lid messages)))
+		   with _ -> 
+		     error_frozen "line 871" "" "do_it" (fun () -> raise Exit)
+		 )
 		     
 	     in 
 	     let cl =  
