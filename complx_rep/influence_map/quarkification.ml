@@ -25,6 +25,8 @@ let error_frozen (*i*) x (*t*) y =
       y
 
 type bound = UNKNOWN | BOUND | FREE | LINK of (int*string) | NONE
+  
+
 let upgrade b1 b2 = 
   match b1,b2 with 
     UNKNOWN,_ -> b2
@@ -170,10 +172,26 @@ let quarkify cpb contact rule =
 	    | Release ((a,s),(a',s')) -> 
 		let aid = specie a in
 		let aid' = specie a' in
-		  (QSet.add (QF(aid,s)) 
-		     (QSet.add (QF(aid',s')) mp),
-		   QSet.add (ql(aid,s,aid',s'))
-		      mn)
+		  
+		let mp = 
+		  if 
+		    (let q = get (a,s) map in 
+		       not (q = FREE))
+		  then
+		    QSet.add (QF(aid,s)) mp
+		  else 
+		    mp in 
+		let mp = 
+		  if 
+		    (let q = get (a',s') map in 
+		       (not (q=FREE)))
+		  then 
+		    QSet.add (QF(aid',s')) mp
+		  else
+		    mp
+		in 
+		  mp,
+		QSet.add (ql(aid,s,aid',s')) mn
 	    | Break_half (a,s) -> (
 		let aid = specie a in
 		let q = get (a,s) map in
@@ -201,19 +219,6 @@ let quarkify cpb contact rule =
 	    | Check _ | Check_choice _  -> (mp,mn))
 	  (QSet.empty,QSet.empty) control.cpb_update
           in
-(*      let mod_pos = 
-	QSet.fold 
-	  (fun q sol -> 
-	     match q with 
-		 QL(a,s,a',s') -> 
-		   QSet.remove 
-		     (QF(a,s))
-		     (QSet.remove 
-			(QF(a',s'))
-			sol)
-	       | _ -> sol)
-	  mod_pos mod_pos 
-      in *)
       let mod_pos,mod_neg = 
 	IntSet.fold 
 	  (fun a (mp,mn) ->
