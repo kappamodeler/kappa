@@ -201,7 +201,7 @@ let quarkify cpb contact rule =
 	    | Check _ | Check_choice _  -> (mp,mn))
 	  (QSet.empty,QSet.empty) control.cpb_update
           in
-      let mod_pos = 
+(*      let mod_pos = 
 	QSet.fold 
 	  (fun q sol -> 
 	     match q with 
@@ -213,7 +213,7 @@ let quarkify cpb contact rule =
 			sol)
 	       | _ -> sol)
 	  mod_pos mod_pos 
-      in 
+      in *)
       let mod_pos,mod_neg = 
 	IntSet.fold 
 	  (fun a (mp,mn) ->
