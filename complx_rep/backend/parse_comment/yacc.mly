@@ -50,6 +50,7 @@ Comment_rule :
 Line :
   D EOL {let _ = succ () in Decl($1)}
 | C EOL {let _ = succ () in Mutt($1)}
+| Ident C EOL {let _ = succ() in Mutt($1^$2)}
 | Comment_rule EOL {let _ = succ () in Rgl($1)}
 | EOL {let _ = succ () in Mutt("")}
 
