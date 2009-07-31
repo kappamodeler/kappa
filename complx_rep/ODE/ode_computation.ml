@@ -1831,7 +1831,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					   else sol
 				       | _ -> sol) 
 				  [] 
-				  context_update 
+				  (List.rev context_update) 
 			      in
 			      let _ = dump_line 1776 in 
 			      let rep = 
