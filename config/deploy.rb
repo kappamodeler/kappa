@@ -1,32 +1,42 @@
-set :application, "set your application name here"
-set :repository,  "set your repository location here"
+require 'active_support'
+require 'config/management'
+load File.expand_path(File.dirname(__FILE__) + '/recipes/support/group.rb')
+load File.expand_path(File.dirname(__FILE__) + '/recipes/support/base.rb')
+load File.expand_path(File.dirname(__FILE__) + '/recipes/support/config.rb')
+load File.expand_path(File.dirname(__FILE__) + '/recipes/support/s3util.rb')
 
-# If you have previously been relying upon the code to start, stop 
-# and restart your mongrel application, or if you rely on the database
-# migration code, please uncomment the lines you require below
+set :application, "plx_engine"
+set :deploy_to,   "/var/app/plx_engine"
+set :repository,  "git@git.plectix.com:plx_engine.git"
 
-# If you are deploying a rails app you probably need these:
+namespace :deploy do
 
-# load 'ext/rails-database-migrations.rb'
-# load 'ext/rails-shared-directories.rb'
+  task :update_revision do
+    run "echo '#{branch}' >> #{current_path}/REVISION"
+  end
 
-# There are also new utility libaries shipped with the core these 
-# include the following, please see individual files for more
-# documentation, or run `cap -vT` with the following lines commented
-# out to see what they make available.
+  task :restart do
+  end
 
-# load 'ext/spinner.rb'              # Designed for use with script/spin
-# load 'ext/passenger-mod-rails.rb'  # Restart task for use with mod_rails
-# load 'ext/web-disable-enable.rb'   # Gives you web:disable and web:enable
+  task :stop do
+  end
 
-# If you aren't deploying to /u/apps/#{application} on the target
-# servers (which is the default), you can specify the actual location
-# via the :deploy_to variable:
-# set :deploy_to, "/var/www/#{application}"
+  task :start do
+  end
 
-# If you aren't using Subversion to manage your source code, specify
-# your SCM below:
-# set :scm, :subversion
-# see a full list by running "gem contents capistrano | grep 'scm/'"
+  task :compile do
+    run "cd #{release_path} && make" do |ch,stream,text|
+      #ch[:state] ||= {}
+      #ch.send_data("t\n")
+    end
+  end
 
-role :web, "your web-server here"
+end
+
+#
+# ===================================================================
+before "deploy:setup",   "deploy:setup_var_app"
+
+after "deploy",  "deploy:compile"
+after "deploy",  "deploy:update_revision"
+
