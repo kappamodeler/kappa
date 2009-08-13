@@ -33,11 +33,11 @@ SIMPLXREP?=simplx_rep
 COMPLXREP?=complx_rep
 INTERPLXREP?=interplx_rep
 
-BIN = bin
+BIN = ./bin
 KEY?=without_key
 
 $(BIN): 
-	mkdir bin
+	mkdir ./bin
 
 $(SIMPLXREP)/lib:
 	mkdir $(SIMPLXREP)/lib 
