@@ -51,7 +51,7 @@ let scan_views_in_species = F.scan_views_in_species
 let plug_views_in_subspecies = F.plug_views_in_subspecies
 let split_tp_list = F.split_subspecies 
 let get_views_from_agent_id = F.get_views_from_agent_id 
-let get_neighbour = F.get_neighbour 
+(*let get_neighbour = F.get_neighbour *)
 let build_species = F.build_species  
 let apply_blist_with_species = F.apply_blist_with_species
 let remove_agent_in_species = F.remove_agent_in_species 
@@ -2239,9 +2239,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 								 (AL((d,e,f),(g,h)),true) when d=a && e=a' && f=b' -> 
 								   if keep_this_link (e,f) (g,h) 
 								   then 
-								     let target_id = 
-								       try get_neighbour t (a,b') g 
-								       with _ -> "" in 
+								     let target_id = d in 
+(*								       try get_neighbour t (a,b') g 
+								       with _ -> (print_string "ERROR";print_newline ();"") in *)
 								     Some((Some target_id),g,h)
 								   else
 								     Some(None,g,h)
@@ -2266,11 +2266,12 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 						 match target_id with 
 						   None -> error 1297
 						 |	Some target_id -> 
-						     ((AL((target_id,target_type,target_site),(a',b')),false))::
+						     (*((AL((target_id,target_type,target_site),(a',b')),false))::
 						     (AL((a,a',b'),(target_type,target_site)),false)::
-						     (B(target_id,target_type,target_site),false)::
-						     context_update
-						       ,res,target_id::solid_half
+						     (B(target_id,target_type,target_site),false)::*)
+							  (B(a,a',b'),false)::
+							    context_update
+							    ,res,target_id::solid_half
 					       end
 					  else
 					       ((AL((a,a',b'),(target_type,target_site)),false)::

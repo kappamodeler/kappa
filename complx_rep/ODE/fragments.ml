@@ -1445,7 +1445,7 @@ let build_species agent_of_views view_map extension =
   in
   species 
 
-let get_neighbour species (agent_id,site) agent_type' = 
+(*let get_neighbour species (agent_id,site) agent_type' = 
   try 
     let (rp',s') = 
       SitetypeMap.find 
@@ -1461,7 +1461,7 @@ let get_neighbour species (agent_id,site) agent_type' =
   with 
     Not_found -> 
       error 1069 None 
-    
+*)  
 
 
 let add_bond_to_subspecies sp (a,s) (a',s') = 

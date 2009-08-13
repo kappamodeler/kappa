@@ -81,7 +81,7 @@ module type Fragments =
 
       val get_views_from_agent_id: (views_id -> 'a views) -> string -> string -> subspecies -> (views_id * 'a views) option
 
-      val get_neighbour: subspecies -> (string*string) -> string -> string 
+(*      val get_neighbour: subspecies -> (string*string) -> string -> string *)
 
       val build_species: (views_id -> string) -> views_id Pb_sig.StringMap.t -> ((string*((string*string)*(string*string))list)*views_id) list -> subspecies
 
