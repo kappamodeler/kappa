@@ -8,6 +8,7 @@ open Error_handler
 let error i y = 
   unsafe_frozen 
     None
+    (Some "Complx")
     (Some "count_isomorphism.ml")
     None
     (Some i)

@@ -22,6 +22,7 @@ module H = Hash.HInit
 let error i x t y = 
     unsafe
       (Some x) 
+      (Some "Complx")
       (Some "bdd.ml") 
       (Some t) 
       (Some i) 
@@ -1085,6 +1086,7 @@ module BddBool =
 	with Not_found -> 
 	  unsafe_frozen 
 	    (None) 
+	    (Some "Complx")
 	    (Some "bdd.ml") 
 	    (Some "resotre_views") 
 	    (Some "line 1069")   

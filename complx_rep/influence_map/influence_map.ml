@@ -34,7 +34,7 @@ let compute_influence_map (pb:'a Pb_sig.cpb) =
 	       let quarks = 
 		 match rc.cpb_quarks with 
 		     Some a -> a
-		   | _ -> frozen_unsafe (Some "Quarks are missing") (Some "influence_map.ml") (Some "compute_influence_map") (Some "line 37")  (fun () -> raise Exit) in 
+		   | _ -> frozen_unsafe (Some "Quarks are missing") (Some "Complx") (Some "influence_map.ml") (Some "compute_influence_map") (Some "line 37")  (fun () -> raise Exit) in 
                let idlist = 
 		 List.fold_left 
 		   (fun sol (a,_,_) -> 

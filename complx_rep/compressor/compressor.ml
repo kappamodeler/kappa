@@ -24,6 +24,7 @@ let access4 = true
 let error i x t y = 
     unsafe
       (Some x) 
+      (Some "Complx")
       (Some "compressor.ml") 
       (Some t) 
       (Some i) 
@@ -32,6 +33,7 @@ let error i x t y =
 let error_frozen i x t y = 
     unsafe_frozen
       (Some x) 
+      (Some "Complx")
       (Some "compressor.ml") 
       (Some t) 
       (Some i) 

@@ -20,7 +20,7 @@ type compression_mode = Compressed | Flat | Approximated
 
 
 let error i = 
-  unsafe_frozen None (Some "Annotated_contact_map.ml") None (Some ("line "^(string_of_int i))) (fun () -> raise Exit)
+  unsafe_frozen None (Some "Complx") (Some "Annotated_contact_map.ml") None (Some ("line "^(string_of_int i))) (fun () -> raise Exit)
 
 
 let keep_this_link (a,b) (c,d) skeleton = 

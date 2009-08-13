@@ -235,5 +235,5 @@ module RoughBool =
        let restore_subviews a = 
 	 try 
 	   KeyMap.find Void a 
-	 with Not_found -> unsafe_frozen (Some "ROUGH") (Some "Rough.ml") (Some "restore_subviews") (Some "line:237")  (fun () -> raise Exit)
+	 with Not_found -> unsafe_frozen (Some "ROUGH") (Some "Complx") (Some "Rough.ml") (Some "restore_subviews") (Some "line:237")  (fun () -> raise Exit)
 	   end:AbstractExprBool))

@@ -157,6 +157,7 @@ let store_options () =
 let error i x t y = 
     unsafe
       (Some x) 
+      (Some "Complx")
       (Some "pipeline.ml") 
       (Some t) 
       (Some i) 
@@ -165,6 +166,7 @@ let error i x t y =
 let error_frozen i x t y = 
     unsafe_frozen
       (Some x) 
+      (Some "Complx")
       (Some "pipeline.ml") 
       (Some t) 
       (Some i)
@@ -433,10 +435,16 @@ module Pipeline =
        and get_first_encoding interface prefix pb log = 
 	 let pb,log = translate interface prefix pb log in
 	 match pb 
-	 with None -> frozen_error "line 291" "translate has failed" "get_first_encoding" (fun () -> raise Exit)
+	 with None -> 
+	   frozen_error 
+	     "line 291" 
+	      
+	     "translate has failed" 
+	     "get_first_encoding"
+	     (fun () -> raise Exit)
 	 | Some rep -> 
 	     (match rep.first_encoding with
-	       None ->frozen_error "line 294" "first encoding has failed" "get_first_encoding" (fun () -> raise Exit)
+	       None ->frozen_error "line 294"  "first encoding has failed" "get_first_encoding" (fun () -> raise Exit)
 	     | Some a -> pb,log,a )
 
        and smash_rule_system interface prefix pb (l,m) =
@@ -479,7 +487,7 @@ module Pipeline =
 		    let pb = Some {rep0 with intermediate_encoding  = Some cpb} in 
 		      pb,(l,m)))
        and get_smashed interface prefix pb log =
-	 let error i  = frozen_error i "Quotiented system cannot be built" "get_smashed" (fun () -> raise Exit) in
+	 let error i  = frozen_error i  "Quotiented system cannot be built" "get_smashed" (fun () -> raise Exit) in
 	 let pb,log  = smash_rule_system interface prefix pb log in 
 	 match pb with None -> error "line 341"
 	 | Some rep0 -> 
@@ -489,7 +497,7 @@ module Pipeline =
 	     | Some rep -> pb,log,rep
 		   )
        and get_no_smashed interface prefix pb log = 
-	 let error i  = frozen_error i "Renaming cannot be built" "get_no_smashed" (fun () -> raise Exit) in
+	 let error i  = frozen_error i  "Renaming cannot be built" "get_no_smashed" (fun () -> raise Exit) in
 	 let pb,log  = no_smash_rule_system interface prefix pb log in 
 	 match pb with None -> error "line 351"
 	 | Some rep0 -> 
@@ -552,11 +560,11 @@ module Pipeline =
 	   None -> 
 	     (let pb0',log' = compile interface Unsmashed prefix (Some pb) log in 
 	     match pb0'
-	     with None -> frozen_error "line 410" "Boolean encoding cannot be built" "get_boolean_encoding" (fun () -> raise Exit)
+	     with None -> frozen_error "line 410"  "Boolean encoding cannot be built" "get_boolean_encoding" (fun () -> raise Exit)
 	     | Some pb' -> (
 		 match pb'.boolean_encoding with 
 		   Some a -> pb',log',a
-		 | None -> frozen_error "line 414" "Boolean encoding cannot be built" "get_boolean_encoding" (fun () -> raise Exit)))
+		 | None -> frozen_error "line 414"  "Boolean encoding cannot be built" "get_boolean_encoding" (fun () -> raise Exit)))
 	 | Some a -> pb,log,a 
        and get_gathered_boolean_encoding interface prefix pb log = 
 	 let _ = add_suffix prefix "get_gathered_boolean_encoding"in
@@ -564,11 +572,11 @@ module Pipeline =
 	   None -> 
 	     (let pb0',log' = compile interface Smashed prefix (Some pb) log in 
 	     match pb0'
-	     with None -> frozen_error "line 422" "Boolean encoding cannot be built" "get_gathered_boolean_encoding" (fun () -> raise Exit)
+	     with None -> frozen_error "line 422"  "Boolean encoding cannot be built" "get_gathered_boolean_encoding" (fun () -> raise Exit)
 	     | Some pb' -> (
 		 match pb'.gathered_boolean_encoding with 
 		   Some a -> pb',log',a
-		 | None -> frozen_error "line 426" "Boolean encoding cannot be built" "get_gathered_boolean_encoding"  (fun () -> raise Exit)))
+		 | None -> frozen_error "line 426"  "Boolean encoding cannot be built" "get_gathered_boolean_encoding" (fun () -> raise Exit)))
 	 | Some a -> pb,log,a 
        and get_intermediate_encoding interface prefix pb log = 
 	 let _ =add_suffix prefix "get_intermediate_encoding" in
@@ -577,12 +585,12 @@ module Pipeline =
 	     let pb',log' = compile interface Unsmashed prefix (Some pb) log in 
 	     	     
 	     (match pb' 
-	     with None -> frozen_error "line 435" "Intermediate encoding cannot be built" "get_intermediate_encoding" (fun () -> raise Exit)
+	     with None -> frozen_error "line 435"  "Intermediate encoding cannot be built" "get_intermediate_encoding" (fun () -> raise Exit)
 	     |Some pb' -> 
 		 (
 		 match pb'.intermediate_encoding 
 		 with Some a -> pb',log',a
-		 |  None -> frozen_error "line 440" "Intermediate encoding cannot be built" "get_intermediate_encoding" (fun () -> raise Exit)))
+		 |  None -> frozen_error "line 440"  "Intermediate encoding cannot be built" "get_intermediate_encoding" (fun () -> raise Exit)))
 	 | Some a -> pb,log,a
        and convert_contact prefix rep (l,m) = 
 	 let prefix' = add_suffix prefix "convert_contact" in 
@@ -643,8 +651,8 @@ module Pipeline =
 		       error_frozen 
 			 "line 505" 
 			 "Syntactic contact map is missing"
-			 "build_drawers" 
-			 			 (fun _ -> raise Exit)),(l,m) 
+			 "build_drawers"
+			 (fun _ -> raise Exit)),(l,m) 
 		 | Some a -> rep',
 		     String2Map.map 
 		       (List.map (fun (a,b,c) -> (a,c)))
@@ -700,12 +708,12 @@ module Pipeline =
 	   None -> 
 	     let pb',log' = build_contact High prefix (Some pb) log in 
 	     (match pb' with 
-	       None -> frozen_error "line 530" "contact map cannot be built" "get_high_res_contact_map"  (fun () -> raise Exit)
+	       None -> frozen_error "line 530"  "contact map cannot be built" "get_high_res_contact_map"  (fun () -> raise Exit)
 	     | Some a -> 
 		 a,log',
 		 (match a.contact_map 
 		 with Some a -> a
-		 |  None -> frozen_error "line 535" "contact_map cannot be built" "get_high_res_contact_map" (fun () -> raise Exit)))
+		 |  None -> frozen_error "line 535"  "contact_map cannot be built" "get_high_res_contact_map" (fun () -> raise Exit)))
 	 | Some a -> pb,log,a
        and get_low_res_contact_map prefix pb log = 
 	 let pb,log,cpb = get_intermediate_encoding None (add_suffix prefix "get_low_res_contact_map") pb log in
@@ -724,7 +732,7 @@ module Pipeline =
 	   None -> 
 	     let pb',log',contact = get_low_res_contact_map prefix pb log in
 	     (match contact with 
-	       None -> frozen_error "line 530" "contact map cannot be built" "get_best_res_contact_map"  (fun () -> raise Exit)
+	       None -> frozen_error "line 530"  "contact map cannot be built" "get_best_res_contact_map"  (fun () -> raise Exit)
 	     | Some a -> pb,log,convert_low_in_high a)
 		 	
 	 | Some a -> pb,log,a
@@ -1067,8 +1075,9 @@ module Pipeline =
 				       sol a)
 				   sol rc.cpb_guard)
 			       IntMap.empty cpb.cpb_rules in
-			   (fun x -> try (IntMap.find x map) with _ -> 
-			     frozen_error "line 893" "" "build_influence_map"  (fun () -> raise Exit)) 
+			   (fun x -> 
+			      try (IntMap.find x map) with _ -> 
+				frozen_error "line 893"  "" "build_influence_map"  (fun () -> raise Exit)) 
 			 in
 			 let _ = 
 			   Tools2.log_in_file file 
@@ -1159,7 +1168,7 @@ module Pipeline =
 		 let pb,(l,m),_ = get_boolean_encoding None prefix'  pb' (l,m) in 
 		 pb,(l,m)
 	     |  _ -> 
-	   frozen_error "line 936" "Unknown compression mode" "build_compression" (fun () -> raise Exit) in 
+	   frozen_error "line 936"  "Unknown compression mode" "build_compression" (fun () -> raise Exit) in 
 	   (
 	       let pb',(l,m),auto = get_auto prefix' pb' (l,m) in 
 	       let auto x = 
@@ -1199,7 +1208,7 @@ module Pipeline =
 		   let _ = print_option prefix (Some stdout) "Counting complexes\n" in
 		   let rep3,(l,m) = build_pieces prefix' (Some pb') (l,m) in 
 		   let n = 
-		     match rep3 with None -> frozen_error "line 971" "Cannot build pieces" "count_complexe" (fun () -> raise Exit) | Some rep3 -> count rep3 in 
+		     match rep3 with None -> frozen_error "line 971"  "Cannot build pieces" "count_complexe" (fun () -> raise Exit) | Some rep3 -> count rep3 in 
 		   let l = chrono prefix "Counting complexes" l in
 		   Some {pb' with n_complex = n},(l,m)
 		 else
@@ -1230,7 +1239,7 @@ module Pipeline =
 	       let rep3,(l,m) = build_pieces prefix' (Some pb') (l,m) in 
 	       let rep3 = 
 		 match rep3 with 
-		   None -> frozen_error "line 1001" "cannot build pieces" "build_ennumeration" (fun () -> raise Exit) 
+		   None -> frozen_error "line 1001"  "cannot build pieces" "build_ennumeration" (fun () -> raise Exit) 
 		 | Some rep3 -> rep3 in
 	       let n,l  =   if Acyclicity.is_acyclic pb' then 
 		 count rep3,chrono prefix "Complex counting" l  else Some Unbounded,l in 
@@ -1341,7 +1350,7 @@ module Pipeline =
 			 (l,m) in 
 		     let boolean_encoding = 
 		       match pb'.boolean_encoding 
-		       with None -> error "line 1099" "Cannot build boolean encoding" "refine_system_to_avoid_polymeres" (raise Exit)
+		       with None -> error "line 1099"  "Cannot build boolean encoding" "refine_system_to_avoid_polymeres" (raise Exit)
 		       | Some boolean_encoding -> boolean_encoding in
 		     let rule_system = boolean_encoding.system in 
 		     (Some rule_system),(l,m) 
@@ -1376,12 +1385,12 @@ module Pipeline =
 	     let pb2,(l,m)  = count_automorphisms prefix' (Some pb) (l,m) in 
 	     begin 
 	       match pb2 with 
-		 None -> error "line 1268" "cannot count automorphisms" "" (raise Exit)
+		 None -> error "line 1268"  "cannot count automorphisms" "" (raise Exit)
 	       | Some pb2 -> 
 		   begin
 		     match pb2.automorphisms 
 		     with 
-		       None -> error "line 1273" "Cannot count automorphisms" "" (raise Exit)
+		       None -> error "line 1273"  "Cannot count automorphisms" "" (raise Exit)
 		     | Some a -> pb2,(l,m),a
 		   end
 	     end

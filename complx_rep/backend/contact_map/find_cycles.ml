@@ -10,7 +10,7 @@ let algo = Warshall
 
 let debug = false 
 let exit i = 
-  frozen_unsafe None (Some "find_cycles.ml") None  (Some (string_of_int i)) (fun () -> raise Exit) 
+  frozen_unsafe None (Some "Complx") (Some "find_cycles.ml") None  (Some (string_of_int i)) (fun () -> raise Exit) 
 
 type io = IN of (string*string) | OUT of (string*string)
 module IoMap = Map2.Make (struct type t = io let compare = compare end)

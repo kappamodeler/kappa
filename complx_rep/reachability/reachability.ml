@@ -18,6 +18,7 @@ let smart_lens = true
 let error i x t y = 
     unsafe
       (Some x) 
+      (Some "Complx")
       (Some "reachability.ml") 
       (Some t) 
       (Some i) 
@@ -26,6 +27,7 @@ let error i x t y =
 let error_frozen i x t y = 
     unsafe_frozen
       (Some x) 
+      (Some "Complx")
       (Some "reachability.ml") 
       (Some t) 
       (Some i) 

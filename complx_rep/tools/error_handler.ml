@@ -170,19 +170,19 @@ let set a b =
   match a with None -> ()
   | Some a -> b a 
 
-let warn_message warn module_n  function_n k  = 
-  (*let _ = set "Complx" set_application *)
+let warn_message warn engine_n module_n  function_n k  = 
+  let _ = set engine_n set_app in 
   let _ = set warn set_message in 
   let _ = set function_n set_function_name in
   let _ = set module_n set_file_name in
   let _ = set k set_key in
   ()
 
-let unsafe warn module_name function_name key x  = 
-   warn_message warn module_name function_name key ;
+let unsafe warn engine_n module_name function_name key x  = 
+   warn_message warn engine_n module_name function_name key ;
    if !Config_complx.unsafe_mode then x else raise Exit 
 
-let frozen_unsafe warn module_name function_name key x = 
+let frozen_unsafe warn engine_n module_name function_name key x = 
   warn_message warn module_name function_name key ;
   if !Config_complx.unsafe_mode then x () else raise Exit 
 

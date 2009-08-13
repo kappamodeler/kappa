@@ -6,6 +6,7 @@ open Error_handler
 let error i j = 
   unsafe_frozen 
     (Some ("line "^(string_of_int i)))
+    (Some "Complx")
     None
     None
     None 

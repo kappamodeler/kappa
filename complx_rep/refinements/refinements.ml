@@ -5,7 +5,7 @@ open Error_handler
 
 
 let error i s = 
-  unsafe_frozen None (Some "refinements.ml") s (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
+  unsafe_frozen None (Some "Complx") (Some "refinements.ml") s (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
 
 let compare_guard a b =
   try 

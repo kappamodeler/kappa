@@ -24,7 +24,7 @@ let release_debug = false
 let get_denum_debug = true 
 
 let error i s = 
-  unsafe_frozen None (Some "fragments.ml") s (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
+  unsafe_frozen None (Some "Complx")  (Some "fragments.ml") s (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
 
 module New_Fragment = 
   (struct

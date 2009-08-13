@@ -20,7 +20,7 @@ let print_debug =
   if debug then print_string else (fun x -> ())
 
 let error i = 
-  unsafe_frozen None (Some "views.ml") None (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
+  unsafe_frozen None (Some "Complx") (Some "views.ml") None (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
 
 
 type ('bdd,'var,'sb,'expr,'pb,'export,'restore) ode_handler = 

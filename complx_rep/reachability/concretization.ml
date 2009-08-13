@@ -192,6 +192,7 @@ let get_gspecies prelist pb  messages =
   let error i x t y = 
     unsafe 
       (Some x) 
+      (Some "Complx")
       (Some "concretization.ml") 
       (Some t) 
       (Some i) 

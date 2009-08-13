@@ -32,7 +32,7 @@ let smaller k k' =
 
 
 let error i = 
-  unsafe_frozen None (Some "avoid_polyme.ml") (Some ("line  "^(string_of_int i))) None  (fun _ -> raise Exit)
+  unsafe_frozen None (Some "Complx") (Some "avoid_polyme.ml") (Some ("line  "^(string_of_int i))) None  (fun _ -> raise Exit)
 
 type mode = Warn | Refine_with_constrains | Refine_without_constrains  
 

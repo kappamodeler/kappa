@@ -13,6 +13,7 @@ open Error_handler
 let error  x  y = 
     unsafe
       (Some x) 
+      (Some "Complx")
       (Some "cbng.ml") 
       None (*(Some t)*) 
       None (*(Some i)*) 
@@ -21,6 +22,7 @@ let error  x  y =
 let error_frozen (*i*) x (*t*) y = 
     unsafe_frozen
       (Some x) 
+      (Some "Complx")
       (Some "cbng.ml") 
       None (*(Some t)*) 
       None (*(Some i)*) 
