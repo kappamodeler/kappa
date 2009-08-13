@@ -33,11 +33,14 @@ SIMPLXREP?=simplx_rep
 COMPLXREP?=complx_rep
 INTERPLXREP?=interplx_rep
 
-BIN = ./bin
+BIN = bin
 KEY?=without_key
 
-$(BIN): bin/
+$(BIN): 
 	mkdir bin
+
+$(SIMPLXREP)/lib:
+	mkdir $(SIMPLXREP)/lib 
 
 OCAMLC=		$(OCAMLPREFIX)ocamlc
 OCAMLCI=	$(OCAMLPREFIX)ocamlc
@@ -262,15 +265,15 @@ byte :  $(MLI) $(CMI) $(LIBSC_CMA) $(LIB_BYTE) $(SIMPLX_MAIN) $(BIN)
 dep :  
 	ocamldep $(OCAMLINCLUDES) $(MLFILES)
 
-$(SIMPLX_OUT).cmxa: $(MLI) $(CMI) $(LIBSC_CMXA) $(NATIVE_OBJS) 
+$(SIMPLX_OUT).cmxa: $(MLI) $(CMI) $(LIBSC_CMXA) $(NATIVE_OBJS)  $(SIMPLXREP)/lib
 	$(OCAMLOPT) $(OCAMLFLAGS) -a $(NATIVE_OBJS)  -o $(SIMPLXREP)/lib/$(SIMPLX_OUT).cmxa
 
-$(SIMPLX_OUT).cma: $(MLI) $(CMI) $(LIBSC_CMA) $(OBJS)	
+$(SIMPLX_OUT).cma: $(MLI) $(CMI) $(LIBSC_CMA) $(OBJS) $(LIB) $(SIMPLXREP)/lib 
 	$(OCAMLC) $(OCAMLFLAGS) -a $(OBJS) -o $(SIMPLXREP)/lib/$(SIMPLX_OUT).cma
 
 LINE = $(OCAMLOPT) $(OCAMLFLAGS) $(TKINCLUDES) $(CMXA) $(TK_CMXA) $(LIBSC_CMXA)  $(NATIVE_OBJS) 
 
-complx: $(LIBSC_CMXA) $(NATIVE_OBJS) $(COMPLX_MAIN)
+complx: $(LIBSC_CMXA) $(NATIVE_OBJS) $(COMPLX_MAIN) $(BIN)
 	$(LINE) $(COMPLX_MAIN) -o $(BIN)/$(COMPLX_OUT)
 
 toplevel: $(MLI) $(CMI) $(LIBSC_CMA) $(LIB_BYTE)
