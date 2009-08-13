@@ -32,7 +32,9 @@ let string_of_exn x =
   | Error.Found s -> "Error.Found "^s
   | Error.Too_expensive ->  "Error.Too expensive"
   | Error.Not_handled_yet s -> "Error.Not handled yet "^s 
-  | _  -> "Not known"
+  | Stack_overflow -> "Stack_overflow"   
+  | _ -> "Not known" 
+
 
 
 (** handle_errors app meth f a applies f with a,
