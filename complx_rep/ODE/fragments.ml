@@ -21,10 +21,10 @@ let complete_debug = false
 let split_debug = false
 let apply_blist_debug = false
 let release_debug = false
-let get_denum_debug = true 
+let get_denum_debug = false
 
-let error i s = 
-  unsafe_frozen None (Some "Complx")  (Some "fragments.ml") s (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
+let error i s m = 
+  unsafe_frozen m (Some "Complx")  (Some "fragments.ml") s (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
 
 module New_Fragment = 
   (struct
@@ -276,14 +276,14 @@ let canonical_fragment_of_subspecies graph  =
 	      -1 -> Some ([path],i)
 	    |  0 -> Some (path::path',i')
 	    |  1 -> Some (path',i')
-	    |  _ -> error 46 None
+	    |  _ -> error 46 None None 
 	    end)
       graph.subspecies_views 
       None 
   in 
   let path,key = 
     match result with 
-      None -> error 168 None
+      None -> error 168 None None
     | Some (a,b) -> a,b in 
   let candidate = 
     List.map 
@@ -347,7 +347,7 @@ let canonical_fragment_of_subspecies graph  =
 			  print_rpath path;
 			  print_string ";";
 			  print_newline ();
-			  error 311 None
+			  error 311 None None 
 			end)} in
 		vide working_list' (n+1) black_list sol'
 	in
@@ -368,7 +368,7 @@ let canonical_fragment_of_subspecies graph  =
     | [] -> (b,n) in
   let sol = 
     match candidate with t::q -> (trace_print_fragment t;aux q t 1)
-    | [] -> error 105 None 
+    | [] -> error 371 None None 
   in
   let _ = 
     if cannonical_debug 
@@ -510,7 +510,7 @@ let merge sp1 sp2 =
 	SitetypeMap.map2 
 	  (fun _ b -> b)
 	  (fun _ b -> b)
-	  (fun a b c -> if b=c then b else error 387 None)
+	  (fun a b c -> if b=c then b else error 513 None None)
 	  b 
 	  c)
 	sp1.bonds_map 
@@ -519,7 +519,7 @@ let merge sp1 sp2 =
       RPathMap.map2 
 	(fun _ b -> b)
 	(fun _ b -> b)
-	(fun _ b c -> if b=c then b else (error 395 None))
+	(fun _ b c -> if b=c then b else (error 522 None None ))
 	sp1.subspecies_views sp2.subspecies_views } in
   let _ = 
     if merge_debug 
@@ -529,189 +529,6 @@ let merge sp1 sp2 =
       end
   in sp 
       
-
-(*
-let get_denum_without_recursive_memoisation (agent_to_int_to_nlist,view_of_tp_i,ode_handler) bool = 
-  (** If the boolean is true then this function associates a maximal list of compatible fragments to a bond *)
-  (** If the boolean is false then this function associated a maximal list of fragments to a bond *)
-  (** This function is hash consed *)
-  let hash = Hashtbl.create 20001 in
-  let f x = 
-    try 
-      Hashtbl.find hash x
-    with 
-      Not_found -> 
-	let rec aux 
-	    current (* contains a list of subspecies to expand *)
-	    compatibility (* map each rooted path to an interface *)
-	    sol (* list of already built subspecies *)
-	    = 
-	  match current with 
-	    [] -> sol (*computation is over *)
-	  | ([],subspecies)::q -> (*a subspecies is now complete *)
-	      let compatibility' = (* here we update compatibility map *)
-		if not bool then compatibility 
-		else 
-		  RPathMap.fold 
-		    (fun rpath tp_i comp -> 
-		      let view = view_of_tp_i tp_i in 
-		      let interface = interface_of_view view in 
-		      if (* is there a conflict *)
-			try 
-			  RPathMap.find rpath comp <> interface 
-			with 
-			  Not_found -> false 
-		      then 
-			error 536 (Some "Incompatible interfaces in agents")
-		      else
-			RPathMap.add rpath interface comp)
-		    subspecies.subspecies_views 
-		    compatibility 
-	      in 
-	      aux q compatibility' (subspecies::sol) 
-	  | (((a,s,a',s'),black,rpath)::b,subspecies)::q ->
-             (* a species to be extended *)
-	      let _ = 
-		if StringSet.mem a black 
-		then 
-		  error 47 (Some "Infinite number of fragments") 
-	      in
-	      let black' = StringSet.add a black in 
-	      let ag1,s1,ag2,s2 = (a,s,a',s') in 
-	        (* a is the new agent, a' belong to the subspecies *)
-	      let rpath'= 
-		{rpath 
-		with path = ((a,s),(a',s'))::rpath.path} 
-	      in
-	      let tp = (*here is the list of all template piece for agent a containing site s*)
-		try 
-		  StringListMap.find 
-		    [s] 
-		    (StringMap.find a agent_to_int_to_nlist)
-		with Not_found -> error 1135 None 
-	      in
-	      let _ = 
-		if get_denum_debug 
-		then 
-		  begin 
-		    print_string "TP LIST: \n";
-		    List.iter (fun i -> print_int i;print_newline ()) tp ;
-		    print_newline ()
-		  end
-	      in 
-	      let tp = 
-		List.filter (*filter out the one that are ot compatible*)
-                            (* TO DO improve by computing directly the list when compatibility relation is already known *)
-		  (fun tp -> 
-		    let view = view_of_tp_i tp in 
-		    let interface = interface_of_view view  in 
-		    try 
-		      (not bool) 
-			or RPathMap.find rpath' compatibility = interface 
-		    with Not_found -> true )
-		  tp in 
-	      let _ = 
-		if get_denum_debug 
-		then 
-		  begin 
-		    print_string "TP LIST2: \n";
-		    List.iter (fun i -> print_int i;print_newline ()) tp ;
-		    print_newline ();
-		    print_string ag1;
-		    print_string s1;
-		    print_string ag2;
-		    print_string s2;
-		    print_newline () 
-		  end
-	      in 
-	      let q' =
-		List.fold_left
-		  (fun q' n_tp -> 
-		    let view = view_of_tp_i n_tp in 
-		    let _ = 
-		      if get_denum_debug
-		      then 
-			let _ = print_int n_tp  in 
-			let _ = print_newline () in 
-  List.iter 
-			  ((fun (b,bool) -> 
-			    print_b (ode_handler.b_of_var b);
-			    print_string (if bool then "T" else "F");
-			    print_newline ()))
-			  (valuation_of_view view)
-		    in 
-		    if 
-		      let rec aux l = (* check that the view contains a bonds *)                                      (* TODO hash cons the function between bonds and views compatible with this bond *) 
-			match l with [] -> false
-			| t::q -> 
-			    begin
-			      match ode_handler.b_of_var (fst t),snd(t) with AL((x,y,z),(t,u)),bool 
-				when x=ag1 && y=ag1 && z=s1 && t=ag2 && u = s2 -> bool
-			      | _ -> aux q
-			    end
-		      in aux (valuation_of_view view)
-		    then 
-		      let _ = 
-			if get_denum_debug then 
-			  begin 
-			    print_int n_tp;
-			    print_newline ()
-			  end
-		      in 
-		      let b' = 
-			String4Set.fold 
-			  (fun ((ag1,s1),(ag2,s2)) b' -> 
-			    if ag2 = a' && s'=s2  then b'
-			    else (
-			      let _ = 
-				if get_denum_debug
-				    then 
-				  begin
-				    print_string ag2;
-				    print_string s2;
-				    print_string ag1;
-				    print_string s1;
-				    print_newline ()
-				  end in 
-				    (ag2,s2,ag1,s1),black',rpath')::b')
-			  (pending_edges view) b 
-		      in
-		      (b',
-		       add_bond_to_subspecies 
-			 (add_view_to_subspecies subspecies rpath' n_tp)
-			 (rpath',s) (rpath,s'))::q'
-		    else q')
-		  q tp in
-	      aux q' compatibility sol in
-	let rep = 
-	  aux 
-	    [[x,StringSet.empty,empty_rpath],empty_species] 
-	    RPathMap.empty 
-	    [] 
-	in
-	(Hashtbl.add hash x rep;
-	 rep)
-  in 
-  let f x = 
-    let rep = f x in
-    let _ = 
-      if get_denum_debug 
-      then 
-	let _ = print_string "GET_DENUM\n" in 
-	let (a,b,c,d) = x in
-	let _ = print_string a in
-	let _ = print_string "." in
-	let _ = print_string b in
-	let _ = print_string "|" in
-	let _ = print_string c in
-	let _ = print_string "." in
-	let _ = print_string d in
-	let _ = print_newline () in 
-	let _ = List.iter (fun x -> print_string "SPECIES:";print_species x;print_newline ();print_string "-----\n") rep 
-	in () 
-    in rep
-  in f
-*)
 
 
 let get_denum_with_recursive_memoization 
@@ -735,7 +552,7 @@ let get_denum_with_recursive_memoization
   and
       compute black (a,s,a',s') = 
     if StringSet.mem a black 
-    then error 738 (Some "Infinite set of fragment") 
+    then error 555 None (Some "Infinite set of fragment") 
     else 
       let fetch = if level = 2 then fetch else compute in 
       let black = StringSet.add a black in 
@@ -757,7 +574,7 @@ let get_denum_with_recursive_memoization
 	  StringListMap.find 
 	    [s] 
 	    (StringMap.find a agent_to_int_to_nlist)
-	with Not_found -> error 544 None 
+	with Not_found -> error 577 None None
       in
       let _ = 
 	if get_denum_debug 
@@ -777,7 +594,7 @@ let get_denum_with_recursive_memoization
 	    try 
 	      interface_of_view (view_of_tp_i (List.hd tp_list)) 
 	    with 
-		_  -> error 550 None
+		_  -> error 597 None None 
 	  in 
 	    List.filter (*filter out the one that are ot compatible*)
               (* TO DO improve by computing directly the list when compatibility relation is already known *)
@@ -1109,9 +926,8 @@ let split_subspecies data_structure ode_handler contact_map subspecies =
 	  with
 	    Not_found -> 
 	      begin 
-		print_string "ERROR:\n";
 		print_rpath rp; 
-		error 829 None
+		error 829 None None 
 	      end
 	in
 	let old = 
@@ -1133,14 +949,14 @@ let split_subspecies data_structure ode_handler contact_map subspecies =
 	    RPathMap.find a hash 
 	  with 
 	    Not_found -> 
-	      error 810 None 
+	      error 952 None None
 		
 	in
 	let old = 
 	  try
 	    IntMap.find i bonds_map 
 	  with 
-	    Not_found -> error 858 None 
+	    Not_found -> error 959 None None 
 	in
 	IntMap.add i (add_bond_to_subspecies old (a,b) (c,d)) bonds_map)
       subspecies 
@@ -1257,7 +1073,7 @@ let apply_blist_with_species ode_handler data_structure keep_link rule_id  speci
 	   let ((agent_type:string),
 		(v:'a BMap.t)) = 
 	     match get rp modified with 
-	      None -> error 1255 (Some "update blist")
+	      None -> error 1076 (Some "update blist") None 
 	       |Some rep -> rep 
 	   in 
 	   let v' = BMap.add b' bool v in
@@ -1286,7 +1102,7 @@ let apply_blist_with_species ode_handler data_structure keep_link rule_id  speci
 		in
 		let (agent_type',v') = 
 		  match get rp' modified 
-		  with None -> error 1284 None 
+		  with None -> error 1105 None None
 		    |Some a -> a 
 		in 
 		let modified  = f (B(agent_type,agent_type,site))  rp modified in
@@ -1358,7 +1174,7 @@ let apply_blist_with_species ode_handler data_structure keep_link rule_id  speci
 		print_string "F\n")
 	    bmap in 
 	    
-	       error 1343 (Some  "Try to hash unknown view")
+	       error 1343 None (Some  "Try to hash unknown view") 
   in
   let species = 
     {subspecies 
@@ -1511,7 +1327,7 @@ let compute_edges fragment view_data_structure=
 	      if check = Some ((c,d),(a,b)) 
 	      then 
 		match last with 
-		  None -> error 1451 None
+		  None -> error 1451 None None 
 		| Some i' -> 
 		  begin 
 		    fadd ((i',d),(i,b)) bonds,
@@ -1610,7 +1426,7 @@ let pretty_print
 	try
 	  IntMap.find i tuple_map 
 	with 
-	  Not_found -> error 1511 None in 
+	  Not_found -> error 1511 None None in 
       let tuple = 
 	try 
 	  StringMap.find s old
@@ -1689,7 +1505,7 @@ let pretty_print
 	      IntMap.find i tuple_map 
 	    with 
 	      Not_found -> 
-		error 1611 None
+		error 1611 None None 
 	  in
 	  let tuple = 
 	    try 
@@ -1744,7 +1560,7 @@ let root_of_species x =
       x.subspecies_views
       None 
   with 
-    None -> error 1660 None 
+    None -> error 1660 None  None  
   | Some i -> i
 
 end:Fragments)

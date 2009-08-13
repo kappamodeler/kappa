@@ -183,7 +183,7 @@ let unsafe warn engine_n module_name function_name key x  =
    if !Config_complx.unsafe_mode then x else raise Exit 
 
 let frozen_unsafe warn engine_n module_name function_name key x = 
-  warn_message warn module_name function_name key ;
+  warn_message warn engine_n module_name function_name key ;
   if !Config_complx.unsafe_mode then x () else raise Exit 
 
 let frozen_exit () = raise Exit 

@@ -22,7 +22,7 @@ let memory = true
 
 
 let error i = 
-  unsafe_frozen None (Some "Ode_computation.ml") None (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
+  unsafe_frozen None (Some "Complx") (Some "Ode_computation.ml") None (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
 
 let dump_line i = 
   if debug then 
@@ -1566,11 +1566,18 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					end
 					  
 				    | (a,from)::b -> 
-					if StringSet.mem a black  or  not (List.exists (fun x -> match x with H(x,_),b -> (
-					  (x=a && b)) | 
-					  _  -> false) rule.Pb_sig.injective_guard) 
+					if StringSet.mem a black  
+					  or  
+					  not 
+					  (List.exists 
+					     (fun x -> 
+						match x with 
+						    H(x,_),b -> ((x=a && b)) 
+						  | _  -> false) 
+					     rule.Pb_sig.injective_guard) 
 					then 
-					  ( aux ((guard,b,to_visit_other_class,black,prefix,same_class_agent,other_class)::q) sol)
+					  (	
+					    aux ((guard,b,to_visit_other_class,black,prefix,same_class_agent,other_class)::q) sol)
 					else
 					  let restricted_blist = 
 					    List.filter 
@@ -1627,69 +1634,73 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 						  bmap;
 						print_newline ();
 						print_newline ()
-					      end in 
-					  
+					      end 
+					  in 
+					    
 					  let bound_agent_list_same_class,
 					    bound_agent_list_other_class = 
 					    List.fold_left 
 					      (fun 
 						(same,other) b 
 						->
-						  let f (a1,a2,a3,a5,a6) (same,other) = 						 let a4 = 
-						    let rec aux l = 
-						      match l with 
-							[] -> None 
-						      | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b4,b5,b6,b2,b3) -> Some b1
-						      | _::q -> aux q in
-						    aux (cla.extended_passives) in
-						  (match a4 with 
-						    None -> (same,other)
-						  | Some a4 when StringSet.mem a4 black -> (same,other)
-						  | Some a4 -> 
-						      if  not (List.exists (fun x -> x=(H(a4,a5),true)) rule.Pb_sig.injective_guard) then 
-							same,other
-						      else
-							if keep_this_link 
-							    (a2,a3) (a5,a6)  
-							then 
-							  
-							  (a4,Some (a1,a3,a4,a6))::same,other
-							else
-							  (same,(Some (a5,a6,a2,a3),(a4,None))::other))
-						    
+						  let f (a1,a2,a3,a5,a6) (same,other) =
+ 						    let a4 = 
+						      let rec aux l = 
+							match l with 
+							    [] -> None 
+							  | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b4,b5,b6,b2,b3) -> Some b1
+							  | _::q -> aux q 
+						      in
+							aux (cla.extended_passives) 
+						    in
+						      (match a4 with 
+							   None -> (same,other)
+							 | Some a4 when StringSet.mem a4 black -> (same,other)
+							 | Some a4 -> 
+							     if  not (List.exists (fun x -> x=(H(a4,a5),true)) rule.Pb_sig.injective_guard) then 
+							       same,other
+							     else
+							       if keep_this_link 
+								 (a2,a3) (a5,a6)  
+							       then 
+								 
+								 (a4,Some (a1,a3,a4,a6))::same,other
+							       else
+								 (same,(Some (a5,a6,a2,a3),(a4,None))::other))
+							
 						  in 
-						  match b with 
-						    AL((a1,a2,a3),(a5,a6)),true -> f (a1,a2,a3,a5,a6) (same,other)
-						  | L((a1,a2,a3),(a4,a5,a6)),true -> 
-						      let same,other = 
-							if a1=a 
-							then f (a1,a2,a3,a5,a6) (same,other)
-							else same,other in
-						      let same,other = 
-							if a4=a 
-							then f (a4,a5,a6,a2,a3) (same,other) 
-							else same,other 
-						      in same,other
-						  | _ -> same,other )
+						    match b with 
+							AL((a1,a2,a3),(a5,a6)),true -> f (a1,a2,a3,a5,a6) (same,other)
+						      | L((a1,a2,a3),(a4,a5,a6)),true -> 
+							  let same,other = 
+							    if a1=a 
+							    then f (a1,a2,a3,a5,a6) (same,other)
+							    else same,other in
+							  let same,other = 
+							    if a4=a 
+							    then f (a4,a5,a6,a2,a3) (same,other) 
+							    else same,other 
+							  in same,other
+						      | _ -> same,other )
 					      (to_visit_same_class,
 					       to_visit_other_class)
 					      restricted_blist in
-					  aux 
-					    (List.fold_left
-					       (fun sol x  -> 
-						 (guard,
-						  bound_agent_list_same_class,
-						  bound_agent_list_other_class,
-						  StringSet.add a black,
-						  (match from with None -> (fun x -> x)
-						  | Some (a,b,c,d) -> 
-						      (fun x -> add_bond_to_subspecies x (a,b) (c,d)))
-						    (plug_views_in_subspecies a x prefix) ,
-						  a::same_class_agent,
-						  other_class)::sol) 
-					       q
-					       tp_list) 
-					    sol
+					    aux 
+					      (List.fold_left
+						 (fun sol x  -> 
+						    (guard,
+						     bound_agent_list_same_class,
+						     bound_agent_list_other_class,
+						     StringSet.add a black,
+						     (match from with None -> (fun x -> x)
+							| Some (a,b,c,d) -> 
+							    (fun x -> add_bond_to_subspecies x (a,b) (c,d)))
+						       (plug_views_in_subspecies a x prefix) ,
+						     a::same_class_agent,
+						     other_class)::sol) 
+						 q
+						 tp_list) 
+					      sol
 				  end
 			    in
 			    let rep =
@@ -3366,7 +3377,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			     List.iter (fun (x,bool) -> 
 					  pprint_string print_debug (string_of_b x);
 					  pprint_string print_debug (if bool then "T" else "F"))
-			       c;unsafe_frozen None None None (Some "line 3321") (fun () -> 1))::l)
+			       c;unsafe_frozen None (Some "Complx") None None (Some "line 3321") (fun () -> 1))::l)
 		    [] 
 		    (try StringMap.find ag annotated_contact_map.subviews
 		    with Not_found -> 
