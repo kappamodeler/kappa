@@ -803,6 +803,11 @@ module Compressor =
 			       a2)) 
 		      (m1,m2,idl) l1))
 		 (RuleIdMap.empty,RuleIdMap.empty,[]) rep in 
+	     let l = 
+	       List.sort 
+		 (fun rid1 rid2 -> compare rid1.Pb_sig.r_simplx.Rule.id rid2.Pb_sig.r_simplx.Rule.id)
+		 l 
+	     in
 	     let rec aux cl lid messages = 
                match cl with 
 		 [] -> ()
