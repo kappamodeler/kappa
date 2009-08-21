@@ -292,7 +292,7 @@ let node_shape n =
 let simplxname = "SIMulator by PLectiX:  simplx "^Data.version
 let complxname = "COMpressor by PLectiX: complx "^version 
 let sepname = "\n"
-let headline = ["This file has been automatically computed by the PLECTIX Compressor prototype.";simplxname;complxname;"Git commit tag is "^date_commit]
+let headline = ["This file has been automatically computed by the PLECTIX Compressor prototype.";simplxname;complxname;"Git commit date is "^date_commit]
 
 let head = ref ("\n\n ******************************************************************************************\n 
 "^(List.fold_right (fun a b -> a^"\n"^b) headline "")^
