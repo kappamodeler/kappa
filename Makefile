@@ -1,3 +1,6 @@
+VN:=$(shell cat tag/number)     # Version number for commit tag
+DATE:=`date +'%Y-%m-%d'` # date YYYY-MM-DD 
+
 all: simplx_light complx_light 
 
 simplx_light:
@@ -367,8 +370,13 @@ grab_svn_version_number:
 	svn up --username hudson --password bu1ldme --no-auth-cache | tail -n 1 | sed -e "s/\([^0-9]*\)\([0-9]*\)\./let svn_number = \2 +1/" > complx_rep/automatically_generated/svn_number.ml 
 
 commit:
-	make grab_svn_version_number
-	svn commit 
+	echo `expr $(VN) + 1`  > tag/number 
+	echo $(DATE) > tag/date 
+	echo let git_commit_tag = `expr $(VN) + 1` \n let git_commit_date = $(DATE) > complx_rep/automatically_generated/git_commit_info.ml 
+	git add tag/date
+	git add tag/number 
+	git add complx_rep/automatically_generated/git_commit_info.ml 
+	git commit 
 
 help: 
 	@echo Usage: ;\
