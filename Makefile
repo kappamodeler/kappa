@@ -1,5 +1,5 @@
 VN:=$(shell cat tag/number)     # Version number for commit tag
-DATE:=`date +'%Y-%m-%d'` # date YYYY-MM-DD 
+DATE:=`date +'%Y-%m-%d %H:%M:%S'` # date YYYY-MM-DD 
 
 all: simplx_light complx_light 
 
@@ -372,7 +372,7 @@ grab_svn_version_number:
 commit:
 	echo `expr $(VN) + 1`  > tag/number 
 	echo $(DATE) > tag/date 
-	echo let git_commit_tag = `expr $(VN) + 1` \n let git_commit_date = $(DATE) > complx_rep/automatically_generated/git_commit_info.ml 
+	echo let git_commit_tag,git_commit_date  = `expr $(VN) + 1`,$(DATE) > complx_rep/automatically_generated/git_commit_info.ml 
 	git add tag/date
 	git add tag/number 
 	git add complx_rep/automatically_generated/git_commit_info.ml 
