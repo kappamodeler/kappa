@@ -2,10 +2,11 @@
 
 let version_main = 4
 let version_cpt = 16 (*Bug corrected: [ENG-214] Infinite loop upon deadlock with non empty task list*)
-let version_svn = Svn_number.svn_number
+let git_tag = Git_commit_info.git_commit_tag
 let version_branch = ""
 let arch_type = string_of_int Sys.word_size
-let version = (string_of_int version_main)^"."^(string_of_int version_cpt)^version_branch^".."^(string_of_int version_svn)^"_"^arch_type
+let commit_date = Git_commit_info.git_commit_date
+let version = (string_of_int version_main)^"."^(string_of_int version_cpt)^version_branch^".."^(string_of_int git_tag)^"_"^arch_type
 
 (**<h3>File naming </h3>*)
 

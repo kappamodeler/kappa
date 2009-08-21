@@ -23,8 +23,9 @@ let time_stamp =
     (ad2 tm.Unix.tm_min) 
     (ad2 tm.Unix.tm_sec)
 
-let version = "4.16.."^(string_of_int Svn_number.svn_number) 
+let version = "4.16.."^(string_of_int Git_commit_info.git_commit_tag)
 let date = "2009.07.20"
+let date_commit = Git_commit_info.git_commit_date 
 let input_marshalling = ref "" 
 let input_file = ref [""] 
 let input_focus_on = ref ""
@@ -291,7 +292,7 @@ let node_shape n =
 let simplxname = "SIMulator by PLectiX:  simplx "^Data.version
 let complxname = "COMpressor by PLectiX: complx "^version 
 let sepname = "\n"
-let headline = ["This file has been automatically computed by the PLECTIX Compressor prototype.";simplxname;complxname]
+let headline = ["This file has been automatically computed by the PLECTIX Compressor prototype.";simplxname;complxname;"Git commit tag is "^date_commit]
 
 let head = ref ("\n\n ******************************************************************************************\n 
 "^(List.fold_right (fun a b -> a^"\n"^b) headline "")^
