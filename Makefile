@@ -121,7 +121,7 @@ MLFULL? = $(COMPLXREP)/lib/$(TKREP)/superargTk.ml
 
 TKFILE=
 
-OBJS = 	./$(COMPLXREP)/automatically_generated/svn_number.cmo \
+OBJS = 	./$(COMPLXREP)/automatically_generated/git_commit_info.cmo  \
 	./$(COMPLXREP)/tools/exceptions.cmo \
 	./$(COMPLXREP)/tools/memory_usage.cmo \
 	./$(COMPLXREP)/lib/$(KEY)/key.cmo \
@@ -372,10 +372,11 @@ grab_svn_version_number:
 commit:
 	echo `expr $(VN) + 1`  > tag/number 
 	echo $(DATE) > tag/date 
-	echo let git_commit_tag,git_commit_date  = `expr $(VN) + 1`,"$(DATE)" > complx_rep/automatically_generated/git_commit_info.ml 
+	echo let git_commit_tag,git_commit_date  = `expr $(VN) + 1`,\"$(DATE)\" > complx_rep/automatically_generated/git_commit_info.ml 
 	git add tag/date
 	git add tag/number 
 	git add complx_rep/automatically_generated/git_commit_info.ml 
+	git tag -a `expr $(VN) + 1` -m "$(DATE)"  
 	git commit 
 
 help: 
