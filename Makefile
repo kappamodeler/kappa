@@ -376,8 +376,9 @@ commit:
 	git add tag/date
 	git add tag/number 
 	git add complx_rep/automatically_generated/git_commit_info.ml 
-	git tag -a `expr $(VN) + 1` -m "$(DATE)"  
 	git commit 
+	git tag -a `expr $(VN) + 1` -m "$(DATE)"  
+
 
 help: 
 	@echo Usage: ;\
