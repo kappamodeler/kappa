@@ -319,7 +319,7 @@ let compute_compatible_views_id blist restricted_blist bmap agent_id (specie_of_
 	     print_debug "\n")
 	
       with _ -> ());
-       [] (*error 1190*))
+       [])
 	
   in
   let (tp_list:views_id list) = 
@@ -327,21 +327,25 @@ let compute_compatible_views_id blist restricted_blist bmap agent_id (specie_of_
       (fun sol xx -> 
 	let view = view_of_tp_i xx in
 	let valuation  = valuation_of_view view in 
-	let rec test_b s = 
-	  match s with 
-	    [] -> true 
-	  | (b,bool)::q -> 
-	      let b = ode_handler.b_of_var b in 
-	      if 
-		try 
-		  (BMap.find b bmap)=bool
-		with 
-		  Not_found -> true 
-	      then 
-		test_b q
-	      else false
-	in
-	let test = test_b valuation in
+	let bmap2 = 
+	    List.fold_left 
+	      (fun set (b,bool) -> BMap.add (ode_handler.b_of_var b)  bool set )
+
+	      BMap.empty 
+	      valuation 
+	in 
+	let test= 
+	  try 
+	    let _ = 
+	      BMap.iter2 
+		(fun x y -> if y then raise Exit )
+		(fun x z -> ())
+		(fun x y z -> if not y=z then raise Exit)
+		bmap 
+		bmap2 
+	    in true
+	  with Exit -> false 
+	in 
 	if not test then sol 
 	else 
 	  (xx::sol))
