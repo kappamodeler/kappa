@@ -137,7 +137,7 @@ let rec simplify2 expr =
 	   let rec aux k sol = 
 	     if k=0 then sol
 	     else aux (k-1) (Mult(a,sol))
-	   in aux b (Const 1)
+	   in aux b expr
       )
       map
       (Const 1)

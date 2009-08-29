@@ -538,6 +538,22 @@ let get_denum_with_recursive_memoization
   (** If the boolean is true then this function associates a maximal list of compatible fragments to a bond *)
   (** If the boolean is false then this function associated a maximal list of fragments to a bond *)
   (** This function is hash consed *)
+  let inc_black x black = 
+    let old = 
+      try StringMap.find x black 
+      with 
+	  Not_found -> 0 
+    in 
+      StringMap.add x (old+1) black 
+  in 
+  let black_listed x black = 
+     let old = 
+      try StringMap.find x black 
+      with 
+	  Not_found -> 0 
+    in 
+       old > 1
+  in 
   let hash = Hashtbl.create 200001 in
   let rec fetch black (x:Pb_sig.name_specie*string*string*string) = 
     try Hashtbl.find hash x 
@@ -551,11 +567,11 @@ let get_denum_with_recursive_memoization
 	rep 
   and
       compute black (a,s,a',s') = 
-    if StringSet.mem a black 
+    if black_listed a black 
     then error 555 None (Some "Infinite set of fragment") 
     else 
       let fetch = if level = 2 then fetch else compute in 
-      let black = StringSet.add a black in 
+      let black = inc_black a black in 
       let ag1,s1,ag2,s2 = (a,s,a',s') in 
       let _ = 
 	if get_denum_debug 
@@ -722,7 +738,7 @@ let get_denum_with_recursive_memoization
 	       else liste)
 	  []
 	  tp_list 
-  in fetch StringSet.empty 
+  in fetch StringMap.empty 
 
 
 
