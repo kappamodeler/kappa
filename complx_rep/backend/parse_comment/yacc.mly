@@ -61,10 +61,17 @@ LastLine :
 
 
 FlagIdent :
-  Ident FlagIdent {($1)^($2)}
-| Ident           {$1}
+  Identf FlagIdent {($1)^($2)}
+| Identf           {$1}
+
+Identf :
+  IDENT {$1}
 | Sharp {"#"}
-| Sharp FlagIdent {"#"^$2}
+| Bi {"<->"}
+| Direct {"->"}
+| NextLine {"///n"}
+| Percent {"%"}
+
 
 Ident :
   IDENT Ident {$1^$2}
