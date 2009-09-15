@@ -106,6 +106,7 @@ type ('a,'b) classes =
 						     of compositions (list/an elmt per subcomposant (delimited by dashed edges)
                                                      of choices (list/an elmt per potential completion) *)
 	extended_passives:((string*string*string)*(string*string*string)) list;  
+        intra_link:((string*string*string)*(string*string*string)) list;
 	rate:expr option;
 	rate_other:expr option }
       	
@@ -121,7 +122,8 @@ let empty_class g =
    subclass = None;
    rate = None;
    rate_other = None;
-   extended_passives = [] }
+   extended_passives = [];
+   intra_link = [] }
 
 let get_rule_of_class g = g.rule
 let check x = 
@@ -1439,6 +1441,16 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			 passives 
 			 xx.Pb_sig.injective_guard 
 		     in 
+                     let intra_link = 
+                         List.fold_left 
+			 (fun intra (b,bool) -> 
+			   match b,bool with 
+			     L((a,a2,s),(a',a2',s')),true -> 
+			       (((a,a2,s),(a',a2',s'))::intra)
+			     | _ -> intra)
+			   []
+			   xx.Pb_sig.injective_guard 
+                     in 
 		     StringSet.fold 
 		       (fun x l ->
 			 let rec aux to_visit black set = 
@@ -1458,7 +1470,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			       aux tv b (StringSet.add t set) in
 			 {(empty_class xx) with 
 			   extended_passives = passives ;
-			   agents_id=aux [x] (StringSet.empty) (StringSet.singleton x)}::l)
+			    intra_link = intra_link ; 
+                            agents_id=aux [x] (StringSet.empty) (StringSet.singleton x)}::l)
 		       (List.fold_left 
 			  (fun set ((a',_,_),_) -> StringSet.remove a' set)
 			  xx.Pb_sig.target passives) 
@@ -1651,7 +1664,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 							  | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b4,b5,b6,b2,b3) -> Some b1
 							  | _::q -> aux q 
 						      in
-							aux (cla.extended_passives) 
+							aux (cla.intra_link)
 						    in
 						      (match a4 with 
 							   None -> (same,other)
@@ -2056,7 +2069,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 										     | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b4,b5,b6,b2,b3) -> Some b1
 										     | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b1,b2,b3,b5,b6) -> Some b4
 										     | _::q -> aux q in
-										   aux (cla.extended_passives) in
+										   aux (cla.intra_link) in
 										 (match a4 with 
 										      None -> (same,other)
 										    | Some a4 when StringSet.mem a4 black -> (same,other)
@@ -2508,7 +2521,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				     List.fold_left 
 				       (fun map ((a,a',s),(b,b',s')) -> 
 					 let fadd agent_id site agent_id' map = 
-					   let old = 
+		                           let old = 
 					     try
 					       StringMap.find agent_id map 
 					     with
@@ -2524,7 +2537,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					     map 
 					 in
 					 fadd a s b (fadd b s' a map))
-				       StringMap.empty (cla.extended_passives)
+				       StringMap.empty (cla.intra_link)
 				   in
 				   let cut_list = 
 				   (* We remove binding internal to the subspecies *)
@@ -2540,13 +2553,13 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 						      site 
 						      (StringMap.find agent_id graph_agent_site_to_agent)
 						  in
-						  let _ = (* check wether the first agent is within the species *)
+                                                  let _ = (* check wether the first agent is within the species *)
 						    StringMap.find agent_id agent_id_to_views
 						  in
-						  let _ = (* check wether the second agent is within the species *)
+                                                  let _ = (* check wether the second agent is within the species *)
 						    StringMap.find agent_id' agent_id_to_views 
 						  in
-						  false
+                                                    false
 						with (* If one find has failed, then the target is out of the species *)
 						  Not_found -> true)
 					      binding
@@ -2556,7 +2569,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				  (* List of tp_i list extention of the connected component *)
 				     let rec vide l sol = 
 				       match l with [] -> sol 
-				       | (subspecies,pending_bonds)::q -> 
+				       | (subspecies,agents,pending_bonds)::q -> 
 					   begin
 					     match pending_bonds with 
 					       [] -> vide q (subspecies::sol) 
@@ -2575,46 +2588,55 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 							       site 
 							       (StringMap.find agent_root graph_agent_site_to_agent)
 							   in
-							   let tp_list = (* first compute the list of views that can be plugged *)
-							     try 
-							       String4Map.find 
-								 ((agent_type',site'),(agent_type,site))
-								 views_data_structures.link_to_template 
-							     with 
-							       Not_found ->
-								 error 1482 
-							   in
-							   let liste = 
-							     List.fold_left 
-							       (fun liste tp_i -> 
-								 let interface =  (* compute the set of sites with a solid bond, except the one it is plugged by *)
-								   String4Set.remove
-								     ((agent_type',site'),(agent_type,site)) 
-								     (pending_edges (view_of_tp_i tp_i))  
-								 in
-								 let pending_bonds' = (*we update the list of pending bonds*)
+                                                             if StringSet.mem agent_id' agents 
+                                                             then 
+                                                                vide ((subspecies,agents,q2)::q) sol 
+                                                             else 
+                                   			       let tp_list = (* first compute the list of views that can be plugged *)
+							         try 
+							           String4Map.find 
+								     ((agent_type',site'),(agent_type,site))
+								     views_data_structures.link_to_template 
+							         with 
+							             Not_found ->
+								       error 1482 
+							       in
+							       let liste = 
+							         List.fold_left 
+							           (fun liste tp_i -> 
+								      let interface =  (* compute the set of sites with a solid bond, except the one it is plugged by *)
+								        String4Set.remove
+								          ((agent_type',site'),(agent_type,site)) 
+								          (pending_edges (view_of_tp_i tp_i))  
+								      in
+								      let pending_bonds' = (*we update the list of pending bonds*)
 								   String4Set.fold 
 								     (fun a b -> ((agent_id',[]),a)::b) 
 								     interface 
 								     q2 
-								 in
-								 (
-								 (StringMap.add agent_id' tp_i subspecies)
-								   ,pending_bonds')::liste)
-							       q tp_list in
-							   vide liste sol 
+								      in
+								        (
+								          (StringMap.add agent_id' tp_i subspecies),
+								            StringSet.add agent_id' agents
+                                                                            ,pending_bonds')::liste)
+							           q tp_list in
+							         vide liste sol 
 							 end
-						     |  _ -> (* the target is not within the target *)
-							 raise Not_found 
+						       |  _ -> (* the target is not within the target *)
+							    raise Not_found 
 						   end
 						 with Not_found -> 
-						   vide ((subspecies,q2)::q) sol 
+						   vide ((subspecies,agents,q2)::q) sol 
 					   end
 				     in
 				     vide 
 				       (List.map 
 					  (fun (agent_to_views_id,pending_bonds) -> 
 					    (agent_to_views_id,
+                                             StringMap.fold 
+                                               (fun a _ sol -> StringSet.add a sol)
+                                               agent_to_views_id
+                                               StringSet.empty ,
 					     List.map 
 					       (fun 
 						 ((agent_id,agent_type,site),(agent_type',site'))
@@ -2624,7 +2646,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					  cut_list)
 				       [] 
 				   in
-				   
 				   let extended_list =
 				  (* restrict the list of tp_i extension to those that are compatible with the left hand side *)
 				     List.filter
@@ -2681,7 +2702,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 						   sp
 						     ) 
 					       sp
-					       (cla.extended_passives)  in    
+					       (cla.intra_link)  in    
 					   complete_subspecies sp))
 				       [] 
 				       extended_list in 
