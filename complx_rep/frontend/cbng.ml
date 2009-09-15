@@ -966,33 +966,49 @@ List.map (rename_test f) b)) r.cpb_guard;
 		  (translate_control_create pb ir) 
 		  r.cpb_control.cpb_create [] in 
 	      {Pb_sig.context_update = 
-		List.fold_left 
-			 (fun context_update (i,ig) -> 
+		  begin 
+                    let context_update = 
+                      List.fold_left 
+		        (fun context_update (i,ig) -> 
 			   (
-			   let sites = 
-			     let rec aux l = 
-			       match l with 
-				 (a,b,c)::q -> if a = ig then c else aux q
-			       | [] -> [] 
-			     in aux pb.cpb_interface  in 
-			   List.fold_left
-			     (fun context_update s -> 
-			       if String2Set.mem (i,s) bound_site 
-			       then context_update 
-			       else (Pb_sig.B(i,ig,s),false)::context_update)
-			     
-			     ((Pb_sig.H(i,ig),true)::context_update)
-			     sites ))
-		  context create;
+			     let sites = 
+			       let rec aux l = 
+			         match l with 
+				     (a,b,c)::q -> if a = ig then c else aux q
+			         | [] -> [] 
+			       in aux pb.cpb_interface  in 
+			       List.fold_left
+			         (fun context_update s -> 
+			            if String2Set.mem (i,s) bound_site 
+			            then context_update 
+			            else (Pb_sig.B(i,ig,s),false)::context_update)
+			         
+			       ((Pb_sig.H(i,ig),true)::context_update)
+			         sites ))
+		        context create in 
+                    let pos,neg = 
+                      List.fold_left 
+                        (fun (lpos,lneg) (a,b) -> 
+                         if b then (a,b)::lpos,lneg
+                         else lpos,(a,b)::lneg)
+                        ([],[])
+                        context_update in 
+                    let concat l1 l2 = 
+                      List.fold_left 
+                      (fun l a -> a::l)
+                        l2 l1 in 
+                      concat neg (concat pos [])
+                  end
+                    ;
 		Pb_sig.uncontext_update = uncontext ;
 		Pb_sig.add = 
-		IntSet.fold
-		  (translate_control_remove pb ir)
-		  r.cpb_control.cpb_create [];
+		          IntSet.fold
+		            (translate_control_remove pb ir)
+		            r.cpb_control.cpb_create [];
 		Pb_sig.remove = 
-		IntSet.fold 
-			 (translate_control_remove pb ir) 
-		  r.cpb_control.cpb_remove [];
+		          IntSet.fold 
+			    (translate_control_remove pb ir) 
+		            r.cpb_control.cpb_remove [];
 	      }
 		
 	    in 
