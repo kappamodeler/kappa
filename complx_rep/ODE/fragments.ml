@@ -568,7 +568,7 @@ let get_denum_with_recursive_memoization
   and
       compute black (a,s,a',s') = 
     if black_listed a black 
-    then error 555 None (Some "Infinite set of fragment") 
+    then error 555 None (Some "Infinite set of fragments") 
     else 
       let fetch = if level = 2 then fetch else compute in 
       let black = inc_black a black in 
