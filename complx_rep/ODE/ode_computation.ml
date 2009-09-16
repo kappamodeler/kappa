@@ -19,7 +19,7 @@ open Error_handler
 let debug = false
 let log_step = false
 let memory = true
-
+let allow_cycle_in_lhs = false
 
 let error i = 
   unsafe_frozen (Some "") (Some "Complx") (Some "Ode_computation.ml") None (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
@@ -1397,8 +1397,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		       | Some a -> 
 			   a.print_string ("dydt("^(string_of_int i)^")=dydt("^(string_of_int i)^")+")
 		   in 
-(*		   let _ = print_expr print_ODE_act true true (Const 0) in 
-		   let _ = pprint_string print_ODE_act ",\n" in *)
 		   let _ = pprint_vart print_ODE in 
 		   let _ = pprint_assign_plus {print_ODE with matlab_aux = None} in 
 		   let _ = print_expr print_ODE true true l in 
@@ -1456,7 +1454,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			   xx.Pb_sig.injective_guard 
                      in 
                      let _ = 
-                       if 
+                       if (not allow_cycle_in_lhs) && 
+
                          begin (*is there a cycle in the lhs of the rule ?*)
                            let agent_to_sites,contact = 
                              let fadd (a,s) (a',s') (agent_to_sites,contact) = 
@@ -1761,13 +1760,12 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 					      end 
 					  in 
 					    
-					  let bound_agent_list_same_class,
-					    bound_agent_list_other_class = 
+					  let prefix,bound_agent_list_same_class,bound_agent_list_other_class = 
 					    List.fold_left 
 					      (fun 
-						(same,other) b 
+						(prefix,same,other) b 
 						->
-						  let f (a1,a2,a3,a5,a6) (same,other) =
+						  let f (a1,a2,a3,a5,a6) (prefix,same,other) =
  						    let a4 = 
 						      let rec aux l = 
 							match l with 
@@ -1778,35 +1776,37 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 							aux (cla.intra_link)
 						    in
 						      (match a4 with 
-							   None -> (same,other)
-							 | Some a4 when StringSet.mem a4 black -> (same,other)
+							   None -> (prefix,same,other)
+							 | Some a4 when StringSet.mem a4 black -> 
+                                                             (add_bond_to_subspecies prefix (a1,a3) (a4,a6),same,other)
 							 | Some a4 -> 
 							     if  not (List.exists (fun x -> x=(H(a4,a5),true)) rule.Pb_sig.injective_guard) then 
-							       same,other
+							       prefix,same,other
 							     else
 							       if keep_this_link 
 								 (a2,a3) (a5,a6)  
 							       then 
 								 
-								 (a4,Some (a1,a3,a4,a6))::same,other
+								 prefix,(a4,Some (a1,a3,a4,a6))::same,other
 							       else
-								 (same,(Some (a5,a6,a2,a3),(a4,None))::other))
+								 prefix,same,(Some (a5,a6,a2,a3),(a4,None))::other)
 							
 						  in 
 						    match b with 
-							AL((a1,a2,a3),(a5,a6)),true -> f (a1,a2,a3,a5,a6) (same,other)
+							AL((a1,a2,a3),(a5,a6)),true -> f (a1,a2,a3,a5,a6) (prefix,same,other)
 						      | L((a1,a2,a3),(a4,a5,a6)),true -> 
-							  let same,other = 
+							  let prefix,same,other = 
 							    if a1=a 
-							    then f (a1,a2,a3,a5,a6) (same,other)
-							    else same,other in
-							  let same,other = 
+							    then f (a1,a2,a3,a5,a6) (prefix,same,other)
+							    else prefix,same,other in
+							  let prefix,same,other = 
 							    if a4=a 
-							    then f (a4,a5,a6,a2,a3) (same,other) 
-							    else same,other 
-							  in same,other
-						      | _ -> same,other )
-					      (to_visit_same_class,
+							    then f (a4,a5,a6,a2,a3) (prefix,same,other) 
+							    else prefix,same,other 
+							  in prefix,same,other
+						      | _ -> prefix,same,other )
+					      (prefix,
+                                               to_visit_same_class,
 					       to_visit_other_class)
 					      restricted_blist in
 					    aux 
