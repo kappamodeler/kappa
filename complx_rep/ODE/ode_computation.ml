@@ -1513,21 +1513,6 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	                           contact
 	                           empty
 	                       in 
-                               let _ = 
-                                 String2Map.iter 
-                                   (fun (a,s) set -> 
-                                      pprint_string print_debug a;
-                                      pprint_string print_debug s;
-                                      pprint_string print_debug ":\n";
-                                      String2Set.iter 
-                                        (fun (a,s) -> 
-                                           pprint_string print_debug a;
-                                           pprint_string print_debug s;
-                                           pprint_string print_debug " ")
-                                        set)
-                                   map
-                               in 
-                                           
                                let rec aux next to_visit = 
                                  match next with 
                                      [] -> 
