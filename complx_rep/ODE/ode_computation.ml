@@ -22,7 +22,7 @@ let memory = true
 
 
 let error i = 
-  unsafe_frozen None (Some "Complx") (Some "Ode_computation.ml") None (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
+  unsafe_frozen (Some "") (Some "Complx") (Some "Ode_computation.ml") None (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
 
 let error_ext i s m = 
   unsafe_frozen m (Some "Complx")  (Some "fragments.ml") s (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
