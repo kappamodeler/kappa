@@ -24,6 +24,10 @@ let memory = true
 let error i = 
   unsafe_frozen None (Some "Complx") (Some "Ode_computation.ml") None (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
 
+let error_ext i s m = 
+  unsafe_frozen m (Some "Complx")  (Some "fragments.ml") s (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
+
+
 let dump_line i = 
   if debug then 
     begin
@@ -1450,6 +1454,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			     | _ -> intra)
 			   []
 			   xx.Pb_sig.injective_guard 
+                     in 
+                     let _ = 
+                       if List.length intra_link <> List.length passives 
+                       then 
+                         error_ext 1457 None (Some "Cycles in lhs are not handled")
                      in 
 		     StringSet.fold 
 		       (fun x l ->
