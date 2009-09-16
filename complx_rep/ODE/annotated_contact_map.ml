@@ -647,13 +647,21 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map  =
 	    if trivial_rule rs 
 	    then solid_edges 
 	    else 
-	      let passive = rs.Pb_sig.passive_species in 
-	      let solid_edges = 
-		List.fold_left 
-		  (fun solid_edges ((a,b,c),(d,e,f)) ->
-		    String22Set.add ((b,c),(e,f)) 
-			(String22Set.add ((e,f),(b,c)) solid_edges))
-		  solid_edges passive in
+              let guard = rs.Pb_sig.rules in 
+              let solid_edges =
+                List.fold_left 
+                  (fun solid_edges guard -> 
+                     List.fold_left 
+                       (fun solid_edges x -> 
+                          match x 
+                          with 
+                              L((_,b,c),(_,e,f)),true
+                            |AL((_,b,c),(e,f)),true 
+                                -> String22Set.add ((b,c),(e,f)) solid_edges
+                            | _ -> solid_edges)
+                       solid_edges guard.injective_guard)
+                  solid_edges guard
+              in 
 	      let solid_edges = 
 		List.fold_left 
 		  (fun solid_edges b -> 
@@ -665,7 +673,6 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map  =
 		  solid_edges 
 		  rs.Pb_sig.control.Pb_sig.context_update 
 	      in 
-	      
 	      let solid_edges = 
 		List.fold_left 
 		  (fun solid_edges (a,b,c) -> 
