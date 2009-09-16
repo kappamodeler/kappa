@@ -1456,7 +1456,124 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			   xx.Pb_sig.injective_guard 
                      in 
                      let _ = 
-                       if List.length intra_link <> List.length passives 
+                       if 
+                         begin (*is there a cycle in the lhs of the rule ?*)
+                           let agent_to_sites,contact = 
+                             let fadd (a,s) (a',s') (agent_to_sites,contact) = 
+                               let fadd1 a s agent_to_sites = 
+                                 let old = 
+                                   try 
+                                     StringMap.find a agent_to_sites 
+                                   with 
+                                       Not_found -> StringSet.empty 
+                                 in 
+                                   StringMap.add a (StringSet.add s old) agent_to_sites 
+                               in 
+                               let agent_to_sites = 
+                                 fadd1 a s (fadd1 a' s' agent_to_sites)
+                               in 
+                               let contact = 
+                                 String2Map.add (a,s) (a',s')
+                                   (String2Map.add (a',s') (a,s) contact)
+                               in 
+                                 agent_to_sites,contact 
+                             in 
+                               List.fold_left 
+                                 (fun x ((a,_,s),(a',_,s')) -> 
+                                    fadd (a,s) (a',s') x)
+                                 (StringMap.empty,
+                                  String2Map.empty)
+                                 intra_link 
+                           in 
+                             try (
+	                       let add_relation x y (set,map) = 
+	                         if x=y then raise Exit 
+	                         else 
+	                           let set' = String2Set.add x (String2Set.add y set) in
+	                           let map' = 
+	                             let old = 
+		                       try Pb_sig.String2Map.find x map 
+		                       with Not_found -> String2Set.empty in
+	                               Pb_sig.String2Map.add x (String2Set.add y old) map in
+	                             set',map' 
+                               in
+	                       let empty = String2Set.empty,Pb_sig.String2Map.empty in
+                               let g (x,(a,s)) = 
+                                 StringSet.fold   
+	                           (fun s' -> 
+                                      if s=s' 
+                                      then (fun x -> x)
+	                              else add_relation x (a,s') 
+	                           )
+	                           (StringMap.find a agent_to_sites)
+                               in 
+	                       let (set,map) = 
+	                         Pb_sig.String2Map.fold 
+	                           (fun x x' sol  -> g (x,x') (g (x',x) sol))
+	                           contact
+	                           empty
+	                       in 
+                               let _ = 
+                                 String2Map.iter 
+                                   (fun (a,s) set -> 
+                                      pprint_string print_debug a;
+                                      pprint_string print_debug s;
+                                      pprint_string print_debug ":\n";
+                                      String2Set.iter 
+                                        (fun (a,s) -> 
+                                           pprint_string print_debug a;
+                                           pprint_string print_debug s;
+                                           pprint_string print_debug " ")
+                                        set)
+                                   map
+                               in 
+                                           
+                               let rec aux next to_visit = 
+                                 match next with 
+                                     [] -> 
+                                       begin
+                                         if String2Set.is_empty to_visit 
+                                         then 
+                                           false
+                                         else 
+                                           let next = String2Set.min_elt to_visit 
+                                           in 
+                                             aux [next,None,String2Set.singleton next] (String2Set.remove next to_visit)
+                                       end
+                                   | (t,from,black)::q -> 
+                                       let succ = 
+                                         try 
+                                           Pb_sig.String2Map.find t map 
+                                         with 
+                                             Not_found -> String2Set.empty
+                                       in 
+                                       let succ = 
+                                         match from with None -> succ
+                                           | Some a -> String2Set.remove a succ 
+                                       in 
+                                         aux 
+                                           (String2Set.fold 
+                                              (fun a l -> 
+                                                 if String2Set.mem a black
+                                                 then raise Exit 
+                                                 else 
+                                                   (a,Some t,String2Set.add t black)::l
+                                              )
+                                              succ 
+                                              q)
+                                           (String2Set.diff to_visit succ)
+                               in 
+                                 if String2Set.is_empty set then false
+                                 else 
+                                   let start = String2Set.min_elt set in 
+                                     aux 
+                                       [start,None,String2Set.singleton start]
+                                       (String2Set.remove start set)
+                             )                
+                             with Exit -> true
+ 
+ 
+                         end
                        then 
                          error_ext 1457 None (Some "Cycles in lhs are not handled")
                      in 
