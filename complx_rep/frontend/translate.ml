@@ -477,7 +477,7 @@ let translate_rule t flags interface_map usage_map fset (agents,marks,markable_s
 	(fun i a (((c1:Pb_sig.action list),c3),interface_map,agents,cr_agents,ms,mark_site_rel,linkable_sites) -> 
 	  let i = sigma i in 
 	  let ig = Agent.name a in 
-	  let interface,(a1,marks_site_rel,linkable_sites)  = 
+	  let interface,(a1,mark_site_rel,linkable_sites)  = 
 	    Agent.fold_interface 
 	       (fun s (m1,m2) (interface,(ms,mark_site_rel,linkable_sites)) ->  
 		 if s = "_" then interface,(ms,mark_site_rel,linkable_sites)
