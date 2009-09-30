@@ -760,9 +760,10 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   
 
   let create_fragments_hashtable ode_handler print  pb  = 
-    let hash_tp_list,dump,size  = 
+    let hash_tp_list,dump,size,get_fragment  = 
       let n = ref 1 in
       let map = ref FragmentMap.empty in
+      let conv = ref IntMap.empty in 
       let size () = (!n)-1 in 
       (let f (x,aut) = 
 	let x'=x in 
@@ -787,7 +788,8 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	    let _ = print_log "\n" in () in 
 	  let _ = n:= (!n)+1 in
 	  let _ = map:=FragmentMap.add x' (rep,aut) (!map) in
-	  (rep,aut)
+	  let _ = conv:= IntMap.add rep x' (!conv) in 
+            (rep,aut)
       in f),
       (let dump view_data_structure fmap  = 
 	let _ = 
@@ -886,16 +888,24 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	    
 	in
 	  () in dump),
-      size 
+      (size) ,
+      (let f k = 
+         try 
+           IntMap.find k (!conv)
+         with 
+             Not_found -> error 896
+       in f)
+      
+       
     in
-      hash_tp_list,dump,size in 
+      hash_tp_list,dump,size,get_fragment in 
     
 
   (*****************************************)
   (* WE CREATE THE HASHTABLE FOR FRAGMENTS *)
   (*****************************************)
 
-  let hash_fragment,dump,size  = create_fragments_hashtable ode_handler print_obs pb in 
+  let hash_fragment,dump,size,get_fragment  = create_fragments_hashtable ode_handler print_obs pb in 
   let hash_subspecies x = hash_fragment (canonical_form x) in 
     (* hash_subspecie maps each subspecies to their fragment identifier. *)
     (* dump dump the content of the hashtable *)
@@ -3875,6 +3885,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     in 
     let _ = 
       if not is_obs then 
+        let log_fragment = 
+          {print_none  with data = print}
+        in
         let rec vide k = 
           if k>nobs then () 
           else 
@@ -3892,7 +3905,17 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	    let _ = (pstring print) "' using 1:" in 
 	    let _ = (pstring print) (string_of_int k) in 
 	    let _ = (pstring print) " title '" in 
-	    let _ = (pstring print) ("Fragment "^(string_of_int k)) in 
+	    let _ = 
+              print_fragment 
+                log_fragment 
+	        (get_fragment k)
+		string_txt
+		ode_handler 
+		views_data_structures 
+		(fun a b -> keep_this_link a b)
+		(Some "")
+		true 
+            in 
 	    let _ = (pstring print) "' w l\n" in 
 	vide (k+1) 
         in vide 1

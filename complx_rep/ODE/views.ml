@@ -352,3 +352,6 @@ let compute_compatible_views_id blist restricted_blist bmap agent_id (specie_of_
       [] tp_list in
   tp_list 
     
+
+
+
