@@ -146,7 +146,8 @@ let translate_init_elt t interface_map (agents,marks,markable_sites,linkable_sit
 		   | _ -> (error_frozen "translate translate_init" frozen_exit)
 	       in 
 	       let test,linkable_sites = 
-		 match m2 with Agent.Wildcard -> test,linkable_sites
+		 match m2 with Agent.Wildcard -> 
+                   error_frozen ("Agent "^ag^" is introduced with a wildcard on the site "^s) frozen_exit 
 		   | Agent.Free -> 
 		       if s = "_" then test,linkable_sites 
 		       else
@@ -154,8 +155,18 @@ let translate_init_elt t interface_map (agents,marks,markable_sites,linkable_sit
 			  fadd i s linkable_sites
 			 )
 		   | Agent.Bound ->  
-		       (test,
-			fadd i s linkable_sites)
+		       if 
+                         try 
+                           let _ = 
+                             Solution.PA.find (i,s) t.Solution.links
+                           in true 
+                         with 
+                             _  -> false
+                       then 
+                         (test,
+			  fadd i s linkable_sites)
+                       else 
+                         error_frozen ("Agent "^ag^" is introduced with an underscore on the site "^s) frozen_exit 
 		   | _ -> (error_frozen  "translate.95" frozen_exit)
 	       in 
 		 (test,agents,marks,markable_sites,linkable_sites,mark_site_rel))
