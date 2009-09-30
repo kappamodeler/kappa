@@ -442,7 +442,7 @@ let pprint_ODE_middle1 print =
   in ()
 
 
-let pprint_ODE_middle2 print aux_file jac_file init_file obs_file file_ODE_data  nfrag nobs = 
+let pprint_ODE_middle2 print aux_file jac_file init_file obs_file file_ODE_data  nfrag nobs is_obs = 
   let _ = 
     match print.mathematica with 
       None -> () 
@@ -742,7 +742,7 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
     ()
 
 
- let dump_prod (prod,jac) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab print_ODE_matlab_aux print_ODE_matlab_jac print_ODE_matlab_size output_data file_aux file_jac  file_init file_obs file_data size  nobs = 
+ let dump_prod (prod,jac) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab print_ODE_matlab_aux print_ODE_matlab_jac print_ODE_matlab_size output_data file_aux file_jac  file_init file_obs file_data size  nobs is_obs = 
    let nfragments = string_of_int size in 
    let print_ODE = print_ODE_mathematica in 
    let print_latex = keep_latex print_ODE_mathematica in 
@@ -813,7 +813,7 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
        false 
        obs in
  
-   let _ = pprint_ODE_middle2 print_ODE file_jac file_aux file_init file_obs file_data nfragments nobs in 
+   let _ = pprint_ODE_middle2 print_ODE file_jac file_aux file_init file_obs file_data nfragments nobs is_obs in 
    let _ = 
      List.fold_left
        (fun bool c -> 

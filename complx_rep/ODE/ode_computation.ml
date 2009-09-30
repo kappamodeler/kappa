@@ -3731,6 +3731,19 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	 (fun a _ obs -> (Var a)::(obs))
 	 init 
 	[] in 
+    let nfragments = size () in 
+    let nobs,obs,is_obs = 
+      if nobs > 0 
+      then 
+        (nobs,obs,true)
+      else 
+        (nfragments, 
+         (let rec vide k sol = 
+           if k<1 then sol
+           else vide (k-1) ((Var k)::sol)
+         in vide nfragments []),
+         false) 
+    in 
     let _ = dump_rate_map print_ODE rate_map (snd flag_map) in 
     let _ = 
       dump_prod 
@@ -3763,8 +3776,9 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	file_ODE_matlab_init 
 	file_ODE_matlab_obs
 	file_ODE_data
-	(size ())
+	nfragments 
 	(string_of_int nobs) 
+        is_obs
     in 
     let _ = (match print_data with None -> () | Some a -> 
     (a.print_string "\n ")) in 
@@ -3833,29 +3847,56 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     in 
     let file_ODE_data = Tools.cut2 file_ODE_data in 
     let _ = 
-      IntMap.fold 
-	(fun i j k -> 
-	   let _ = (pstring print) "set output '" in 
-	   let _ = (pstring print) file_ODE_png in 
-	   let _ = (pstring print) "'\n" in 
-	   let _ = 
-	     if k=2 then 
-	       (pstring print) "plot "
-	     else  
-	       (pstring print) "replot "
-	   in 
-	   let _ = (pstring print) "'" in 
-	   let _ = (pstring print) file_ODE_data in 
-	   let _ = (pstring print) "' using 1:" in 
-	   let _ = (pstring print) (string_of_int k) in 
-	   let _ = (pstring print) " title '" in 
-	   let _ = (pstring print) (try IntMap.find i (snd flag_map)
-				    with 
-					Not_found -> "") in 
-	   let _ = (pstring print) "' w l\n" in 
-	     (k+1))
-	pb_obs 2
+      if is_obs then 
+        let _ = 
+          IntMap.fold 
+	    (fun i j k -> 
+	       let _ = (pstring print) "set output '" in 
+	       let _ = (pstring print) file_ODE_png in 
+	       let _ = (pstring print) "'\n" in 
+	       let _ = 
+	         if k=2 then 
+	           (pstring print) "plot "
+	         else  
+	           (pstring print) "replot "
+	       in 
+	       let _ = (pstring print) "'" in 
+	       let _ = (pstring print) file_ODE_data in 
+	       let _ = (pstring print) "' using 1:" in 
+	       let _ = (pstring print) (string_of_int k) in 
+	       let _ = (pstring print) " title '" in 
+	       let _ = (pstring print) (try IntMap.find i (snd flag_map)
+				        with 
+					    Not_found -> "") in 
+	       let _ = (pstring print) "' w l\n" in 
+	         (k+1))
+	    pb_obs 2
+        in () 
     in 
+    let _ = 
+      if not is_obs then 
+        let rec vide k = 
+          if k>nobs then () 
+          else 
+            let _ = (pstring print) "set output '" in 
+	    let _ = (pstring print) file_ODE_png in 
+	    let _ = (pstring print) "'\n" in 
+	    let _ = 
+	      if k=1 then 
+	        (pstring print) "plot "
+	      else  
+	        (pstring print) "replot "
+	    in 
+	    let _ = (pstring print) "'" in 
+	    let _ = (pstring print) file_ODE_data in 
+	    let _ = (pstring print) "' using 1:" in 
+	    let _ = (pstring print) (string_of_int k) in 
+	    let _ = (pstring print) " title '" in 
+	    let _ = (pstring print) ("Fragment "^(string_of_int k)) in 
+	    let _ = (pstring print) "' w l\n" in 
+	vide (k+1) 
+        in vide 1
+    in
     let _ = List.iter close_out  (match print with None -> [] | Some a -> a.chan) in 
      
   
