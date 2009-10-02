@@ -32,7 +32,10 @@ let style () =
   "xsi:schemaLocation=\"http://plectix.synthesisstudios.com
 KappaSession.xsd\" xmlns=\"http://plectix.synthesisstudios.com/schemas/kappasession\"
 xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-  
+
+let style2 () = 
+  "xsi:schemaLocation=\\\"http://plectix.synthesisstudios.com\\nKappaSession.xsd\\\"\\nxmlns=\\\"http://plectix.synthesisstudios.com/schemas/kappasession\\\"\\nxmlns:xsi=\\\"http://www.w3.org/2001/XMLSchema-instance\\\" "
+
 let time_stamp () = Config_complx.time_stamp 
 let command_line () =  
   let s = ref "" in 

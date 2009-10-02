@@ -160,6 +160,7 @@ let skip_a_specie   = ref ""      (*to be printed when an agent can be fully abs
 let ode_memoization_level = ref 1
 let output_latex_rule_system = ref ""
 let output_latex_sty = ref ""
+let output_ODE_xml = ref "" 
 let output_ODE_latex = ref ""
 let output_ODE_obs_head = ref ""
 let output_ODE_data = ref ""
@@ -405,6 +406,7 @@ let options = List.rev
 "--output-ODE-gplot","_plx_ODE.gplot";
 "--output-ODE-png","_plx_ODE.png";
 "--output-ODE-script","_plx_ODE.script";
+"--output-ODE-xml","_plx_ODE.xml";
 "--output-marshalling","_plx.marshalling";
 "--output-influence-map-txt","_plx_influence_map.txt";
 "--output-influence-map-dot","_plx_influence_map.dot";
@@ -563,6 +565,9 @@ let options = List.rev
   ["2_Output'";"ODE"],Normal;
 "--output-ODE-data",  String output_ODE_data,
   "write plots coordinate",
+  ["2_Output'";"ODE"],Normal;
+"--output-ODE-xml", String output_ODE_xml,
+  "write datas in an XML output",
   ["2_Output'";"ODE"],Normal;
 "--output-pack-constraints",
  String output_pack_value_file,

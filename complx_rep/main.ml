@@ -181,6 +181,7 @@ let main ()  =
 	(!Config_complx.output_ODE_gplot)
 	(!Config_complx.output_ODE_png)
 	(!Config_complx.output_ODE_script)
+        (!Config_complx.output_ODE_xml)
 	prefix 
 	pb 
 	log 
