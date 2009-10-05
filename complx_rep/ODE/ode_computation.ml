@@ -3790,6 +3790,12 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	nfragments 
 	(string_of_int nobs) 
         is_obs
+        flag_map 
+        print_fragment 
+        get_fragment 
+        ode_handler 
+        views_data_structures 
+        keep_this_link
     in 
     let _ = (match print_data with None -> () | Some a -> 
     (a.print_string "\n ")) in 

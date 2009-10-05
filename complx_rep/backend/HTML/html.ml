@@ -123,6 +123,11 @@ let output_xml channel   =
     (!Config_complx.output_xml) 
     "Xml session"
 
+let output_ODE_xml pb channel   = 
+  precomputed_data channel 
+    (!Config_complx.output_ODE_xml) 
+    "Xml session (for ODE integration)"
+
 let print_influence_map pb channel = 
   let file = !Config_complx.output_influence_map_jpg_file  in 
   if file = "" 
@@ -429,9 +434,10 @@ let dump_html pb channel (l,m)  =
 	       (!Config_complx.output_without_polymere)
 	       "Refinement"]
      else [])@
-     (if !Config_complx.do_ODE 
+     (if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
      then 
        [menutitle channel "Ordinary differential equations";
+        output_ODE_xml pb channel;
 	print_ODE_plot pb channel;
 	print_ODE_system_mathematica pb channel;
 	print_ODE_system_octave_data pb channel;
