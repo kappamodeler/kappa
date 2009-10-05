@@ -3755,6 +3755,23 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
          false) 
     in 
     let _ = dump_rate_map print_ODE rate_map (snd flag_map) in 
+    let pb_obs = 
+      IntMap.map 
+	(fun x -> 
+	   match x with None -> None
+	     | Some r -> 
+		 begin 
+		   try (Some (StringMap.find r (fst flag_map)))
+		   with Not_found -> None
+		 end)
+	pb_obs in 
+    let pb_obs_inv,_ = 
+      IntMap.fold 
+        (fun i k (map,int) -> 
+           IntMap.add int (i,k) map,int+1)
+        pb_obs (IntMap.empty,1)
+    in 
+             
     let _ = 
       dump_prod 
 	(merge_prod,jacobian) 
@@ -3796,19 +3813,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
         ode_handler 
         views_data_structures 
         keep_this_link
+        pb_obs_inv
     in 
     let _ = (match print_data with None -> () | Some a -> 
     (a.print_string "\n ")) in 
-    let pb_obs = 
-      IntMap.map 
-	(fun x -> 
-	   match x with None -> None
-	     | Some r -> 
-		 begin 
-		   try (Some (StringMap.find r (fst flag_map)))
-		   with Not_found -> None
-		 end)
-	pb_obs in 
+   
     let _ = print_init_in_matlab print_ODE_matlab_init file_ODE_matlab_init init in 
     let (l,m) = print_obs_in_matlab  print_ODE_matlab_obs file_ODE_matlab_obs activity_map (size ()) pb_obs (l,m)  in 
     let _ = print_activity print_ODE_matlab_activity file_ODE_matlab_act activity_map in 

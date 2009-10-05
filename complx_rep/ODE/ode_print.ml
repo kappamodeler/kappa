@@ -442,7 +442,7 @@ let pprint_ODE_middle1 print =
   in ()
 
 
-let pprint_ODE_middle2 print print_fragment get_fragment ode_handler views_data_structures keep_this_link aux_file jac_file init_file obs_file file_ODE_data file_ODE_XML   nfrag nobs is_obs flag_map = 
+let pprint_ODE_middle2 print print_fragment get_fragment ode_handler views_data_structures keep_this_link aux_file jac_file init_file obs_file file_ODE_data file_ODE_XML   nfrag nobs is_obs pb_obs flag_map = 
   let _ = 
     match print.mathematica with 
       None -> () 
@@ -477,12 +477,16 @@ let pprint_ODE_middle2 print print_fragment get_fragment ode_handler views_data_
                     if k>(int_of_string  nobs) then () 
                     else 
                       begin
-                        let _ = a.print_string ("fprintf(fid,\"<Plot Type=\\\"OBSERVABLE\\\" Text=\\\"[%s]\\\"/>\\n\",\"") in 
+                        let _ = a.print_string ("fprintf(fid,\"<Plot Type=\\\"OBSERVABLE\\\" Text=\\\"%s\\\"/>\\n\",\"") in 
                         let _ = 
                           if is_obs 
                           then 
                             (a.print_string 
-                               (try IntMap.find k (snd flag_map)
+                               (try 
+                                  (let a,b = IntMap.find k pb_obs in 
+                                  try IntMap.find (a)  (snd flag_map)
+                                  with 
+                                      Not_found -> match b with None -> raise Not_found | Some b -> "["^(IntMap.find b (snd flag_map))^"]")
 				with 
 				    Not_found -> ""))
                           else 
@@ -790,7 +794,7 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
     ()
 
 
- let dump_prod (prod,jac) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab print_ODE_matlab_aux print_ODE_matlab_jac print_ODE_matlab_size output_data file_aux file_jac  file_init file_obs file_data file_XML size  nobs is_obs flag_map print_fragment get_fragment ode_handler views_data_structures keep_this_link = 
+ let dump_prod (prod,jac) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab print_ODE_matlab_aux print_ODE_matlab_jac print_ODE_matlab_size output_data file_aux file_jac  file_init file_obs file_data file_XML size  nobs is_obs flag_map print_fragment get_fragment ode_handler views_data_structures keep_this_link pb_obs = 
    let nfragments = string_of_int size in 
    let print_ODE = print_ODE_mathematica in 
    let print_latex = keep_latex print_ODE_mathematica in 
@@ -861,7 +865,7 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
        false 
        obs in
  
-   let _ = pprint_ODE_middle2 print_ODE print_fragment get_fragment ode_handler views_data_structures keep_this_link file_jac file_aux file_init file_obs file_data file_XML nfragments nobs is_obs flag_map in 
+   let _ = pprint_ODE_middle2 print_ODE print_fragment get_fragment ode_handler views_data_structures keep_this_link file_jac file_aux file_init file_obs file_data file_XML nfragments nobs is_obs pb_obs flag_map in 
    let _ = 
      List.fold_left
        (fun bool c -> 
@@ -949,6 +953,7 @@ let pprint_ODE_head print print_obs print_activity file file_jac file_size file_
     nfragments 
     nobs 
     is_obs 
+    pb_obs 
     flag_map in 
     
 (*  let print_ODE = print_ODE_matlab_aux in 
@@ -1173,7 +1178,7 @@ let dump_rate_map print rate_map flag_map =
 	       in 
 	       (i,true,s))
 	    rate_map (0,false,"") in 
-	let _ = pprint_string a ("%"^s) in 
+	let _ = pprint_string a ("      %"^s) in 
 	let _ = pprint_string a "\n];\n\n" 
 	in () 
   in () 
