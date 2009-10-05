@@ -3893,7 +3893,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	       let _ = (pstring print) " title '" in 
 	       let _ = (pstring print) (try IntMap.find i (snd flag_map)
 				        with 
-					    Not_found -> "") in 
+					    Not_found -> 
+                                              match j with None -> "" 
+                                                | Some j -> 
+                                                    try "["^(IntMap.find j (snd flag_map))^"]"
+                                                    with Not_found -> "" ) in 
 	       let _ = (pstring print) "' w l\n" in 
 	         (k+1))
 	    pb_obs 2
