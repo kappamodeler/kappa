@@ -133,43 +133,46 @@ let translate_init_elt t interface_map (agents,marks,markable_sites,linkable_sit
 		 s 
 		 (m1,m2) 
 		 (interface,(test,agents,marks,markable_sites,linkable_sites,mark_site_rel))->
-		 StringSet.add s interface,
-	       let test,marks,markable_sites,mark_site_rel = 
-		 match m1 
-		 with Agent.Wildcard -> 
-		   (test,marks,markable_sites,mark_site_rel)
-		   | Agent.Marked m -> 
-		       (fadd_test i (Pb_sig.S_mark(s,m)) test,
-			StringSet.add m marks,
-			fadd i s markable_sites,
-			fadd_mark_site (i,s) m mark_site_rel)
-		   | _ -> (error_frozen "translate translate_init" frozen_exit)
-	       in 
-	       let test,linkable_sites = 
-		 match m2 with Agent.Wildcard -> 
-                   error_frozen ("Agent "^ag^" is introduced with a wildcard on the site "^s) frozen_exit 
-		   | Agent.Free -> 
-		       if s = "_" then test,linkable_sites 
-		       else
-			 (fadd_test i (Pb_sig.S_free s) test,
-			  fadd i s linkable_sites
-			 )
-		   | Agent.Bound ->  
-		       if 
-                         try 
+		 if s ="_" then (interface,(test,agents,marks,markable_sites,linkable_sites,mark_site_rel))
+                 else 
+                   begin 
+                     StringSet.add s interface,
+	           let test,marks,markable_sites,mark_site_rel = 
+		     match m1 
+		     with Agent.Wildcard -> 
+		       (test,marks,markable_sites,mark_site_rel)
+		       | Agent.Marked m -> 
+		           (fadd_test i (Pb_sig.S_mark(s,m)) test,
+			    StringSet.add m marks,
+			    fadd i s markable_sites,
+			    fadd_mark_site (i,s) m mark_site_rel)
+		       | _ -> (error_frozen "translate translate_init" frozen_exit)
+	           in 
+	           let test,linkable_sites = 
+		     match m2 with Agent.Wildcard -> 
+                       error_frozen ("Agent "^ag^" is introduced with a wildcard on the site "^s) frozen_exit 
+		       | Agent.Free -> 
+		           if s = "_" then test,linkable_sites 
+		           else
+			     (fadd_test i (Pb_sig.S_free s) test,
+			      fadd i s linkable_sites
+			     )
+		       | Agent.Bound ->  
+		           if 
+                             try 
                            let _ = 
                              Solution.PA.find (i,s) t.Solution.links
                            in true 
-                         with 
-                             _  -> false
-                       then 
-                         (test,
-			  fadd i s linkable_sites)
-                       else 
+                             with 
+                                 _  -> false
+                           then 
+                             (test,
+			      fadd i s linkable_sites)
+                           else 
                          error_frozen ("Agent "^ag^" is introduced with an underscore on the site "^s) frozen_exit 
-		   | _ -> (error_frozen  "translate.95" frozen_exit)
-	       in 
-		 (test,agents,marks,markable_sites,linkable_sites,mark_site_rel))
+		       | _ -> (error_frozen  "translate.95" frozen_exit)
+	           in 
+		     (test,agents,marks,markable_sites,linkable_sites,mark_site_rel)end)
 	      a
 	      (StringSet.empty,(test,StringSet.add (Agent.name a) agents,marks,markable_sites,linkable_sites,mark_site_rel)) 
 	  in 
@@ -181,7 +184,9 @@ let translate_init_elt t interface_map (agents,marks,markable_sites,linkable_sit
 	       then 
 		 interface_map
 	       else
-		 error_frozen ("Agent "^ag^" is introduced with distinct interfaces") frozen_exit
+		 (
+                    error_frozen ("Agent "^ag^" is introduced with distinct interfaces") frozen_exit)
+
 	     with 
 		 Not_found -> StringMap.add ag interface interface_map)
 	      ,rep))
@@ -208,9 +213,10 @@ let translate_init_elt t interface_map (agents,marks,markable_sites,linkable_sit
 	       test),
 	 fadd_contact (i1,s1) (i2,s2) contact)
       t.Solution.links (test,contact)  in 
-  (IntMap.fold (fun i s l -> 
-		       let ig = IntMap.find i speciemap in 
-			 (ig,s)::l) test []),
+  (IntMap.fold (
+     fun i s l -> 
+       let ig = IntMap.find i speciemap in 
+	 (ig,s)::l) test []),
   interface_map,
   (agents,marks,markable_sites,linkable_sites,mark_site_rel,cpt,contact),
   messages
