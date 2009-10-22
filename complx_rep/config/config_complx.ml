@@ -101,7 +101,7 @@ let hash_cons = ref true
 let memoisation = ref true
 let local_memoisation = ref false 
 let flat_ode = ref false 
-
+let stoc_ode = ref false 
 
 let cycle_depth = ref 10 
 let force_cycle = ref false 
@@ -664,6 +664,7 @@ let options = List.rev
   "--final-time",Float ode_final_time,"final time for ODE integration",["ODE"],Normal;
   "--initial-step",Float ode_init_step,"initial time step for ODE integration",["ODE"],Normal;
   "--flat-ode",Bool flat_ode,"Compute the ODE for the flat system",["ODE"],Normal;
+  "--stoc-ode",Bool stoc_ode,"Compute fragmentation for the stochastic semantics",["ODE"],Hidden;
   "--plots",Int ode_points,"number of plots in the data file",["ODE"],Normal;
   "--ode-memoization-level",Int ode_memoization_level,
  "tune the level of memoization \n     0 -- no memoization \n     1 -- few memoization \n     2 -- much memoization",["ODE"],Expert;

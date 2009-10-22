@@ -1584,9 +1584,10 @@ module Pipeline =
 				    boolean 
 				    sub
 				    auto 
-				    (match !Config_complx.flat_ode 
+				    (match !Config_complx.stoc_ode,!Config_complx.flat_ode 
 				     with 
-					 true -> Annotated_contact_map.Flat
+					 _,true -> Annotated_contact_map.Flat
+                                       |true,_ -> Annotated_contact_map.Stoc
 				       | _ -> Annotated_contact_map.Compressed)
 				    obs_map
 				    (l,m) in  

@@ -601,6 +601,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	Flat -> upgrade (compute_annotated_contact_map_in_flat_mode system cpb contact ) cpb
       |	Compressed -> compute_annotated_contact_map_in_compression_mode system cpb contact 
       |	Approximated -> upgrade(compute_annotated_contact_map_in_approximated_mode system cpb contact ) cpb
+      | Stoc -> Annotated_contact_map_stoc.compute_annotated_contact_map_in_stoc_mode system cpb contact
     in 
   
 
@@ -1097,6 +1098,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     let activity_map = IntMap.empty in 
     let rate_map = IntMap.empty in 
     let flag_map = (StringMap.empty,IntMap.empty) in 
+    let system = if compression_mode = Stoc then [] else system in 
     let activity = 
       List.fold_left  
 	(fun ((mainprod:IntSet.t),

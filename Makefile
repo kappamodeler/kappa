@@ -199,6 +199,7 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/git_commit_info.cmo  \
 	./$(COMPLXREP)/ODE/arithmetics.cmo \
 	./$(COMPLXREP)/ODE/ode_print.cmo \
 	./$(COMPLXREP)/ODE/annotated_contact_map.cmo \
+	./$(COMPLXREP)/ODE/annotated_contact_map_stoc.cmo \
 	./$(COMPLXREP)/ODE/views.cmo \
 	./$(COMPLXREP)/ODE/rooted_path.cmo \
 	./$(COMPLXREP)/ODE/fragments_sig.cmo \

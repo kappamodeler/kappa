@@ -5,18 +5,10 @@ open Output_contact_map
 open Ode_print_sig
 open Ode_print 
 open Error_handler 
+open Annotated_contact_map 
 
 let debug = false
 
-type template_piece = {kept_sites:StringSet.t}
-
-type ode_skeleton = 
-    {subviews:(template_piece list) StringMap.t;
-      solid_edges: String22Set.t }
-
-
-
-type compression_mode = Compressed | Flat | Approximated | Stoc 
 
 
 let error i = 
@@ -30,7 +22,6 @@ let keep_this_link (a,b) (c,d) skeleton =
    or 
    String22Set.mem ((c,d),(a,b)) skeleton.solid_edges)
 
-    
 
 let dump_template print  x =
   let _ = pprint_string print "Passing sites: \n" in
@@ -247,7 +238,7 @@ let trivial_rule rs =
 	let rec aux context rep = 
 	  match context with 
 	    (AL(_),_)::q | (B(_),_)::q-> aux q rep
-	    | (L((a,b,c),(d,e,f)),false)::q  -> 
+	    | (L((a,b,c),(d,e,f)),_)::q  -> 
 		begin
 		  match rep with 
 		    None -> aux q (Some((a,b,c),(d,e,f)))
@@ -271,10 +262,10 @@ let trivial_rule rs =
 		  List.for_all 
 		    (fun (bb,bool) -> 
 		      match bb,bool  with 
-			B(x,y,z),true when (x=a && y=b && z=c) or (x=d && y=e && z=f) -> true 
-		      |	AL((x,y,z),(xx,yy)),true when (x=a && y=b && z=c && xx=e && yy=f) or (x=d && y=e && z=f && xx=b & yy=c) -> true 
-		      |	L((x,y,z),(xx,yy,zz)),true when (x=a && y=b && z=c && xx=d && yy=e && zz=f) or (xx=a && yy=b && zz=c && x=d && y=e && z=f) -> true 
-		      | H(_),_ -> true 
+			B(x,y,z),_ when (x=a && y=b && z=c) or (x=d && y=e && z=f) -> true 
+		      |	AL((x,y,z),(xx,yy)),_ when (x=a && y=b && z=c && xx=e && yy=f) or (x=d && y=e && z=f && xx=b & yy=c) -> true 
+		      |	L((x,y,z),(xx,yy,zz)),_ when (x=a && y=b && z=c && xx=d && yy=e && zz=f) or (xx=a && yy=b && zz=c && x=d && y=e && z=f) -> true 
+		      | H(x,y),_ when x=a or x = d -> true 
 		      | _ -> false
 			    )
 		    rule.Pb_sig.injective_guard
@@ -284,48 +275,25 @@ let trivial_rule rs =
       end
   |	_ -> false 
 
-type tr = Half of string*string | Unbind of string*string*string*string 
+type trstoc = Half of string*string | Unbind of string*string*string*string  | Bind of string*string*string*string | Remove of string 
 	
 
-let which_trivial_rule rs = 
-  let control = rs.Pb_sig.control in 
-  let context = control.Pb_sig.context_update in 
-  let uncontext = control.Pb_sig.uncontext_update in 
-  match context,uncontext with 
-    _,[a,b,c] -> Half(b,c)
-  | _,[] ->
-      begin
-	let rec aux context rep = 
-	  match context with 
-	    (AL(_),_)::q | (B(_),_)::q-> aux q rep
-	    | (L((a,b,c),(d,e,f)),false)::q  -> 
-		begin
-		  match rep with 
-		    None -> Some (Unbind(b,c,e,f))
-		  | Some _ -> None
-		end
-	    | _ -> None
-	  in 
-	(match aux context None  
-	with None -> error 256
-	| Some a -> a )
-      end
-  |	_ -> error 259 
 
-let trivial_rule2 (contact,keep_this_link) rule = 
-  trivial_rule rule
-    && 
-  begin 
-    match which_trivial_rule rule
-    with 
-      Half(a,b) -> 
-	List.for_all 
-	  (fun (_,c,d) -> not (keep_this_link (a,b) (c,d)))
-	  (contact (a,b))
-    | Unbind(a,b,c,d) -> not (keep_this_link (a,b) (c,d))
-  end
+let is_trivial_deletion rs = 
+  (List.length rs.Pb_sig.control.Pb_sig.remove = 1)
+  && 
+    (List.for_all 
+       (fun rule -> 
+	  List.length rule.Pb_sig.injective_guard = 1)
+       rs.Pb_sig.rules)
+  && 
+    (rs.Pb_sig.control.Pb_sig.add = [] )
     
-let compute_annotated_contact_map_in_compression_mode system cpb contact_map  =
+let is_trivial_rule_stoc  rs = (trivial_rule  rs) or is_trivial_deletion rs 
+
+
+    
+let compute_annotated_contact_map_in_stoc_mode system cpb contact_map  =
   let local_map,site_map  = compute_annotated_contact_map_init cpb in
   let classes = 
     StringMap.map 
@@ -337,6 +305,7 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map  =
 	   StringListSet.empty l)
       local_map
   in 
+  let system = List.filter (fun x -> not (is_trivial_rule_stoc x)) system in 
   let fadd ag x y map = 
     let old1,old2 = 
       try StringMap.find ag map 
@@ -357,7 +326,7 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map  =
 	  StringMap.add y new2_image old2 in 
 	StringMap.add ag (new1_map,new2_map)  map 
   in
-      
+  
   let site_relation,classes,dangerous_sites = 
     List.fold_left
       (fun (relation,classes,dangerous_sites)  rs -> 
@@ -507,6 +476,8 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map  =
 		    (fun _ _ x -> x)
 		    (fun _ _ x -> x)
 		    (fun (a,a') tested modified rel -> 
+                       let tested=StringSet.union tested modified in 
+                       let modified=StringSet.union tested modified in 
 		      StringSet.fold 
 			(fun test  rel -> 
 			  StringSet.fold
@@ -655,7 +626,7 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map  =
                        (fun solid_edges x -> 
                           match x 
                           with 
-                              L((_,b,c),(_,e,f)),true
+                              L((_,b,c),(_,e,f)),_
                             |AL((_,b,c),(e,f)),true 
                                 -> String22Set.add ((b,c),(e,f)) solid_edges
                             | _ -> solid_edges)
@@ -666,7 +637,7 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map  =
 		List.fold_left 
 		  (fun solid_edges b -> 
 		    match b with 
-		      L((a,b,c),(d,e,f)),false -> 
+		      L((a,b,c),(d,e,f)),_ -> 
 			String22Set.add ((b,c),(e,f))
 			  (String22Set.add ((e,f),(b,c)) solid_edges)
 		    | _ -> solid_edges)
