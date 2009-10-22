@@ -186,7 +186,7 @@ let translate_init_elt t interface_map (agents,marks,markable_sites,linkable_sit
 		 Not_found -> StringMap.add ag interface interface_map)
 	      ,rep))
       t.Solution.agents
-      (StringMap.empty,(IntMap.empty,agents,marks,markable_sites,linkable_sites,mark_site_rel))
+      (interface_map,(IntMap.empty,agents,marks,markable_sites,linkable_sites,mark_site_rel))
   in 
   let test,contact = 
     Solution.PA.fold 
@@ -671,7 +671,6 @@ let translate_rule_list l init interface  messages =
 	  StringSet.fold (fun a b -> a::b) 
 	    (try (StringMap.find s linkable_sites) with Not_found -> StringSet.empty) [])::interface))
       species_set ([],[]) in 
-  
   let _ = 
     StringMap.iter2
       (fun i x -> ())
