@@ -1523,7 +1523,7 @@ module Pipeline =
 					   else 
 					     begin 
 					         let key = (List.hd (List.hd r.Pb_sig.rules).Pb_sig.labels).Pb_sig.r_simplx.Rule.id in 
-						   (list,IntMap.remove key obs_map,(l,m))
+						   (r::list,(*IntMap.remove key Bug FIX ENG-268: Now  obs are dumped even if they are not defined*) obs_map,(l,m))
 					     end)
 				      ([],obs_map,(l,m))
 				      boolean_obs.system 
