@@ -12,13 +12,15 @@ let rec find_val t c obs =
 	  Some v -> v
 	| None -> find_val (t-1) c obs
 		
+
 let output_data_point desc_opt sd p c = 
   match !desc_opt with
       None -> c
     | Some d ->
+	
 	let t = 
-	  if !time_mode then get_time_range p c.curr_time (*get the time interval corresponding to current time*)
-	  else get_step_range p c.curr_step (*get the event interval corresponding to current event*)
+	  if !time_mode then get_time_range c.curr_time (*get the time interval corresponding to current time*)
+	  else get_step_range c.curr_step (*get the event interval corresponding to current event*)
 	in
 	  if t = c.last_measure then c
 	  else
@@ -53,7 +55,7 @@ let output_data_point desc_opt sd p c =
 			       let r,_ = Rule_of_int.find i sd.rules in
 				 if r.input = "var" then cont
 				 else
-				   (Printf.sprintf "%d" (int_of_float (find_val t c i)))::cont
+			       	   (Printf.sprintf "%d" (int_of_float (find_val t c i)))::cont
 			    ) sd.obs_ind [] 
 	      in
 		Printf.fprintf d "%s" (String.concat "\t" ((Printf.sprintf "%.3E" c.curr_time)::line));

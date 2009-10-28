@@ -25,7 +25,8 @@ let main =
     ("--deadlock-threshold",
      Arg.Float (fun i -> deadlock_sensitivity:=i),"[expert] Defines the activity of a deadlocked system (default 0.0)");
     ("--gp",Arg.Unit (fun s -> gnuplot_plugin:=true), "Requires the creation of a gnuplot readable file at the end on the simulation");
-    ("--compile", Arg.String (fun s -> compile_mode:=true; fic := s), "name of the kappa file to compile");
+    ("--compile", Arg.String (fun s -> compilation_opt:= !compilation_opt land (lnot _PARSE_INIT) ; compile_mode:=true; fic := s), 
+     "name of the kappa file to compile");
 
     (*Causality analysis*)
     ("--cflow", Arg.String (fun s -> story_mode := true ; fic := s), "name of the kappa file to analyse");

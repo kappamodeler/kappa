@@ -48,7 +48,7 @@ val to_str : ?ordered:bool -> t -> string
 val is_empty_intf : t  -> bool
 
 (**[make name set map] creates an agent whose sites are given by set. The map should send a site in set to a pair of marks*)
-val make : string -> Mods2.StringSet.t -> environment  -> t
+val make : string -> (*Mods2.StringSet.t ->*) environment  -> t
 
 val fold_interface: (string -> mark*mark -> 'a -> 'a) -> t -> 'a -> 'a 
 val fold2iz_interface: (string -> mark*mark -> mark*mark -> 'a -> 'a) -> t -> t -> 'a -> 'a

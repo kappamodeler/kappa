@@ -98,7 +98,7 @@ let rec is_empty_intf intf =
    SharedStringMap.is_empty a'
 
 
-let make name interface state_of_site = 
+let make name (*interface*) state_of_site = 
   let state_array = 
     (*SharedStringMap.int_of_tree*) (SharedStringMap.fold (fun x s ar -> SharedStringMap.add x s ar) state_of_site SharedStringMap.empty) in
     {name = name ; state_of_site = state_array}

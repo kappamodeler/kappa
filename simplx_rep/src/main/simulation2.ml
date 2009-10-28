@@ -1875,12 +1875,6 @@ let update warn r_ind assoc upd_quarks assoc_add sol sim_data p c = (*!! r_ind i
   let _ = if !bench_mode then Bench.pos_upd := !Bench.pos_upd +. (chrono t_pos) in
     (sim_data,mod_obs)
 
-let get_time_range p f =
-  let f' = (f /. !time_sample) in
-    (int_of_float f')
-
-let get_step_range p s = (s / !step_sample)
-
 let ticking c = 
   let p = float_of_int !clock_precision 
   and mx_i = float_of_int !max_iter
@@ -1911,6 +1905,13 @@ let ticking c =
 (***********************************************EVENT LOOP***********************************************)
 (********************************************************************************************************)
 	    
+let get_time_range f =
+  let f' = (f /. !time_sample) in
+    (int_of_float f')
+
+let get_step_range s = (s / !step_sample)
+
+
 let event log sim_data p c story_mode =
   if !debug_mode then Printf.printf "%d:(%d,%f)\n" c.curr_iteration c.curr_step c.curr_time ; flush stdout;
   let stop_test curr_step curr_time  = 
@@ -2096,8 +2097,8 @@ let event log sim_data p c story_mode =
 		begin
 		  let t_data = chrono 0.0 in (*for benchmarking*)
 		  let t = 
-		    if !time_mode then get_time_range p curr_time (*get the time interval corresponding to current time*)
-		    else get_step_range p (c.curr_step+1) (*get the event interval corresponding to current event*)
+		    if !time_mode then get_time_range curr_time (*get the time interval corresponding to current time*)
+		    else get_step_range (c.curr_step+1) (*get the event interval corresponding to current event*)
 		  in
 		    if (!init_time <= curr_time) then (*take measures only if passed init time*)
 		      let obs_map = 

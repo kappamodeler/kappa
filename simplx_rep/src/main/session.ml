@@ -353,7 +353,7 @@ let xml_of_maps rules ?conflict flow =
       (xml_of_graph_nodes nodes) (xml_of_graph_connections pos_edges) (xml_of_graph_connections neg_edges)
 
 let xml_of_solution sol n = 
-  let kappa_str = Solution.kappa_of_solution sol in
+  let kappa_str = Solution.kappa_of_solution ~full:true sol in
     try
       Printf.sprintf "<Species Kappa=\"%s\" Number=\"%d\">\n</Species>\n" kappa_str n (*xml_nodes xml_bonds*)
     with
@@ -379,8 +379,7 @@ let ls_of_species species curr_time =
     (LongString.concat (Printf.sprintf "<FinalState Time=\"%s\">\n" (Float_pretty_printing.string_of_float curr_time)) LongString.empty,
      ls,
      LongString.concat (Printf.sprintf "</FinalState>") LongString.empty)
-  
-    
+      
 (***************session**************)
 let schema_loc = "\"http://plectix.synthesisstudios.com SimplxSession.xsd\""
 let xmlns = "\"http://plectix.synthesisstudios.com/schemas/kappasession\""

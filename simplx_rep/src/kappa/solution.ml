@@ -72,12 +72,14 @@ let kappa_of_solution ?(full=false) ?whitelist sol =
       and hsh_link = Hashtbl.create 10 
       in
       let longstr_of_agents agents =
-	AA.fold (fun id ag ls ->
-		   if Agent.is_empty ag or (with_whitelist && not (IntSet.mem id wl)) then ls
+	AA.fold (fun id ag (ls,cpt) ->
+		   if Agent.is_empty ag or (with_whitelist && not (IntSet.mem id wl)) or ((cpt > 20) && (not full)) then (ls,cpt+1)
 		   else
-		     let name = if full then Printf.sprintf "%s#%d" (Agent.name ag) id else Agent.name ag 
+		     let name = Agent.name ag 
 		     in
-		       LongString.concat ~sep:','
+		       if (cpt = 20) && (not full) then (LongString.concat ~sep:',' "..." ls,cpt+1)
+		       else
+		       (LongString.concat ~sep:','
 			 (Printf.sprintf "%s(%s)"
 			    name
 			    (String.concat ","
@@ -128,10 +130,11 @@ let kappa_of_solution ?(full=false) ?whitelist sol =
 				  ) ag  []
 			       )
 			    )
-			 ) ls
-		) agents LongString.empty
+			 ) ls,cpt+1)
+		) agents (LongString.empty,0)
       in
-	LongString.to_string (longstr_of_agents sol.agents)
+      let ls,_ = longstr_of_agents sol.agents in
+	LongString.to_string ls
 
 let to_dot ?(low_reso=false) sol = 
   let hsh_done = Hashtbl.create 10 in

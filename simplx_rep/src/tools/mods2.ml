@@ -23,6 +23,7 @@ type assoc = int IntMap.t
 module AssocArray = Array_ext.Make(struct type t = assoc let default = IntMap.empty end)
 module CoordSetArray = Array_ext.Make(struct type t = CoordSet.t let default = CoordSet.empty end)
 
+module PortArray = Array_ext.Make(struct type t = int*string let default = (-1,"") end)
 
 module Palette:
 sig

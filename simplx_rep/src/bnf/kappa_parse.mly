@@ -103,7 +103,7 @@
 	error_found 90 (flag^" is an observation name, expecting a rule name")
 %}
 %token INIT_LINE  OBS_LINE  STORY_LINE NEWLINE MODIF_LINE GEN_LINE CONC_LINE EOF VAR_LINE
-%token MULT DIVIDE AND PLUS MINUS COMMA SEMICOLON GREATER SMALLER SET EQUAL INFINITY SEP MIXTURE PAUSE KILL DUMP
+%token MULT DIVIDE AND OR PLUS MINUS COMMA SEMICOLON GREATER SMALLER SET EQUAL INFINITY SEP MIXTURE PAUSE KILL DUMP
 %token DO AT TIME
 %token KAPPA_LNK KAPPA_WLD KAPPA_SEMI KAPPA_LRAR KAPPA_RAR IMPLY
 %token OP_PAR CL_PAR OP_CONC CL_CONC OP_ACC CL_ACC
@@ -113,6 +113,7 @@
 %left PLUS MINUS
 %left COMMA
 %left MULT DIVIDE
+%left OR
 %left AND
 
 %start line
@@ -121,7 +122,8 @@
 %% /*Grammar rules*/
 
   line: 
-| INIT_LINE init_expr {if (!compilation_opt land _PARSE_INIT)=_PARSE_INIT then hsh_add !env $2 else ()}
+| INIT_LINE init_expr {let t0 = chrono 0.0 in if (!compilation_opt land _PARSE_INIT)=_PARSE_INIT 
+			 then hsh_add !env $2 else ()}
 | OBS_LINE obs_expr {obs_l := $2::(!obs_l)}
 | VAR_LINE var_expr {obs_l := $2::(!obs_l)}
 | STORY_LINE story_expr {obs_l := $2::(!obs_l)}
@@ -293,9 +295,9 @@
                         let coef = if !parse_coef or $1 = 0 then 
 			  (int_of_float (float_of_int $1 *. (!rescale)))
 			else 1 in
-			  if not (IntMap.is_empty semi_bounds) then 
+			  if not (PortArray.is_empty semi_bounds) then 
 			    let str = 
-			      String.concat "," (IntMap.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
+			      String.concat "," (PortArray.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
 			    in
 			      error_found 266 (Printf.sprintf "dangling bound(s): {%s}." str)
 			  else 
@@ -303,9 +305,9 @@
 			    (sol,coef)
 		       }
 | FLOAT MULT ne_sol_expr {let semi_bounds,_,sol = $3 in 
-			    if not (IntMap.is_empty semi_bounds) then 
+			    if not (PortArray.is_empty semi_bounds) then 
 			      let str = 
-				String.concat "," (IntMap.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
+				String.concat "," (PortArray.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
 			      in
 				error_found 276 (Printf.sprintf "dangling bound(s): {%s}." str)
 			    else
@@ -313,9 +315,9 @@
 			      (sol,int_of_float ($1 *. (!rescale)))
 			 }
 | ne_sol_expr {let semi_bounds,_,sol = $1 in 
-		 if not (IntMap.is_empty semi_bounds) then 
+		 if not (PortArray.is_empty semi_bounds) then 
 		   let str = 
-		     String.concat "," (IntMap.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
+		     String.concat "," (PortArray.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
 		   in
 		     error_found 286 (Printf.sprintf "dangling bound(s): {%s}." str)
 		 else 
@@ -328,7 +330,7 @@
   ne_sol_expr: /*non empty solution*/
 | OP_PAR ne_sol_expr CL_PAR {$2}
 | agent_expr {let semi_bounds_ag,ag = $1 in 
-	      let semi_bounds_sol = IntMap.fold (fun n s map -> IntMap.add n (0,s) map) semi_bounds_ag IntMap.empty in
+	      let semi_bounds_sol = IntMap.fold (fun n s map -> PortArray.add n (0,s) map) semi_bounds_ag (PortArray.create 10) in
 		(semi_bounds_sol,
 		 IntSet.empty,
 		 {Solution.agents = Solution.AA.add 0 ag (Solution.AA.create 1) ;
@@ -346,10 +348,10 @@
 					 error_found 312 
 					   (Printf.sprintf "link %d is defined multiple times" n)
 				       else
-					 let i = sol.Solution.fresh_id in
+				       	 let i = sol.Solution.fresh_id in
 					   try
-					     let (i',s') = IntMap.find n semi_bounds_sol in
-					     let semi_bounds_sol = IntMap.remove n semi_bounds_sol in
+					     let (i',s') = PortArray.find n semi_bounds_sol in
+					     let semi_bounds_sol = PortArray.remove n semi_bounds_sol in
 					     let links = 
 					       Solution.PA.add (i,s) (i',s') 
 						 (Solution.PA.add (i',s') (i,s) links) 
@@ -358,7 +360,7 @@
 					     in
 					       (semi_bounds_sol,used,links)
 					   with 
-					       Not_found -> (IntMap.add n (i,s) semi_bounds_sol,used,links)
+					       Not_found -> (PortArray.add n (i,s) semi_bounds_sol,used,links)
 				    ) semi_bounds_ag (semi_bounds_sol,used,sol.Solution.links)
 				in
 				  (semi_bounds_sol,
@@ -373,13 +375,8 @@
 
   agent_expr:
 | ID OP_PAR interface_expr CL_PAR {let semi_bound,state_of_site = $3 in 
-				   let interface = 
-				     Agent.fold_environment 
-				       (fun site _ intf -> StringSet.add site intf) state_of_site 
-				       (StringSet.add "_" (StringSet.empty)) 
-				   in
 				   let state_of_site = Agent.add_environment "_" (Agent.Wildcard,Agent.Free) state_of_site in
-				   let ag = Agent.make $1 interface state_of_site in
+				   let ag = Agent.make $1 (*interface*) state_of_site in
 				     (semi_bound,ag)
 				  }
 | ID OP_PAR interface_expr error {error_found 351 "mismatch parenthesis"}
@@ -394,7 +391,7 @@
 			     (semi_bounds,Agent.add_environment  $1 (inf,lnk) Agent.empty_environment)
 			  }
 | ID state_expr link_expr COMMA interface_expr {let semi_bounds,smap = $5 in 
-						  if Agent.mem_environment  $1 smap 
+						  if Agent.mem_environment $1 smap 
 						  then error_found 364 
 						    (Printf.sprintf "site %s is defined multiple times" $1)
 						  else
@@ -407,7 +404,7 @@
 							    else (inf,lnk,IntMap.add n $1 semi_bounds)
 							| (inf,(lnk,None)) -> (inf,lnk,semi_bounds)
 						    in
-						      (semi_bounds,Agent.add_environment  $1 (inf,lnk) smap)
+						      (semi_bounds,Agent.add_environment $1 (inf,lnk) smap)
 					       }
   ;
 
@@ -426,22 +423,22 @@
   obs_expr: 
 | LABEL NEWLINE {let flag = $1 in (check_flag_rule flag ; Solution.Occurrence flag)} 
 | ne_sol_expr NEWLINE {let (semi_bounds,_,sol) = $1 in 
-			 if IntMap.is_empty semi_bounds 
+			 if PortArray.is_empty semi_bounds 
 			 then Solution.Concentration ("["^(Solution.kappa_of_solution sol)^"]",sol)
 			 else 
 			   let str =  
 			     String.concat "," 
-			       (IntMap.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
+			       (PortArray.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
 			   in
 			     error_found 402 (Printf.sprintf "dangling bound(s): {%s}." str)
 		      }
 | LABEL ne_sol_expr NEWLINE {Hashtbl.replace flag_env ("["^$1^"]") 1 ;
 			     let (semi_bounds,_,sol) = $2 in 
-			       if IntMap.is_empty semi_bounds then Solution.Concentration ("["^$1^"]",sol)
+			       if PortArray.is_empty semi_bounds then Solution.Concentration ("["^$1^"]",sol)
 			       else 
 				 let str =  
 				   String.concat "," 
-				     (IntMap.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
+				     (PortArray.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
 				 in
 				   error_found 412 (Printf.sprintf "dangling bound(s): {%s}." str)
 			    } 
@@ -452,11 +449,11 @@
   var_expr: 
 | LABEL ne_sol_expr NEWLINE {Hashtbl.replace flag_env ("["^$1^"]") 1 ;
 			     let (semi_bounds,_,sol) = $2 in 
-			       if IntMap.is_empty semi_bounds then Solution.Variable ("["^$1^"]",sol)
+			       if PortArray.is_empty semi_bounds then Solution.Variable ("["^$1^"]",sol)
 			       else 
 				 let str =  
 				   String.concat "," 
-				     (IntMap.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
+				     (PortArray.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
 				 in
 				   error_found 412 (Printf.sprintf "dangling bound(s): {%s}." str)
 			    } 
@@ -495,9 +492,9 @@
 
   sol_expr:  /*empty*/ {Solution.empty()}
 | ne_sol_expr {let semi_bounds,_,sol = $1 in 
-		 if not (IntMap.is_empty semi_bounds) then 
+		 if not (PortArray.is_empty semi_bounds) then 
 		   let str = 
-		     String.concat "," (IntMap.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
+		     String.concat "," (PortArray.fold (fun n _ cont -> string_of_int n::cont) semi_bounds []) 
 		   in
 		     error_found 445 (Printf.sprintf "dangling bound(s): {%s}." str)
 		 else 

@@ -625,7 +625,7 @@ let add_event ?(replay=false) eid (r,modifs) add_wire net =
 	   s_depth=s_d+1;
 	   g_depth=g_d+1;
 	   kind=1;
-	   nodes = modifs 
+	   nodes = modifs ;
 	  } 
   in
     {net with 

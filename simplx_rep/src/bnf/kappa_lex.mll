@@ -71,6 +71,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     | "=" {EQUAL}
     | "=>" {IMPLY} 
     | '&' {AND}
+    | '|' {OR}
     | "$INF" {INFINITY}
     | "$T" {TIME}
     | "$M" {MIXTURE}
@@ -144,7 +145,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
 			   and init =
 			     if (!compilation_opt land _PARSE_INIT) = _PARSE_INIT then !init
 			     else 
-			       if !load_sim_data then []
+			       if !load_sim_data or !compile_mode then []
 			       else
 				 if Sys.file_exists !serialized_mixture_file then
 				   let d = open_in_bin !serialized_mixture_file in
