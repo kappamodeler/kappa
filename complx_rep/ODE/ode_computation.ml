@@ -1,4 +1,4 @@
-(* 06/09/2008 *)
+(* 29/10/2009 *)
 (* ODE generation *)
 (* Jerome Feret pour PlectiX *)
 (* ode_computation.ml *)
@@ -1782,6 +1782,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 						      let rec aux l = 
 							match l with 
 							    [] -> None 
+                                                          | ((b4,b5,b6),(b1,b2,b3))::_ when (a1,a2,a3,a5,a6) = (b4,b5,b6,b2,b3) -> Some b1   
 							  | ((b1,b2,b3),(b4,b5,b6))::_ when (a1,a2,a3,a5,a6) = (b4,b5,b6,b2,b3) -> Some b1
 							  | _::q -> aux q 
 						      in
