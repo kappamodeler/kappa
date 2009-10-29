@@ -19,7 +19,7 @@ open Error_handler
 let debug = false
 let log_step = false
 let memory = true
-let allow_cycle_in_lhs = false
+let allow_cycle_in_lhs = true
 
 let error i = 
   unsafe_frozen (Some "") (Some "Complx") (Some "Ode_computation.ml") None (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
