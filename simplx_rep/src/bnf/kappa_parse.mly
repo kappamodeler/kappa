@@ -121,6 +121,10 @@
 
 %% /*Grammar rules*/
 
+newline:
+  EOF {()}
+| NEWLINE {()}
+
   line: 
 | INIT_LINE init_expr {let t0 = chrono 0.0 in if (!compilation_opt land _PARSE_INIT)=_PARSE_INIT 
 			 then hsh_add !env $2 else ()}
@@ -130,7 +134,7 @@
 | MODIF_LINE modif_expr {exp := Experiment.add $2 (!exp)}
 | GEN_LINE gen_expr {}
 | CONC_LINE gen_expr {}
-| NEWLINE {()}
+| newline {()}
 | named_rule_expr {if (!compilation_opt land _PARSE_RULES)=_PARSE_RULES then rules := (List.fold_left (fun rules r -> r::rules) (!rules) $1) else ()} 
 | EOF {let sol = sol_of_hsh !env in
          init := sol ;
@@ -139,7 +143,7 @@
   ;
 
   modif_expr:
-| preconditions DO assignement NEWLINE {let dep_list,test_list,str1 =
+| preconditions DO assignement newline {let dep_list,test_list,str1 =
 					  match $1 with
 					      None -> raise (error_found 138 "empty preconditions")
 					    | Some result -> result
@@ -284,8 +288,8 @@
   ;
 
   init_expr:
-| NEWLINE {(Solution.empty(),0)} 
-| mult_sol_expr NEWLINE {$1}
+| newline {(Solution.empty(),0)} 
+| mult_sol_expr newline {$1}
 | mult_sol_expr EOF {error_found 253 "missing end of line"}
   ;
 
@@ -421,8 +425,8 @@
 
   
   obs_expr: 
-| LABEL NEWLINE {let flag = $1 in (check_flag_rule flag ; Solution.Occurrence flag)} 
-| ne_sol_expr NEWLINE {let (semi_bounds,_,sol) = $1 in 
+| LABEL newline {let flag = $1 in (check_flag_rule flag ; Solution.Occurrence flag)} 
+| ne_sol_expr newline {let (semi_bounds,_,sol) = $1 in 
 			 if PortArray.is_empty semi_bounds 
 			 then Solution.Concentration ("["^(Solution.kappa_of_solution sol)^"]",sol)
 			 else 
@@ -432,7 +436,7 @@
 			   in
 			     error_found 402 (Printf.sprintf "dangling bound(s): {%s}." str)
 		      }
-| LABEL ne_sol_expr NEWLINE {Hashtbl.replace flag_env ("["^$1^"]") 1 ;
+| LABEL ne_sol_expr newline {Hashtbl.replace flag_env ("["^$1^"]") 1 ;
 			     let (semi_bounds,_,sol) = $2 in 
 			       if PortArray.is_empty semi_bounds then Solution.Concentration ("["^$1^"]",sol)
 			       else 
@@ -447,7 +451,7 @@
   ;
 
   var_expr: 
-| LABEL ne_sol_expr NEWLINE {Hashtbl.replace flag_env ("["^$1^"]") 1 ;
+| LABEL ne_sol_expr newline {Hashtbl.replace flag_env ("["^$1^"]") 1 ;
 			     let (semi_bounds,_,sol) = $2 in 
 			       if PortArray.is_empty semi_bounds then Solution.Variable ("["^$1^"]",sol)
 			       else 
@@ -463,8 +467,8 @@
 
 
   story_expr: 
-| LABEL NEWLINE {let flag = $1 in if is_defined_flag flag then Solution.Story (StringSet.empty,flag) else error_found 469 (Printf.sprintf "undefined flag: %s" flag)} 
-| OP_ACC rule_label_set CL_ACC IMPLY LABEL NEWLINE {Solution.Story ($2,$5)}  
+| LABEL newline {let flag = $1 in if is_defined_flag flag then Solution.Story (StringSet.empty,flag) else error_found 469 (Printf.sprintf "undefined flag: %s" flag)} 
+| OP_ACC rule_label_set CL_ACC IMPLY LABEL newline {Solution.Story ($2,$5)}  
 | LABEL EOF {error_found 420 "missing end of line"}
   ;
   
@@ -475,7 +479,7 @@
 
 
   named_rule_expr:
-| LABEL rule_expr NEWLINE { match $2 with
+| LABEL rule_expr newline { match $2 with
 				[r';r] -> (
 				  Hashtbl.replace flag_env $1 0 ;
 				  Hashtbl.replace flag_env ($1^"_op") 0 ;
@@ -484,7 +488,7 @@
 			      | [r] -> (Hashtbl.replace flag_env $1 0 ; [{r with flag = Some $1}])
 			      | _ -> error_runtime 431 "Parser.named_rule_expr failure" 
 			  }
-| rule_expr NEWLINE {$1}
+| rule_expr newline {$1}
 | LABEL rule_expr EOF {error_found 434 "missing end of line"}
 | rule_expr EOF {error_found 435 "missing end of line"}
   ;
@@ -554,9 +558,9 @@
 | OP_PAR INFINITY CL_PAR {error_found 499 "infinite rate for implicit unary rule is not allowed"}
 ;
   gen_expr : 
-| agent_expr NEWLINE {Some $1,None,None,[]}
-| ID EQUAL ID NEWLINE {None,Some $1,Some $3,[]}
-| ID EQUAL ID OP_CONC instruction_list CL_CONC NEWLINE {None,Some $1,Some $3,$5}
+| agent_expr newline {Some $1,None,None,[]}
+| ID EQUAL ID newline {None,Some $1,Some $3,[]}
+| ID EQUAL ID OP_CONC instruction_list CL_CONC newline {None,Some $1,Some $3,$5}
   ;
 
   instruction_list: 

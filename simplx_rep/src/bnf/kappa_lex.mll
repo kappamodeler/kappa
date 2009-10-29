@@ -4,6 +4,9 @@
  open Kappa_parse
  open Data
 
+ let reach_eof lexbuf = 
+   lexbuf.lex_eof_reached <- true 
+
  let incr_line lexbuf = 
    let pos = lexbuf.lex_curr_p in
      lexbuf.lex_curr_p <- {pos with pos_lnum = pos.pos_lnum+1 ; pos_bol = pos.pos_cnum}
@@ -79,7 +82,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     | "!STOP" {KILL}
     | "!DUMP" {DUMP}
     | blank  {token lexbuf}
-    | eof {EOF}
+    | eof {reach_eof lexbuf;EOF}
     | _ as c {return_error lexbuf (Printf.sprintf "invalid use of character %c" c)}
 
   and read_label acc = parse
@@ -107,6 +110,23 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
 	env := Hashtbl.create 100 
       end
 	
+  let sol_of_hsh hsh = 
+    Hashtbl.fold (fun _ (sol,n) init -> 
+		    let init = (sol,n)::init
+		    in
+		      init
+		 ) hsh !init
+    
+
+  let test_eof lexbuf = 
+    if lexbuf.lex_eof_reached 
+    then 
+      begin
+        let sol = sol_of_hsh !env in
+          init := sol ;
+	  raise End_of_file
+      end
+
   let compile fic =
     init_val() ;
     let d = open_in fic in
@@ -114,10 +134,11 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
 	let lexbuf = Lexing.from_channel d in
 	  lexbuf.lex_curr_p <- {lexbuf.lex_curr_p with pos_fname = fic} ;
 	  while true do
-	    try
-	      Kappa_parse.line token lexbuf 
-	    with 
-		Error.Found msg -> return_error lexbuf msg 
+            let _ = test_eof lexbuf in 
+	      try
+	        Kappa_parse.line token lexbuf 
+	      with 
+		  Error.Found msg -> return_error lexbuf msg 
 	  done ; 
 	  let s = "Lexer.compile: unexpected end of loop" in
 	    Error.runtime
@@ -171,6 +192,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     try
       let lexbuf = Lexing.from_string (rule_str^"\n") in
 	while true do
+          let _ = test_eof lexbuf in 
 	  try
 	    Kappa_parse.line token lexbuf
 	  with 
@@ -189,6 +211,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     try
       let lexbuf = Lexing.from_string ("%init:"^sol_str^"\n") in
 	while true do
+          let _ = test_eof lexbuf in 
 	  try
 	    Kappa_parse.line token lexbuf
 	  with 
