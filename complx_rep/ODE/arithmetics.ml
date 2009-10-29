@@ -4,11 +4,10 @@ open Ode_print_sig
 let debug = false
 let count_embedding = false
     (* TRUE -> count embedding 
-       FALSE -> count embedding / automaorphism *)
+       FALSE -> count embedding / automorphism *)
 
 type expr = 
     Letter of string 
-	
   | Vark of string
   | VarInit of int
   | Vari of (int*string)
