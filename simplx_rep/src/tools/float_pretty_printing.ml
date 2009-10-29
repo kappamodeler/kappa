@@ -48,4 +48,79 @@ let string_of_float x =
 *)
     
 
-  
+(*SOL4 as many bits (<57) so that the conversion loses no information, otherwise 57 bits *)
+let l = 
+  [
+    ("%.0g":(float->string,unit,string) format);
+    "%.1g";
+    "%.2g";
+    "%.3g";
+    "%.4g";
+    "%.5g";
+    "%.6g";
+    "%.7g";
+    "%.8g";
+    "%.9g"; 
+    "%.10g";
+    "%.11g";
+    "%.12g";
+    "%.13g"; 
+    "%.14g";
+    "%.15g";
+    "%.16g";
+    "%.17g"; 
+    "%.18g";
+    "%.19g";
+    "%.20g";
+    "%.21g"; 
+    "%.22g";
+    "%.23g";
+    "%.24g"; 
+    "%.25g";
+    "%.26g";
+    "%.27g";
+    "%.28g"; 
+    "%.29g";
+    "%.30g";
+    "%.31g";
+    "%.32g"; 
+    "%.33g";
+    "%.34g";
+    "%.35g";
+    "%.36g"; 
+    "%.37g";
+    "%.38g";
+    "%.39g";
+    "%.40g";
+    "%.41g"; 
+    "%.42g";
+    "%.43g";
+    "%.44g"; 
+    "%.45g";
+    "%.46g";
+    "%.47g";
+    "%.48g"; 
+    "%.49g";
+    "%.50g";
+    "%.51g";
+    "%.52g"; 
+    "%.53g";
+    "%.54g";
+    "%.55g";
+    "%.56g"; 
+    "%.57g";
+]
+
+let exact_string_of_float (x:float) = 
+  let rec scan l = 
+    match l 
+    with 
+        [] -> Printf.sprintf "%.57g" x
+      |t::q -> 
+         let s = Printf.sprintf t x in 
+           if float_of_string s -. x = 0.  
+           then s
+           else scan q 
+  in  
+    scan l 
+

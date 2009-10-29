@@ -890,7 +890,7 @@ let pprint_ODE_head print print_obs print_activity file_main file file_jac file_
 	     if k>final then ()
              else 
 	       let _ = if k>init_t then pprint_string print_ODE "," in 
-	       let t = Float_pretty_printing.string_of_float k in 
+	       let t = Float_pretty_printing.exact_string_of_float k in 
 	       let _ = pprint_string print_ODE "{" in
 	       let _ = pprint_string print_ODE t in 
 	       let _ = 

@@ -176,7 +176,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	  else 
 	    let chan = open_out file  in
 	    {print_string = Printf.fprintf chan "%s"  ;
-	      print_float = (fun x -> Printf.fprintf chan "%s" (Float_pretty_printing.string_of_float x)) ;
+	      print_float = (fun x -> Printf.fprintf chan "%s" (Float_pretty_printing.exact_string_of_float x)) ;
 	      print_int = Printf.fprintf chan "%d" ;
 	      chan = [chan];
 	      print_newline = (fun () -> Printf.fprintf chan "\n")}
