@@ -182,7 +182,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	      print_newline = (fun () -> Printf.fprintf chan "\n")}
 	end
     else None in
-  let set_print = f in 
+(*  let set_print = f in *)
     
  
   let print_data = f DATA file_ODE_data_head  in 
@@ -208,11 +208,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 
   let _ = (match print_data with None -> () | Some a -> 
     (a.print_string "#t ")) in 
-  let prefix_output_file = 
+(*  let prefix_output_file = 
     let a,_ = compute_prefix file_ODE_matlab in 
     List.fold_left
       (fun s a -> s^a)
-      "" a   in 
+      "" a   in *)
 
   let cpb = match pb.Pb_sig.intermediate_encoding with 
     Some cpb -> cpb
@@ -239,7 +239,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      matlab_obs = None ;
      matlab_init = None } in
 
- let print_ODE_size = 
+(* let print_ODE_size = 
     {dump = None;
      data = None;
      txt = None;
@@ -252,7 +252,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
      matlab_jacobian= None;
      matlab_activity = None;
      matlab_obs = None ;
-     matlab_init = None} in
+     matlab_init = None} in*)
 
  let print_ODE_act = 
     {dump = None;
@@ -1387,7 +1387,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			    Plus(a,(Mult(Const i,j))))
 			  (Const 0) l)
 		   in 
-		   let funname = ((prefix_output_file^(string_of_intermediar_var flag (string_of_int i)))^".m") in 
+(*		   let funname = ((prefix_output_file^(string_of_intermediar_var flag (string_of_int i)))^".m") in *)
 		   let print_ODE = print_ODE_aux in 
 		   let _ = 
 		     match print_ODE.matlab with 
@@ -3343,7 +3343,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				     Plus(a,Mult(Const i,j)))
 				  (Const 0)
 				  l in 
-			      let funname = ((prefix_output_file^(string_of_intermediar_var flag (string_of_int i)))^".m") in 
+(*			      let funname = ((prefix_output_file^(string_of_intermediar_var flag (string_of_int i)))^".m") in *)
 			      let print_ODE = print_ODE_aux in 
 			      let _ = 
 				match print_ODE.matlab with 

@@ -203,7 +203,7 @@ type action =
   | Check of id 
   | No_Helix
   | No_Pol
-
+  | Rooted_story of IntSet.t
 
 type gen_action = 
     GBind of ((string*string)*(string*string))
@@ -213,6 +213,7 @@ type gen_action =
   | GCheck of string	
   | GNo_Helix
   | GNo_Pol
+  | GRooted_story of StringSet.t 
 
 module GLMap = Map.Make (struct type t = gen_action list let compare = compare end)
 

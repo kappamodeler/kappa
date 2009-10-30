@@ -2,6 +2,8 @@ open Kappa_parse
 open Data_structures
 open Pb_sig 
 open Quarkification
+open Error_handler 
+open Tools 
 
 let good_vertice file  = 
  	 match file with "" -> None
@@ -15,8 +17,18 @@ let good_vertice file  =
 	     let _ = Data.forward:= tmp_forward in
 	     let _ = Data.compile_mode := tmp_mode in 
 
-	     let cpb,messages = Translate.translate_rule_list (List.rev a) b None [] in 
-	     match cpb.cpb_contact 
+	     let bool,cpb,messages = Translate.translate_rule_list (List.rev a) b None [] in 
+	     let _ = 
+               if not bool then 
+               unsafe_frozen
+                 (Some "Auxilliary model in not in pure Kappa")
+                 (Some "Complx")
+                 (Some "neighbourhood.ml") 
+                 None 
+                 (Some "28")
+                 (fun () -> raise Exit)
+             in 
+               match cpb.cpb_contact 
 	     with None -> None
 	     | Some pre_contact ->
 		 let contact = 

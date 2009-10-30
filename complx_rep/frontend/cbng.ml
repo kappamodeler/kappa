@@ -123,7 +123,7 @@ module CBnG =
 	   
     let translate_control_update pb irule map cpb_map t  (context_control,uncontext_control) = 
     match t with 
-      No_Pol | No_Helix -> (context_control,uncontext_control) 
+      No_Pol | No_Helix | Rooted_story _ -> (context_control,uncontext_control) 
     | Bind ((i1,s1),(i2,s2)) -> 
 	let i1',ig1 = irule.id_mapping i1 in 
 	let i2',ig2 = irule.id_mapping i2 in 
@@ -219,7 +219,7 @@ module CBnG =
 	       | _ -> error 214 "COMPARE\n"  (list_fold 
 		   (fun (id,l) sol -> (id,((Release((i1,s1),(i2,s2)))::l))::sol)
 		   q []))
-	    | Mark _ | Break_half _ | Check _  | No_Pol | No_Helix  -> 
+	    | Mark _ | Break_half _ | Check _  | No_Pol | No_Helix| Rooted_story _ -> 
 		list_fold 
 		  (fun (id,l) sol -> (id,x::l)::sol)
 		  q [] 
@@ -282,6 +282,17 @@ module CBnG =
 	     match x with 
 	       GNo_Pol -> print_string "No_Pol;"
 	     | GNo_Helix -> print_string "No_Helix;"
+             | GRooted_story x -> 
+                 (print_string "Rooted_story:" ;
+                  let _ = 
+                    StringSet.fold 
+                      (fun i b -> 
+                         let _ = if b then print_string "," in 
+                         let _ = print_string i in 
+                           true)
+                      x false in 
+                  print_newline ())
+                 
 	     | GBind x -> (print_string "B";
                            print_site_pair x;
 			   print_string";")
@@ -322,7 +333,7 @@ module CBnG =
       let _ = trace_print "Compute_renaming_rule" in
       let rename_var i (f,n) = 
 	try 
-	  (IntMap.find i f;f,n) 
+	  (let _ = IntMap.find i f in f,n) 
 	with Not_found -> 
 	       (IntMap.add i n f,n+1) in 
       let c1 = list_fold
@@ -429,7 +440,7 @@ List.map (rename_test f) b)) r.cpb_guard;
 		   PathSet.empty in 
                  IntMap.add x (PathSet.add path  old) solset in
              let sol',list' = 
-               try (IntMap.find x sol;(sol,list)) 
+               try (let _ = IntMap.find x sol in (sol,list)) 
 	       with Not_found -> 
 		 (IntMap.add x path sol,(x,path)::list)
              in solset',(sol',list') in 

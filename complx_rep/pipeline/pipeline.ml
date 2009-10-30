@@ -427,25 +427,35 @@ module Pipeline =
 		 (
 		 let _ = add_suffix prefix  "Translation(simplx->ckappa) \n" in
 		 let _ = print_option prefix (Some stdout) "Translation(simplx->ckappa)\n" in 
-               	 let rep',messages = Translate.translate_rule_list (List.rev a) b interface m in 
-		 let _ = trace_print "TRANSLATE DONE" in
+               	 let bool,rep',messages = Translate.translate_rule_list (List.rev a) b interface m in 
+                 let _ = trace_print "TRANSLATE DONE" in
 		 let l = chrono prefix "Translation" l in 
-		 let pb = Some {rep with first_encoding=Some rep'} in
+                 let m,pb = 
+                   if not bool 
+                   then
+                     let _ = 
+                       add_error 
+                         {application=Some "Complx";
+                          method_name=Some "translate";
+                          file_name=Some "pipeline.ml";
+                          function_name=None;
+                          calling_stack=None;
+                          message=Some "The (main) model is not in Pure Kappa (see warning messages)";
+                          key=None ;
+                          exception_=Exit}
+                     in messages,None
+                   else 
+		     messages,Some {rep with first_encoding=Some rep'} 
+                 in
                    pb,(l,m))
        and get_first_encoding interface prefix pb log = 
 	 let pb,log = translate interface prefix pb log in
 	 match pb 
-	 with None -> 
-	   frozen_error 
-	     "line 291" 
-	      
-	     "translate has failed" 
-	     "get_first_encoding"
-	     (fun () -> raise Exit)
+	 with None -> pb,log,None
 	 | Some rep -> 
 	     (match rep.first_encoding with
 	       None ->frozen_error "line 294"  "first encoding has failed" "get_first_encoding" (fun () -> raise Exit)
-	     | Some a -> pb,log,a )
+	     | Some a -> pb,log,Some a )
 
        and smash_rule_system interface prefix pb (l,m) =
 	 let _  = add_suffix prefix "smash_rule_system \n"  in
@@ -456,8 +466,8 @@ module Pipeline =
 	     | None -> 
 		 (let _ = print_option prefix (Some stdout)  "Quotienting rules\n"  in
 		 let pb,(l,m),rep = get_first_encoding interface prefix pb (l,m) in 
-		 match pb with None -> None ,(l,m)
-		 | Some rep0 -> 
+		 match pb,rep with None,_|_,None  -> None ,(l,m)
+		 | Some rep0,Some rep -> 
 		 let n0 = List.length rep.cpb_rules in 
 		 let cpb,m = CBnG.smash_pb true rep  m in 
 		 let _ = trace_print "RETURN SMASH_PB" in 
@@ -479,8 +489,8 @@ module Pipeline =
 	     | None -> 
 		 (let _ = print_option prefix (Some stdout)  "Renaming\n"  in
 		 let pb,(l,m),rep = get_first_encoding interface prefix' pb (l,m) in 
-		 match pb with None -> None ,(l,m)
-		 | Some rep0 ->
+		 match pb,rep with None,_ | _,None -> None ,(l,m)
+		 | Some rep0,Some rep  ->
 		    let cpb,m = CBnG.smash_pb false rep  m in 
 		    let l = chrono prefix "Renaming" l in
 		    let _ = trace_print "RETURN SMASH_PB" in 
@@ -489,7 +499,7 @@ module Pipeline =
        and get_smashed interface prefix pb log =
 	 let error i  = frozen_error i  "Quotiented system cannot be built" "get_smashed" (fun () -> raise Exit) in
 	 let pb,log  = smash_rule_system interface prefix pb log in 
-	 match pb with None -> error "line 341"
+	 match pb with None  -> error "line 341"
 	 | Some rep0 -> 
 	     (match 
 	       rep0.gathered_intermediate_encoding
@@ -499,12 +509,12 @@ module Pipeline =
        and get_no_smashed interface prefix pb log = 
 	 let error i  = frozen_error i  "Renaming cannot be built" "get_no_smashed" (fun () -> raise Exit) in
 	 let pb,log  = no_smash_rule_system interface prefix pb log in 
-	 match pb with None -> error "line 351"
+	 match pb with None -> None,log,None 
 	 | Some rep0 -> 
 	     match 
 	       rep0.intermediate_encoding
 	     with None -> error "line 355"
-	     | Some rep -> pb,log,rep
+	     | Some rep -> pb,log,Some rep
        and compile (interface:interface) mode prefix rep (l,m) =
 	   let title = 
 	   if mode = Smashed 
@@ -543,8 +553,8 @@ module Pipeline =
 	       | None -> 
 		   let pb,(l,m),cpb =  get_no_smashed interface prefix' rep (l,m) in
 		    (
-		   match pb with None -> (None,(l,m)) 
-		   | Some rep0 -> 
+		   match pb,cpb  with None,_ | _,None  -> (None,(l,m)) 
+		   | Some rep0,Some cpb  -> 
 		       let cpb,messages = CBnG.translate_problem rep cpb A.f,m in 
 		       let pb = {rep0 with boolean_encoding = cpb} in
                        let pb = CBnG.refine_contact_map  pb None A.f in 
@@ -585,13 +595,13 @@ module Pipeline =
 	     let pb',log' = compile interface Unsmashed prefix (Some pb) log in 
 	     	     
 	     (match pb' 
-	     with None -> frozen_error "line 435"  "Intermediate encoding cannot be built" "get_intermediate_encoding" (fun () -> raise Exit)
+	     with None -> pb',log',None 
 	     |Some pb' -> 
 		 (
 		 match pb'.intermediate_encoding 
-		 with Some a -> pb',log',a
+		 with Some a -> Some pb',log',Some a
 		 |  None -> frozen_error "line 440"  "Intermediate encoding cannot be built" "get_intermediate_encoding" (fun () -> raise Exit)))
-	 | Some a -> pb,log,a
+	 | Some a -> Some pb,log,Some a
        and convert_contact prefix rep (l,m) = 
 	 let prefix' = add_suffix prefix "convert_contact" in 
 	 match rep with None -> (rep,(l,m))
@@ -604,10 +614,11 @@ module Pipeline =
 		  let _ = print_option  prefix (Some stdout) "Low-res contact map\n" in 
 		 let rep',(l,m),a = get_intermediate_encoding None prefix' rep' (l,m) in 
 		 (
-		 match a.cpb_contact 
-		 with None -> (Some rep',(l,m))
-		 | Some map  -> 
-		    
+		 match rep',a
+		 with None,_ | _,None  -> (rep',(l,m))
+		 | Some rep',Some a -> 
+                     match a.cpb_contact with None -> (Some rep',(l,m))
+                       |Some map -> 
 		     let contact = 
 		       String2Map.fold 
 			     (fun s m sol -> 
@@ -629,7 +640,7 @@ module Pipeline =
 	     then
 	       begin 
 		 let pb,log,_ = get_intermediate_encoding None prefix' rep' (l,m)  in 
-		   (Some pb),log 
+		   pb,log 
 	       end
 	     else
 	       (
@@ -645,24 +656,34 @@ module Pipeline =
 	   | Some rep' -> 
 	       let rep',(l,m),cpb = get_intermediate_encoding None prefix' rep' (l,m) in 
 	       let rep',contact,(l,m) = 
-	      	 match rep'.contact_map with 
-		   None -> rep',
-		     (match cpb.cpb_contact with Some a -> a | None -> 
-		       error_frozen 
-			 "line 505" 
-			 "Syntactic contact map is missing"
-			 "build_drawers"
-			 (fun _ -> raise Exit)),(l,m) 
-		 | Some a -> rep',
-		     String2Map.map 
-		       (List.map (fun (a,b,c) -> (a,c)))
-		       a.link_of_site,(l,m)
+	      	 match rep' with None -> None,None,(l,m)
+                   | Some rep' -> 
+                       match rep'.contact_map with 
+		           None -> Some rep',
+		             (match cpb with None -> None
+                                | Some cpb -> 
+                                    match cpb.cpb_contact 
+                                    with Some a -> Some a 
+                                      | None -> 
+		                          error_frozen 
+			                    "line 505" 
+			                    "Syntactic contact map is missing"
+			                "build_drawers"
+			                    (fun _ -> raise Exit)),(l,m) 
+		         | Some a -> 
+                             Some rep',
+		             Some (String2Map.map 
+		                     (List.map (fun (a,b,c) -> (a,c)))
+		                     a.link_of_site)
+                               ,(l,m)
 	       in
-	       (Some {rep' with 
-		      drawers = 
-		      Some (build_drawer (fun x -> true)
-			cpb.cpb_rules contact)},(l,m))
-   
+                 match rep',cpb,contact  with None,_,_|_,None,_|_,_,None -> None,(l,m)
+                   | Some rep',Some cpb,Some contact  -> 
+	               (Some {rep' with 
+		                drawers = 
+		            Some (build_drawer (fun x -> true)
+			            cpb.cpb_rules contact)},(l,m))
+                         
        and find_potential_cycles  res prefix rep (l,m) = 
 	 let prefix' = add_suffix prefix  "find_potential_cycles" in
 	 match rep with None -> (rep,(l,m))
@@ -717,7 +738,7 @@ module Pipeline =
 	 | Some a -> pb,log,a
        and get_low_res_contact_map prefix pb log = 
 	 let pb,log,cpb = get_intermediate_encoding None (add_suffix prefix "get_low_res_contact_map") pb log in
-	 pb,log,cpb.cpb_contact
+	 pb,log,match cpb with None -> None | Some cpb -> cpb.cpb_contact
 	      
        and convert_low_in_high a = 
 	 String2Map.fold 
@@ -733,7 +754,10 @@ module Pipeline =
 	     let pb',log',contact = get_low_res_contact_map prefix pb log in
 	     (match contact with 
 	       None -> frozen_error "line 530"  "contact map cannot be built" "get_best_res_contact_map"  (fun () -> raise Exit)
-	     | Some a -> pb,log,convert_low_in_high a)
+	     | Some a -> pb,log,
+                  (
+                   convert_low_in_high 
+                     (a)))
 		 	
 	 | Some a -> pb,log,a
 
@@ -958,7 +982,7 @@ module Pipeline =
 				       ))) with Not_found -> () in 
 			   let _ = close_out output in  
 			   
-			   (Some pb,(chrono prefix 
+			   (pb,(chrono prefix 
 			       	       "Low resolution contact_map (txt)"
 				       
 				       l,m))
@@ -1029,125 +1053,138 @@ module Pipeline =
 	     let pb,(l,m),cpb = get_intermediate_encoding None prefix' pb (l,m) in
 	   
 	     let _ = flush stdout in 
-	     Some {pb with intermediate_encoding = 
-		    Some {cpb with 
-			   cpb_rules = 
-			   List.map (quarkify cpb contact) cpb.cpb_rules};quarks=true},(chrono prefix "Quark computation" l,m)
-	       
+               (match pb,cpb
+               with None,_|_,None-> pb
+                 | Some pb,Some cpb -> 
+	             Some {pb 
+                     with intermediate_encoding = 
+		         Some {cpb with 
+			         cpb_rules = 
+			     List.map (quarkify cpb contact) cpb.cpb_rules};quarks=true})
+                       ,(chrono prefix "Quark computation" l,m)
+	               
        and
-	   build_influence_map file file2 file3 prefix pb' (l,m) =
-	 let prefix' = add_suffix prefix "build_influence_map" in 
-	 match pb' with 
-	   None -> (pb',(l,m))
-	 |Some pb ->
-	     (match pb.wake_up_map,pb.inhibition_map 
-	     with 
-	       Some _,Some _ -> (pb',(l,m))
-	     | _ ->
-	
-		 let _ = print_option prefix (Some stdout) "Influence map \n" in  
-		 let pb,(l,m),cpb = get_intermediate_encoding None prefix' pb  (l,m) in 
-		 let pb,(l,m) = 
-		   if pb.quarks 
-		   then Some pb,(l,m)
-		   else quarkification prefix' (Some pb) (l,m) 
-		 in 
-		 
-		 match pb with 
-		   None -> (pb,(l,m))
-		 | Some pb -> 
-		     
-		     let _ = flush stdout in 
-		     let pb,(l,m),cpb = get_intermediate_encoding None prefix' pb  (l,m) in 
-		     let rep = Influence_map.compute_influence_map cpb in 
-		     let l = 
-		       if file <> "" or file2 <> "" then 
-			 let f = 
-			   let map = 
-			     List.fold_left 
-			       (fun sol rc -> 
-				 List.fold_left 
-				   (fun sol (a,b,c) -> 
-				     List.fold_left 
-				       (fun sol id -> 
-					 let kid = id.Pb_sig.r_simplx.Rule.id in
-					 IntMap.add kid id sol)
-				       sol a)
-				   sol rc.cpb_guard)
-			       IntMap.empty cpb.cpb_rules in
-			   (fun x -> 
-			      try (IntMap.find x map) with _ -> 
-				frozen_error "line 893"  "" "build_influence_map"  (fun () -> raise Exit)) 
-			 in
-			 let _ = 
-			   Tools2.log_in_file file 
-			     (fun x -> 
-			       let _ =  
-				 IntMap.iter
+	 build_influence_map file file2 file3 prefix pb' (l,m) =
+	   let prefix' = add_suffix prefix "build_influence_map" in 
+	     match pb' with 
+	         None -> (pb',(l,m))
+	       |Some pb ->
+	          (match pb.wake_up_map,pb.inhibition_map 
+	           with 
+	               Some _,Some _ -> (pb',(l,m))
+	             | _ ->
+	                 
+		         let _ = print_option prefix (Some stdout) "Influence map \n" in  
+		         let pb,(l,m),cpb = get_intermediate_encoding None prefix' pb  (l,m) in 
+		           match pb,cpb with None,_|_,None -> pb,(l,m)
+                             | Some pb,Some cpb  -> 
+                                 let pb,(l,m) = 
+		                   if pb.quarks 
+		                   then Some pb,(l,m)
+		                   else quarkification prefix' (Some pb) (l,m) 
+		                 in 
+		                   
+		                   match pb with 
+		                       None -> (pb,(l,m))
+		                     | Some pb -> 
+		                         
+		                         let _ = flush stdout in 
+		                         let pb,(l,m),cpb = get_intermediate_encoding None prefix' pb  (l,m) in 
+                                           match cpb with None -> pb,(l,m)
+                                             | Some cpb -> 
+		                                 let rep = Influence_map.compute_influence_map cpb in 
+		                                 let l = 
+		                                   if file <> "" or file2 <> "" then 
+			                             let f = 
+			                               let map = 
+			                                 List.fold_left 
+			                                   (fun sol rc -> 
+				                              List.fold_left 
+				                                (fun sol (a,b,c) -> 
+				                                   List.fold_left 
+				                                     (fun sol id -> 
+					                                let kid = id.Pb_sig.r_simplx.Rule.id in
+					                                  IntMap.add kid id sol)
+				                                     sol a)
+				                                sol rc.cpb_guard)
+			                                   IntMap.empty cpb.cpb_rules in
+			                                 (fun x -> 
+			                                    try (IntMap.find x map) with _ -> 
+				                              frozen_error "line 893"  "" "build_influence_map"  (fun () -> raise Exit)) 
+			                             in
+			                             let _ = 
+			                               Tools2.log_in_file file 
+			                                 (fun x -> 
+			                                    let _ =  
+				                              IntMap.iter
 				   (fun a b -> 
-				     (IntSet.iter 
-					(fun b -> Printf.fprintf x "%s->%s\n" 
+				      (IntSet.iter 
+					 (fun b -> Printf.fprintf x "%s->%s\n" 
 					    (name_of_rule (f a)) 
 					    (name_of_rule (f b))) b))
-				   (fst rep),
-				 IntMap.iter 
-				   (fun a b -> 
-				     (IntSet.iter 
-					(fun b -> Printf.fprintf x "%s->%s\n" 
-					    (name_of_rule (f a)) 
-					    (name_of_rule (f b)))
-					b)) (snd rep)
-			       in ()) 
-			 in 
-			 let _ = 
-			   Tools2.log_in_file file2
-			     (fun x -> 
-			       let set = 
-				 IntMap.fold 
-				   (fun a b c -> IntSet.union b (IntSet.add a c))
-				   (fst rep)
-				   (IntMap.fold 
-				      (fun a b c -> IntSet.union b (IntSet.add a c))
-				      (snd rep)
-				      (IntSet.empty)) in 
-			       let _ = Printf.fprintf x "DiGraph G {\n" in
-			       let _ = 
-				 IntSet.iter 
-				   (fun r -> Printf.fprintf x "\"%s\" \n" (name_of_rule (f r)))
-				   set in
-			       let _ =  
-				 IntMap.iter
-				   (fun a b -> 
-				     (IntSet.iter 
-					(fun b -> Printf.fprintf x "\"%s\"->\"%s\" [color=green]\n" 
-					    (name_of_rule (f a)) 
-					    (name_of_rule (f b))) b))
-				   (fst rep),
-				 IntMap.iter 
-				   (fun a b -> 
-				     (IntSet.iter 
-					(fun b -> Printf.fprintf x "\"%s\"-|\"%s\" [color=red] \n" 
-					    (name_of_rule (f a)) 
-					    (name_of_rule (f b)))
-					b)) (snd rep)
-			       in 
-			       let _ = Printf.fprintf x "}\n" in 
-			 ())
-			 in 
-			 let _ = 
-			   if file2="" or file3 = "" 
-			   then ()
-			   else 
-			     let _ = Sys.command ("dot -Tjpg "^file2^" -o "^file3) in () in 
-     
-			 let l=chrono prefix "Influence map" l 
-			 in l 
-		       else l
-		     in 
-			 (Some {pb 
-			       with wake_up_map = Some (fst rep) ;
-				 inhibition_map = Some (snd rep)},(l,m))) 
-
+				                                (fst rep),
+				                              IntMap.iter 
+				                                (fun a b -> 
+				                                   (IntSet.iter 
+					                              (fun b -> Printf.fprintf x "%s->%s\n" 
+					                                 (name_of_rule (f a)) 
+					   (name_of_rule (f b)))
+					                              b)) (snd rep)
+			                                    in ()) 
+			                             in 
+			                             let _ = 
+			                               Tools2.log_in_file file2
+			                                 (fun x -> 
+			                                    let set = 
+				                              IntMap.fold 
+				                                (fun a b c -> IntSet.union b (IntSet.add a c))
+				                                (fst rep)
+				                                (IntMap.fold 
+				                                   (fun a b c -> IntSet.union b (IntSet.add a c))
+				                                   (snd rep)
+				                                   (IntSet.empty)) in 
+			                                    let _ = Printf.fprintf x "DiGraph G {\n" in
+			                                    let _ = 
+				                              IntSet.iter 
+				                                (fun r -> Printf.fprintf x "\"%s\" \n" (name_of_rule (f r)))
+				                                set in
+			                                    let _ =  
+				                              IntMap.iter
+				                                (fun a b -> 
+				                                   (IntSet.iter 
+					                              (fun b -> Printf.fprintf x "\"%s\"->\"%s\" [color=green]\n" 
+					                                 (name_of_rule (f a)) 
+					                                 (name_of_rule (f b))) b))
+				                                (fst rep),
+				                              IntMap.iter 
+				                                (fun a b -> 
+				                                   (IntSet.iter 
+					                              (fun b -> Printf.fprintf x "\"%s\"-|\"%s\" [color=red] \n" 
+					                                 (name_of_rule (f a)) 
+					                                 (name_of_rule (f b)))
+					                              b)) (snd rep)
+			                                    in 
+			                                    let _ = Printf.fprintf x "}\n" in 
+			                                      ())
+			                             in 
+			                             let _ = 
+			                               if file2="" or file3 = "" 
+			                               then ()
+			                               else 
+			                                 let _ = Sys.command ("dot -Tjpg "^file2^" -o "^file3) in 
+                                                           () 
+                                                     in 
+                                                     let l=chrono prefix "Influence map" l 
+			                             in l 
+		                         else l
+		                                 in 
+                                                   match pb 
+                                                   with None -> None,(l,m)
+                                                     | Some pb -> 
+			                                 Some {pb 
+			                                        with wake_up_map = Some (fst rep) ;
+				                                  inhibition_map = Some (snd rep)},(l,m))
+                    
        and build_compression mode file1 file2 prefix pb (l,m) =  
 	 let prefix' = add_suffix prefix "build_compression" in
 	 let title = 
@@ -1331,9 +1368,9 @@ module Pipeline =
 	       let pb,(l,m),cpb = 
 		 get_intermediate_encoding None prefix'  pb (l,m) in 
 	       let pb,(l,m) = 
-		 reachability_analysis prefix' (Some pb) (l,m) in
-	       match pb with None -> [],None,(l,m)
-	       | Some pb -> 
+		 reachability_analysis prefix' pb (l,m) in
+	       match pb,cpb with None,_|_,None  -> [],None,(l,m)
+	       | Some pb,Some cpb  -> 
 	       let interface = cpb.cpb_interface in 
 	       let subsystem,(l,m) = 
 		 match subsystem with 
@@ -1497,9 +1534,12 @@ module Pipeline =
 		 | Some a -> 
 		     let pb,(l,m),boolean = get_boolean_encoding None prefix' a (l,m) in 
 		     let pb,(l,m),cpb = get_intermediate_encoding None  prefix' a (l,m) in 
-		     let pb,(l,m),auto = get_auto prefix' pb (l,m) in 
-		     let pb,(l,m),contact = get_best_res_contact_map prefix pb (l,m) in 
-
+		     match pb,cpb with 
+                         None,_|_,None -> pb,(l,m)
+                       | Some pb,Some cpb  -> 
+                           let pb,(l,m),auto = get_auto prefix' pb (l,m) in 
+		           let pb,(l,m),contact = get_best_res_contact_map prefix pb (l,m) in 
+                             
 		     (match pb.bdd_sub_views with None -> Some pb,(l,m)
 		     | Some sub ->
 			 let nrule = List.length boolean.system in 
@@ -1522,7 +1562,7 @@ module Pipeline =
 					   if b then (r::list),obs_map,(l,m)
 					   else 
 					     begin 
-					         let key = (List.hd (List.hd r.Pb_sig.rules).Pb_sig.labels).Pb_sig.r_simplx.Rule.id in 
+	(*				         let key = (List.hd (List.hd r.Pb_sig.rules).Pb_sig.labels).Pb_sig.r_simplx.Rule.id in *)
 						   (r::list,(*IntMap.remove key Bug FIX ENG-268: Now  obs are dumped even if they are not defined*) obs_map,(l,m))
 					     end)
 				      ([],obs_map,(l,m))
@@ -1603,7 +1643,7 @@ module Pipeline =
        and 
 	 integrate = 
 	   (fun file prefix pb (l,m) -> 
-	      let prefix' = add_suffix prefix "integrate" in 
+(*	      let prefix' = add_suffix prefix "integrate" in *)
 	   let _ = print_option prefix (Some stdout) "Starting ODE integration\n" in
 	   let _ = Sys.command ("./"^(file))  in 
 	   let l = chrono prefix "ODE integration" l in

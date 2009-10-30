@@ -262,7 +262,7 @@ let build_drawer p rules contact =
 	List.fold_left 
 	  (fun drawer action -> 
 	    match action with 
-	      No_Pol | No_Helix -> drawer 
+	      No_Pol | No_Helix | Rooted_story _ -> drawer 
 	    | Bind ((i,s),(i',s')) -> 
 		let ag = get_id i in 
 		let ag' = get_id i' in 

@@ -74,7 +74,10 @@ module RoughBool =
 	 K.E.expr_and expr ((if b then fun x -> x else K.E.expr_not) (K.E.expr_atom  v))
 
        let set expr f = 
-	 let expr' = forget expr (fun x -> try (K.E.V.varmap_find x f;true) with Not_found -> false) in
+	 let expr' = 
+           forget expr 
+             (fun x -> 
+                try (let _ = K.E.V.varmap_find x f in true) with Not_found -> false) in
 	 K.E.V.varmap_fold (fun v b sol -> test sol  v b) f expr'
       
        let weak_set expr f  = 

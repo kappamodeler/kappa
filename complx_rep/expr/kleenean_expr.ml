@@ -467,8 +467,8 @@ module Kleenean_expr =
 		  match kin2 with 
 		   Some a (*when a<>1.*)-> 
 		      let _ = print_option empty_prefix log " @ " in
-		      let _ = print_option empty_prefix log (Float_pretty_printing.string_of_float a) in 
-		      ((Float_pretty_printing.string_of_float a)::" @ "::string)
+		      let _ = print_option empty_prefix log (Float_pretty_printing.exact_string_of_float a) in 
+		      ((Float_pretty_printing.exact_string_of_float a)::" @ "::string)
 		  | _ -> string 
 		in
 		let _ = if ret then print_option empty_prefix log  "\n"  else () in 

@@ -180,7 +180,7 @@ let compute_annotated_contact_map_in_approximated_mode system cpb contact_map  =
 		match a with
 		  H (x,x'),true -> 
 		    (try 
-		      (String2Map.find (x,x') sol;sol)
+		      (let _ = String2Map.find (x,x') sol in sol)
 		    with 
 		      Not_found -> 
 			(String2Map.add (x,x') StringSet.empty sol))
@@ -382,7 +382,7 @@ let compute_annotated_contact_map_in_stoc_mode system cpb contact_map  =
 			 match a with
 			     H (x,x'),true -> 
 			       (try 
-				  (String2Map.find (x,x') sol1;sol1,sol2)
+				  (let _ = String2Map.find (x,x') sol1 in sol1,sol2)
 				with 
 				    Not_found -> 
 				      (String2Map.add (x,x') StringSet.empty sol1,sol2))

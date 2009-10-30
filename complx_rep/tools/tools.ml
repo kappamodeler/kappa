@@ -683,6 +683,6 @@ let keep_second s =
 	vide_virg (k+1) 
     in 
     let middle2 = vide_virg middle in 
-    let middle3 = vide_space (middle2+1) in 
+(*    let middle3 = vide_space (middle2+1) in *)
             (String.sub s beg 1)^(String.sub s (middle2+1) (size-1-middle2))
   with _ -> ""

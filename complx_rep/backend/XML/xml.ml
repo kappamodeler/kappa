@@ -244,27 +244,28 @@ let print_rules channel pb  =
   with _ -> ()
       
 let print_contact_map channel pb set   = 
-  try (let cpb =
-    match pb.intermediate_encoding with 
-      None -> raise Exit
-    | Some a -> a in 
-  let reachables = 
-    match (!Config_complx.display_unreachable_rules_in_contact_map,pb.unreachable_rules)
-    with 
-      true,_ | _,None -> (fun x->true)
-    | false,Some a ->
-	let aprim = 
-	  RuleIdSet.fold
-	    (fun a b -> IntSet.add (idint_of_rule a) b)
-	    a IntSet.empty  in 
-	(fun x -> not (IntSet.mem x aprim))
-  in 
+  try (
+    let cpb =
+      match pb.intermediate_encoding with 
+          None -> raise Exit
+        | Some a -> a in 
+    (*let reachables = 
+      match (!Config_complx.display_unreachable_rules_in_contact_map,pb.unreachable_rules)
+      with 
+          true,_ | _,None -> (fun x->true)
+        | false,Some a ->
+	    let aprim = 
+	      RuleIdSet.fold
+	        (fun a b -> IntSet.add (idint_of_rule a) b)
+	           a IntSet.empty  in 
+	      (fun x -> not (IntSet.mem x aprim))
+    in*) 
 		    
   let print s = Printf.fprintf channel s in 
   let print_rule r = print "<Rule Id=\"%i\"/>\n" r in
-  let g f x = if reachables x then f x else () in 
+(*  let g f x = if reachables x then f x else () in *)
   
-  let iter_filter_mod_ag ag f =
+(*  let iter_filter_mod_ag ag f =
     match pb.drawers with 
       None -> ()
     | Some a -> 
@@ -274,8 +275,8 @@ let print_contact_map channel pb set   =
 	  with 
 	    Not_found -> IntSet.empty 
 	in
-	IntSet.iter (g f) rules  in
-  let iter_filter_mod_sites site f = 
+	IntSet.iter (g f) rules  in*)
+(*  let iter_filter_mod_sites site f = 
     match pb.drawers with 
       None -> ()
     | Some a -> 
@@ -285,8 +286,8 @@ let print_contact_map channel pb set   =
 	  with 
 	    Not_found -> IntSet.empty 
 	in
-	IntSet.iter (g f) rules  in
-   let iter_filter_mod_edges edge f = 
+	IntSet.iter (g f) rules  in*)
+ (*  let iter_filter_mod_edges edge f = 
      let (a,b) = edge in 
      let edge = 
        if compare a b < 0 then edge else (b,a) in 
@@ -299,7 +300,7 @@ let print_contact_map channel pb set   =
 	  with 
 	    Not_found -> IntSet.empty 
 	in
-	IntSet.iter (g f) rules  in
+	IntSet.iter (g f) rules  in*)
    let iter_mod_ag ag f =
     match pb.drawers with 
       None -> ()
@@ -339,7 +340,7 @@ let print_contact_map channel pb set   =
 	       IntSet.iter f rules  
    in
    
-   let iter_filter_tested_ag ag f =
+(*   let iter_filter_tested_ag ag f =
     match pb.drawers with 
       None -> ()
     | Some a -> 
@@ -349,8 +350,8 @@ let print_contact_map channel pb set   =
 	  with 
 	    Not_found -> IntSet.empty 
 	in
-	IntSet.iter (g f) rules  in
-  let iter_filter_tested_sites site f = 
+	IntSet.iter (g f) rules  in*)
+(*  let iter_filter_tested_sites site f = 
     match pb.drawers with 
       None -> ()
     | Some a -> 
@@ -360,8 +361,8 @@ let print_contact_map channel pb set   =
 	  with 
 	    Not_found -> IntSet.empty 
 	in
-	IntSet.iter (g f) rules  in
-   let iter_filter_tested_edges edge f = 
+    IntSet.iter (g f) rules  in*)
+(*   let iter_filter_tested_edges edge f = 
      let (a,b) = edge in 
      let edge = 
        if compare a b < 0 then edge else (b,a) in 
@@ -374,7 +375,7 @@ let print_contact_map channel pb set   =
 	  with 
 	    Not_found -> IntSet.empty 
 	in
-	IntSet.iter (g f) rules  in
+	IntSet.iter (g f) rules  in*)
    let iter_tested_ag ag f =
     match pb.drawers with 
       None -> ()

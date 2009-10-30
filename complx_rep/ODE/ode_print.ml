@@ -801,8 +801,8 @@ let pprint_ODE_head print print_obs print_activity file_main file file_jac file_
 
  let dump_prod (prod,jac) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab print_ODE_matlab_aux print_ODE_matlab_jac print_ODE_matlab_size output_data file_aux file_jac  file_init file_obs file_data file_XML size  nobs is_obs flag_map print_fragment get_fragment ode_handler views_data_structures keep_this_link pb_obs = 
    let nfragments = string_of_int size in 
-   let print_ODE = print_ODE_mathematica in 
-   let print_latex = keep_latex print_ODE_mathematica in 
+(*   let print_ODE = print_ODE_mathematica in 
+   let print_latex = keep_latex print_ODE_mathematica in *)
    let print_ODE_wo_latex = remove_latex print_ODE_mathematica in 
     
 (*  let _ = pprint_ODE_head' print_ODE in

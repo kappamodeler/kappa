@@ -584,7 +584,7 @@ module Compressor =
 	     (
 	     (fun x -> (Printf.fprintf channel "%s" x)),
 	     (fun x -> (Printf.fprintf channel "\n")),Some channel) in 
-             let sol =      
+       let _  =      
 	 begin
 	   List.fold_left 
 	     (fun (liste) (vars,rs,access,(sp_of_id:string->string),int_of_id,dotset,ars) -> 
@@ -703,14 +703,14 @@ module Compressor =
        
 	       
      (end_ticking ();
-     let nameint_of_rule x = idint_of_rule x in 
+ (*    let nameint_of_rule x = idint_of_rule x in *)
      let name_of_rule x = 
           try name_of_rule x with _ -> error "700" "Name_of_rule" "" "" in 
-     let length l = 
+(*     let length l = 
        let rec aux l k = 
 	 match l with [] -> k
 	 |	t::q -> aux q ((String.length t)+k) in
-       aux l 0 in 
+       aux l 0 in *)
 (*     let fadd i s map = 
        let j = List.map nameint_of_rule i in 
        try 
@@ -909,7 +909,7 @@ module Compressor =
 			   in 
 
 			   let s = Tools.concat_list_string (List.rev b) in 
-			   let messages = 
+			   let _  = 
 			     if 
 			       b = ["Cannot be applied"]
 			       or 
@@ -963,31 +963,32 @@ module Compressor =
 					let _ = print_opt "\n" in () 
 				in 
 				  messages)
-
-
+                                 
+                                 
 			   in 
 			   print_opt " ";
 			   print_opt !Config_complx.comment;
 			   print_opt  id.r_id;
 			   print "\n";lid) 
-			 with Not_found -> (print_opt "Cannot be applied \n";let id,lid = List.hd lid,List.tl lid in   lid) in 
-		     ((let lid = 
-			 if a.dir = 1 then f lid "" else 
-			   (let lid = f lid "" in f lid "_op") in aux q lid messages)))
+			 with Not_found -> (print_opt "Cannot be applied \n";
+                                            let id,lid = List.hd lid,List.tl lid in   lid) in 
+		       ((let lid = 
+			   if a.dir = 1 then f lid "" else 
+			     (let lid = f lid "" in f lid "_op") in aux q lid messages)))
 		   with _ -> 
 		     error_frozen "line 871" "" "do_it" (fun () -> raise Exit)
 		 )
-		     
+		   
 	     in 
 	     let cl =  
 	       match pb.txt_lines with 
-	         Some l -> l 
-	       | None -> [] in
-	     
+	           Some l -> l 
+	         | None -> [] in
+	       
 	     let _ = aux cl l messages  in 
 	     let _ = print_opt "\n" in 
 	     let _ = close_out output in 
-	     () end 
+	       () end 
 	  with _ -> () in 
 rep,
 	messages) 

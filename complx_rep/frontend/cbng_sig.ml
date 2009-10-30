@@ -221,6 +221,16 @@ let dump_a_rule channel  r =
       match x with 
 	No_Pol -> print "NO_POLYMERE;\n"
       |	No_Helix -> print "No_Helix;\n"
+      | Rooted_story x -> 
+          (print "Rooted_story";
+          let _ = 
+            IntSet.fold 
+              (fun i b -> 
+                 let _ = if b then print ";" in
+                 let _ = print "%s" (string_of_int i) in 
+                   true)
+              x false in
+            print "\n")
       |	Mark((x,s),m) -> print "MARK %d,%s,%s;\n" x s m
       | Check_choice l -> (print "CHECK_CHOICE:";
                           let _ = List.fold_left 

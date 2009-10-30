@@ -126,7 +126,7 @@ newline:
 | NEWLINE {()}
 
   line: 
-| INIT_LINE init_expr {let t0 = chrono 0.0 in if (!compilation_opt land _PARSE_INIT)=_PARSE_INIT 
+| INIT_LINE init_expr {let _ = chrono 0.0 in if (!compilation_opt land _PARSE_INIT)=_PARSE_INIT 
 			 then hsh_add !env $2 else ()}
 | OBS_LINE obs_expr {obs_l := $2::(!obs_l)}
 | VAR_LINE var_expr {obs_l := $2::(!obs_l)}
