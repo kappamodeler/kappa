@@ -7,6 +7,9 @@
  let reach_eof lexbuf = 
    lexbuf.lex_eof_reached <- true 
 
+ let reset_eof lexbuf = 
+   lexbuf.lex_eof_reached <- false 
+
  let incr_line lexbuf = 
    let pos = lexbuf.lex_curr_p in
      lexbuf.lex_curr_p <- {pos with pos_lnum = pos.pos_lnum+1 ; pos_bol = pos.pos_cnum}
@@ -191,6 +194,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     init_val() ;
     try
       let lexbuf = Lexing.from_string (rule_str^"\n") in
+      let _ = reset_eof lexbuf in 
 	while true do
           let _ = test_eof lexbuf in 
 	  try
@@ -210,6 +214,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
     init_val() ;
     try
       let lexbuf = Lexing.from_string ("%init:"^sol_str^"\n") in
+      let _ = reset_eof lexbuf in 
 	while true do
           let _ = test_eof lexbuf in 
 	  try
