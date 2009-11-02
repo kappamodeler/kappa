@@ -39,7 +39,7 @@ type prefix = string * string list
 let extend_prefix x = x^"-"
 
 type file_name = string
-type simplx_encoding = (Rule.t list * (Solution.t*int)list * Solution.observation list) option
+type simplx_encoding = (Rule.t list * (Solution.t*int)list * Solution.observation list * Experiment.t) option
 type 'a intermediate_encoding = 'a Pb_sig.cpb option
 type 'a boolean_encoding = 'a Pb_sig.boolean_encoding option 
 type 'a internal_encoding = 'a Pb_sig.pb option 
@@ -320,7 +320,7 @@ module Pipeline =
 	 end 
        and build_obs a prefix n = 
 	 match a with None -> None,IntMap.empty 
-	   | Some (a,b,c) -> 
+	   | Some (a,b,c,d) -> 
 	       let fake_rules,obs,_  = 
 		 List.fold_right 
 		   (fun obs (cont,obs',fresh_id) ->
@@ -362,7 +362,7 @@ module Pipeline =
 		   ) c ([],IntMap.empty,n+1)
 
 	       in
-		 Some {pb_init with simplx_encoding =  Some (fake_rules,b,c)},obs
+		 Some {pb_init with simplx_encoding =  Some (fake_rules,b,c,d)},obs
 		       
        and parse_file  s prefix (l,m) =
 	 let tmp_forward = !Data.forward in
@@ -378,13 +378,14 @@ module Pipeline =
 	     let (a,b,c,d) = Kappa_lex.compile s  in 
 	     let b = !Data.init in
 	     let obs = !Data.obs_l in 
+             let exp = !Data.exp in 
 	     let _ = trace_print "COMPILATION DONE" in
 	     let l = chrono 
 		 prefix 
 		 "Compilation(simplx)" 
 		 l in 
 	     (Some {pb_init 
-		   with simplx_encoding = (Some (a,b,obs))}
+		   with simplx_encoding = (Some (a,b,obs,exp))}
 		,(l,m))
 	       
 	 in 
@@ -399,7 +400,7 @@ module Pipeline =
 	 | Some a -> 
 	     (match a.simplx_encoding with 
 	       None -> None,(l,m)
-	     | Some(a,_,_) -> 
+	     | Some(a,_,_,_) -> 
 		 Some (List.fold_left 
 			 (fun set rule -> 
 			   Mods2.IntMap.fold 
@@ -423,7 +424,7 @@ module Pipeline =
 	 |Some rep ->
 	     match rep.first_encoding, rep.simplx_encoding  with 
 	       Some _,_ | _,None -> input,(l,m)
-	     | _,Some (a,b,c) -> 
+	     | _,Some (a,b,c,_) -> 
 		 (
 		 let _ = add_suffix prefix  "Translation(simplx->ckappa) \n" in
 		 let _ = print_option prefix (Some stdout) "Translation(simplx->ckappa)\n" in 
@@ -1760,7 +1761,7 @@ marshallize  =
 	       let rules = 
 		 match a.simplx_encoding with 
 		   None -> frozen_error "line 1340" "" "" (fun () -> raise Exit)
-		 | Some (a,_,_) -> a in 
+		 | Some (a,_,_,_) -> a in 
 	       let rep = 
 		 List.fold_left 
 		   (fun a b -> 
@@ -1828,7 +1829,7 @@ marshallize  =
 	       let rules = 
 		 match a.simplx_encoding with 
 		   None -> frozen_error "line 1340" "" "" (fun () -> raise Exit)
-		 | Some (a,_,_) -> a in 
+		 | Some (a,_,_,_) -> a in 
 	       let rules = 
 		 List.map 
 		   (fun r -> 
@@ -1893,7 +1894,7 @@ marshallize  =
 	       let rules = 
 		 match a.simplx_encoding with 
 		   None -> frozen_error "line 1340" "" "" (fun () -> raise Exit)
-		 | Some (a,_,_) -> a in 
+		 | Some (a,_,_,_) -> a in 
 	       let rep = 
 		 List.fold_left 
 		   (fun a b -> 
@@ -1982,7 +1983,7 @@ marshallize  =
 		   let rules = 
 		     match a.simplx_encoding with 
 		       None -> frozen_error "line 1422" "" "" (fun () -> raise Exit)
-		     | Some (a,_,_) -> a in 
+		     | Some (a,_,_,_) -> a in 
 		   match get a with 
 		     Some a -> 
 		       let _ = 

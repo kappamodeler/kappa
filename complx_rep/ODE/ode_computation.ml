@@ -3715,7 +3715,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	 Arraymap.create 0,
 	 Arraymap.create "",
 	 1) 
-	 (match pb.Pb_sig.simplx_encoding with Some (a,b,c) -> b 
+	 (match pb.Pb_sig.simplx_encoding with Some (a,b,c,d) -> b 
 	 | None -> error 2809 )
     in
     let (init:expr Arraymap.t) = 

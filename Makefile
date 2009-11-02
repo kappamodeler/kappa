@@ -234,6 +234,7 @@ MLI =  ./$(SIMPLXREP)/src/tools/error.mli \
         ./$(SIMPLXREP)/src/kappa/agent.mli \
 	./$(SIMPLXREP)/src/kappa/solution.mli \
 	./$(SIMPLXREP)/src/kappa/rule.mli\
+	./$(SIMPLXREP)/src/kappa/experiment.mli\
 	./$(SIMPLXREP)/src/bnf/kappa_parse.mli \
 
 CMI = $(MLI:mli=cmi)

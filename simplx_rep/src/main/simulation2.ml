@@ -732,6 +732,8 @@ let init log (rules,init,sol_init,obs_l,exp) =
       Some (fake_rules@rules,
 	    init (*JK: list of pairs (sol,n) where n is the multiplication coef of sol*),
 	    []   (*obs for ODE*)
+              ,
+            Experiment.empty
 	   )  
     in
     let pb = pipeline_methods.Pipeline.build_pb cplx_simplx (add_suffix (add_suffix Tools.empty_prefix "") "")  
@@ -781,7 +783,7 @@ let init log (rules,init,sol_init,obs_l,exp) =
 
     (*computing refinement quotient and automorphisms for real rules*)
     let (cplx_simplx:Pipeline.simplx_encoding) = 
-      Some (rules,init,[])  
+      Some (rules,init,[],Experiment.empty)  
     in
     let pb = pipeline_methods.Pipeline.build_pb cplx_simplx (add_suffix (add_suffix Tools.empty_prefix "") "")  
     in 
@@ -807,7 +809,7 @@ let init log (rules,init,sol_init,obs_l,exp) =
 
     (*computing automorphism for observables (fake rules)*)
     let (cplx_simplx:Pipeline.simplx_encoding) = 
-      Some (fake_rules,init,[])
+      Some (fake_rules,init,[],Experiment.empty)
     in
     let pb = pipeline_methods.Pipeline.build_pb cplx_simplx (add_suffix (add_suffix Tools.empty_prefix "") "")  
     in 
