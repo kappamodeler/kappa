@@ -346,7 +346,7 @@ type 'a pb =
       nfrag:int option;
      quarks:bool;
       txt_lines: Comment_sig.commented_line  list option;
-      simplx_encoding: (Rule.t list * (Solution.t*int)list * Solution.observation list * Experiment.t) option;
+      simplx_encoding: (Rule.t list * (Solution.t*int)list * Solution.observation list * Experiment.t_unfun) option;
       first_encoding: 'a cpb option;
       intermediate_encoding: 'a cpb option;
       gathered_intermediate_encoding: 'a cpb option;

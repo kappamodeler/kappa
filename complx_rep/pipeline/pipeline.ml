@@ -39,7 +39,7 @@ type prefix = string * string list
 let extend_prefix x = x^"-"
 
 type file_name = string
-type simplx_encoding = (Rule.t list * (Solution.t*int)list * Solution.observation list * Experiment.t) option
+type simplx_encoding = (Rule.t list * (Solution.t*int)list * Solution.observation list * Experiment.t_unfun) option
 type 'a intermediate_encoding = 'a Pb_sig.cpb option
 type 'a boolean_encoding = 'a Pb_sig.boolean_encoding option 
 type 'a internal_encoding = 'a Pb_sig.pb option 
@@ -74,7 +74,7 @@ type 'a pipeline = {
     unmarshallize: file_name -> prefix -> output_channel -> 'a internal_encoding*output_channel;
     marshallize: file_name -> 'a step;
     build_pb: simplx_encoding -> prefix -> 'a internal_encoding; 
-    build_obs: simplx_encoding -> prefix -> int  -> 'a internal_encoding * string option IntMap.t ;
+    build_obs: simplx_encoding -> prefix -> int  -> 'a internal_encoding * string option IntMap.t * Experiment.t_unfun;
     translate: interface -> 'a step;
     dump_ckappa: file_name -> compile -> 'a step;
     compile: interface -> compile -> 'a step;
@@ -136,8 +136,8 @@ sig
 end
 
 
-
-
+let marshall_simplx_encoding _ = None 
+let unmarshall_simplx_encoding _ = None 
 
 let store_options () = 
   {version=Config_complx.version;
@@ -319,7 +319,7 @@ module Pipeline =
 	     (bool,(l,m))
 	 end 
        and build_obs a prefix n = 
-	 match a with None -> None,IntMap.empty 
+	 match a with None -> None,IntMap.empty,Experiment.unfun Experiment.empty
 	   | Some (a,b,c,d) -> 
 	       let fake_rules,obs,_  = 
 		 List.fold_right 
@@ -362,7 +362,10 @@ module Pipeline =
 		   ) c ([],IntMap.empty,n+1)
 
 	       in
-		 Some {pb_init with simplx_encoding =  Some (fake_rules,b,c,d)},obs
+		 Some {pb_init 
+                       with simplx_encoding =  Some (fake_rules,b,c,d)},
+               obs,
+               d
 		       
        and parse_file  s prefix (l,m) =
 	 let tmp_forward = !Data.forward in
@@ -378,7 +381,7 @@ module Pipeline =
 	     let (a,b,c,d) = Kappa_lex.compile s  in 
 	     let b = !Data.init in
 	     let obs = !Data.obs_l in 
-             let exp = !Data.exp in 
+             let exp = Experiment.unfun !Data.exp in 
 	     let _ = trace_print "COMPILATION DONE" in
 	     let l = chrono 
 		 prefix 
@@ -1544,11 +1547,11 @@ module Pipeline =
 		     (match pb.bdd_sub_views with None -> Some pb,(l,m)
 		     | Some sub ->
 			 let nrule = List.length boolean.system in 
-			 let pb',obs_map  = build_obs pb.simplx_encoding  prefix' nrule  in 
+			 let pb',obs_map,exp  = build_obs pb.simplx_encoding  prefix' nrule  in 
 			   match pb' with 
 			       None -> pb',(l,m)
 			     |Some a' -> 
-				let pb',(l,m),boolean_obs = get_boolean_encoding None prefix' a' (l,m) in 
+                                let pb',(l,m),boolean_obs = get_boolean_encoding None prefix' a' (l,m) in 
 				let purge,obs_map,(l,m) = 
 				  let list,obs_map,(l,m) =
 				    List.fold_left
@@ -1631,6 +1634,7 @@ module Pipeline =
                                        |true,_ -> Annotated_contact_map.Stoc
 				       | _ -> Annotated_contact_map.Compressed)
 				    obs_map
+                                    exp
 				    (l,m) in  
 			 let nfrag = 
 			   match opt with None -> None 
@@ -1650,12 +1654,18 @@ module Pipeline =
 	   let l = chrono prefix "ODE integration" l in
 	     pb,(l,m))
        and 
-marshallize  = 
+         marshallize  = 
 	 (fun fic prefix pb (l,m) -> 
 	   if fic = "" 
 	   then pb,(l,m)
 	   else 
 	     let channel = open_out fic in 
+             let pb = 
+               match pb 
+               with 
+                   None -> None
+                 | Some pb -> Some {pb with simplx_encoding = marshall_simplx_encoding pb.simplx_encoding} 
+             in 
 	     let _ = Marshal.to_channel channel pb [] in 
 	     let _ = close_out channel in 
 	     let l = chrono prefix "marshalling" l in 
@@ -1668,6 +1678,12 @@ marshallize  =
 	   else 
 	     let channel = open_in fic in 
 	     let pb = Marshal.from_channel channel in 
+             let pb = 
+               match pb 
+               with 
+                   None -> None
+                 | Some pb -> Some {pb with simplx_encoding = unmarshall_simplx_encoding pb.simplx_encoding} 
+             in  
 	     let _ = close_in channel in 
 	     let l = chrono prefix "unmarshalling" l in 
 	     pb,(l,m))

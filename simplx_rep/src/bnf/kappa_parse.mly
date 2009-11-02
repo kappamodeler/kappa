@@ -143,7 +143,7 @@ newline:
   ;
 
   modif_expr:
-| preconditions DO assignement newline {let dep_list,test_list,str1 =
+| preconditions DO assignement newline {let dep_list,test_list,test_unfun_list,str1 =
 					  match $1 with
 					      None -> raise (error_found 138 "empty preconditions")
 					    | Some result -> result
@@ -151,7 +151,8 @@ newline:
 					and modif,str2 = $3 in 
 					  {Experiment.dep_list=dep_list;
 					   Experiment.test_list=test_list;
-					   Experiment.modif=modif;
+					   Experiment.test_unfun_list=test_unfun_list;
+                                           Experiment.modif=modif;
 					   Experiment.test_str=str1;
 					   Experiment.modif_str=str2
 					  }
@@ -160,16 +161,16 @@ newline:
   ;
 
   preconditions: 
-| ineq {let dep,test,str = $1 in 
-	  Some ([dep],[test],str)
+| ineq {let dep,test,test_unfun,str = $1 in 
+	  Some ([dep],[test],[test_unfun],str)
        }
-| ineq AND preconditions {let dep,test,str = $1 in
-			  let dep_list,test_list,str' =
+| ineq AND preconditions {let dep,test,test_unfun,str = $1 in
+			  let dep_list,test_list,test_unfun_list,str' =
 			    match $3 with
-				None -> ([],[],"")
+				None -> ([],[],[],"")
 			      | Some result -> result
 			  in
-			    Some (dep::dep_list,test::test_list,str^" AND "^str')
+			    Some (dep::dep_list,test::test_list,test_unfun::test_unfun_list,str^" AND "^str')
 			 }
 ;
 
@@ -230,7 +231,11 @@ newline:
 				 List.iter (fun flag -> check_flag_obs flag) rule_flags ;
 				 let dep = Experiment.RULE_FLAGS rule_flags in
 				 let str = (Experiment.string_of_ast c1)^">"^(Experiment.string_of_ast c2) in
-				   (dep,test,str)
+                                 let test_unfun = Experiment.Comp(c1,c2) in 
+				   (dep,
+                                    test,
+                                    test_unfun,
+                                    str)
 			      }
 
 | conc_expr SMALLER conc_expr {let c1 = $1 and c2 = $3 in
@@ -247,22 +252,23 @@ newline:
 				 in
 				   (*check here if rule flags corresponds to defined obervations --fake rules--*)
 				 let str = (Experiment.string_of_ast c1)^"<"^(Experiment.string_of_ast c2) in
-				   (dep,test,str)
+                                 let test_unfun = Experiment.Comp(c2,c1) in 
+				   (dep,test,test_unfun,str)
 			      }
 | TIME GREATER real_number {let t0 = $3 in
 			    let test _ = true 
 			    and dep = Experiment.GREATER_TIME t0
-			    in
-			    let str = "current time > "^(string_of_float t0) in
-			      (dep,test,str)
+			    and str = "current time > "^(string_of_float t0) 
+                            and test_unfun = Experiment.Timeg($3) in 
+			      (dep,test,test_unfun,str)
 			   }
 
 | TIME SMALLER real_number {let t0 = $3 in
 			    let test _ = true 
 			    and dep = Experiment.LESSER_TIME t0
 			    and str = "current time < "^(string_of_float t0) 
-			    in
-			      (dep,test,str)
+			    and test_unfun = Experiment.Timel($3) in
+			      (dep,test,test_unfun,str)
 			   }
 
 | TIME error {error_found 247 "invalid precondition"}

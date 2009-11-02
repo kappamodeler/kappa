@@ -4,9 +4,16 @@ open Rule
 
 type dep = LESSER_TIME of float | RULE_FLAGS of (string list) | GREATER_TIME of float
 
+type ast = Mult of ast * ast | Add of ast * ast | Div of ast * ast 
+	   | Val_float of float | Val_sol of string | Val_kin of string | Val_infinity
+
+
+type test = Comp of ast*ast | Timeg of float | Timel of float
 (*test = fun fake_rules_indices -> bool*)
 (*modif = [(flg_1,mult_1);...;(flg_n;mult_n)]*)
+
 type perturbation = {dep_list: dep list; 
+                     test_unfun_list: test list;
 		     test_list: ((int StringMap.t) * Rule_of_int.t -> bool) list;  (*rule_of_name,rules*) 
 		     modif: IntSet.t * IntSet.t * (int StringMap.t) * Rule_of_int.t  -> IntSet.t * IntSet.t * Rule_of_int.t  ; 
 		     test_str: string ; 
@@ -20,6 +27,60 @@ type t = {
   perturbations: perturbation IntMap.t ; (*[pert_indice -> perturbation]*) 
 }
 
+
+type perturbation_unfun = 
+   {dep_list_unfun: dep list; 
+    test_unfun_list_unfun: test list;
+    modif_unfun: Mods2.IntSet.t * Mods2.IntSet.t * (int Mods2.StringMap.t) * Rule.Rule_of_int.t  -> Mods2.IntSet.t * Mods2.IntSet.t * Rule.Rule_of_int.t  ; 
+    test_str_unfun: string ; 
+    modif_str_unfun:string}  
+
+type t_unfun = {
+  fresh_pert_unfun:int;
+  name_dep_unfun: Mods2.IntSet.t Mods2.StringMap.t ; (*pert_dep: [obs_name -> {pert_indices}] *)
+  time_on_unfun: float Mods2.IntMap.t ; (*activate time_on: pert_id -> time*) 
+  time_off_unfun: float Mods2.IntMap.t ; (*remove time_of: pert_id -> time*) 
+  perturbations_unfun: perturbation_unfun Mods2.IntMap.t ; (*[pert_indice -> perturbation]*) 
+}
+
+let unfun t = 
+  {
+    fresh_pert_unfun=t.fresh_pert;
+    name_dep_unfun= t.name_dep;
+    time_on_unfun= t.time_on;
+    time_off_unfun= t.time_off;
+    perturbations_unfun=
+      IntMap.map 
+        (fun p -> 
+           {dep_list_unfun= p.dep_list;
+            test_unfun_list_unfun= p.test_unfun_list;
+            test_str_unfun=p.test_str;
+            modif_unfun=p.modif;
+            modif_str_unfun=p.modif_str})
+        t.perturbations}
+    
+
+let refun t = 
+    {
+      fresh_pert=t.fresh_pert_unfun;
+      name_dep= t.name_dep_unfun;
+      time_on= t.time_on_unfun;
+      time_off= t.time_off_unfun;
+      perturbations=
+        IntMap.map 
+          (fun p -> 
+             {dep_list= p.dep_list_unfun;
+              test_unfun_list= p.test_unfun_list_unfun;
+              test_list = [];
+              test_str=p.test_str_unfun;
+              modif=p.modif_unfun;
+              modif_str=p.modif_str_unfun}
+          )
+          t.perturbations_unfun}
+
+
+
+
 let empty = {fresh_pert = 0 ; 
 	     name_dep = StringMap.empty ; 
 	     time_on = IntMap.empty ;
@@ -27,8 +88,6 @@ let empty = {fresh_pert = 0 ;
 	     perturbations = IntMap.empty
 	    }
 
-type ast = Mult of ast * ast | Add of ast * ast | Div of ast * ast 
-	   | Val_float of float | Val_sol of string | Val_kin of string | Val_infinity
 
 let string_of_perturbation pert =
   Printf.sprintf "-Whenever %s do %s\n" pert.test_str pert.modif_str 
