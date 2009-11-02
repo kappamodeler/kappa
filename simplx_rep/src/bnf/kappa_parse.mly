@@ -148,12 +148,13 @@ newline:
 					      None -> raise (error_found 138 "empty preconditions")
 					    | Some result -> result
 						
-					and modif,str2 = $3 in 
+					and modif,modif_unfun,str2 = $3 in 
 					  {Experiment.dep_list=dep_list;
 					   Experiment.test_list=test_list;
 					   Experiment.test_unfun_list=test_unfun_list;
                                            Experiment.modif=modif;
-					   Experiment.test_str=str1;
+		                           Experiment.modif_unfun=modif_unfun;
+			                   Experiment.test_str=str1;
 					   Experiment.modif_str=str2
 					  }
 				       } 
@@ -196,7 +197,7 @@ newline:
 				       (oo,inf_list,Rule.Rule_of_int.add i ({r_i with Rule.kinetics = kin' ; Rule.boost = kin'}, inst_i) rules)
 			   in 
 			   let str = "kin("^flag^"):="^(Experiment.string_of_ast assgn) in 
-			     (modif,str)
+			     (modif,($1,$3),str)
 			}
 
 | LABEL SET error {error_found 165 "invalid assignement"}
