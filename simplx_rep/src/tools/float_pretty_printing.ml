@@ -112,15 +112,18 @@ let l =
 ]
 
 let exact_string_of_float (x:float) = 
-  let rec scan l = 
-    match l 
-    with 
-        [] -> Printf.sprintf "%.57g" x
-      |t::q -> 
-         let s = Printf.sprintf t x in 
-           if float_of_string s -. x = 0.  
-           then s
-           else scan q 
-  in  
-    scan l 
-
+  let s = string_of_float x in 
+    if float_of_string s -. x = 0. then s
+    else 
+      let rec scan l = 
+        match l 
+        with 
+            [] -> Printf.sprintf "%.57g" x
+          |t::q -> 
+             let s = Printf.sprintf t x in 
+               if float_of_string s -. x = 0.  
+               then s
+               else scan q 
+      in  
+        scan l 
+          

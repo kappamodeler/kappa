@@ -8,6 +8,9 @@ type ast = Mult of ast * ast | Add of ast * ast | Div of ast * ast
 	   | Val_float of float | Val_sol of string | Val_kin of string | Val_infinity
 
 
+type ord = VAL of float | INF
+
+
 type test = Comp of ast*ast | Timeg of float | Timel of float
 (*test = fun fake_rules_indices -> bool*)
 (*modif = [(flg_1,mult_1);...;(flg_n;mult_n)]*)
@@ -16,6 +19,7 @@ type perturbation = {dep_list: dep list;
                      test_unfun_list: test list;
 		     test_list: ((int StringMap.t) * Rule_of_int.t -> bool) list;  (*rule_of_name,rules*) 
 		     modif: IntSet.t * IntSet.t * (int StringMap.t) * Rule_of_int.t  -> IntSet.t * IntSet.t * Rule_of_int.t  ; 
+                     modif_unfun: string*ast;
 		     test_str: string ; 
 		     modif_str:string} 
 
@@ -31,7 +35,7 @@ type t = {
 type perturbation_unfun = 
    {dep_list_unfun: dep list; 
     test_unfun_list_unfun: test list;
-    modif_unfun: Mods2.IntSet.t * Mods2.IntSet.t * (int Mods2.StringMap.t) * Rule.Rule_of_int.t  -> Mods2.IntSet.t * Mods2.IntSet.t * Rule.Rule_of_int.t  ; 
+    modif_unfun_unfun: string*ast;
     test_str_unfun: string ; 
     modif_str_unfun:string}  
 
@@ -55,32 +59,10 @@ let unfun t =
            {dep_list_unfun= p.dep_list;
             test_unfun_list_unfun= p.test_unfun_list;
             test_str_unfun=p.test_str;
-            modif_unfun=p.modif;
+            modif_unfun_unfun=p.modif_unfun;
             modif_str_unfun=p.modif_str})
         t.perturbations}
     
-
-let refun t = 
-    {
-      fresh_pert=t.fresh_pert_unfun;
-      name_dep= t.name_dep_unfun;
-      time_on= t.time_on_unfun;
-      time_off= t.time_off_unfun;
-      perturbations=
-        IntMap.map 
-          (fun p -> 
-             {dep_list= p.dep_list_unfun;
-              test_unfun_list= p.test_unfun_list_unfun;
-              test_list = [];
-              test_str=p.test_str_unfun;
-              modif=p.modif_unfun;
-              modif_str=p.modif_str_unfun}
-          )
-          t.perturbations_unfun}
-
-
-
-
 let empty = {fresh_pert = 0 ; 
 	     name_dep = StringMap.empty ; 
 	     time_on = IntMap.empty ;
@@ -121,8 +103,6 @@ let rec string_of_ast ast =
     | Val_sol flag -> flag 
     | Val_kin flag -> "kin("^flag^")"
     | Val_infinity -> "inf"
-
-type ord = VAL of float | INF
 
 let greater ord1 ord2 = 
   match (ord1,ord2) with

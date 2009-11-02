@@ -3,7 +3,7 @@ open Arithmetics
 open Ode_print_sig 
 open Xml 
 open Tools 
-
+open Error_handler 
 
 let stdprint = 
   {
@@ -14,6 +14,8 @@ let stdprint =
   chan = [stdout] 
   } 
     
+let error x i = 
+  unsafe_frozen (Some x) (Some "Complx") (Some "Ode_print.ml") None (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
 
 
 let all_fields x  = [x.dump;x.matlab;x.mathematica;x.latex;x.matlab_aux;x.data;x.kappa;x.txt;x.matlab_jacobian;x.matlab_size;x.matlab_activity;x.matlab_obs;x.matlab_init]
@@ -606,14 +608,14 @@ let channel_set print set =
     (all_fields print)
 
 
-let rec print_expr  print bool bool2  x = 
+let rec print_expr print aux bool bool2  x = 
   match x with
      Constf f -> pprint_float print f
    | Letter s -> pprint_string print  s 
    | Const i ->  pprint_int print i 
    | VarInit i -> pprint_var print "init" (string_of_int i) 
    | Vari (v,r) -> (print_intermediar_var print r (string_of_int v);(if bool then pprint_ty print else if bool2 then pprint_zero print else ())) 
-   | Vark i ->   pprint_var print "k" i 
+   | Vark i ->   pprint_var print (if aux then "k_temp" else "k") i 
    | Var i ->  (pprint_var print "y" (string_of_int i);(if bool then pprint_t print else if bool2 then pprint_zero print else ()))
    | Vardi (i,r,j) -> 
        begin 
@@ -627,41 +629,41 @@ let rec print_expr  print bool bool2  x =
    | Shortcut (s,a) -> (print_intermediar_var print s a;(if bool then pprint_t print else if bool2 then pprint_zero print else ())) 
    | Div (a,b) -> 
        begin
-	print_atom print bool  bool2 a;
+	print_atom print aux bool  bool2 a;
 	pprint_string print  "/";
-	print_atom print bool bool2  b
+	print_atom print aux bool bool2  b
        end
 	 
   | Mult (a,b) -> 
       begin
-	print_atom print bool bool2  a;
+	print_atom print aux bool bool2  a;
         pprint_string print "*";
-	print_atom print bool bool2 b
+	print_atom print aux bool bool2 b
       end 
   | Plus (a,b) -> 
       begin
 	(match a with 
 	   Plus _ -> print_expr 
-	|  _ -> print_atom ) print bool bool2 a;
+	|  _ -> print_atom ) print aux bool bool2 a;
 	pprint_string print "+";
 	(match b with 
 	  Plus _ -> print_expr 
-	|  _ -> print_atom)  print  bool bool2  b
+	|  _ -> print_atom)  print aux  bool bool2  b
       end
   | Eps -> pprint_string print "e"
-and print_atom print  bool bool2 x = 
+and print_atom print aux  bool bool2 x = 
   if is_atomic x 
-  then print_expr print  bool  bool2 x 
+  then print_expr print aux bool  bool2 x 
   else 
     begin
       pprint_string print  "(";
-      print_expr print bool bool2 x;
+      print_expr print aux bool bool2 x;
       pprint_string print  ")"
     end
 
 let print_expr_no_latex = print_expr 
 
-let rec print_expr  print bool bool2  x = 
+let rec print_expr  print aux bool bool2  x = 
    match x with
      Constf f -> 
        let _ = pprint_string print "{" in 
@@ -685,16 +687,16 @@ let rec print_expr  print bool bool2  x =
 	 pprint_string print r
        end
    | Vari (v,r) -> (print_intermediar_var print r (string_of_int v);(if bool then pprint_ty print else if bool2 then pprint_zero print else ())) 
-   | Vark i ->   pprint_var print "k" i 
+   | Vark i ->   pprint_var print (if aux then "k_temp" else "k") i 
    | VarInit i -> pprint_var print "init" (string_of_int i)
    | Var i ->  (pprint_var print "y" (string_of_int i);(if bool then pprint_t print else if bool2 then pprint_zero print else ()))
    | Shortcut (s,a) -> (print_intermediar_var print s a;(if bool then pprint_t print else if bool2 then pprint_zero print else ())) 
    | Div (a,b) -> 
        begin
 	pprint_string print "\\odefrac{";
-	 print_atom print bool  bool2 a;
+	 print_atom print aux bool  bool2 a;
 	pprint_string print  "}{";
-	print_atom print bool bool2  b;
+	print_atom print aux bool bool2  b;
 	 pprint_string print "}"
        end
 	
@@ -704,53 +706,120 @@ let rec print_expr  print bool bool2  x =
    | Mult(a,Const -1) -> 
        begin 
 	 pprint_string print "\\odeuniminus";
-	 print_expr print bool bool2 a 
+	 print_expr print aux bool bool2 a 
        end
    | Mult (a,b) -> 
        begin
 	(match a with 
 	   Mult _ -> print_expr 
-	|  _ -> print_atom ) print bool bool2 a;
+	|  _ -> print_atom ) print aux bool bool2 a;
 	pprint_string print "\\odetime";
 	(match b with 
 	  Mult _ -> print_expr 
-	|  _ -> print_atom)  print  bool bool2  b
+	|  _ -> print_atom)  print aux bool bool2  b
       end
   | Plus (a,b) -> 
       begin
 	(match a with 
 	   Plus _ -> print_expr 
-	|  _ -> print_atom ) print bool bool2 a;
+	|  _ -> print_atom ) print aux bool bool2 a;
 	pprint_string print " \\odeplus ";
 	(match b with 
 	  Plus _ -> print_expr 
-	|  _ -> print_atom)  print  bool bool2  b
+	|  _ -> print_atom)  print aux bool bool2  b
       end
   | Eps -> pprint_string print "\\varepsilon"
-and print_atom print  bool bool2 x = 
+and print_atom print aux  bool bool2 x = 
   if is_atomic x 
-  then print_expr print  bool  bool2 x 
+  then print_expr print aux bool bool2 x 
   else 
     begin
-      pprint_string print  "(";
-      print_expr print bool bool2 x;
+      pprint_string print "(";
+      print_expr print aux bool bool2 x;
       pprint_string print  ")"
     end
 
-let print_expr print bool bool2 x = 
+let print_expr print aux bool bool2 x = 
   let print' = remove_latex print in 
   let print_latex = keep_latex print in 
-  let _ = print_expr_no_latex print' bool bool2 x in
+  let _ = print_expr_no_latex print' aux bool bool2 x in
   let _ = 
     match print.latex
     with 
       None -> ()
-    | Some a -> print_expr print_latex  bool bool2 x 
+    | Some a -> print_expr print_latex aux bool bool2 x 
   in ()
   
 
+let rec print_ast print map x = 
+  match x with 
+      Experiment.Mult (a1,a2) -> 
+        begin 
+          pprint_string print "(";
+          print_ast print map a1;
+          pprint_string print "*";
+          print_ast print map a2;
+          pprint_string print ")"
+        end
+    | Experiment.Add (a1,a2) -> 
+         begin 
+          pprint_string print "(";
+          print_ast print map a1;
+          pprint_string print "/";
+          print_ast print map a2;
+          pprint_string print ")"
+        end
+    | Experiment.Div (a1,a2) -> 
+         begin 
+          pprint_string print "(";
+          print_ast print map a1;
+          pprint_string print "/";
+          print_ast print map a2;
+          pprint_string print ")"
+        end
+    | Experiment.Val_float float -> pprint_string print (Float_pretty_printing.exact_string_of_float float) 
+    | Experiment.Val_sol s -> pprint_string print ("obs_temp("^(try string_of_int (StringMap.find s map) with Not_found -> error "Unknown expression in perturbation test" 781)^")")
+    | Experiment.Val_kin s -> pprint_string print (s^"KIN") 
+    | Experiment.Val_infinity -> pprint_string print "Inf"
 
-let pprint_ODE_head print print_obs print_activity file_main file file_jac file_size file_activity file_obs  = 
+let print_test print map x = 
+  match x with 
+      Experiment.Comp (a1,a2) -> 
+        begin
+          print_ast print map a1;
+          pprint_string print "<";
+          print_ast print map a2
+        end
+    | Experiment.Timeg float -> 
+        begin
+          pprint_string print "t>";
+          pprint_string print (Float_pretty_printing.exact_string_of_float float) 
+        end
+    | Experiment.Timel float -> 
+        begin
+          pprint_string print "t<";
+          pprint_string print (Float_pretty_printing.exact_string_of_float float)
+        end
+
+let print_mod print bool map x = 
+  let (a,b) = x in 
+    begin
+      pprint_string print "k";
+      (if bool then pprint_string print "_temp");
+      pprint_string print "(";
+      pprint_string 
+        print 
+        (string_of_int (try StringMap.find a map with Not_found -> error "Unknown expression in perturbation modification" 808)^")=");
+      print_ast print map b;
+      pprint_string print ";\n"
+    end
+      
+      
+
+
+
+
+let pprint_ODE_head print print_obs print_activity file_main file file_jac file_size file_activity file_obs perturb map map2  = 
   let print_latex = keep_latex print in 
   let print = remove_latex print in 
   let print_main = {print with matlab_aux = None ; matlab_jacobian = None ; matlab_size = None;matlab_activity = None ;matlab_obs = None  } in
@@ -781,15 +850,41 @@ let pprint_ODE_head print print_obs print_activity file_main file file_jac file_
   let _ = pprint_float print_main (!Config_complx.ode_init_step) in
   let _ = pprint_commandsep print_main in
   let _ = pprint_newline print_main in 
-  let size = Tools.cut file_size^"()" in 
+  let size = (Tools.cut file_size^"()") in 
   let _ = pprint_string print_main  "num_t_point" in 
   let _ = pprint_assign print_main  in 
   let _ = pprint_int print_main (!Config_complx.ode_points) in
   let _ = pprint_commandsep print_main in
   let _ = pprint_newline print_main in 
   let _ = pprint_newline print_main in
-  let _ = pprint_string print_aux ("function dydt="^(Tools.cut file)^"(t,y)\n\n\nglobal k;\n\n\ndydt=zeros("^size^",1);") in 
-  let _ = pprint_string print_jac ("function Jac="^(Tools.cut file_jac)^"(t,y)\n\nJac = sparse("^size^","^size^");\n\nglobal k;\n\n\n") in 
+  let _ = pprint_string print_aux ("function dydt="^(Tools.cut file)^"(t,y)\n\n\nglobal perturbation_trigger;\nglobal k;\n\nk_temp=k;\nobs_temp="^(Tools.cut file_obs)^"(y);\n\n") in 
+  let _ = 
+    Mods2.IntMap.iter 
+      (fun i perturb -> 
+         pprint_string print_aux ("if perturbation_trigger("^(string_of_int (i+1))^")");
+         List.iter 
+           (fun i -> pprint_string print_aux " && ";print_test print_aux map i)
+           perturb.Experiment.test_unfun_list_unfun;
+         pprint_string print_aux "\n   ";
+         print_mod print_aux true map2 perturb.Experiment.modif_unfun_unfun;
+         pprint_string print_aux "end;\n")
+      perturb.Experiment.perturbations_unfun
+  in 
+  let _ = pprint_string print_aux ("\n\ndydt=zeros("^size^",1);\n\n") in 
+  let _ = pprint_string print_jac ("function Jac="^(Tools.cut file_jac)^"(t,y)\n\nJac = sparse("^size^","^size^");\n\n\nglobal perturbation_trigger;\nglobal k;\n\nobs_temp="^(Tools.cut file_obs)^"(y);\n\n") in 
+  let _ = 
+    Mods2.IntMap.iter 
+      (fun i perturb -> 
+         pprint_string print_jac ("if perturbation_trigger("^(string_of_int (i+1))^")");
+         List.iter 
+           (fun i -> pprint_string print_jac " && ";print_test print_jac map i)
+           perturb.Experiment.test_unfun_list_unfun;
+         pprint_string print_jac "\n   ";
+         print_mod print_jac false map2 perturb.Experiment.modif_unfun_unfun;
+         pprint_string print_jac ("   perturbation_trigger("^(string_of_int i)^")=0;\n");
+         pprint_string print_jac "end;\n")
+      perturb.Experiment.perturbations_unfun
+  in 
   let _ = pprint_string print_latex "\\odebeforeequs\n" in 
   let _ = pprint_string print_size "function Size=" in
   let _ = pprint_string print_size size in
@@ -799,7 +894,7 @@ let pprint_ODE_head print print_obs print_activity file_main file file_jac file_
     ()
 
 
- let dump_prod (prod,jac) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab print_ODE_matlab_aux print_ODE_matlab_jac print_ODE_matlab_size output_data file_aux file_jac  file_init file_obs file_data file_XML size  nobs is_obs flag_map print_fragment get_fragment ode_handler views_data_structures keep_this_link pb_obs = 
+ let dump_prod (prod,jac) init obs (init_t,final,step) print_ODE_mathematica print_ODE_matlab print_ODE_matlab_aux print_ODE_matlab_jac print_ODE_matlab_size output_data file_aux file_jac  file_init file_obs file_data file_XML size  nobs is_obs flag_map print_fragment get_fragment ode_handler views_data_structures keep_this_link pb_obs n_perturbation = 
    let nfragments = string_of_int size in 
 (*   let print_ODE = print_ODE_mathematica in 
    let print_latex = keep_latex print_ODE_mathematica in *)
@@ -865,7 +960,7 @@ let pprint_ODE_head print print_obs print_activity file_main file file_jac file_
        (fun bool c -> 
 	  let _ = if bool then pprint_eq_separator print_ODE in
 	  let _ = pprint_newline print_ODE in 
-	  let _ = print_expr print_ODE false false   (simplify_expr c) in
+	  let _ = print_expr print_ODE true false false   (simplify_expr c) in
 	    true)
        false 
        obs in
@@ -876,7 +971,7 @@ let pprint_ODE_head print print_obs print_activity file_main file file_jac file_
        (fun bool c -> 
 	  let _ = if bool then pprint_eq_separator print_ODE in 
 	  let _ = pprint_newline print_ODE  in 
-	  let _ = print_expr print_ODE true false  (simplify_expr c) in
+	  let _ = print_expr print_ODE true true false  (simplify_expr c) in
 	    true)
        false 
        obs in  
@@ -897,7 +992,7 @@ let pprint_ODE_head print print_obs print_activity file_main file file_jac file_
 		 List.iter 
 		   (fun c -> 
 		      let _ = pprint_string print_ODE "," in 
-		      let _ = print_expr print_ODE false false   (simplify_expr c) in
+		      let _ = print_expr print_ODE true false false   (simplify_expr c) in
 		      let _ = pprint_string print_ODE "[" in 
 		      let _ = pprint_string print_ODE t in 
 		      let _ = pprint_string print_ODE "]" in 
@@ -927,7 +1022,7 @@ let pprint_ODE_head print print_obs print_activity file_main file file_jac file_
 	   else pprint_string print_ODE ("     %"^old) 
 	 in
 	 let _ = pprint_newline print_ODE in 
-	 let _ = print_expr print_ODE false false expr in 
+	 let _ = print_expr print_ODE false false false expr in 
 	   bool,kappa)
       init
       (false,"")
@@ -939,6 +1034,18 @@ let pprint_ODE_head print print_obs print_activity file_main file file_jac file_
   let _ = pprint_string print_ODE "]" in 
   let _ = pprint_commandsep print_ODE in 
   let _ = pprint_newline print_ODE in 
+  let _ = pprint_newline print_ODE in 
+  let _ = pprint_string print_ODE "global perturbation_trigger = [\n" in 
+  let _ = 
+    let rec aux k = 
+      if k>n_perturbation then ()
+      else 
+        (pprint_string print_ODE ("1, %perturbation "^(string_of_int k)^"\n");
+         aux (k+1))
+    in 
+      aux 1 in
+  let _ = pprint_string print_ODE "]" in
+  let _ = pprint_commandsep print_ODE in 
   let _ = pprint_newline print_ODE in 
   let _ = pprint_newline print_ODE in  
   let _ = pprint_ODE_middle1 print_ODE in
@@ -1077,7 +1184,7 @@ let print_diff print_ODE bool i j flag expr =
 	let _ = print.print_string "=" in 
 	let _ = if bool then print.print_string (var^"+") in 
 	let print_ODE = {print_ODE with matlab = None ; mathematica = None ; latex = None ; matlab_aux = None} in 
-	let _ = print_expr print_ODE true true  expr in 
+	let _ = print_expr print_ODE false true true  expr in 
 	let _ = print.print_string ";\n" in 
 	  () 
 
@@ -1090,7 +1197,7 @@ let print_activity print file activity_map =
 	   let _ = 
 	     if bool then pprint_string print ",\n"
 	   in
-	 let _ = print_expr print true true j in 
+	 let _ = print_expr print false true true j in 
 	   true)
 	activity_map false in 
     let _ = pprint_string print "];\n" in () 
@@ -1106,7 +1213,7 @@ let print_obs_in_matlab print file activity_map nfrag obsset (l,m) =
 	if k>nfrag then (k>1,l,m)
 	else 
 	  let _ = if k>1 then pprint_string print ",\n" in 
-	  let _ = print_expr print true true (Var(k))
+	  let _ = print_expr print true true true (Var(k))
 	  in vide (k+1)
       in  vide 1
     else
@@ -1131,7 +1238,7 @@ let print_obs_in_matlab print file activity_map nfrag obsset (l,m) =
 	       in 
 	       let m=if expr = Const 0 then "Dead rule in observables"::m else m in 
 		 
-	       let _ = print_expr print true true expr in 
+	       let _ = print_expr print false true true expr in 
 		 (true,l,m) 
 	     end
 	 with 
@@ -1148,11 +1255,13 @@ let print_init_in_matlab print file activity_map =
 	 let _ = 
 	   if bool then pprint_string print ",\n"
 	 in
-	 let _ = print_expr print true true expr in 
+	 let _ = print_expr print false true true expr in 
 	   true)
       activity_map false in 
   let _ = pprint_string print "];\n" in () 
 
+
+          
 
 let dump_rate_map print rate_map flag_map = 
   let _ = match print.matlab with None -> ()

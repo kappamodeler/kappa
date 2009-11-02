@@ -149,7 +149,12 @@ let print_log s =
 
 let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_matlab_act file_ODE_matlab_obs file_ODE_matlab_init file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_ODE_data_head file_data_foot file_ODE_data file_ODE_gplot file_ODE_png file_ODE_script file_XML ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs  exp (l,m) = 
   
-  let _ = Experiment.print (Experiment.refun exp) in 
+ 
+  let n_perturbation = 
+    1+(Mods2.IntMap.fold 
+      (fun i _ sol -> max i sol)
+      exp.Experiment.perturbations_unfun 0 )
+  in 
   let prefix' = "-"^(fst prefix) in 
   let do_latex = !Config_complx.do_dump_latex in 
   let good_mode a b = 
@@ -461,7 +466,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       matlab_activity = None;
       matlab_init = print_matlab_init }
   in
-  let _ = pprint_ODE_head print_ODE print_ODE_matlab_obs print_ODE_matlab_activity file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_jacobian file_ODE_matlab_size file_ODE_matlab_act file_ODE_matlab_obs in 
+
   let _ = dump_line 429 in  
   let is_access = 
     match pb.unreachable_rules with 
@@ -557,7 +562,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	rs.Pb_sig.rules } in 
 
 
-
+    
  
 
 
@@ -567,7 +572,60 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   
  
   let system = List.map (fun x -> simplify (clean x)) a.Pb_sig.system in 
+
+  let flag_map = (StringMap.empty,IntMap.empty) in 
+  let flag_map = 
+    List.fold_left  
+      (fun flag_map x -> 
+	 try 
+	   let label = List.hd (List.hd x.Pb_sig.rules).Pb_sig.labels in 
+	   let rule_id = name_of_rule label in 
+	   let key = label.Pb_sig.r_simplx.Rule.id in 
+	   let flag_map = (StringMap.add rule_id key (fst flag_map),IntMap.add key rule_id (snd flag_map)) in 
+	     flag_map
+	 with 
+	       _ -> flag_map
+      )
+      flag_map system 
+  in 
+  let flag_map_inv = fst flag_map in 
+  let pb_obs' = 
+      IntMap.map 
+	(fun x -> 
+	   match x with None -> None
+	     | Some r -> 
+		 begin 
+		   try (Some (StringMap.find r (fst flag_map)))
+		   with Not_found -> None
+		 end)
+	pb_obs in 
+  
+
+  let obs_map_inv = 
+    snd 
+      (IntMap.fold 
+	 (fun i j (k,map) -> 
+            let map  = 
+	      (try StringMap.add (IntMap.find i (snd flag_map)) k map 
+	       with 
+		   Not_found -> 
+                     match j 
+                     with None -> map
+                       | Some j -> 
+                           try 
+                             StringMap.add 
+                               ("["^(IntMap.find j (snd flag_map))^"]") 
+                               k 
+                               map
+                          with Not_found -> map
+              )
+            in (k+1,map))
+         pb_obs' (1,StringMap.empty))
+  in 
+
  
+  let _ = pprint_ODE_head print_ODE print_ODE_matlab_obs print_ODE_matlab_activity file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_jacobian file_ODE_matlab_size file_ODE_matlab_act file_ODE_matlab_obs exp obs_map_inv flag_map_inv in 
+
         
   let _ = print_log "COMPUTE ANNOTATED CONTACT MAP" in
 
@@ -1097,8 +1155,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     let jacobian = Int2Set.empty in 
     let activity_map = IntMap.empty in 
     let rate_map = IntMap.empty in 
-    let flag_map = (StringMap.empty,IntMap.empty) in 
-    let system = if compression_mode = Stoc then [] else system in 
+   let system = if compression_mode = Stoc then [] else system in 
     let activity = 
       List.fold_left  
 	(fun ((mainprod:IntSet.t),
@@ -1411,12 +1468,18 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 		   in 
 		   let _ = pprint_vart print_ODE in 
 		   let _ = pprint_assign_plus {print_ODE with matlab_aux = None} in 
-		   let _ = print_expr print_ODE true true l in 
+		   let _ = print_expr print_ODE true true true l in 
 		   let grad = grad l in 
 		   let jacobian = 
 		     IntMap.fold 
 		       (fun j expr jacobian -> 
-			  let _ = print_diff print_ODE_jacobian (Int2Set.mem (i,j) jacobian) i j flag expr in 
+			  let _ = print_diff 
+                            print_ODE_jacobian 
+                            (Int2Set.mem (i,j) jacobian) 
+                            i 
+                            j 
+                            flag 
+                            expr in 
 			    Int2Set.add (i,j) jacobian)
 		       grad jacobian 
 		   in 
@@ -1915,7 +1978,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				pprint_int print_debug i ;
 				pprint_string print_debug " ";
 				(match rate with None -> () 
-				   | Some rate -> print_expr print_debug true true rate);
+				   | Some rate -> print_expr print_debug true true true rate);
 				pprint_newline print_debug)
 			     rate_kin_map in
 			   () in 
@@ -3103,7 +3166,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				       let _ = print_string origin_type in
 				       let _ = print_string origin_site in
 				       let _ = print_newline () in 
-				       let _ = print_expr print_debug true true expr_denum in
+				       let _ = print_expr print_debug false true true expr_denum in
 				       () in 
 				   let tp_list = 
 				     try StringMap.find target_type annotated_contact_map.subviews 
@@ -3250,11 +3313,11 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 						 let _ = print_int (fst conskey) in
 						 let _ = print_string ":" in
 						 let _ = print_int (-1) in
-						 let _ = print_expr print_debug  true true (simplify_expr expr) in
+						 let _ = print_expr print_debug false  true true (simplify_expr expr) in
 						 let _ = print_int (fst prodkey) in
 						 let _ = print_string ":" in
 						 let _ = print_int (1) in
-						 let _ = print_expr print_debug  true true   (simplify_expr expr) in
+						 let _ = print_expr print_debug false true true   (simplify_expr expr) in
 						 let _ = pprint_newline print_debug  in 
 						 () 
 						   
@@ -3293,7 +3356,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			       let _ = pprint_string print_debug ":" in
 			       let _ = pprint_int print_debug k1 in
 			       let _ = pprint_string print_debug ";" in
-			       let _ = print_expr print_debug true true   (simplify_expr expr) in
+			       let _ = print_expr print_debug false true true   (simplify_expr expr) in
 			       let _ = pprint_newline print_debug  in () 
 			     in 
 			     fadd_contrib (hash_fragment c)  k1 kyn_factor expr prod)
@@ -3322,7 +3385,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 				 let _ = pprint_string print_debug ":" in
 				 let _ = pprint_int print_debug k1 in
 				 let _ = pprint_string print_debug ";" in 
-				 let _ = print_expr print_debug  true  true (simplify_expr expr) in
+				 let _ = print_expr print_debug false  true  true (simplify_expr expr) in
 				 let _ = pprint_newline print_debug  in () in 
 			     fadd_contrib  
 			       (hash_subspecies c)
@@ -3368,7 +3431,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			      let _ = pprint_vart print_ODE in 
 			      let _ = pprint_assign_plus {print_ODE with matlab_aux = None} in 
 			      let expr = simplify_expr l in 
-			      let _ = print_expr print_ODE true true expr in 
+			      let _ = print_expr print_ODE true true true expr in 
 			      let grad = grad expr in 
 			      let _ = pprint_commandsep print_ODE in 
 			      let _ = pprint_string print_ODE_latex "}"in 
@@ -3817,6 +3880,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
         views_data_structures 
         keep_this_link
         pb_obs_inv
+        n_perturbation 
     in 
     let _ = (match print_data with None -> () | Some a -> 
     (a.print_string "\n ")) in 

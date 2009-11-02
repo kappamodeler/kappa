@@ -6,19 +6,23 @@ type ast = Mult of ast * ast | Add of ast * ast | Div of ast * ast
 
 type test = Comp of ast*ast | Timeg of float | Timel of float 
 
+
+type ord = VAL of float | INF
+
 (*test = fun fake_rules_indices -> bool*)
 (*modif = [(flg_1,mult_1);...;(flg_n;mult_n)]*)
 type perturbation = {dep_list: dep list; 
                      test_unfun_list: test list;
 		     test_list: ((int Mods2.StringMap.t) * Rule.Rule_of_int.t -> bool) list;  (*rule_of_name,rules*) 
 		     modif: Mods2.IntSet.t * Mods2.IntSet.t * (int Mods2.StringMap.t) * Rule.Rule_of_int.t  -> Mods2.IntSet.t * Mods2.IntSet.t * Rule.Rule_of_int.t  ; 
-		     test_str: string ; 
+		     modif_unfun:string*ast;
+                     test_str: string ; 
 		     modif_str:string} 
 
 type perturbation_unfun = 
    {dep_list_unfun: dep list; 
     test_unfun_list_unfun: test list;
-    modif_unfun: Mods2.IntSet.t * Mods2.IntSet.t * (int Mods2.StringMap.t) * Rule.Rule_of_int.t  -> Mods2.IntSet.t * Mods2.IntSet.t * Rule.Rule_of_int.t  ; 
+    modif_unfun_unfun: string*ast;
     test_str_unfun: string ; 
     modif_str_unfun:string}  
 
@@ -39,7 +43,6 @@ type t_unfun = {
 }
 
 val unfun: t -> t_unfun
-val refun: t_unfun -> t 
 
 val empty: t
 
@@ -48,7 +51,7 @@ val string_of_perturbation: perturbation -> string
 val print: t -> unit 
 val string_of_ast: ast -> string
 
-type ord = VAL of float | INF
+
 
 
 val add: perturbation -> t -> t

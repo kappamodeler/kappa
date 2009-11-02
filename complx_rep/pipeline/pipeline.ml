@@ -136,8 +136,8 @@ sig
 end
 
 
-let marshall_simplx_encoding _ = None 
-let unmarshall_simplx_encoding _ = None 
+let marshall_simplx_encoding x = x
+let unmarshall_simplx_encoding x = x 
 
 let store_options () = 
   {version=Config_complx.version;
