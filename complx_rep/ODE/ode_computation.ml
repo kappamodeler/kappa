@@ -3063,46 +3063,44 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 			 List.fold_left 
 			   (fun p_list 
 			       (agent_id,agent_type,site,agent_id',agent_type',site') -> 
-				 let a_cand,b_cand,other = 
+				 let a_cand,b_cand,ab_cand,other = 
 				   List.fold_left 
 				     (fun 
-				       (a_cand,b_cand,other) 
-					 (c,k1,k2) 
-				       -> 
-					 if is_agent_in_species agent_id c
-					 then
-					   (
-					   (c,k1,k2)::a_cand,
-					   b_cand,
-					   other)
-					 else
-					   if is_agent_in_species agent_id' c 
-					   then 
-					     (
-					     a_cand,
-					     (c,k1,k2)::b_cand,
-					     other)
-					   else
-					     (
-					     a_cand,
-					     b_cand,
-					     (c,k1,k2)::other))
-				     ([],[],[]) p_list in
-				 List.fold_left 
-				   (fun p_list (ac,ak1,ak2) -> 
-				     (List.fold_left
-					(fun p_list (bc,bk1,bk2) -> 
-					  (
-					  (
-					  add_bond_to_subspecies 
-					    (merge ac bc) 
-					    (agent_id,site)
-					    (agent_id',site'),
-					  ak1,
-					  ak2@bk2
-						 )::p_list))
-					p_list b_cand))
-				   other a_cand)
+				       (a_cand,b_cand,ab_cand,other) 
+					(c,k1,k2) 
+				        -> 
+					  match is_agent_in_species agent_id c,is_agent_in_species agent_id' c 
+                                          with 
+                                              true,true  -> a_cand,b_cand,(c,k1,k2)::ab_cand,other
+                                            | true,false -> (c,k1,k2)::a_cand,b_cand,ab_cand,other 
+                                            | _,true -> a_cand,(c,k1,k2)::b_cand,ab_cand,other
+                                            | _ -> a_cand,b_cand,ab_cand,(c,k1,k2)::other
+                                     )
+				     ([],[],[],[]) p_list in
+				   List.fold_left 
+				     (fun p_list (ac,ak1,ak2) -> 
+				        (List.fold_left
+					   (fun p_list (bc,bk1,bk2) -> 
+					      (
+					        (
+					          add_bond_to_subspecies 
+					            (merge ac bc) 
+					            (agent_id,site)
+					            (agent_id',site'),
+					          ak1,
+					          ak2@bk2
+						)::p_list))
+					   p_list b_cand))
+				     (List.fold_left 
+                                        (fun p_list (abc,k1,k2) -> 
+                                           (add_bond_to_subspecies 
+                                              abc 
+                                              (agent_id,site)
+                                              (agent_id',site'),
+                                            k1,
+                                            k2)::p_list)
+                                        other ab_cand) 
+                                     a_cand)
 			   p_list 
 			   new_binding in 
 		       let _ = if sl_list <> [] then error 2298  in 
@@ -3990,7 +3988,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
 	    let _ = (pstring print) "'" in 
 	    let _ = (pstring print) file_ODE_data in 
 	    let _ = (pstring print) "' using 1:" in 
-	    let _ = (pstring print) (string_of_int k) in 
+	    let _ = (pstring print) (string_of_int (k+1)) in 
 	    let _ = (pstring print) " title '" in 
 	    let _ = 
               print_fragment 
