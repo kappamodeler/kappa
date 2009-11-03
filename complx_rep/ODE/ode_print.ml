@@ -787,7 +787,7 @@ let print_test print map x =
       Experiment.Comp (a1,a2) -> 
         begin
           print_ast print map a1;
-          pprint_string print "<";
+          pprint_string print ">";
           print_ast print map a2
         end
     | Experiment.Timeg float -> 
@@ -881,7 +881,7 @@ let pprint_ODE_head print print_obs print_activity file_main file file_jac file_
            perturb.Experiment.test_unfun_list_unfun;
          pprint_string print_jac "\n   ";
          print_mod print_jac false map2 perturb.Experiment.modif_unfun_unfun;
-         pprint_string print_jac ("   perturbation_trigger("^(string_of_int i)^")=0;\n");
+         pprint_string print_jac ("   perturbation_trigger("^(string_of_int (1+i))^")=0;\n");
          pprint_string print_jac "end;\n")
       perturb.Experiment.perturbations_unfun
   in 
