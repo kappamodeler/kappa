@@ -189,3 +189,16 @@ let frozen_unsafe warn engine_n module_name function_name key x =
 let frozen_exit () = raise Exit 
     
 let unsafe_frozen = frozen_unsafe  (*WTF!!*)
+
+let put_error app meth exn = 
+    let error = 
+        {application = if !application_name=None then app else !application_name ;
+	 method_name = meth ;
+	  function_name = !function_name ;
+	 file_name = !file_name ;
+         calling_stack = !calling_stack ;
+         message = !message ;
+         key = !ind ;
+          exception_ = exn}
+    in
+      add_error error 

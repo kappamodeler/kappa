@@ -232,7 +232,7 @@ let main ()  =
 	(!Config_complx.kinetic_amplifier)
 	prefix pb log
     else
-      [],pb,log 
+      Some [],pb,log 
   in 
   let pb,log = 
     if !Config_complx.do_maximal_refinement 

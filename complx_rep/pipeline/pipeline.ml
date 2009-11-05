@@ -104,7 +104,7 @@ type 'a pipeline = {
     integrate: file_name -> 'a step;
     dump_potential_cycles: precision -> 'a step;
     refine_system_to_avoid_polymers: 
-	file_name -> simplx_encoding option -> Avoid_polymere.mode -> int option -> float  -> ('a,('a rule_class list)) step_with_output; 
+	file_name -> simplx_encoding option -> Avoid_polymere.mode -> int option -> float  -> ('a,('a rule_class list option)) step_with_output; 
     build_drawers: 'a step ; 
     compute_refinement_relation_maximal: 'a step ;
     export_refinement_relation_maximal: ('a,Rule.t list option) step_with_output;
@@ -173,7 +173,16 @@ let error_frozen i x t y =
       y
 
 let frozen_error = error_frozen 
-
+let warn i x t y exn = 
+  let _ = 
+    warn_message
+      (Some x) 
+      (Some "Complx")
+      (Some "pipeline.ml") 
+      (Some t) 
+      (Some i)
+  in 
+    put_error (Some "Complx") (Some "pipeline.ml") exn 
 
 module Pipeline = 
   (functor (A:AbstractExprBool) ->
@@ -458,7 +467,10 @@ module Pipeline =
 	 with None -> pb,log,None
 	 | Some rep -> 
 	     (match rep.first_encoding with
-	       None ->frozen_error "line 294"  "first encoding has failed" "get_first_encoding" (fun () -> raise Exit)
+	       None ->
+                 let _ = warn "line 294"  "first encoding has failed" "get_first_encoding" Exit
+                 in 
+                   pb,log,None 
 	     | Some a -> pb,log,Some a )
 
        and smash_rule_system interface prefix pb (l,m) =
@@ -501,23 +513,25 @@ module Pipeline =
 		    let pb = Some {rep0 with intermediate_encoding  = Some cpb} in 
 		      pb,(l,m)))
        and get_smashed interface prefix pb log =
-	 let error i  = frozen_error i  "Quotiented system cannot be built" "get_smashed" (fun () -> raise Exit) in
+	 let error i  = warn i  "Quotiented system cannot be built" "get_smashed" Exit in
 	 let pb,log  = smash_rule_system interface prefix pb log in 
-	 match pb with None  -> error "line 341"
+	 match pb with None  -> 
+           let _ = error "line 341" in 
+             pb,log,None 
 	 | Some rep0 -> 
 	     (match 
 	       rep0.gathered_intermediate_encoding
-	     with None -> error "line 345"
-	     | Some rep -> pb,log,rep
+	     with None -> let _ = error "line 345" in pb,log,None
+	     | Some rep -> pb,log,Some rep
 		   )
        and get_no_smashed interface prefix pb log = 
-	 let error i  = frozen_error i  "Renaming cannot be built" "get_no_smashed" (fun () -> raise Exit) in
+	 let error i  = warn i  "Renaming cannot be built" "get_no_smashed" Exit  in
 	 let pb,log  = no_smash_rule_system interface prefix pb log in 
 	 match pb with None -> None,log,None 
 	 | Some rep0 -> 
 	     match 
 	       rep0.intermediate_encoding
-	     with None -> error "line 355"
+	     with None -> let _ = error "line 355" in pb,log,None 
 	     | Some rep -> pb,log,Some rep
        and compile (interface:interface) mode prefix rep (l,m) =
 	   let title = 
@@ -535,14 +549,14 @@ module Pipeline =
 	     then 
 	       match rep0.gathered_boolean_encoding
 	       with Some a -> rep,(l,m)
-	       | None -> 
+	         | None -> 
 		   let pb,(l,m),cpb =  get_smashed 
 		       interface 
 		       prefix' rep  (l,m) in
 		    (
-		   match pb with None -> (None,(l,m)) 
-		   | Some rep0 -> 
-		       let cpb,messages = CBnG.translate_problem rep cpb A.f,m in 
+		   match pb,cpb with None,_|_,None  -> (pb,(l,m)) 
+		   | Some rep0,Some cpb -> 
+                       let cpb,messages = CBnG.translate_problem rep cpb A.f,m in 
 		       let pb = {rep0 with gathered_boolean_encoding = cpb} in
                        let pb = CBnG.refine_contact_map  pb None A.f in 
 		       let  pack' = Packing.compute_pack pb in 
@@ -574,24 +588,33 @@ module Pipeline =
 	   None -> 
 	     (let pb0',log' = compile interface Unsmashed prefix (Some pb) log in 
 	     match pb0'
-	     with None -> frozen_error "line 410"  "Boolean encoding cannot be built" "get_boolean_encoding" (fun () -> raise Exit)
-	     | Some pb' -> (
-		 match pb'.boolean_encoding with 
-		   Some a -> pb',log',a
-		 | None -> frozen_error "line 414"  "Boolean encoding cannot be built" "get_boolean_encoding" (fun () -> raise Exit)))
-	 | Some a -> pb,log,a 
+	     with None -> 
+               let _ = warn "line 410"  "Boolean encoding cannot be built" "get_boolean_encoding" Exit 
+               in None,log',None 
+	     | Some pb' -> 
+                 (
+		   match pb'.boolean_encoding with 
+		       Some a -> Some pb',log',Some a
+		     | None -> 
+                         let _ = warn "line 414"  "Boolean encoding cannot be built" "get_boolean_encoding" Exit in 
+                           Some pb',log',None ))
+	 | Some a -> Some pb,log,Some a 
        and get_gathered_boolean_encoding interface prefix pb log = 
 	 let _ = add_suffix prefix "get_gathered_boolean_encoding"in
 	 match pb.gathered_boolean_encoding with 
 	   None -> 
 	     (let pb0',log' = compile interface Smashed prefix (Some pb) log in 
 	     match pb0'
-	     with None -> frozen_error "line 422"  "Boolean encoding cannot be built" "get_gathered_boolean_encoding" (fun () -> raise Exit)
-	     | Some pb' -> (
+	     with None -> 
+               let _ = warn "line 422"  "Boolean encoding cannot be built" "get_gathered_boolean_encoding" Exit
+               in pb0',log',None  
+	       | Some pb' -> (
 		 match pb'.gathered_boolean_encoding with 
-		   Some a -> pb',log',a
-		 | None -> frozen_error "line 426"  "Boolean encoding cannot be built" "get_gathered_boolean_encoding" (fun () -> raise Exit)))
-	 | Some a -> pb,log,a 
+		   Some a -> Some pb',log',Some a
+		 | None -> 
+                     let _ = warn "line 426"  "Boolean encoding cannot be built" "get_gathered_boolean_encoding" Exit 
+                     in Some pb',log',None))
+	 | Some a -> Some pb,log,Some a 
        and get_intermediate_encoding interface prefix pb log = 
 	 let _ =add_suffix prefix "get_intermediate_encoding" in
 	 match pb.intermediate_encoding  with 
@@ -604,7 +627,9 @@ module Pipeline =
 		 (
 		 match pb'.intermediate_encoding 
 		 with Some a -> Some pb',log',Some a
-		 |  None -> frozen_error "line 440"  "Intermediate encoding cannot be built" "get_intermediate_encoding" (fun () -> raise Exit)))
+		 |  None -> 
+                      let _ = warn "line 440"  "Intermediate encoding cannot be built" "get_intermediate_encoding" Exit in 
+                        Some pb',log',None ))
 	 | Some a -> Some pb,log,Some a
        and convert_contact prefix rep (l,m) = 
 	 let prefix' = add_suffix prefix "convert_contact" in 
@@ -669,11 +694,13 @@ module Pipeline =
                                     match cpb.cpb_contact 
                                     with Some a -> Some a 
                                       | None -> 
-		                          error_frozen 
-			                    "line 505" 
-			                    "Syntactic contact map is missing"
-			                "build_drawers"
-			                    (fun _ -> raise Exit)),(l,m) 
+		                          let _ = 
+                                            warn 
+			                      "line 505" 
+			                      "Syntactic contact map is missing"
+			                      "build_drawers"
+			                      Exit in None)
+                               ,(l,m) 
 		         | Some a -> 
                              Some rep',
 		             Some (String2Map.map 
@@ -733,13 +760,17 @@ module Pipeline =
 	   None -> 
 	     let pb',log' = build_contact High prefix (Some pb) log in 
 	     (match pb' with 
-	       None -> frozen_error "line 530"  "contact map cannot be built" "get_high_res_contact_map"  (fun () -> raise Exit)
+	       None -> 
+                 let _ = warn "line 530"  "contact map cannot be built" "get_high_res_contact_map"  Exit in 
+                   pb,log',None 
 	     | Some a -> 
 		 a,log',
 		 (match a.contact_map 
-		 with Some a -> a
-		 |  None -> frozen_error "line 535"  "contact_map cannot be built" "get_high_res_contact_map" (fun () -> raise Exit)))
-	 | Some a -> pb,log,a
+		  with Some a -> Some a
+		    |  None -> 
+                         let _ = warn "line 535"  "contact_map cannot be built" "get_high_res_contact_map" Exit in 
+                           None ))
+	   | Some a -> pb,log,Some a
        and get_low_res_contact_map prefix pb log = 
 	 let pb,log,cpb = get_intermediate_encoding None (add_suffix prefix "get_low_res_contact_map") pb log in
 	 pb,log,match cpb with None -> None | Some cpb -> cpb.cpb_contact
@@ -757,13 +788,14 @@ module Pipeline =
 	   None -> 
 	     let pb',log',contact = get_low_res_contact_map prefix pb log in
 	     (match contact with 
-	       None -> frozen_error "line 530"  "contact map cannot be built" "get_best_res_contact_map"  (fun () -> raise Exit)
-	     | Some a -> pb,log,
-                  (
+	       None -> let _ = warn "line 530"  "contact map cannot be built" "get_best_res_contact_map"  Exit in 
+                 pb,log',None 
+	     | Some a -> pb,log',
+                  (Some (
                    convert_low_in_high 
-                     (a)))
+                     (a))))
 		 	
-	 | Some a -> pb,log,a
+	 | Some a -> pb,log,Some a
 
        and parse_line_by_line file prefix rep (l,m) = 
 	 match rep with None -> (None,(l,m))
@@ -795,38 +827,40 @@ module Pipeline =
 		 let _ = print_option prefix (Some stdout) "Reachability analysis \n" in
 		 let _ = flush stdout in 
 		 let pb,(l,m),_ = get_boolean_encoding  None prefix' pb (l,m) in 
-		 let pb,(l,m),_ = get_gathered_boolean_encoding None prefix' pb (l,m) in 
-		 let pb,(l,m) = convert_contact prefix' (Some pb) (l,m) in 
-	       	 match pb with None -> pb,(l,m)
-		 |  Some pb -> 
-		     let pb,(l,m),contact = get_high_res_contact_map prefix'  pb (l,m)  in 
-		     let _ = set_packs pb in  
-		 let (abstract_lens,rep1,rep2,live_agents),sp,parsed_case,messages = Ite.itere pb m in
-		 let rep = rep1,rep2 in 
-		 let m,sol = 
-		   RuleIdListMap.fold 
-		     (fun r a sol ->
-		       if a = None
-		       then 
-			 List.fold_left 
-			   (fun (m,sol) r -> 
-			     ("Rule "^(name_of_rule r)^" cannot be applied")::m,
-			     RuleIdSet.add r sol)
-			   sol r
-		       else sol)
-		     abstract_lens (m,RuleIdSet.empty) in
+                   match pb with None -> None,(l,m)
+                     | Some pb -> 
+		         let pb,(l,m),_ = get_gathered_boolean_encoding None prefix' pb (l,m) in 
+		         let pb,(l,m) = convert_contact prefix' pb (l,m) in 
+	       	           match pb with None -> pb,(l,m)
+		             |  Some pb -> 
+		                  let pb,(l,m),contact = get_high_res_contact_map prefix'  pb (l,m)  in 
+		                  let _ = set_packs pb in  
+		                  let (abstract_lens,rep1,rep2,live_agents),sp,parsed_case,messages = Ite.itere pb m in
+		                  let rep = rep1,rep2 in 
+		                  let m,sol = 
+		                    RuleIdListMap.fold 
+		                      (fun r a sol ->
+		                         if a = None
+		                         then 
+			                   List.fold_left 
+			                     (fun (m,sol) r -> 
+			                        ("Rule "^(name_of_rule r)^" cannot be applied")::m,
+			                        RuleIdSet.add r sol)
+			                     sol r
+		                         else sol)
+		                      abstract_lens (m,RuleIdSet.empty) in
 		 
 	
-		 let pb = 
-		   {pb with Pb_sig.reachability_analysis = Some (StringMap.map A.summarize_abstract_expr (fst rep));
-		     Pb_sig.unreachable_rules = Some sol;
-		     bdd_sub_views = Some (StringMap.map A.compute_subviews rep1);
-		     bdd_false = Some (StringMap.map A.compute_subviews sp);
-		     contact_map = 
-		       Some {(snd rep) with live_agents = live_agents} 
-		   } in 
-		 let l = chrono prefix "Reachability analysis" l in
-		 Some pb,(l,m) )
+		                  let pb = 
+		                    {pb with Pb_sig.reachability_analysis = Some (StringMap.map A.summarize_abstract_expr (fst rep));
+		                       Pb_sig.unreachable_rules = Some sol;
+		                       bdd_sub_views = Some (StringMap.map A.compute_subviews rep1);
+		                       bdd_false = Some (StringMap.map A.compute_subviews sp);
+		                       contact_map = 
+		                        Some {(snd rep) with live_agents = live_agents} 
+		                    } in 
+		                  let l = chrono prefix "Reachability analysis" l in
+		                    Some pb,(l,m) )
 
        and refine_subviews prefix pb (l,m) =
          let prefix' = add_suffix prefix "refine_subviews" in 
@@ -946,23 +980,27 @@ module Pipeline =
 			 None,false -> (Some pb,(l,m)) 
 		       | _ -> 
 			   let pb,(l,m),contact = get_high_res_contact_map prefix  pb (l,m) in 
-			   let output = open_out fic in 
-			   let _ = 
-			     try ( 
-			       let print s = Printf.fprintf output s in 
-			       ((List.iter 
-				   (fun (a,b) -> 
-				     print "%s" (string_of_b (L((fst a,fst a,snd a),(fst b,fst b,snd b))));
+                             match contact 
+                             with
+                                 None -> Some pb,(l,m)
+                               | Some contact -> 
+			           let output = open_out fic in 
+			           let _ = 
+			             try ( 
+			               let print s = Printf.fprintf output s in 
+			                 ((List.iter 
+				             (fun (a,b) -> 
+				                print "%s" (string_of_b (L((fst a,fst a,snd a),(fst b,fst b,snd b))));
 				     print "\n")
-				   contact.relation_list)
-				  )) with Not_found -> () in 
-			   let _ = close_out output in 
-			      (Some pb,(chrono 
-					  prefix  (
-					"High resolution contact map (txt)")
-					  l,m))
-			     
-			     
+				             contact.relation_list)
+				         )) with Not_found -> () in 
+			           let _ = close_out output in 
+			             (Some pb,(chrono 
+					         prefix  (
+					           "High resolution contact map (txt)")
+					         l,m))
+			               
+			               
 		     else 
 		       match pb.intermediate_encoding,!Config_complx.do_low_res_contact_map
 		       with None,false -> (Some pb,(l,m))
@@ -1054,19 +1092,21 @@ module Pipeline =
 	 | Some pb -> 
 	     let _ = print_option prefix (Some stdout) "Quark computation\n" in
 	     let pb,(l,m),contact = get_best_res_contact_map prefix' pb (l,m) in 
-	     let pb,(l,m),cpb = get_intermediate_encoding None prefix' pb (l,m) in
-	   
-	     let _ = flush stdout in 
-               (match pb,cpb
-               with None,_|_,None-> pb
-                 | Some pb,Some cpb -> 
-	             Some {pb 
-                     with intermediate_encoding = 
-		         Some {cpb with 
-			         cpb_rules = 
-			     List.map (quarkify cpb contact) cpb.cpb_rules};quarks=true})
-                       ,(chrono prefix "Quark computation" l,m)
+               match contact with None -> (pb',(l,m))
+                 | Some contact -> 
+	             let pb,(l,m),cpb = get_intermediate_encoding None prefix' pb (l,m) in
 	               
+	             let _ = flush stdout in 
+                       (match pb,cpb
+                        with None,_|_,None-> pb
+                          | Some pb,Some cpb -> 
+	                      Some {pb 
+                                    with intermediate_encoding = 
+		                  Some {cpb with 
+			                  cpb_rules = 
+			              List.map (quarkify cpb contact) cpb.cpb_rules};quarks=true})
+                         ,(chrono prefix "Quark computation" l,m)
+	                   
        and
 	 build_influence_map file file2 file3 prefix pb' (l,m) =
 	   let prefix' = add_suffix prefix "build_influence_map" in 
@@ -1113,7 +1153,8 @@ module Pipeline =
 				                                sol rc.cpb_guard)
 			                                   IntMap.empty cpb.cpb_rules in
 			                                 (fun x -> 
-			                                    try (IntMap.find x map) with _ -> 
+			                                    try (IntMap.find x map) 
+                                                            with _ -> 
 				                              frozen_error "line 893"  "" "build_influence_map"  (fun () -> raise Exit)) 
 			                             in
 			                             let _ = 
@@ -1217,16 +1258,18 @@ module Pipeline =
 		     float_of_int (IntMap.find x  auto)
 		 with 
 		   Not_found -> 1. in 
-	       let rep,m = Com.do_it file1 file2 mode auto pb' m in 
-	       let l = chrono prefix title l in 
-	       Some 
-		 (match mode with Full -> {pb' with qualitative_compression = Some rep}
-		 |  Isolated -> {pb' with quantitative_compression = Some rep}
-		 | _ -> pb')
-,(l,m))
+	       match pb' with None -> None,(l,m)
+                 | Some pb' -> 
+                     let rep,m = Com.do_it file1 file2 mode auto pb' m in 
+	             let l = chrono prefix title l in 
+	               Some 
+		         (match mode with Full -> {pb' with qualitative_compression = Some rep}
+		            |  Isolated -> {pb' with quantitative_compression = Some rep}
+		            | _ -> pb')
+                         ,(l,m))
        and build_pieces prefix pb (l,m) = 
-	  match pb  with None -> None,(l,m)
-	  |Some pb' -> 
+	   match pb  with None -> None,(l,m)
+	     |Some pb' -> 
 	      match pb'.Pb_sig.concretization with 
 		None -> None,(l,m) 
 	      | Some conc -> 
@@ -1367,13 +1410,13 @@ module Pipeline =
 	 (fun file subsystem mode k kin_coef prefix pb (l,m) -> 
 	   let prefix'= add_suffix prefix "Refine_system to avoid polymers"  in
 	   let _ = print_option prefix (Some stdout) "Refine system to avoid polymers\n" in 
-	   match pb with None -> [],None,(l,m)
+	   match pb with None -> None,None,(l,m)
 	   | Some pb -> 
 	       let pb,(l,m),cpb = 
 		 get_intermediate_encoding None prefix'  pb (l,m) in 
 	       let pb,(l,m) = 
 		 reachability_analysis prefix' pb (l,m) in
-	       match pb,cpb with None,_|_,None  -> [],None,(l,m)
+	       match pb,cpb with None,_|_,None  -> None,None,(l,m)
 	       | Some pb,Some cpb  -> 
 	       let interface = cpb.cpb_interface in 
 	       let subsystem,(l,m) = 
@@ -1389,54 +1432,59 @@ module Pipeline =
 			 prefix'
 			 pb' 
 			 (l,m) in 
-		     let boolean_encoding = 
-		       match pb'.boolean_encoding 
-		       with None -> error "line 1099"  "Cannot build boolean encoding" "refine_system_to_avoid_polymeres" (raise Exit)
-		       | Some boolean_encoding -> boolean_encoding in
-		     let rule_system = boolean_encoding.system in 
-		     (Some rule_system),(l,m) 
+		       begin 
+                         match pb' with 
+                             None -> None,(l,m) 
+                           | Some pb' -> let boolean_encoding = 
+		               match pb'.boolean_encoding 
+		               with None -> error "line 1099"  "Cannot build boolean encoding" "refine_system_to_avoid_polymeres" (raise Exit)
+		                 | Some boolean_encoding -> boolean_encoding in
+		             let rule_system = boolean_encoding.system in 
+		               (Some rule_system),(l,m) 
+                       end
 	       in  
 	       let pb,(l,m),_ = 
 		 get_boolean_encoding (Some interface) prefix' pb (l,m)  in  
 	       let pb,rep,(l,m)  = 
-		 Ref.avoid_polymere 
-		   file 
-		   subsystem 
-		   k
-		   kin_coef 
-		   pb 
-		   mode  
-		   (l,m)  
+                 match pb with 
+                     None -> None,None,(l,m)
+                   | Some pb ->  let a,b,c = Ref.avoid_polymere file subsystem  k kin_coef pb mode (l,m)  
+                     in Some a,Some b,c
 	       in  
 	       let pb,(l,m),auto = get_auto prefix' pb (l,m) in 
-	       let auto x= 
-		 try 
-		   float_of_int (IntMap.find x auto) 
-		 with 
-		   Not_found -> 1. in 
-	       let _ = Ref.dump (!Config_complx.output_without_polymere) auto pb (!Config_complx.cycle_depth) in 
-	       let l = chrono prefix "System refinement" l in 
-	       rep,(Some pb),(l,m))
+	         match pb with None -> None,None,(l,m)
+                   |Some pb -> 
+                      let auto x= 
+		        try 
+		          float_of_int (IntMap.find x auto) 
+		        with 
+		            Not_found -> 1. in 
+	              let _ = Ref.dump (!Config_complx.output_without_polymere) auto pb (!Config_complx.cycle_depth) in 
+	              let l = chrono prefix "System refinement" l in 
+	                rep,Some pb,(l,m))
        and get_auto prefix pb (l,m) = 
 	 let prefix' = prefix in 
-	 match 
-	   pb.automorphisms 
-	 with 
-	   None -> 
-	     let pb2,(l,m)  = count_automorphisms prefix' (Some pb) (l,m) in 
-	     begin 
-	       match pb2 with 
-		 None -> error "line 1268"  "cannot count automorphisms" "" (raise Exit)
-	       | Some pb2 -> 
-		   begin
-		     match pb2.automorphisms 
-		     with 
-		       None -> error "line 1273"  "Cannot count automorphisms" "" (raise Exit)
-		     | Some a -> pb2,(l,m),a
-		   end
-	     end
-	 | Some a -> pb,(l,m),a 
-	   
+	   match pb 
+           with None -> pb,(l,m),IntMap.empty
+             | Some pb -> 
+                 match 
+	           pb.automorphisms 
+	         with 
+	             None -> 
+	               let pb2,(l,m)  = count_automorphisms prefix' (Some pb) (l,m) in 
+	                 begin 
+	                   match pb2 with 
+		               None -> error "line 1268"  "cannot count automorphisms" "" (raise Exit)
+	                     | Some pb2 -> 
+		                 begin
+		                   match pb2.automorphisms 
+		                   with 
+		                       None -> error "line 1273"  "Cannot count automorphisms" "" (raise Exit)
+		                     | Some a -> Some pb2,(l,m),a
+		                 end
+	                 end
+	           | Some a -> Some pb,(l,m),a 
+	               
      and template = 
 	 (fun file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 file11 file12  file13 file14 file15 file16 file17 file18 file19 file20 file21 file22 prefix pb (l,m) ->
 	   let prefix' = add_suffix prefix "template" in 
@@ -1538,114 +1586,118 @@ module Pipeline =
 		 | Some a -> 
 		     let pb,(l,m),boolean = get_boolean_encoding None prefix' a (l,m) in 
 		     let pb,(l,m),cpb = get_intermediate_encoding None  prefix' a (l,m) in 
-		     match pb,cpb with 
-                         None,_|_,None -> pb,(l,m)
-                       | Some pb,Some cpb  -> 
-                           let pb,(l,m),auto = get_auto prefix' pb (l,m) in 
-		           let pb,(l,m),contact = get_best_res_contact_map prefix pb (l,m) in 
-                             
-		     (match pb.bdd_sub_views with None -> Some pb,(l,m)
-		     | Some sub ->
-			 let nrule = List.length boolean.system in 
-			 let pb',obs_map,exp  = build_obs pb.simplx_encoding  prefix' nrule  in 
-			   match pb' with 
-			       None -> pb',(l,m)
-			     |Some a' -> 
-                                let pb',(l,m),boolean_obs = get_boolean_encoding None prefix' a' (l,m) in 
-				let purge,obs_map,(l,m) = 
-				  let list,obs_map,(l,m) =
-				    List.fold_left
-				      (fun (list,obs_map,(l,m)) r -> 
-					 let b,(l,m) = 
-					   purge (cpb.Pb_sig.cpb_species,
-						  (match cpb.Pb_sig.cpb_contact with None -> String2Map.empty | Some a -> a),
-						  (match cpb.Pb_sig.cpb_mark_site with None -> String2Map.empty | Some a -> a),
-						 match cpb.Pb_sig.cpb_sites with None -> Pb_sig.String2Set.empty | Some a->a) 
-					     r (l,m)
-					 in
-					   if b then (r::list),obs_map,(l,m)
-					   else 
-					     begin 
-	(*				         let key = (List.hd (List.hd r.Pb_sig.rules).Pb_sig.labels).Pb_sig.r_simplx.Rule.id in *)
-						   (r::list,(*IntMap.remove key Bug FIX ENG-268: Now  obs are dumped even if they are not defined*) obs_map,(l,m))
-					     end)
-				      ([],obs_map,(l,m))
-				      boolean_obs.system 
-				  in List.rev list,obs_map,(l,m)
-				in
-				let pb' = 
-				  {pb' 
-				   with 
-				     boolean_encoding =
-				      (match pb.boolean_encoding 
-				       with None -> None
-					 | Some a -> Some {a with system = purge})}
-				in 
-				let pb',(l,m),obs_auto = get_auto prefix' pb' (l,m) in 
-				let auto = IntMap.fold IntMap.add obs_auto auto in 
-				let boolean = {boolean with system = (List.rev boolean.system)@(List.rev purge)} in 
-				let opt,(l,m)  = 
-				  Ode_computation.compute_ode
-				    file0 
-				    file1 
-				    file2
-				    file3
-				    file4 
-				    file5
-				    file6 
-				    file7 
-				    file8
-				    file9 
-				    file10 
-				    file11
-				    file12 
-				    file13
-				    file14
-				    file15
-				    file16 
-				    file17
-				    file18 
-				    file19
-				    file20
-				    file21
-				    file22
-                                    {project=A.project;
-				     export_ae = A.export_ae;
-				     restore = A.restore_subviews;
-				     b_of_var = A.K.E.V.b_of_var ;
-				     var_of_b = A.K.E.V.var_of_b ;
-				     print_sb = print_sb;
-				     print_sb_latex = print_sb_latex;
-				     fnd_of_bdd = A.fnd_of_bdd;
-				     conj = A.conj ;
-				     atom_pos = A.atom_pos ;
-				     atom_neg = A.atom_neg ; 
-				     expr_true = A.ae_true}
-				    Ode_print_sig.MATLAB
-				    prefix 
-				    (Some stdout)
-				    a 
-				    boolean 
-				    sub
-				    auto 
-				    (match !Config_complx.stoc_ode,!Config_complx.flat_ode 
-				     with 
-					 _,true -> Annotated_contact_map.Flat
-                                       |true,_ -> Annotated_contact_map.Stoc
-				       | _ -> Annotated_contact_map.Compressed)
-				    obs_map
-                                    exp
-				    (l,m) in  
-			 let nfrag = 
-			   match opt with None -> None 
-			   | Some(_,_,n) -> Some n 
-			 in 
-			 let l = chrono prefix "dumping fragments" l in 
-			   Some {pb with nfrag = nfrag},(l,m))
-									       
+		     match pb,cpb,boolean with 
+                         None,_,_|_,None,_|_,_,None -> pb,(l,m)
+                       | Some pb,Some cpb,Some boolean  -> 
+                           let pb,(l,m),auto = get_auto prefix' (Some pb) (l,m) in 
+		           match pb with None -> pb,(l,m)
+                             | Some pb -> 
+                                 let pb,(l,m),contact = get_best_res_contact_map prefix pb (l,m) in 
+                             	   (match pb.bdd_sub_views with None -> Some pb,(l,m)
+		                      | Some sub ->
+			                  let nrule = List.length boolean.system in 
+			                  let pb',obs_map,exp  = build_obs pb.simplx_encoding  prefix' nrule  in 
+			                    match pb' with 
+			                        None -> pb',(l,m)
+			                      |Some a' -> 
+                                                 let pb',(l,m),boolean_obs = get_boolean_encoding None prefix' a' (l,m) in 
+				                 match pb',boolean_obs with 
+                                                     None,_|_,None -> Some pb,(l,m)
+                                                   | Some pb',Some boolean_obs -> 
+                                                       let purge,obs_map,(l,m) = 
+				                         let list,obs_map,(l,m) =
+				                           List.fold_left
+				                             (fun (list,obs_map,(l,m)) r -> 
+					                        let b,(l,m) = 
+					                          purge (cpb.Pb_sig.cpb_species,
+						                         (match cpb.Pb_sig.cpb_contact with None -> String2Map.empty | Some a -> a),
+						                         (match cpb.Pb_sig.cpb_mark_site with None -> String2Map.empty | Some a -> a),
+						                         match cpb.Pb_sig.cpb_sites with None -> Pb_sig.String2Set.empty | Some a->a) 
+					                            r (l,m)
+					                        in
+					                          if b then (r::list),obs_map,(l,m)
+					                          else 
+					                            begin 
+	                                                              (*				         let key = (List.hd (List.hd r.Pb_sig.rules).Pb_sig.labels).Pb_sig.r_simplx.Rule.id in *)
+						                      (r::list,(*IntMap.remove key Bug FIX ENG-268: Now  obs are dumped even if they are not defined*) obs_map,(l,m))
+					                            end)
+				                             ([],obs_map,(l,m))
+				                             boolean_obs.system 
+				                         in List.rev list,obs_map,(l,m)
+				                       in
+				                       let pb' = 
+				                         {pb' 
+				                          with 
+				                            boolean_encoding =
+				                             (match pb.boolean_encoding 
+				                              with None -> None
+					                        | Some a -> Some {a with system = purge})}
+				                       in 
+				                       let pb',(l,m),obs_auto = get_auto prefix' (Some pb') (l,m) in 
+				                       let auto = IntMap.fold IntMap.add obs_auto auto in 
+				                       let boolean = {boolean with system = (List.rev boolean.system)@(List.rev purge)} in 
+				                       let opt,(l,m)  = 
+				                         Ode_computation.compute_ode
+				                           file0 
+				                           file1 
+				                           file2
+				                           file3
+				                           file4 
+				                           file5
+				                           file6 
+				                           file7 
+				                           file8
+				                           file9 
+				                           file10 
+				                           file11
+				                           file12 
+				                           file13
+				                           file14
+				                           file15
+				                           file16 
+				                           file17
+				                           file18 
+				                           file19
+				                           file20
+				                           file21
+				                           file22
+                                                           {project=A.project;
+				                            export_ae = A.export_ae;
+				                            restore = A.restore_subviews;
+				                            b_of_var = A.K.E.V.b_of_var ;
+				                            var_of_b = A.K.E.V.var_of_b ;
+				                            print_sb = print_sb;
+				                            print_sb_latex = print_sb_latex;
+				                            fnd_of_bdd = A.fnd_of_bdd;
+				                            conj = A.conj ;
+				                            atom_pos = A.atom_pos ;
+				                            atom_neg = A.atom_neg ; 
+				                            expr_true = A.ae_true}
+				                           Ode_print_sig.MATLAB
+				                           prefix 
+				                           (Some stdout)
+				                           a 
+				                           boolean 
+				                           sub
+				                           auto 
+				                           (match !Config_complx.stoc_ode,!Config_complx.flat_ode 
+				                            with 
+					                        _,true -> Annotated_contact_map.Flat
+                                                              |true,_ -> Annotated_contact_map.Stoc
+				                              | _ -> Annotated_contact_map.Compressed)
+				                           obs_map
+                                                           exp
+				                           (l,m) in  
+			                               let nfrag = 
+			                                 match opt with None -> None 
+			                                   | Some(_,_,n) -> Some n 
+			                               in 
+			                               let l = chrono prefix "dumping fragments" l in 
+			                                 Some {pb with nfrag = nfrag},(l,m))
+				     
 	       ))
 	   
-       and 
+     and 
 	 integrate = 
 	   (fun file prefix pb (l,m) -> 
 (*	      let prefix' = add_suffix prefix "integrate" in *)
@@ -1697,10 +1749,13 @@ module Pipeline =
 	       let _ = print_option prefix (Some stdout) "count automorphism in lhs\n"  in 
 
 	       let a,(l,m),boolean = get_boolean_encoding None prefix' a (l,m) in 
-	       let rep,(l,m) = 
-		 Count_isomorphism.count_isomorphism_in_rule_system  a boolean (l,m) in
-	       let l = chrono prefix "count automorphisms in lhs" l in
-	       Some rep,(l,m) )
+                 match boolean,a with 
+                     None,_|_,None -> None,(l,m)
+                   | Some boolean,Some a  -> 
+	               let rep,(l,m) = 
+		         Count_isomorphism.count_isomorphism_in_rule_system  a boolean (l,m) in
+	               let l = chrono prefix "count automorphisms in lhs" l in
+	                 Some rep,(l,m) )
        and 
 	   compute_refinement_relation_closure  = 
 	 (fun prefix pb (l,m) -> 
@@ -1711,10 +1766,12 @@ module Pipeline =
 	       let _ = print_option prefix (Some stdout) "compute refinement relation closure\n" in 
 	       let a,(l,m),boolean = get_gathered_boolean_encoding None prefix' a (l,m) in 
 	       
-	       let rep = Refinements.compute_refinement boolean in
-	       let l = chrono prefix "compute refinement relation closure" l in
-	      
-	       Some {a with refinement_relation_closure = Some rep},(l,m))
+	       match boolean,a 
+               with None,_|_,None -> None,(l,m)
+                 | Some boolean,Some a  -> 
+                     let rep = Refinements.compute_refinement boolean in
+	             let l = chrono prefix "compute refinement relation closure" l in
+	               Some {a with refinement_relation_closure = Some rep},(l,m))
        and
 	   compute_refinement_relation_maximal = 
 	 (fun prefix pb (l,m) -> 
@@ -2039,32 +2096,37 @@ module Pipeline =
 	   None -> pb,log
 	 | Some a -> 
 	     let pb',log,_ = get_boolean_encoding None prefix a log in 
-	     begin
-	       let _ = Latex.dump file pb'
-		     (A.K.E.V.var_of_b,
-		      A.K.E.V.b_of_var,
-		      A.K.E.V.varset_add,
-		      A.K.E.V.varset_empty,
-		      A.K.E.V.fold_vars,
-		      A.K.build_kleenean_rule_system,
-		      (fun is_access f  g set  ss print_any sigma sigma2 ret log -> 
-			A.K.print_kleenean_system 
-			  string_latex 
-			  is_access 
-			  f 
-			  g 
-			  set 
-			  ss
-			  print_any 
-			  sigma 
-			  sigma2 
-			  ret 
-			  None 
-			  log))in 
-		 (Some pb'),log
-	     end
+               match pb' 
+               with 
+                   None -> None,log 
+                 | Some pb' ->
+	             begin
+	               let _ = 
+                         Latex.dump file pb'
+		           (A.K.E.V.var_of_b,
+		            A.K.E.V.b_of_var,
+		            A.K.E.V.varset_add,
+		            A.K.E.V.varset_empty,
+		            A.K.E.V.fold_vars,
+		            A.K.build_kleenean_rule_system,
+		            (fun is_access f  g set  ss print_any sigma sigma2 ret log -> 
+			       A.K.print_kleenean_system 
+			         string_latex 
+			         is_access 
+			         f 
+			         g 
+			         set 
+			         ss
+			         print_any 
+			         sigma 
+			         sigma2 
+			         ret 
+			         None 
+			         log))in 
+		         (Some pb'),log
+	             end
        and
-	   dump_latex_version file prefix pb log = 
+	 dump_latex_version file prefix pb log = 
 	 let _ = Latex.dump_version file in 
 	 pb,log 
        and
@@ -2140,7 +2202,7 @@ module Pipeline =
        dump_potential_cycles = (fun a -> handle_errors_step (Some "Complx") (Some "dump_potential_cycles") (dump_potential_cycles a)) ;
        find_connected_components = (fun a -> handle_errors_step (Some "Complx") (Some "find_connected_components") (find_connected_components a));
        refine_system_to_avoid_polymers = 
-       (fun a b c d e  -> handle_errors_def (Some "Complx") (Some "refine_system_to_avoid_polymers") (refine_system_to_avoid_polymeres a b c d e ) []);
+       (fun a b c d e  -> handle_errors_def (Some "Complx") (Some "refine_system_to_avoid_polymers") (refine_system_to_avoid_polymeres a b c d e ) (Some []));
        build_drawers = 
         handle_errors_step (Some "Complx") (Some "build_drawers") build_drawers ;
        count_automorphisms = 
