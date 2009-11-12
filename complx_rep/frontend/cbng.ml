@@ -157,7 +157,9 @@ module CBnG =
       else (b,a)
 				
 
-    let make_commutation r ir = 
+    let make_commutation bool r ir = 
+      let instructions = r.cpb_control.cpb_update in 
+      let ninstructions = List.length instructions in 
       let l = list_fold
 	  (fun x q -> 
 	    match x with 
@@ -193,7 +195,7 @@ module CBnG =
 		   q [] 
 		   
 	       |  0 -> 
-		    if (i1,s1)=(i2,s2) or (not (!Config_complx.duplicate_rules_when_sym))
+		    if not bool or (i1,s1)=(i2,s2) or (not (!Config_complx.duplicate_rules_when_sym)) or (ninstructions> !Config_complx.duplicate_threshold) 
 		    then
 		      list_fold 
 			(fun 
@@ -224,7 +226,7 @@ module CBnG =
 		  (fun (id,l) sol -> (id,x::l)::sol)
 		  q [] 
 	    | Check_choice(list) -> 
-		if (!Config_complx.duplicate_rules_when_sym)
+		if not bool && (!Config_complx.duplicate_rules_when_sym)  &&  (not (ninstructions> !Config_complx.duplicate_threshold))
 		then 
 		  list_fold 
 		    (fun ((id,b),l) sol -> 
@@ -310,7 +312,7 @@ module CBnG =
       let get_id l = fst(fst l) in 
       compare (get_id a) (get_id b)
 	  
-    let sort_control (r,ir)   =
+    let sort_control bool (r,ir)   =
       List.sort 
 	(fun a b -> 
         let rep = compare (prehash (snd (fst a)) ir) (prehash (snd (fst b)) ir) in 
@@ -318,7 +320,7 @@ module CBnG =
 	then compare_id a b else rep)
 	(List.fold_left 
 	   (fun l s -> (s,ir)::l)
-	   [] (make_commutation r ir))
+	   [] (make_commutation bool r ir))
      
     let order_control l = 
        (List.sort 
@@ -465,7 +467,7 @@ List.map (rename_test f) b)) r.cpb_guard;
 	   let annotated_guard = 
 	     list_fold 
 	       (fun r sol -> 
-		  let ir = rule_precomputation  pb r in 
+		  let ir = rule_precomputation pb r in 
 		  let _ = trace_print "PRECOMPUTATION_OK2" in 
 		    
                     list_fold 
@@ -683,7 +685,7 @@ List.map (rename_test f) b)) r.cpb_guard;
       let _ = trace_print "START DIVIDE_LIST" in 
       let l = List.map (fun x -> x,rule_precomputation pb x) l in 
       let _ = trace_print "PRECOMPUTATION_OK" in 
-      let enrich_l = List.map sort_control l in 
+      let enrich_l = List.map (sort_control bool) l in 
       let _ = trace_print "SORT_OK" in 
       let enrich_l = 
 	list_fold 

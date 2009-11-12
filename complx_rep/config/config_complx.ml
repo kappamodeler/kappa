@@ -62,7 +62,7 @@ let trace_reachable_states = ref false  (* compression: print domain of the grou
 let trace_concrete_rules = ref true    (* compression: print concrete rules *)
 let trace_abstract_rules = ref true   (* print compressed rules *)
 
-let complex_limit = ref 100000
+let complex_limit = ref 10000
 let do_ODE = ref false
 let integrate_ODE = ref false 
 let do_XML_session = ref true
@@ -139,6 +139,7 @@ let ignore_dep = ref false  (*true -> peut abstraire partiellement un site *)
 let enforce_structural_invariants = ref true (*use the structural properties of boolean encoding to restore abstracted constraints*)
     
 let duplicate_rules_when_sym = ref true (*true*)
+let duplicate_threshold = ref 5 
 let duplicate_rules_when_cycles = ref true (* true *)(* not_implemented yet *)
 let dump_qualitative_compression = ref ""
 let dump_quantitative_compression = ref "" 
