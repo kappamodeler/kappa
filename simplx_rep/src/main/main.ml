@@ -45,7 +45,8 @@ let main =
     ("--quotient-refinements", Arg.Unit (fun () -> quotient_refs:=true), "replace each rule by the most general rule it is a refinement of when computing stories");
     ("--dot-output",Arg.Unit (fun () -> dot_output:=true), "dot output for stories") ;
 
-    ("--generate-map", Arg.String (fun s -> map_mode :=true ; fic := s), "name of the kappa file for which the influence map should be computed");
+    ("--generate-map", Arg.String (fun s -> compilation_opt:= !compilation_opt land (lnot _PARSE_INIT) ; map_mode :=true ; fic := s), 
+     "name of the kappa file for which the influence map should be computed");
     ("--no-inhibition-map",Arg.Unit (fun () -> build_conflict:=false),"do not construct inhibition map");
     ("--no-activation-map",Arg.Unit (fun () -> build_cause:=false),"do not construct activation map");
     ("--no-maps",Arg.Unit (fun () -> build_conflict:=false ; build_cause:=false),

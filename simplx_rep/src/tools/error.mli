@@ -3,6 +3,7 @@ exception Runtime of string
 exception Runtime2 of string
 exception Found of string
 exception Too_expensive
+exception Not_valid_semantics of string
 exception Not_handled_yet of string 
 exception Interrupted
 

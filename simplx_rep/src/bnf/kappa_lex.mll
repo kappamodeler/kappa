@@ -25,6 +25,19 @@
 	Some 19,
 	Some (full_msg^" line "^(string_of_int line)))
      (full_msg,line)
+
+ let return_error_before lexbuf msg = 
+   let pos = lexbuf.lex_curr_p in
+   let line = pos.pos_lnum - 1 in
+   let full_msg =
+     Printf.sprintf "in %s: %s" pos.pos_fname msg
+   in
+     Error.syntax 
+       (Some "kappa_lex.mll",
+	Some 37,
+	Some (full_msg^" line "^(string_of_int line)))
+     (full_msg,line)
+
 }
 
 let blank = [' ' '\t' '\r']
@@ -142,6 +155,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
 	        Kappa_parse.line token lexbuf 
 	      with 
 		  Error.Found msg -> return_error lexbuf msg 
+		| Error.Not_valid_semantics msg -> return_error_before lexbuf msg
 	  done ; 
 	  let s = "Lexer.compile: unexpected end of loop" in
 	    Error.runtime
@@ -169,7 +183,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
 			   and init =
 			     if (!compilation_opt land _PARSE_INIT) = _PARSE_INIT then !init
 			     else 
-			       if !load_sim_data or !compile_mode then []
+			       if !load_sim_data or !map_mode or !compile_mode then []
 			       else
 				 if Sys.file_exists !serialized_mixture_file then
 				   let d = open_in_bin !serialized_mixture_file in

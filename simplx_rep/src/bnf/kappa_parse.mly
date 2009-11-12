@@ -40,7 +40,8 @@
 	(lhs,cc_map,false)
     in
     let rhs = if empty_lhs then Solution.insert_empty_agent rhs else rhs in
-    let (diffs,add,rate,corr) = Solution.diff lhs rhs in
+    let (diffs,add,rate,corr) = try Solution.diff lhs rhs with Error.Found msg -> (raise (Error.Not_valid_semantics msg)) 
+    in
     let arrow = 
       match rate with
 	  0 -> "~>" 
