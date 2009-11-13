@@ -375,10 +375,7 @@ commit:
 	echo `expr $(VN) + 1`  > tag/number 
 	echo $(DATE) > tag/date 
 	echo let git_commit_tag,git_commit_date  = `expr $(VN) + 1`,\"$(DATE)\" > complx_rep/automatically_generated/git_commit_info.ml 
-	git add tag/date
-	git add tag/number 
-	git add complx_rep/automatically_generated/git_commit_info.ml 
-	git commit 
+	git commit -a 
 	git tag -a `expr $(VN) + 1` -m "$(DATE)"  
 
 
