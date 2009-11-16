@@ -14,53 +14,50 @@ let rec find_val t c obs =
 		
 
 let output_data_point desc_opt sd p c = 
-  match !desc_opt with
-      None -> c
-    | Some d ->
-	
-	let t = 
-	  if !time_mode then get_time_range c.curr_time (*get the time interval corresponding to current time*)
-	  else get_step_range c.curr_step (*get the event interval corresponding to current event*)
-	in
-	  if t = c.last_measure then c
-	  else
-	    begin
-	      if c.last_measure = (-1) then (*if first measure*)
-		begin
-		  let entete = 
-		    IntSet.fold (fun i cont -> 
-				   let r,_ = 
-				     try Rule_of_int.find i sd.rules 
-				     with Not_found -> 
-				       let s = "Main.output_data_point" in
-					 Error.runtime (None,None,None) s
-				   in
-				     if r.input = "var" then cont
-				     else
-				       let s = 
-					 match r.flag with 
-					     Some flg -> flg 
-					   | None -> 
-					       let s = "Main.output_data_point" in
-						 Error.runtime (None,None,None) s
-				       in
-					 s::cont
-				) sd.obs_ind []
-		  in
-		    Printf.fprintf d "#t\t%s" (String.concat "\t" entete)
-		end ;
-	      Printf.fprintf d "\n" ;
-	      let line =
-		IntSet.fold (fun i cont-> 
-			       let r,_ = Rule_of_int.find i sd.rules in
-				 if r.input = "var" then cont
-				 else
-			       	   (Printf.sprintf "%d" (int_of_float (find_val t c i)))::cont
-			    ) sd.obs_ind [] 
-	      in
-		Printf.fprintf d "%s" (String.concat "\t" ((Printf.sprintf "%.3E" c.curr_time)::line));
-		{c with last_measure = t}
-	    end
+  if c.output_data = 0 then c 
+  else
+    match !desc_opt with
+	None -> c
+      | Some d ->
+	  let t = 
+	    if !time_mode then get_time_range c.curr_time (*get the time interval corresponding to current time*)
+	    else get_step_range c.curr_step (*get the event interval corresponding to current event*)
+	  in
+	    if c.output_data = 2 then (*if first measure*)
+	      begin
+		let entete = 
+		  IntSet.fold (fun i cont -> 
+				 let r,_ = 
+				   try Rule_of_int.find i sd.rules 
+				   with Not_found -> 
+				     let s = "Main.output_data_point" in
+				       Error.runtime (None,None,None) s
+				 in
+				   if r.input = "var" then cont
+				   else
+				     let s = 
+				       match r.flag with 
+					   Some flg -> flg 
+					 | None -> 
+					     let s = "Main.output_data_point" in
+					       Error.runtime (None,None,None) s
+				     in
+				       s::cont
+			      ) sd.obs_ind []
+		in
+		  Printf.fprintf d "#t\t%s" (String.concat "\t" entete)
+	      end ;
+	    Printf.fprintf d "\n" ;
+	    let line =
+	      IntSet.fold (fun i cont-> 
+			     let r,_ = Rule_of_int.find i sd.rules in
+			       if r.input = "var" then cont
+			       else
+			       	 (Printf.sprintf "%d" (int_of_float (find_val t c i)))::cont
+			  ) sd.obs_ind [] 
+	    in
+	      Printf.fprintf d "%s" (String.concat "\t" ((Printf.sprintf "%.3E" c.curr_time)::line));
+	      {c with last_measure = t}
 
 let make_gnuplot_file data_file sd = 
   let plot_file = ((chop_extension data_file)^".gplot") in

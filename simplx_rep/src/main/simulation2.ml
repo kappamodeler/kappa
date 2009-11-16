@@ -195,7 +195,8 @@ type sim_counters = {curr_iteration:int;
 		     snapshot_counter : int ;
 		     deadlock : bool ;
 		     restart: bool ;
-		     last_measure : int
+		     last_measure : int ;
+		     output_data : int ;
 		    }
 
 let empty_counters = {curr_iteration=0;
@@ -212,7 +213,8 @@ let empty_counters = {curr_iteration=0;
 		      snapshot_counter = 0 ;
 		      deadlock = false ;
 		      restart = false ;
-		      last_measure = -1
+		      last_measure = -1 ;
+		      output_data = 0
 		     }
 
 let print_injections only_obs sim_data =
@@ -273,7 +275,7 @@ let print sim_data =
     print_injections only_obs sim_data
     (*if not only_obs then print_lift sim_data.lift *)
 
-let init_counters init_time sim_data = 
+let init_counters init_time measure_time sim_data = 
   {curr_iteration = 0; 
    curr_step = 0 ;
    curr_tick = 0 ;
@@ -283,30 +285,34 @@ let init_counters init_time sim_data =
    drawers = Iso.empty_drawers !max_iter ;
    compression_log = [] ; 
    concentrations = 
-      begin
-	let obs_map = 
-	  IntSet.fold (fun ind_obs map ->
-			 let r_obs,inst_obs = Rule_of_int.find ind_obs sim_data.rules in
-			   if r_obs.input = "var" then map
-			   else
-			     let automorphisms = 
-			       match r_obs.automorphisms with 
-				   None -> (failwith "Automorphisms not computed") 
-				 | Some i -> float_of_int i 
-			     in
-			     let act_obs = (inst_obs *. r_obs.kinetics) /. automorphisms
-			     in 
-			       IntMap.add ind_obs act_obs map
-		      ) sim_data.obs_ind IntMap.empty 
-	in
-	  IntMap.add 0 obs_map IntMap.empty (*slot 0 is mapped to init_time and contains initial obs*)
-      end ;
+      if init_time >= measure_time then
+	begin
+	  let obs_map = 
+	    IntSet.fold (fun ind_obs map ->
+			   let r_obs,inst_obs = Rule_of_int.find ind_obs sim_data.rules in
+			     if r_obs.input = "var" then map
+			     else
+			       let automorphisms = 
+				 match r_obs.automorphisms with 
+				     None -> (failwith "Automorphisms not computed") 
+				   | Some i -> float_of_int i 
+			       in
+			       let act_obs = (inst_obs *. r_obs.kinetics) /. automorphisms
+			       in 
+				 IntMap.add ind_obs act_obs map
+			) sim_data.obs_ind IntMap.empty 
+	  in
+	    IntMap.add 0 obs_map IntMap.empty (*slot 0 is mapped to init_time and contains initial obs*)
+	end
+      else
+	IntMap.empty ;
    time_map = IntMap.add 0 init_time IntMap.empty ;
    clock_precision = !clock_precision ;
    snapshot_counter = 0 ;
    deadlock = false ;
    restart = false ;
-   last_measure = -1
+   last_measure = if init_time >= measure_time then 0 else (-1) ;
+   output_data = if init_time >= measure_time then 2 else 0
   }
 
 let add_rule is_obs r sim_data = 
@@ -612,7 +618,7 @@ let concretize sim_data abs_pos_map abs_neg_map log =
     (pos_map,neg_map,log)
 
 (*sim_data initialisation*)
-let init log (rules,init,sol_init,obs_l,exp) =
+let init log (measure_time,rules,init,sol_init,obs_l,exp) =
   if !load_sim_data then
     try 
       let log = Session.add_log_entry 0 
@@ -629,7 +635,7 @@ let init log (rules,init,sol_init,obs_l,exp) =
 	      }
       in
       let sd = unmarshal f_sd in
-      let c = init_counters time sd  in
+      let c = init_counters time measure_time sd  in
       let log = Session.add_log_entry 0 "--Initial state successfully loaded." log in
 	close_in d ;
 	(log,p,{sd with lab = exp},{c with curr_time = time})
@@ -868,7 +874,11 @@ let init log (rules,init,sol_init,obs_l,exp) =
 	    }
     in
     let incomp_ids = StringSet.fold (fun flg set -> IntSet.add (StringMap.find flg sim_data.rule_of_name) set) incomp IntSet.empty in
-      (log,p,{sim_data with n_ag = sol_init.Solution.fresh_id ; lab = exp ; incompressible = IntSet.union sim_data.incompressible incomp_ids}, init_counters 0.0 sim_data)
+      (log,p,{sim_data with 
+		n_ag = sol_init.Solution.fresh_id ; 
+		lab = exp ;
+		incompressible = IntSet.union sim_data.incompressible incomp_ids},
+       init_counters 0.0 measure_time sim_data)
 
 let mult_kinetics flg mult sim_data =
   try
@@ -1992,7 +2002,7 @@ let event log sim_data p c story_mode =
 	    (********************************************************************************************************************)
 	    (***********************************************CAUSALITY ANALYSIS MODE**********************************************)
 	    (********************************************************************************************************************)
-	      
+	    
 	    if story_mode then 
 	      let net',modifs = 
 		let modifs = PortMap.fold (fun quark test_modif pmap ->
@@ -2102,13 +2112,14 @@ let event log sim_data p c story_mode =
 		    if !time_mode then get_time_range curr_time (*get the time interval corresponding to current time*)
 		    else get_step_range (c.curr_step+1) (*get the event interval corresponding to current event*)
 		  in
-		    if (!init_time <= curr_time) then (*take measures only if passed init time*)
+		    if (!init_time <= curr_time) && (not (c.last_measure = t)) then (*take measures only if passed init time and have increased a time step*)
+		      let output_data = if c.last_measure = (-1) then 2 else 1 in
 		      let obs_map = 
 			try IntMap.find t c.concentrations 
 			with Not_found -> IntMap.empty 
 		      in
 		      let mod_obs = 
-			if c.curr_step = 0 then (*if first event*)
+			if output_data = 2 then (*if first measure*)
 			  IntSet.fold (fun i cont -> 
 					 let r_obs,_ = Rule_of_int.find i sim_data.rules in
 					   if not (r_obs.input = "var") then IntSet.add i cont else cont
@@ -2145,10 +2156,12 @@ let event log sim_data p c story_mode =
 			    concentrations = IntMap.add t obs_map c.concentrations;
 			    curr_step = c.curr_step + 1 ;
 			    curr_time = curr_time ;
+			    last_measure = t ;
 			    time_map = 
 			     if IntMap.mem t c.time_map then c.time_map 
 			     else
-			       IntMap.add t curr_time c.time_map
+			       IntMap.add t curr_time c.time_map ;
+			    output_data = output_data
 			 } 
 			)
 		    else
@@ -2159,7 +2172,8 @@ let event log sim_data p c story_mode =
 			  time_map = 
 			   if IntMap.mem t c.time_map then c.time_map 
 			   else
-			     IntMap.add t curr_time c.time_map
+			     IntMap.add t curr_time c.time_map ;
+			  output_data = 0 (*don't output data on the fly*)
 		       }
 		      )
 		end

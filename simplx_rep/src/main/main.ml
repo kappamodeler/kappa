@@ -245,7 +245,7 @@ let main =
 	    
 	    let log = Session.add_log_entry 0 "--Computing initial state" log 
 	    in
-	      Simulation2.init log (rules,init,sol_init,obs_l,exp)  
+	      Simulation2.init log (!init_time,rules,init,sol_init,obs_l,exp)  
 	  in
 	  let sd = 
 	    if !story_mode then (*adding constraints to stories*)
