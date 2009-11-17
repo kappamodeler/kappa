@@ -1923,7 +1923,6 @@ let get_time_range f =
 
 let get_step_range s = (s / !step_sample)
 
-
 let event log sim_data p c story_mode =
   if !debug_mode then Printf.printf "%d:(%d,%f)\n" c.curr_iteration c.curr_step c.curr_time ; flush stdout;
   let stop_test curr_step curr_time  = 
@@ -2110,9 +2109,9 @@ let event log sim_data p c story_mode =
 		  let t_data = chrono 0.0 in (*for benchmarking*)
 		  let t = 
 		    if !time_mode then get_time_range curr_time (*get the time interval corresponding to current time*)
-		    else get_step_range (c.curr_step+1) (*get the event interval corresponding to current event*)
+		    else get_step_range c.curr_step (*get the event interval corresponding to current event*)
 		  in
-		    if (!init_time <= curr_time) && (not (c.last_measure = t)) then (*take measures only if passed init time and have increased a time step*)
+		    if (!init_time <= curr_time) && (not (c.last_measure = t)) then (*take measures only if passed init and have increased a time step*)
 		      let output_data = if c.last_measure = (-1) then 2 else 1 in
 		      let obs_map = 
 			try IntMap.find t c.concentrations 

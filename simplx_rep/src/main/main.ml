@@ -162,13 +162,17 @@ let main =
 	      Session.add_log_entry 1 "No time or event limit defined with a potentially infinite simulation! No data point will be taken." log 
 	    end
 	| (true,false) -> 
-	    time_sample:= (!max_time) /. (float_of_int !data_points) ; log
+	    time_sample:= (!max_time) /. (float_of_int !data_points) ; 
+	    Printf.printf "time sample = %f\n" !time_sample ;flush stdout ;
+	    log
 	| (false,true) ->
 	    let sample =
 	      let i=(!max_step)/(!data_points) in 
 		if (i<1) then 1 else i 
 	    in
-	      step_sample:=sample ; log
+	      step_sample:=sample ;
+	      Printf.printf "step sample = %d\n" !step_sample ;flush stdout ;
+	      log
 	| (false,false) ->
 	    begin
 	      let sample =
