@@ -256,48 +256,38 @@ let xml_of_stories ?(deadlock=false) drawers =
 
 (*Simulation*)
 
-let ls_of_simulation rules obs_ind time_map data_map curr_step curr_time =
+let ls_of_simulation rules obs_ind points curr_step curr_time =
   
   (*  let t_plots = Mods2.chrono 0.0 in*)
   let xml_plots = 
-    IntSet.fold (fun obs_id cont ->
-		   let r,_ = Rule_of_int.find obs_id rules in
-		   let id_str = [""] (*[Printf.sprintf "Id=\"%d\"" obs_id]*)
-		   and glob_id = 
-		     match rule_global_id r with
-			 Some i -> [Printf.sprintf "GlobalId=\"%d\"" i]
-		       | None -> []
-		   and type_str = 
-		     if r.input = "obs" then ["Type=\"OBSERVABLE\""]
-		     else 
-		       if r.input = "var" then []
-		       else ["Type=\"RULE\""]
-		   and text_str = 
-		     match r.flag with
-			 Some flg -> [Printf.sprintf "Text=\"%s\"" flg]
-		       | _ -> (prerr_string "Error: no flag defined for observable" ; 
-			       ["Text=\"Error\""])
-		   in
-		   let xml_plot = Printf.sprintf "<Plot %s/>" (String.concat " " (id_str@glob_id@type_str@text_str)) in
-		     Printf.sprintf "%s\n%s" xml_plot cont
-		) obs_ind ""
+    List.fold_left (fun cont obs_id ->
+		      let r,_ = Rule_of_int.find obs_id rules in
+		      let id_str = [""] (*[Printf.sprintf "Id=\"%d\"" obs_id]*)
+		      and glob_id = 
+			match rule_global_id r with
+			    Some i -> [Printf.sprintf "GlobalId=\"%d\"" i]
+			  | None -> []
+		      and type_str = 
+			if r.input = "obs" then ["Type=\"OBSERVABLE\""]
+			else 
+			  if r.input = "var" then []
+			  else ["Type=\"RULE\""]
+		      and text_str = 
+			match r.flag with
+			    Some flg -> [Printf.sprintf "Text=\"%s\"" flg]
+			  | _ -> (prerr_string "Error: no flag defined for observable" ; 
+				  ["Text=\"Error\""])
+		      in
+		      let xml_plot = Printf.sprintf "<Plot %s/>" (String.concat " " (id_str@glob_id@type_str@text_str)) in
+			Printf.sprintf "%s\n%s" xml_plot cont
+		   ) "" obs_ind
   in
-  let ls_data = IntMap.fold (fun t map ls -> 
-			       let time = 
-				 (*JF if !time_mode then ((float_of_int t) *. !time_sample) 
-				 else*) IntMap.find t time_map
-			       in
-			       let str = 
-				 Printf.sprintf "%s,%s\n" (Float_pretty_printing.string_of_float  time)
-				   (String.concat ","
-				      (IntMap.fold (fun _ v cont -> 
-						      (string_of_float (*int_of_float v*)v)::cont
-						   ) map []
-				      )
-				   )
-			       in
-			       	 LongString.concat str ls
-			    ) data_map LongString.empty
+  let ls_data = List.fold_left (fun ls (k,time,obs_list) -> 
+				  let str = 
+				    Printf.sprintf "%s,%s\n" (Float_pretty_printing.string_of_float time) (String.concat "," obs_list)
+				  in
+			       	    LongString.concat str ls
+			       ) LongString.empty points
   in
   let sim_name = []
   and sim_total_events = [Printf.sprintf "TotalEvents = \"%d\"" curr_step]
@@ -425,13 +415,13 @@ let finalize xml_file ?xml_content log code =
          add_log_entry 2 (Error_handler.string_of_error error) log)
       log (!Error_handler_common.error_list) 
   in
-  let rec dump_longstrings desc l =
+  let rec dump_longstrings ?(no_reverse=false) desc l =
     match l with
 	[] -> ()
       | (ls_head,ls_core,ls_tail)::tl ->
 	  (
 	    LongString.printf desc ls_head ; Printf.fprintf desc "\n" ;
-	    LongString.printf desc ls_core ; Printf.fprintf desc "\n" ;
+	    LongString.printf desc ~no_reverse:no_reverse ls_core ; Printf.fprintf desc "\n" ;
 	    LongString.printf desc ls_tail ;
 	    dump_longstrings desc tl)
   in
@@ -461,7 +451,7 @@ let finalize xml_file ?xml_content log code =
 		let _ = Printf.fprintf d "%s" (String.concat "\n" xml_stories) in
 		let log = add_log_entry (-1) (sprintf "-Building xml tree for stories (if any): %f sec. CPU" (Mods2.gettime()-.t_story)) log in
 		let t_data = Mods2.gettime() in  
-		let _ = dump_longstrings d xml_sim in
+		let _ = dump_longstrings ~no_reverse:true d xml_sim in
 		let log = add_log_entry (-1) (sprintf "-Building xml tree for data points (if any): %f sec. CPU" (Mods2.gettime()-.t_data)) log in
 		  add_log_entry 0 (sprintf "-Results outputted in xml session: %f sec. CPU" (Mods2.gettime()-.t_session)) log
 	end

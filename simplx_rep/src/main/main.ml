@@ -249,7 +249,7 @@ let main =
 	    
 	    let log = Session.add_log_entry 0 "--Computing initial state" log 
 	    in
-	      Simulation2.init log (!init_time,rules,init,sol_init,obs_l,exp)  
+	      Simulation2.init log (rules,init,sol_init,obs_l,exp)  
 	  in
 	  let sd = 
 	    if !story_mode then (*adding constraints to stories*)
@@ -514,24 +514,21 @@ let main =
 		  end
 	      else ([],log)
 	    in
-	    let filtered_obs_ind = IntSet.filter (fun i -> 
-						    try
-						      let r,_ = Rule.Rule_of_int.find i sd.rules in
-							not (r.Rule.input = "var")
-						    with
-							Not_found -> 
-							  Error.runtime (None,None,None) ("Cannot find obs "^(string_of_int i))
-						 ) sd.obs_ind
-	    in
-	    let data_map = Simulation2.build_data c.concentrations c.time_map filtered_obs_ind
+	    let filtered_obs_ind = IntSet.fold (fun i cont -> 
+						  try
+						    let r,_ = Rule.Rule_of_int.find i sd.rules in
+						      if not (r.Rule.input = "var") then i::cont else cont
+						  with
+						      Not_found -> 
+							Error.runtime (None,None,None) ("Cannot find obs "^(string_of_int i))
+					       ) sd.obs_ind []
 	    in
 	    let log = Session.add_log_entry 0 ("-Sampling data...") log 
 	    in
 	    let t0 = Mods2.gettime() in
 	    let ls_sim = 
 	      if !story_mode or !map_mode then []
-	      else [Session.ls_of_simulation sd.rules filtered_obs_ind
-		      c.time_map data_map c.curr_step c.curr_time]
+	      else [Session.ls_of_simulation sd.rules filtered_obs_ind c.points c.curr_step c.curr_time]
 	    in
 	    let log = 
 	      Session.add_log_entry 0 (sprintf "-End of sampling %.4f s CPU" (Mods2.gettime()-.t0)) log 

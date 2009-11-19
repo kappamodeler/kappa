@@ -3,61 +3,44 @@ open Data
 open Mods2
 open Rule
 
-let rec find_val t c obs =
-  if t < 0 then Error.runtime (None,None,None) ("Observable "^(string_of_int obs)^" not defined!")
-  else
-    let obs_map = try IntMap.find t c.concentrations with Not_found -> IntMap.empty in
-    let opt = try Some (IntMap.find obs obs_map) with Not_found -> None in
-      match opt with
-	  Some v -> v
-	| None -> find_val (t-1) c obs
-		
-
 let output_data_point desc_opt sd p c = 
-  if c.output_data = 0 then c 
-  else
-    match !desc_opt with
-	None -> c
-      | Some d ->
-	  let t = 
-	    if !time_mode then get_time_range c.curr_time (*get the time interval corresponding to current time*)
-	    else get_step_range c.curr_step (*get the event interval corresponding to current event*)
-	  in
-	    if c.output_data = 2 then (*if first measure*)
+  match !desc_opt with
+      None -> c
+    | Some d ->
+	match c.points with
+	    [] -> c
+	  | (k,time,obs_list)::_ ->
 	      begin
-		let entete = 
-		  IntSet.fold (fun i cont -> 
-				 let r,_ = 
-				   try Rule_of_int.find i sd.rules 
-				   with Not_found -> 
-				     let s = "Main.output_data_point" in
-				       Error.runtime (None,None,None) s
-				 in
-				   if r.input = "var" then cont
-				   else
-				     let s = 
-				       match r.flag with 
-					   Some flg -> flg 
-					 | None -> 
-					     let s = "Main.output_data_point" in
-					       Error.runtime (None,None,None) s
-				     in
-				       s::cont
-			      ) sd.obs_ind []
-		in
-		  Printf.fprintf d "#t\t%s" (String.concat "\t" entete)
-	      end ;
-	    Printf.fprintf d "\n" ;
-	    let line =
-	      IntSet.fold (fun i cont-> 
-			     let r,_ = Rule_of_int.find i sd.rules in
-			       if r.input = "var" then cont
-			       else
-			       	 (Printf.sprintf "%d" (int_of_float (find_val t c i)))::cont
-			  ) sd.obs_ind [] 
-	    in
-	      Printf.fprintf d "%s" (String.concat "\t" ((Printf.sprintf "%.3E" c.curr_time)::line));
-	      {c with last_measure = t}
+		if c.last_k = k then c
+		else
+		  let _ = 
+		    if k = 1 then
+		      let entete = 
+			IntSet.fold (fun i cont -> 
+				       let r,_ = 
+					 try Rule_of_int.find i sd.rules 
+					 with Not_found -> 
+					   let s = "Main.output_data_point" in
+					     Error.runtime (None,None,None) s
+				       in
+					 if r.input = "var" then cont
+					 else
+					   let s = 
+					     match r.flag with 
+						 Some flg -> flg 
+					       | None -> 
+						   let s = "Main.output_data_point" in
+						     Error.runtime (None,None,None) s
+					   in
+					     s::cont
+				    ) sd.obs_ind []
+		      in
+			Printf.fprintf d "#t\t%s" (String.concat "\t" entete)
+		  in
+		    Printf.fprintf d "\n" ;
+		    Printf.fprintf d "%s" (String.concat "\t" ((Printf.sprintf "%E" time)::obs_list));
+		      {c with last_k = k}
+	      end
 
 let make_gnuplot_file data_file sd = 
   let plot_file = ((chop_extension data_file)^".gplot") in

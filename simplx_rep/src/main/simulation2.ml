@@ -181,22 +181,23 @@ type sim_parameters = {
   gc_alarm_low:bool ;
 }
 
+type interval = DE of int | Dt of float | Undef
+
 type sim_counters = {curr_iteration:int;
 		     curr_step:int;
-		     t0:float;
+		     t0:float; (*initial time of the simulation*)
 		     curr_time:float;
 		     curr_tick:int;
 		     skipped:int;
 		     compression_log: (Network.t * Network.t * Network.t * int * float) list;
 		     drawers:Iso.drawers ;
-		     concentrations: (float IntMap.t) IntMap.t ;
-		     time_map : float IntMap.t (*step -> time*) ;
+		     measure_interval: interval ; 
+		     points: (int * float * (string list)) list ; (*(0,t_0,<obs_1,...,obs_n>)*....(k,t_k,<obs_1,...,obs_n>)*)
+		     last_k: int ;
 		     clock_precision : int ;
 		     snapshot_counter : int ;
 		     deadlock : bool ;
-		     restart: bool ;
-		     last_measure : int ;
-		     output_data : int ;
+		     restart: bool 
 		    }
 
 let empty_counters = {curr_iteration=0;
@@ -207,14 +208,13 @@ let empty_counters = {curr_iteration=0;
 		      skipped=0;
 		      drawers=Iso.empty_drawers 0;
 		      compression_log=[];
-		      concentrations=IntMap.empty;
-		      time_map=IntMap.empty;
+		      measure_interval = Undef ;
+		      points = [] ;
+		      last_k = 0 ;
 		      clock_precision=0 ;
 		      snapshot_counter = 0 ;
 		      deadlock = false ;
-		      restart = false ;
-		      last_measure = -1 ;
-		      output_data = 0
+		      restart = false 
 		     }
 
 let print_injections only_obs sim_data =
@@ -275,7 +275,7 @@ let print sim_data =
     print_injections only_obs sim_data
     (*if not only_obs then print_lift sim_data.lift *)
 
-let init_counters init_time measure_time sim_data = 
+let init_counters init_time sim_data = 
   {curr_iteration = 0; 
    curr_step = 0 ;
    curr_tick = 0 ;
@@ -284,35 +284,13 @@ let init_counters init_time measure_time sim_data =
    skipped = 0;
    drawers = Iso.empty_drawers !max_iter ;
    compression_log = [] ; 
-   concentrations = 
-      if init_time >= measure_time then
-	begin
-	  let obs_map = 
-	    IntSet.fold (fun ind_obs map ->
-			   let r_obs,inst_obs = Rule_of_int.find ind_obs sim_data.rules in
-			     if r_obs.input = "var" then map
-			     else
-			       let automorphisms = 
-				 match r_obs.automorphisms with 
-				     None -> (failwith "Automorphisms not computed") 
-				   | Some i -> float_of_int i 
-			       in
-			       let act_obs = (inst_obs *. r_obs.kinetics) /. automorphisms
-			       in 
-				 IntMap.add ind_obs act_obs map
-			) sim_data.obs_ind IntMap.empty 
-	  in
-	    IntMap.add 0 obs_map IntMap.empty (*slot 0 is mapped to init_time and contains initial obs*)
-	end
-      else
-	IntMap.empty ;
-   time_map = IntMap.add 0 init_time IntMap.empty ;
+   measure_interval = if !time_mode then (Dt !time_sample) else (DE !step_sample) ;
+   points = [] ;
+   last_k = 0 ;
    clock_precision = !clock_precision ;
    snapshot_counter = 0 ;
    deadlock = false ;
-   restart = false ;
-   last_measure = if init_time >= measure_time then 0 else (-1) ;
-   output_data = if init_time >= measure_time then 2 else 0
+   restart = false
   }
 
 let add_rule is_obs r sim_data = 
@@ -618,7 +596,7 @@ let concretize sim_data abs_pos_map abs_neg_map log =
     (pos_map,neg_map,log)
 
 (*sim_data initialisation*)
-let init log (measure_time,rules,init,sol_init,obs_l,exp) =
+let init log (rules,init,sol_init,obs_l,exp) =
   if !load_sim_data then
     try 
       let log = Session.add_log_entry 0 
@@ -635,7 +613,7 @@ let init log (measure_time,rules,init,sol_init,obs_l,exp) =
 	      }
       in
       let sd = unmarshal f_sd in
-      let c = init_counters time measure_time sd  in
+      let c = init_counters time sd in
       let log = Session.add_log_entry 0 "--Initial state successfully loaded." log in
 	close_in d ;
 	(log,p,{sd with lab = exp},{c with curr_time = time})
@@ -878,7 +856,7 @@ let init log (measure_time,rules,init,sol_init,obs_l,exp) =
 		n_ag = sol_init.Solution.fresh_id ; 
 		lab = exp ;
 		incompressible = IntSet.union sim_data.incompressible incomp_ids},
-       init_counters 0.0 measure_time sim_data)
+       init_counters 0.0 sim_data)
 
 let mult_kinetics flg mult sim_data =
   try
@@ -1916,12 +1894,6 @@ let ticking c =
 (********************************************************************************************************)
 (***********************************************EVENT LOOP***********************************************)
 (********************************************************************************************************)
-	    
-let get_time_range f =
-  let f' = (f /. !time_sample) in
-    (int_of_float f')
-
-let get_step_range s = (s / !step_sample)
 
 let event log sim_data p c story_mode =
   if !debug_mode then Printf.printf "%d:(%d,%f)\n" c.curr_iteration c.curr_step c.curr_time ; flush stdout;
@@ -1945,18 +1917,62 @@ let event log sim_data p c story_mode =
 	    else Mods2.random_time_advance activity clashes 
 	  in (*sums clashes+1 time advance according to activity*)
 	  let _ = if !debug_mode then Printf.printf "dt=%f\n" dt in
-	  let curr_time = 
-	    if IntSet.mem r_ind sim_data.oo then c.curr_time 
-	    else
-	      c.curr_time +. dt 
-	  in
 	    
+	    
+	  (**********************************************************************************************)
+	  (*******************************************MEASUREMENTS***************************************)
+	  (**********************************************************************************************)
+	    
+	  let c = 
+	    if story_mode or !ignore_obs or (!init_time > c.curr_time) then c 
+	    else
+	      let k = match c.points with
+		  (k,_,_)::_ -> k
+		| [] -> 0 
+	      in
+	      let take_measures,measurement_t = 
+		match c.measure_interval with
+		    DE delta_e -> ((delta_e * k) <= c.curr_step,c.curr_time)
+		  | Dt delta_t -> let t = delta_t *. (float_of_int k) in (t <= c.curr_time, t +. !init_time)
+		  | _ -> raise (Error.Runtime "Simulation2.event invalid time or event increment")
+	      in
+		if not take_measures then c
+		else
+		  let obs_list = 
+		    IntSet.fold (fun ind_obs cont ->
+				   let r_obs,inst_obs = Rule_of_int.find ind_obs sim_data.rules in
+				     if r_obs.input = "var" then cont
+				     else
+				       let automorphisms = 
+					 match r_obs.automorphisms with 
+					     None -> (failwith "Automorphisms not computed") 
+					   | Some i -> float_of_int i 
+				       in
+				       let act_obs = (inst_obs *. r_obs.kinetics) /. automorphisms
+				       in 
+					 (string_of_int (int_of_float act_obs))::cont
+				) sim_data.obs_ind []
+		  in
+		    {c with points = (k+1,measurement_t,obs_list)::c.points ; last_k = k}
+	  in
+
+	  let c = 
+	    if IntSet.mem r_ind sim_data.oo then c 
+	    else
+	      {c with curr_time = c.curr_time +. dt  ; curr_step = c.curr_step+1}
+	  in
+
+	  (**********************************************************************************************)
+	  (***************************************RULE APPLICATION***************************************)
+	  (**********************************************************************************************)
+	    
+
 	  let r_abst,_ = Rule_of_int.find abst_ind sim_data.rules in
 	  let r_ref,_ = Rule_of_int.find r_ind sim_data.rules in
 	  let _ =
 	    if !debug_mode then 
 	      begin
-		Printf.printf "%f,r[%d]: %s\n" curr_time r_ind (Rule.name r_ref); flush stdout;
+		Printf.printf "%f,r[%d]: %s\n" c.curr_time r_ind (Rule.name r_ref); flush stdout;
 		Printf.printf "INF: %s\n" (string_of_set string_of_int IntSet.fold sim_data.inf_list) ;
 	      end
 	  in
@@ -1994,14 +2010,13 @@ let event log sim_data p c story_mode =
 		     Some s)
 		    s
 	  in
-	  let sim_data,mod_obs = update warn abst_ind assoc upd_q assoc_add sol' sim_data p {c with curr_time = curr_time} (*update abst_ind is equal to original rule*)
+	  let sim_data,mod_obs = update warn abst_ind assoc upd_q assoc_add sol' sim_data p c (*update abst_ind is equal to original rule*)
 	  in
 	  let _ = if !bench_mode then Bench.update_time := !Bench.update_time +. (chrono t_update) in
 
 	    (********************************************************************************************************************)
 	    (***********************************************CAUSALITY ANALYSIS MODE**********************************************)
-	    (********************************************************************************************************************)
-	    
+	    (********************************************************************************************************************)	    
 	    if story_mode then 
 	      let net',modifs = 
 		let modifs = PortMap.fold (fun quark test_modif pmap ->
@@ -2039,11 +2054,9 @@ let event log sim_data p c story_mode =
 		  let h_opt = Network.cut net' (roots,flg) in
 		    match h_opt with
 			None -> 
-			  let limit_reached = stop_test (c.curr_step+1) curr_time in
+			  let limit_reached = stop_test c.curr_step c.curr_time in
 			    (log,sim_data,p,{c with 
 					       curr_iteration = if limit_reached then c.curr_iteration + 1 else c.curr_iteration ;
-					       curr_step = c.curr_step + 1 ; 
-					       curr_time = curr_time ;
 					       restart = limit_reached
 					    }
 			    ) 
@@ -2071,16 +2084,14 @@ let event log sim_data p c story_mode =
 			      match opt with
 				  None -> 
 				    let log = Session.add_log_entry 4 "-Causal trace does not satisfy constraints after compression" log in
-				    let limit_reached = stop_test (c.curr_step+1) curr_time in
+				    let limit_reached = stop_test c.curr_step c.curr_time in
 				      (log,sim_data,p,{c with 
 							 curr_iteration = if limit_reached then c.curr_iteration + 1 else c.curr_iteration ;
-							 curr_step = c.curr_step + 1 ; 
-							 curr_time = curr_time ;
 							 restart = limit_reached
 						      }
 				      ) 
 				| Some compressed_h ->
-				    let drawers = (Iso.classify (compressed_h,curr_time) c.drawers p.iso_mode) 
+				    let drawers = (Iso.classify (compressed_h,c.curr_time) c.drawers p.iso_mode) 
 				    in
 				    let log = Session.add_log_entry 4 "-Causal trace found!" log in
 				      (log,sim_data,p,{c with 
@@ -2090,121 +2101,12 @@ let event log sim_data p c story_mode =
 						      }) 
 			  end
 		else (*last rule was not observable for stories*)
-		  let limit_reached = stop_test (c.curr_step+1) curr_time in
+		  let limit_reached = stop_test c.curr_step c.curr_time in
 		    (log,sim_data,p,{c with 
 				       curr_iteration = if limit_reached then c.curr_iteration + 1 else c.curr_iteration ;
-				       curr_step = c.curr_step + 1 ; 
-				       curr_time = curr_time ;
 				       restart = limit_reached
 				    }
 		    ) 
 		      
 	    else 
-	      (*************************************************************************************************************)
-	      (***********************************************TIME COURSE MODE**********************************************)
-	      (*************************************************************************************************************)
-	      
-	      if not !ignore_obs then (*if !ignore_obs is true there is no need to take data points*)
-		begin
-		  let t_data = chrono 0.0 in (*for benchmarking*)
-		  let t = 
-		    if !time_mode then get_time_range curr_time (*get the time interval corresponding to current time*)
-		    else get_step_range c.curr_step (*get the event interval corresponding to current event*)
-		  in
-		    if (!init_time <= curr_time) && (not (c.last_measure = t)) then (*take measures only if passed init and have increased a time step*)
-		      let output_data = if c.last_measure = (-1) then 2 else 1 in
-		      let obs_map = 
-			try IntMap.find t c.concentrations 
-			with Not_found -> IntMap.empty 
-		      in
-		      let mod_obs = 
-			if output_data = 2 then (*if first measure*)
-			  IntSet.fold (fun i cont -> 
-					 let r_obs,_ = Rule_of_int.find i sim_data.rules in
-					   if not (r_obs.input = "var") then IntSet.add i cont else cont
-				      ) sim_data.obs_ind IntSet.empty
-			else mod_obs
-		      in
-		      let obs_map =
-			IntSet.fold (fun i obs_map ->
-				       let r_obs,inst_obs = 
-					 try Rule_of_int.find i sim_data.rules 
-					 with Not_found -> 
-					   let s = "Simulation.iter: obs not found"  in
-					     runtime
-					       (Some "simulation2.ml",
-						Some 2124,
-						Some s)
-					       s
-				       in
-					 (*automorphism correction for obs and activity for rules*)
-				       let automorphisms = 
-					 match r_obs.automorphisms with 
-					     None -> (failwith "Automorphisms not computed") 
-					   | Some i -> float_of_int i 
-				       in
-				       let act_obs = (inst_obs *. r_obs.kinetics) /. automorphisms
-					 (**. (!rescale) Correction after Walter's class*)
-				       in 
-					 IntMap.add i act_obs obs_map
-				    ) mod_obs obs_map
-		      in
-			if !bench_mode then Bench.data_time := !Bench.data_time +. (chrono t_data) ;
-			(log,{sim_data with sol = sol'},p, 
-			 {c with 
-			    concentrations = IntMap.add t obs_map c.concentrations;
-			    curr_step = c.curr_step + 1 ;
-			    curr_time = curr_time ;
-			    last_measure = t ;
-			    time_map = 
-			     if IntMap.mem t c.time_map then c.time_map 
-			     else
-			       IntMap.add t curr_time c.time_map ;
-			    output_data = output_data
-			 } 
-			)
-		    else
-		      (log,{sim_data with sol = sol'},p,
-		       {c with 
-			  curr_step = c.curr_step + 1 ;
-			  curr_time = curr_time ;
-			  time_map = 
-			   if IntMap.mem t c.time_map then c.time_map 
-			   else
-			     IntMap.add t curr_time c.time_map ;
-			  output_data = 0 (*don't output data on the fly*)
-		       }
-		      )
-		end
-		  (*end simulation mode*)
-	      else
-		(*no observation mode*)
-		(log,{sim_data with sol = sol'},p, 
-		 {c with 
-		    curr_step = c.curr_step + 1 ;
-		    curr_time = curr_time 
-		 } 
-		)
-		      (*end no observation mode*)
-
-let build_data concentrations time_map obs_ind =
-  let data,_ =
-    IntMap.fold (fun t obs_map (data,prev_val) -> 
-		   IntSet.fold (fun i (data,prev_val) -> 
-				  let v = 
-				    try
-				      IntMap.find i obs_map 
-				    with Not_found -> 
-				      try IntMap.find i prev_val
-				      with Not_found -> 0.0
-				  in
-				  let data = 
-				    let m = try IntMap.find t data with Not_found -> IntMap.empty in
-				      IntMap.add t (IntMap.add i v m) data
-				  and prev_val = IntMap.add i v prev_val 
-				  in
-				    (data,prev_val)
-			       ) obs_ind (data,prev_val)
-		) concentrations (IntMap.empty,IntMap.empty)
-  in
-    data
+	      (log,{sim_data with sol = sol'},p,c)

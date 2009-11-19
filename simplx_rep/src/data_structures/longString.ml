@@ -18,10 +18,10 @@ let concat ?sep str ls =
 
 let print ls = List.fold_left (fun _ c -> print_char c) () (List.rev ls)
 
-let printf d ls = 
-  let ls = List.rev ls in
+let printf ?(no_reverse=false) d ls = 
+  let ls = if no_reverse then ls else List.rev ls in
     List.fold_left (fun _ c -> Printf.fprintf d "%c" c) () ls 
   
-let to_string ls = (*costy but just to check!*)
+let to_string ls = (*costly but just to check!*)
   let ls = List.rev ls in
     List.fold_left (fun str c -> Printf.sprintf "%s%c" str c) "" ls
