@@ -1,7 +1,7 @@
 (**Data references*)
 
 let version_main = 4
-let version_cpt = 3 (*complete refactoring of time sampling*)
+let version_cpt = 31 (*inverted data output*)
 let git_tag = Git_commit_info.git_commit_tag
 let version_branch = ""
 let arch_type = string_of_int Sys.word_size

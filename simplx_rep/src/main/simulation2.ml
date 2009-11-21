@@ -1916,9 +1916,7 @@ let event log sim_data p c story_mode =
 	    if !Data.no_random_time then 1./. activity (*expectency*)
 	    else Mods2.random_time_advance activity clashes 
 	  in (*sums clashes+1 time advance according to activity*)
-	  let _ = if !debug_mode then Printf.printf "dt=%f\n" dt in
-	    
-	    
+	  	    
 	  (**********************************************************************************************)
 	  (*******************************************MEASUREMENTS***************************************)
 	  (**********************************************************************************************)
@@ -1928,16 +1926,19 @@ let event log sim_data p c story_mode =
 	    else
 	      let k = match c.points with
 		  (k,_,_)::_ -> k
-		| [] -> 0 
+		| [] -> 0
 	      in
 	      let take_measures,measurement_t = 
 		match c.measure_interval with
-		    DE delta_e -> ((delta_e * k) <= c.curr_step,c.curr_time)
-		  | Dt delta_t -> let t = delta_t *. (float_of_int k) in (t <= c.curr_time, t +. !init_time)
+		    DE delta_e -> ((delta_e * k) <= c.curr_step + 1,c.curr_time)
+		  | Dt delta_t -> let t = delta_t *. (float_of_int k) in (t <= c.curr_time +. dt, t +. !init_time)
 		  | _ -> raise (Error.Runtime "Simulation2.event invalid time or event increment")
 	      in
 		if not take_measures then c
 		else
+		  let _ = () 
+		    (*Printf.printf "Measure : %d,%f\n" (k+1) measurement_t ; flush stdout *)
+		  in
 		  let obs_list = 
 		    IntSet.fold (fun ind_obs cont ->
 				   let r_obs,inst_obs = Rule_of_int.find ind_obs sim_data.rules in

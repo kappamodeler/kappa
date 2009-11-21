@@ -282,12 +282,12 @@ let ls_of_simulation rules obs_ind points curr_step curr_time =
 			Printf.sprintf "%s\n%s" xml_plot cont
 		   ) "" obs_ind
   in
-  let ls_data = List.fold_left (fun ls (k,time,obs_list) -> 
+  let ls_data = List.fold_right (fun (k,time,obs_list) ls -> 
 				  let str = 
 				    Printf.sprintf "%s,%s\n" (Float_pretty_printing.string_of_float time) (String.concat "," obs_list)
 				  in
 			       	    LongString.concat str ls
-			       ) LongString.empty points
+			       ) points LongString.empty 
   in
   let sim_name = []
   and sim_total_events = [Printf.sprintf "TotalEvents = \"%d\"" curr_step]
@@ -451,7 +451,7 @@ let finalize xml_file ?xml_content log code =
 		let _ = Printf.fprintf d "%s" (String.concat "\n" xml_stories) in
 		let log = add_log_entry (-1) (sprintf "-Building xml tree for stories (if any): %f sec. CPU" (Mods2.gettime()-.t_story)) log in
 		let t_data = Mods2.gettime() in  
-		let _ = dump_longstrings ~no_reverse:true d xml_sim in
+		let _ = dump_longstrings d xml_sim in
 		let log = add_log_entry (-1) (sprintf "-Building xml tree for data points (if any): %f sec. CPU" (Mods2.gettime()-.t_data)) log in
 		  add_log_entry 0 (sprintf "-Results outputted in xml session: %f sec. CPU" (Mods2.gettime()-.t_session)) log
 	end
