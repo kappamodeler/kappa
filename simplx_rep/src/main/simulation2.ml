@@ -1930,8 +1930,8 @@ let event log sim_data p c story_mode =
 	      in
 	      let take_measures,measurement_t = 
 		match c.measure_interval with
-		    DE delta_e -> ((delta_e * k) <= c.curr_step + 1,c.curr_time)
-		  | Dt delta_t -> let t = delta_t *. (float_of_int k) in (t <= c.curr_time +. dt, t +. !init_time)
+		    DE delta_e -> ((delta_e * k) <= c.curr_step,c.curr_time)
+		  | Dt delta_t -> let t = delta_t *. (float_of_int k) in (t <= c.curr_time, t +. !init_time)
 		  | _ -> raise (Error.Runtime "Simulation2.event invalid time or event increment")
 	      in
 		if not take_measures then c
