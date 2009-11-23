@@ -4,43 +4,50 @@ open Mods2
 open Rule
 
 let output_data_point desc_opt sd p c = 
-  match !desc_opt with
-      None -> c
-    | Some d ->
-	match c.points with
-	    [] -> c
-	  | (k,time,obs_list)::_ ->
-	      begin
-		if c.last_k = k then c
-		else
-		  let _ = 
-		    if k = 1 then
-		      let entete = 
-			IntSet.fold (fun i cont -> 
-				       let r,_ = 
-					 try Rule_of_int.find i sd.rules 
-					 with Not_found -> 
-					   let s = "Main.output_data_point" in
-					     Error.runtime (None,None,None) s
-				       in
-					 if r.input = "var" then cont
-					 else
-					   let s = 
-					     match r.flag with 
-						 Some flg -> flg 
-					       | None -> 
-						   let s = "Main.output_data_point" in
-						     Error.runtime (None,None,None) s
-					   in
-					     s::cont
-				    ) sd.obs_ind []
-		      in
-			Printf.fprintf d "#t\t%s" (String.concat "\t" entete)
-		  in
-		    Printf.fprintf d "\n" ;
-		    Printf.fprintf d "%s" (String.concat "\t" ((Printf.sprintf "%E" time)::obs_list));
+  let rec print_values d k last_k time obs_list = 
+    if k=last_k then () 
+    else
+      let time = if !time_mode then (!time_sample *. (float_of_int last_k)) +. !init_time else time in
+	Printf.fprintf d "%E\t%s\n" time (String.concat "," obs_list) ;
+	print_values d k (last_k+1) time obs_list
+  in
+    match !desc_opt with
+	None -> c
+      | Some d ->
+	  match c.points with
+	      [] -> c
+	    | (k,time,obs_list)::_ ->
+		begin
+		  if (k = c.last_k) or (c.last_k = -1) then c
+		  else
+		    let _ = 
+		      if k = 0 then
+			let entete = 
+			  IntSet.fold (fun i cont -> 
+					 let r,_ = 
+					   try Rule_of_int.find i sd.rules 
+					   with Not_found -> 
+					     let s = "Main.output_data_point" in
+					       Error.runtime (None,None,None) s
+					 in
+					   if r.input = "var" then cont
+					   else
+					     let s = 
+					       match r.flag with 
+						   Some flg -> flg 
+						 | None -> 
+						     let s = "Main.output_data_point" in
+						       Error.runtime (None,None,None) s
+					     in
+					       s::cont
+				      ) sd.obs_ind []
+			in
+			  Printf.fprintf d "#t\t%s" (String.concat "\t" entete) ;
+			  Printf.fprintf d "\n" 
+		    in
+		      print_values d k (c.last_k) time obs_list ;
 		      {c with last_k = k}
-	      end
+		end
 
 let make_gnuplot_file data_file sd = 
   let plot_file = ((chop_extension data_file)^".gplot") in

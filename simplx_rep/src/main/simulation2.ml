@@ -1926,12 +1926,15 @@ let event log sim_data p c story_mode =
 	    else
 	      let k = match c.points with
 		  (k,_,_)::_ -> k
-		| [] -> 0
+		| [] -> (-1)
 	      in
-	      let take_measures,measurement_t = 
+	      let take_measures,measurement_t,d_k = 
 		match c.measure_interval with
-		    DE delta_e -> ((delta_e * k) <= c.curr_step,c.curr_time)
-		  | Dt delta_t -> let t = delta_t *. (float_of_int k) in (t <= c.curr_time, t +. !init_time)
+		    DE delta_e -> ((delta_e * k) <= c.curr_step,c.curr_time,1)
+		  | Dt delta_t -> let d_k = (int_of_float (c.curr_time /. delta_t)) in 
+		      if (d_k - k) = 0 then (false,c.curr_time,0) 
+		      else (*d_k might be more than 1*)
+			let t = delta_t *. (float_of_int d_k) in (true, t +. !init_time,d_k)
 		  | _ -> raise (Error.Runtime "Simulation2.event invalid time or event increment")
 	      in
 		if not take_measures then c
@@ -1954,7 +1957,7 @@ let event log sim_data p c story_mode =
 					 (string_of_int (int_of_float act_obs))::cont
 				) sim_data.obs_ind []
 		  in
-		    {c with points = (k+1,measurement_t,obs_list)::c.points ; last_k = k}
+		    {c with points = (d_k,measurement_t,obs_list)::c.points ; last_k = k}
 	  in
 
 	  let c = 
