@@ -1891,16 +1891,51 @@ let ticking c =
     display n ;
     {c with curr_tick = c.curr_tick + n}
       
+let measure sim_data c = 
+  let k,last_t = match c.points with
+      (k,last_t,_)::_ -> (k,last_t)
+    | [] -> (-1,(-1.))
+  in
+    if (!max_time > 0.) && (last_t > !max_time) then c 
+    else
+      let take_measures,measurement_t,d_k = 
+	match c.measure_interval with
+	    DE delta_e -> ((delta_e * (k+1)) <= c.curr_step,c.curr_time,k+1)
+	  | Dt delta_t -> let d_k = (int_of_float (c.curr_time /. delta_t)) in 
+	      if (d_k = k) then (false,c.curr_time,0) 
+	      else (*d_k might be more than 1*)
+		let t = delta_t *. (float_of_int d_k) in (true, t +. !init_time,d_k)
+	  | _ -> raise (Error.Runtime "Simulation2.event invalid time or event increment")
+      in
+	if not take_measures then c
+	else
+	  let obs_list = 
+	    IntSet.fold (fun ind_obs cont ->
+			   let r_obs,inst_obs = Rule_of_int.find ind_obs sim_data.rules in
+			     if r_obs.input = "var" then cont
+			     else
+			       let automorphisms = 
+				 match r_obs.automorphisms with 
+				     None -> (failwith "Automorphisms not computed") 
+				   | Some i -> float_of_int i 
+			       in
+			       let act_obs = (inst_obs *. r_obs.kinetics) /. automorphisms
+			       in 
+				 (string_of_int (int_of_float act_obs))::cont
+			) sim_data.obs_ind []
+	  in
+	    {c with points = (d_k,measurement_t,obs_list)::c.points ; last_k = k}
+
 (********************************************************************************************************)
 (***********************************************EVENT LOOP***********************************************)
 (********************************************************************************************************)
 
 let event log sim_data p c story_mode =
+
   if !debug_mode then Printf.printf "%d:(%d,%f)\n" c.curr_iteration c.curr_step c.curr_time ; flush stdout;
   let stop_test curr_step curr_time  = 
     ((!max_time > 0.0) && (curr_time > !max_time)) or ((!max_step>0) && (curr_step > !max_step))
   in
-    
   let t_select = chrono 0.0 in
   let (log,inj_list,sim_data,clashes) = select log sim_data p c in
     if !bench_mode then Bench.rule_select_time := !Bench.rule_select_time +. (chrono t_select) ;
@@ -1916,61 +1951,25 @@ let event log sim_data p c story_mode =
 	    if !Data.no_random_time then 1./. activity (*expectency*)
 	    else Mods2.random_time_advance activity clashes 
 	  in (*sums clashes+1 time advance according to activity*)
-	  	    
+	    
 	  (**********************************************************************************************)
 	  (*******************************************MEASUREMENTS***************************************)
 	  (**********************************************************************************************)
 	    
 	  let c = 
 	    if story_mode or !ignore_obs or (!init_time > c.curr_time) then c 
-	    else
-	      let k = match c.points with
-		  (k,_,_)::_ -> k
-		| [] -> (-1)
-	      in
-	      let take_measures,measurement_t,d_k = 
-		match c.measure_interval with
-		    DE delta_e -> ((delta_e * k) <= c.curr_step,c.curr_time,1)
-		  | Dt delta_t -> let d_k = (int_of_float (c.curr_time /. delta_t)) in 
-		      if (d_k - k) = 0 then (false,c.curr_time,0) 
-		      else (*d_k might be more than 1*)
-			let t = delta_t *. (float_of_int d_k) in (true, t +. !init_time,d_k)
-		  | _ -> raise (Error.Runtime "Simulation2.event invalid time or event increment")
-	      in
-		if not take_measures then c
-		else
-		  let _ = () 
-		    (*Printf.printf "Measure : %d,%f\n" (k+1) measurement_t ; flush stdout *)
-		  in
-		  let obs_list = 
-		    IntSet.fold (fun ind_obs cont ->
-				   let r_obs,inst_obs = Rule_of_int.find ind_obs sim_data.rules in
-				     if r_obs.input = "var" then cont
-				     else
-				       let automorphisms = 
-					 match r_obs.automorphisms with 
-					     None -> (failwith "Automorphisms not computed") 
-					   | Some i -> float_of_int i 
-				       in
-				       let act_obs = (inst_obs *. r_obs.kinetics) /. automorphisms
-				       in 
-					 (string_of_int (int_of_float act_obs))::cont
-				) sim_data.obs_ind []
-		  in
-		    {c with points = (d_k,measurement_t,obs_list)::c.points ; last_k = k}
-	  in
-
+	    else measure sim_data c 
+	  in  
+	  
 	  let c = 
 	    if IntSet.mem r_ind sim_data.oo then c 
 	    else
 	      {c with curr_time = c.curr_time +. dt  ; curr_step = c.curr_step+1}
 	  in
-
-	  (**********************************************************************************************)
-	  (***************************************RULE APPLICATION***************************************)
-	  (**********************************************************************************************)
+	    (**********************************************************************************************)
+	    (***************************************RULE APPLICATION***************************************)
+	    (**********************************************************************************************)
 	    
-
 	  let r_abst,_ = Rule_of_int.find abst_ind sim_data.rules in
 	  let r_ref,_ = Rule_of_int.find r_ind sim_data.rules in
 	  let _ =

@@ -283,7 +283,7 @@ let ls_of_simulation rules obs_ind points curr_step curr_time =
 		   ) "" obs_ind
   in
   let rec print_values k last_k time obs_list ls = 
-    if k = last_k then ls
+    if k < last_k then ls
     else
       let time = if !time_mode then (!time_sample *. (float_of_int last_k)) +. !init_time else time in
       let ls = 
@@ -293,9 +293,10 @@ let ls_of_simulation rules obs_ind points curr_step curr_time =
       in
 	print_values k (last_k+1) time obs_list ls
   in
-  let _,ls_data = List.fold_right (fun (k,time,obs_list) (last_k,ls) -> 
-				   (k,print_values k last_k time obs_list ls)
-			       ) points (0,LongString.empty) 
+  let _,ls_data = List.fold_right (fun (k,time,obs_list) (last_k,ls) ->
+				     let k = if k > !data_points then !data_points else k in
+				     (k,print_values k (last_k+1) time obs_list ls)
+			       ) points (-1,LongString.empty) 
   in
   let sim_name = []
   and sim_total_events = [Printf.sprintf "TotalEvents = \"%d\"" curr_step]

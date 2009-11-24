@@ -5,10 +5,10 @@ open Rule
 
 let output_data_point desc_opt sd p c = 
   let rec print_values d k last_k time obs_list = 
-    if k=last_k then () 
+    if k<last_k then () 
     else
       let time = if !time_mode then (!time_sample *. (float_of_int last_k)) +. !init_time else time in
-	Printf.fprintf d "%E\t%s\n" time (String.concat "," obs_list) ;
+	Printf.fprintf d "%E\t%s\n" time (String.concat " " obs_list) ;
 	print_values d k (last_k+1) time obs_list
   in
     match !desc_opt with
@@ -18,7 +18,7 @@ let output_data_point desc_opt sd p c =
 	      [] -> c
 	    | (k,time,obs_list)::_ ->
 		begin
-		  if (k = c.last_k) or (c.last_k = -1) then c
+		  if (k = c.last_k) then c
 		  else
 		    let _ = 
 		      if k = 0 then
@@ -45,7 +45,8 @@ let output_data_point desc_opt sd p c =
 			  Printf.fprintf d "#t\t%s" (String.concat "\t" entete) ;
 			  Printf.fprintf d "\n" 
 		    in
-		      print_values d k (c.last_k) time obs_list ;
+		    let k = if k > !data_points then !data_points else k in
+		      print_values d k (c.last_k+1) time obs_list ;
 		      {c with last_k = k}
 		end
 

@@ -162,7 +162,7 @@ let main =
 	      Session.add_log_entry 1 "No time or event limit defined with a potentially infinite simulation! No data point will be taken." log 
 	    end
 	| (true,false) -> 
-	    time_sample:= (!max_time) /. (float_of_int !data_points) ; 
+	    time_sample:= !max_time /. (float_of_int !data_points) ; 
 	    Printf.printf "time sample = %f\n" !time_sample ;flush stdout ;
 	    log
 	| (false,true) ->
@@ -320,7 +320,7 @@ let main =
 		      if c.curr_iteration >= !max_iter then
 			begin (*exiting event loop*)
 			  Printf.printf "\n"; flush stdout ;
-			  let log = Session.add_log_entry 0 (Printf.sprintf "-Exiting storification after %d iteration(s)" c.curr_iteration) log in
+			  let log = Session.add_log_entry 0 (Printf.sprintf "-Exiting causal flow analysis after %d iteration(s)" c.curr_iteration) log in
 			    (log,sd,p,{c with 
 					 curr_tick = 0 ;
 					 curr_time = 0.0 ;
@@ -373,13 +373,16 @@ let main =
 			if (!max_time >= 0.0) && (c.curr_time > !max_time) or ((!max_step >= 0) && (c.curr_step > !max_step)) then (*time or event limit reached*)
 			  begin (*exiting event loop*)
 			    Printf.printf "\n"; flush stdout ;
-			    let log = Session.add_log_entry 0 (Printf.sprintf "-Exiting simulation at time %f (after %d events)" c.curr_time c.curr_step) log in
+			    let log = Session.add_log_entry 0 (Printf.sprintf "-Exiting simulation at time %f (after %d rule applications)"
+								 c.curr_time (c.curr_step - 1)) log in
 			      (log,sd,p,c,true)
 			  end
 			else (*time or event limit not reached*)
 			  (log,sd,p,c,false)
 		  in
 		    if stop then 
+		      let c = if !time_mode then Simulation2.measure sd c else c in
+		      let c = if !time_mode then Time_course.output_data_point data_desc sd p c else c in
 		      let sd,c,p,log = Monitor.apply sd c p log true in
 			(log,sd,p,c)
 		    else
