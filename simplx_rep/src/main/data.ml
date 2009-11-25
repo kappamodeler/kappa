@@ -1,7 +1,7 @@
 (**Data references*)
 
 let version_main = 4
-let version_cpt = 314 (*sampling*)
+let version_cpt = 315 (*sampling*)
 let git_tag = Git_commit_info.git_commit_tag
 let version_branch = ""
 let arch_type = string_of_int Sys.word_size

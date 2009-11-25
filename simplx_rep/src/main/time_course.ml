@@ -4,20 +4,26 @@ open Mods2
 open Rule
 
 let output_data_point desc_opt sd p c = 
-  let rec print_values d k last_k time obs_list = 
+  let rec print_values d k last_k time obs_list old_obs = 
     if k<last_k then () 
     else
       let time = if !time_mode then (!time_sample *. (float_of_int last_k)) +. !init_time else time in
-	Printf.fprintf d "%E\t%s\n" time (String.concat " " obs_list) ;
-	print_values d k (last_k+1) time obs_list
+      let obs_v = if k = last_k then obs_list else old_obs in
+	Printf.fprintf d "%E\t%s\n" time (String.concat " " obs_v) ;
+	print_values d k (last_k+1) time obs_list old_obs
   in
     match !desc_opt with
 	None -> c
       | Some d ->
 	  match c.points with
 	      [] -> c
-	    | (k,time,obs_list)::_ ->
+	    | (k,time,obs_list)::tl ->
 		begin
+		  let old_obs = 
+		    match tl with
+			(_,_,old_obs)::_ -> old_obs
+		      | [] -> obs_list (*should not happen*)
+		  in
 		  if (k = c.last_k) then c
 		  else
 		    let _ = 
@@ -46,7 +52,7 @@ let output_data_point desc_opt sd p c =
 			  Printf.fprintf d "\n" 
 		    in
 		    let k = if k > !data_points then !data_points else k in
-		      print_values d k (c.last_k+1) time obs_list ;
+		      print_values d k (c.last_k+1) time obs_list old_obs ;
 		      {c with last_k = k}
 		end
 
