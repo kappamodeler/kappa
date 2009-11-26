@@ -1891,20 +1891,20 @@ let ticking c =
     display n ;
     {c with curr_tick = c.curr_tick + n}
       
-let measure sim_data c = 
+let measure ?(deadlocked=false) sim_data c = 
   let k,last_t = match c.points with
-      (k,last_t,_)::_ -> (k,last_t)
+      (k,last_t,obs_v)::_ -> (k,last_t)
     | [] -> (-1,(-1.))
   in
     if (!max_time > 0.) && (last_t > !max_time) then c 
     else
       let take_measures,measurement_t,d_k = 
 	match c.measure_interval with
-	    DE delta_e -> ((delta_e * (k+1)) <= c.curr_step,c.curr_time,k+1)
-	  | Dt delta_t -> let d_k = (int_of_float (c.curr_time /. delta_t)) in 
-	      if (d_k = k) then (false,c.curr_time,0) 
+	    DE delta_e -> (((delta_e * (k+1)) <= c.curr_step) or deadlocked,c.curr_time,k+1)
+	  | Dt delta_t -> let d_k = if deadlocked then k+1 else (int_of_float (c.curr_time /. delta_t)) in 
+	      if (d_k = k) then (deadlocked,c.curr_time,0) 
 	      else (*d_k might be more than 1*)
-		let t = delta_t *. (float_of_int d_k) in (true, t +. !init_time,d_k)
+		let t = if deadlocked then c.curr_time else delta_t *. (float_of_int d_k) in (true, t +. !init_time,d_k)
 	  | _ -> raise (Error.Runtime "Simulation2.event invalid time or event increment")
       in
 	if not take_measures then c
@@ -1934,7 +1934,7 @@ let event log sim_data p c story_mode =
 
   if !debug_mode then Printf.printf "%d:(%d,%f)\n" c.curr_iteration c.curr_step c.curr_time ; flush stdout;
   let stop_test curr_step curr_time  = 
-    ((!max_time > 0.0) && (curr_time > !max_time)) or ((!max_step>0) && (curr_step > !max_step))
+    ((!max_time > 0.0) && (curr_time > !max_time)) or ((!max_step>0) && (curr_step >= !max_step))
   in
   let t_select = chrono 0.0 in
   let (log,inj_list,sim_data,clashes) = select log sim_data p c in

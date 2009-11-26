@@ -370,19 +370,19 @@ let main =
 			    (log,sd,p,c,true)
 			end
 		      else
-			if (!max_time >= 0.0) && (c.curr_time > !max_time) or ((!max_step >= 0) && (c.curr_step > !max_step)) then (*time or event limit reached*)
+			if (!max_time >= 0.0) && (c.curr_time > !max_time) or ((!max_step >= 0) && (c.curr_step >= !max_step)) then (*time or event limit reached*)
 			  begin (*exiting event loop*)
 			    Printf.printf "\n"; flush stdout ;
 			    let log = Session.add_log_entry 0 (Printf.sprintf "-Exiting simulation at time %f (after %d rule applications)"
-								 c.curr_time (c.curr_step - 1)) log in
+								 c.curr_time c.curr_step) log in
 			      (log,sd,p,c,true)
 			  end
 			else (*time or event limit not reached*)
 			  (log,sd,p,c,false)
 		  in
 		    if stop then 
-		      let c = if !time_mode then Simulation2.measure sd c else c in
-		      let c = if !time_mode then Time_course.output_data_point data_desc sd p c else c in
+		      let c = (*if !time_mode && (not c.deadlock) then*) Simulation2.measure ~deadlocked:c.deadlock sd c (*else c*) in
+		      let c = (*if !time_mode && (not c.deadlock) then *) Time_course.output_data_point data_desc sd p c (*else c*) in
 		      let sd,c,p,log = Monitor.apply sd c p log true in
 			(log,sd,p,c)
 		    else

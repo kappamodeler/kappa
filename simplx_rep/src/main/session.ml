@@ -282,21 +282,22 @@ let ls_of_simulation rules obs_ind points curr_step curr_time =
 			Printf.sprintf "%s\n%s" xml_plot cont
 		   ) "" obs_ind
   in
-  let rec print_values k last_k time obs_list ls = 
+  let rec print_values k last_k time obs_list last_obs ls = 
     if k < last_k then ls
     else
+      let obs_v = if k=last_k then obs_list else last_obs in
       let time = if !time_mode then (!time_sample *. (float_of_int last_k)) +. !init_time else time in
       let ls = 
-	let str = Printf.sprintf "%s,%s\n" (Float_pretty_printing.string_of_float time) (String.concat "," obs_list)
+	let str = Printf.sprintf "%s,%s\n" (Float_pretty_printing.string_of_float time) (String.concat "," obs_v)
 	in
 	  LongString.concat str ls
       in
-	print_values k (last_k+1) time obs_list ls
+	print_values k (last_k+1) time obs_list last_obs ls
   in
-  let _,ls_data = List.fold_right (fun (k,time,obs_list) (last_k,ls) ->
+  let _,_,ls_data = List.fold_right (fun (k,time,obs_list) (last_k,last_obs,ls) ->
 				     let k = if k > !data_points then !data_points else k in
-				     (k,print_values k (last_k+1) time obs_list ls)
-			       ) points (-1,LongString.empty) 
+				     (k,obs_list,print_values k (last_k+1) time obs_list last_obs ls)
+			       ) points (-1,[],LongString.empty) 
   in
   let sim_name = []
   and sim_total_events = [Printf.sprintf "TotalEvents = \"%d\"" curr_step]
