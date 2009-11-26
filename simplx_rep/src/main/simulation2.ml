@@ -2083,16 +2083,27 @@ let event log sim_data p c story_mode =
 				  let _ = aux 0 in
 				    Some vect} 
 			    in
+                            let _ = Story_compressor.set_init_time () in 
 			    let opt = Story_compressor.compress h !Data.story_compression_mode Data.WEAK in
 			      match opt with
 				  None -> 
-				    let log = Session.add_log_entry 4 "-Causal trace does not satisfy constraints after compression" log in
-				    let limit_reached = stop_test c.curr_step c.curr_time in
-				      (log,sim_data,p,{c with 
-							 curr_iteration = if limit_reached then c.curr_iteration + 1 else c.curr_iteration ;
-							 restart = limit_reached
-						      }
-				      ) 
+				    begin
+                                      match !Story_compressor.error_state with 
+                                          None -> 
+                                            let log = Session.add_log_entry 4 "-Causal trace does not satisfy constraints after compression" log in
+				            let limit_reached = stop_test c.curr_step c.curr_time in
+				              (log,sim_data,p,{c with 
+							         curr_iteration = if limit_reached then c.curr_iteration + 1 else c.curr_iteration ;
+							         restart = limit_reached
+						              }
+				              ) 
+                                        | Some x -> 
+                                          let log = Session.add_log_entry 4 x log in
+				            (log,sim_data,p,{c with 
+							       curr_iteration = c.curr_iteration + 1 ;
+							       restart = true
+						            })
+                                    end
 				| Some compressed_h ->
 				    let drawers = (Iso.classify (compressed_h,c.curr_time) c.drawers p.iso_mode) 
 				    in

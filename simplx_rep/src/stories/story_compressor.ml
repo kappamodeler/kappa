@@ -27,11 +27,20 @@ module QuarkMap = Map.Make (struct type t = quark let compare = compare end)
 
 let back = ref 0 
 let init_time = ref 0. 
-let set_init_time () = init_time := Mods2.gettime () 
+let error_state = ref None 
+
+let set_init_time () = 
+  begin
+    init_time := Mods2.gettime ();
+    error_state := None
+  end 
+
 let test_time () = 
   Mods2.gettime () -. (!init_time) < !Data.max_time_per_compression
 
-  
+let set_error x = 
+  error_state := Some x 
+
 type case = 
     {
     port_id:int;
@@ -1559,6 +1568,6 @@ let compress net iter_mode granularity =
 		  Some net 
 	      end
 	end 
-      with Error.Too_expensive -> None
-	| Error.Not_handled_yet s -> None
+      with Error.Too_expensive -> (set_error "-Causal trace computation has been aborded (too expensive)";None)
+	| Error.Not_handled_yet s -> (set_error "-Causal trace computation has been aborded (pattern not implemented yet)";None)
   else (Some net) 
