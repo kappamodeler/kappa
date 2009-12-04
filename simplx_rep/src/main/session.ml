@@ -260,7 +260,7 @@ let ls_of_simulation rules obs_ind points curr_step curr_time =
   
   (*  let t_plots = Mods2.chrono 0.0 in*)
   let xml_plots = 
-    List.fold_left (fun cont obs_id ->
+    List.fold_right (fun obs_id cont ->
 		      let r,_ = Rule_of_int.find obs_id rules in
 		      let id_str = [""] (*[Printf.sprintf "Id=\"%d\"" obs_id]*)
 		      and glob_id = 
@@ -280,7 +280,7 @@ let ls_of_simulation rules obs_ind points curr_step curr_time =
 		      in
 		      let xml_plot = Printf.sprintf "<Plot %s/>" (String.concat " " (id_str@glob_id@type_str@text_str)) in
 			Printf.sprintf "%s\n%s" xml_plot cont
-		   ) "" obs_ind
+		   ) obs_ind ""
   in
   let rec print_values k last_k time obs_list last_obs ls = 
     if k < last_k then ls
