@@ -179,8 +179,12 @@ let pprint_var print k i =
       None -> ()
     | Some a -> 
 	begin
-	  a.print_string "\\odevar{";
-	  a.print_string k;
+	  a.print_string 
+            (match k with 
+                 "init" -> "\\odeinit{"
+               | "k" | "k_temp" -> "\\oderate{"
+               | _ -> "\\odevar{");
+          a.print_string k;
 	  a.print_string "}{";
 	  a.print_string i;
 	  a.print_string "}"
@@ -885,6 +889,7 @@ let pprint_ODE_head print print_obs print_activity file_main file file_jac file_
          pprint_string print_jac "end;\n")
       perturb.Experiment.perturbations_unfun
   in 
+  let _ = pprint_string print_latex "\\resetrulecounter\n" in 
   let _ = pprint_string print_latex "\\odebeforeequs\n" in 
   let _ = pprint_string print_size "function Size=" in
   let _ = pprint_string print_size size in
