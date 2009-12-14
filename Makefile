@@ -377,13 +377,13 @@ grab_svn_version_number:
 
 
 inc_svn:
-	echo `expr $(VN) + 1`  > tag/number 
+	echo `expr $(VN) + 1`> tag/number 
 
 inc_version:
-	echo `expr $(VERSION) +1` > tag/version
+	echo `expr $(VERSION) +1`> tag/version
 
 inc_release: 
-	echo `expr $(RELEASE) +1` > tag/release
+	echo `expr $(RELEASE) +1`> tag/release
 
 fetch_version:
 	cd tag ; git pull 
