@@ -1,7 +1,7 @@
 PREF?= 
 VN:=$(shell cat tag/number)     # Version number for commit tag
 VERSION:=$(shell cat tag/version) 
-RELEASE:=$(shell cat tag/release) 
+RELEASE:=$(shell cat tag/release)
 
 DATE:=`date +'%Y-%m-%d %H:%M:%S'` # date YYYY-MM-DD 
 
@@ -388,7 +388,7 @@ inc_release:
 fetch_version:
 	cd tag ; git pull 
 
-
+arch_object:
 
 commit:
 	make fetch_version
@@ -418,6 +418,15 @@ send_caml:
 	git push --tags
 	git push 
 
+arch_object:
+	file $(BIN)/complx | perl -pe '$$uname = `uname -s`; chomp($$uname); s/^.*\s([0-9]*-bit).*$$/binaries\/plx_engine\/$$uname-$$1/g' > tag/arch_object
+	
+upload:
+	make release
+	make arch_object
+	support/s3sync/s3cmd.rb put plectix-deploy:$(shell cat tag/arch_object)/latest tag/number
+	support/s3sync/s3cmd.rb put plectix-deploy:$(shell cat tag/arch_object)/$(shell cat tag/number)/complx bin/complx
+	support/s3sync/s3cmd.rb put plectix-deploy:$(shell cat tag/arch_object)/$(shell cat tag/number)/simplx bin/simplx
 
 help: 
 	@echo Usage: ;\
