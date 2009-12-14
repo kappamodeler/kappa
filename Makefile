@@ -1,4 +1,8 @@
+PREF?= 
 VN:=$(shell cat tag/number)     # Version number for commit tag
+VERSION:=$(shell cat tag/version) 
+RELEASE:=$(shell cat tag/release) 
+
 DATE:=`date +'%Y-%m-%d %H:%M:%S'` # date YYYY-MM-DD 
 
 all: simplx_light complx_light 
@@ -371,12 +375,44 @@ clean_all: clean
 grab_svn_version_number:
 	svn up --username hudson --password bu1ldme --no-auth-cache | tail -n 1 | sed -e "s/\([^0-9]*\)\([0-9]*\)\./let svn_number = \2 +1/" > complx_rep/automatically_generated/svn_number.ml 
 
+
+inc_svn:
+	echo `expr $(VN) + 1`  > tag/number 
+
+inc_version:
+	echo `expr $(VERSION) +1` > tag/version
+
+inc_release: 
+	echo `expr $(RELEASE) +1` > tag/release
+
+fetch_version:
+	git pull tag/number tag/version tag/release 
+
+
+
 commit:
+	make fetch_version
 	echo `expr $(VN) + 1`  > tag/number 
 	echo $(DATE) > tag/date 
-	echo let git_commit_tag,git_commit_date  = `expr $(VN) + 1`,\"$(DATE)\" > complx_rep/automatically_generated/git_commit_info.ml 
+	make PREF="Not a release" send_caml
+
+major_version: 
+	make fetch_version
+	echo `expr $(VERSION) + 1`  > tag/version
+	echo 1 > tag/release
+	echo $(DATE) > tag/date 
+	make PREF="Release " send_caml
+
+release: 
+	make fetch_version
+	echo `expr $(RELEASE) + 1`  > tag/release
+	echo $(DATE) > tag/date 
+	make PREF="Release " send_caml
+
+send_caml: 
+	echo let git_commit_version,git_commit_release,git_commit_tag,git_commit_date  = $(VERSION),$(RELEASE),$(VN),\"$(DATE)\" > complx_rep/automatically_generated/git_commit_info.ml 
 	git commit -a 
-	git tag -a `expr $(VN) + 1` -m "$(DATE)"  
+	git tag -a $(VN) -m "$(PREF) $(VERSION).$(RELEASE)...$(VN) $(DATE)"  
 	git push --tags
 	git push 
 
