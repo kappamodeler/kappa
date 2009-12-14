@@ -425,11 +425,9 @@ help:
 	echo make sim: create the simulator ;\
 	echo make complx_full: create the compressor;\
 	echo make complx_light: create the light version of the compressor without labltk;\
-	echo make VERSION=X.YY tar: create all tarballs in your home directory;\
-	echo make VERSION=X.YY tar_sim: create the tarball of simplx in your home directory;\
-	echo make VERSION=X.YY tar_com: create the tarball of complx in your home directory;\
-	echo make VERSION=X.YY tar_prorep: create the tarball of ProRepPlx in your home directory;\
-	echo make commit: update config file with the svn number before doing a commit;\
+	echo make commit: update config file with the tag counter before doing a commit&push;\
+	echo make release: update the tag counter and the release counter before doing a commit&push;\
+	echo make version: update the tag counter and the version counter, reset the release counter, before doing a commit&push;\
 	echo make clean: clean compiled files;\
 	echo make clean_data: clean analysis results;\
 	echo make clean_all: clean all	
