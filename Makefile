@@ -425,8 +425,8 @@ upload:
 	make release
 	make arch_object
 	support/s3sync/s3cmd.rb put plectix-deploy:$(shell cat tag/arch_object)/latest tag/number
-	support/s3sync/s3cmd.rb put plectix-deploy:$(shell cat tag/arch_object)/$(shell cat tag/number)/complx bin/complx
-	support/s3sync/s3cmd.rb put plectix-deploy:$(shell cat tag/arch_object)/$(shell cat tag/number)/simplx bin/simplx
+	support/s3sync/s3cmd.rb put plectix-deploy:$(shell cat tag/arch_object)/$(cat tag/number)/complx bin/complx
+	support/s3sync/s3cmd.rb put plectix-deploy:$(shell cat tag/arch_object)/$(cat tag/number)/simplx bin/simplx
 
 help: 
 	@echo Usage: ;\
