@@ -1,0 +1,17 @@
+# Temp files
+.DS_Store
+*.sw*
+
+# Binary files
+*.cm*
+*.o
+*.a
+
+# Generated files and directories
+complx_rep/backend/parse_comment/lexeur.ml
+complx_rep/backend/parse_comment/yacc.ml
+simplx_rep/src/bnf/kappa_lex.ml
+simplx_rep/src/bnf/kappa_parse.ml
+simplx_rep/src/bnf/kappa_parse.mli
+simplx_rep/lib/
+bin
