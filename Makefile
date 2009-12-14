@@ -399,6 +399,7 @@ commit:
 major_version: 
 	make fetch_version
 	echo `expr $(VERSION) + 1`  > tag/version
+	echo `expr $(VN) + 1`  > tag/number 
 	echo 1 > tag/release
 	echo $(DATE) > tag/date 
 	make PREF="Release " send_caml
@@ -406,13 +407,14 @@ major_version:
 release: 
 	make fetch_version
 	echo `expr $(RELEASE) + 1`  > tag/release
+	echo `expr $(VN) + 1`  > tag/number 
 	echo $(DATE) > tag/date 
 	make PREF="Release " send_caml
 
 send_caml: 
 	echo let git_commit_version,git_commit_release,git_commit_tag,git_commit_date  = $(VERSION),$(RELEASE),$(VN),\"$(DATE)\" > complx_rep/automatically_generated/git_commit_info.ml 
 	git commit -a 
-	git tag -a $(VN) -m "$(PREF) $(VERSION).$(RELEASE)...$(VN) $(DATE)"  
+	git tag -a "v$(VERSION).$(RELEASE)...$(VN)"  -m "$(PREF) v$(VERSION).$(RELEASE)...$(VN) $(DATE)"  
 	git push --tags
 	git push 
 
