@@ -392,22 +392,22 @@ fetch_version:
 
 commit:
 	make fetch_version
-	echo `expr $(VN) + 1`  > tag/number 
+	echo `expr $(VN) + 1`> tag/number 
 	echo $(DATE) > tag/date 
 	make PREF="Not a release" send_caml
 
 major_version: 
 	make fetch_version
-	echo `expr $(VERSION) + 1`  > tag/version
-	echo `expr $(VN) + 1`  > tag/number 
+	echo `expr $(VERSION) + 1`> tag/version
+	echo `expr $(VN) + 1`> tag/number 
 	echo 1 > tag/release
 	echo $(DATE) > tag/date 
 	make PREF="Release " send_caml
 
 release: 
 	make fetch_version
-	echo `expr $(RELEASE) + 1`  > tag/release
-	echo `expr $(VN) + 1`  > tag/number 
+	echo `expr $(RELEASE) + 1`> tag/release
+	echo `expr $(VN) + 1`> tag/number 
 	echo $(DATE) > tag/date 
 	make PREF="Release " send_caml
 
