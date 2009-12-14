@@ -23,7 +23,9 @@ let time_stamp =
     (ad2 tm.Unix.tm_min) 
     (ad2 tm.Unix.tm_sec)
 
-let version = "4.16.."^(string_of_int Git_commit_info.git_commit_tag)
+let version = (string_of_int Git_commit_info.git_commit_version)^"."^
+              (string_of_int Git_commit_info.git_commit_release)^".."^
+              (string_of_int Git_commit_info.git_commit_tag)
 let date = "2009.07.20"
 let date_commit = Git_commit_info.git_commit_date 
 let input_marshalling = ref "" 
