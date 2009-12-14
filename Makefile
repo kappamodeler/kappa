@@ -386,7 +386,7 @@ inc_release:
 	echo `expr $(RELEASE) +1` > tag/release
 
 fetch_version:
-	git pull tag/number tag/version tag/release 
+	cd tag ; git pull 
 
 
 
