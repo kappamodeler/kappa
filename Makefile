@@ -414,6 +414,7 @@ release:
 	make PREF="Release " send_caml
 
 send_caml: 
+	echo xxx$(VN)$(RELEASE)$(VERSION)$(DATE)xxx
 	echo let git_commit_version,git_commit_release,git_commit_tag,git_commit_date  = $(VERSION),$(RELEASE),$(VN),\"$(DATE)\" > complx_rep/automatically_generated/git_commit_info.ml 
 	git commit -a 
 	git tag -a $(VN)  -m "$(PREF) v$(VERSION).$(RELEASE)...$(VN) $(DATE)"  
