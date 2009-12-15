@@ -1,10 +1,9 @@
 PREF?= 
-VN:=$(shell cat tag/number)       # Git version number for commit tag
-VERSION:=$(shell cat tag/version) # Major revision release number
-RELEASE:=$(shell cat tag/release) # Release number
-DATE:=`date +'%Y-%m-%d %H:%M:%S'` # date YYYY-MM-DD 
+VN:=$(shell cat tag/number)#            #Git version number for commit tag
+VERSION:=$(shell cat tag/version)#      #Major revision release number
+RELEASE:=$(shell cat tag/release)#      #Release number
+DATE:=`date +'%Y-%m-%d %H:%M:%S'`#      #date YYYY-MM-DD 
 
-REMOVE_SPACE =| sed 's/ //g' | sed 's/\n//g'      # to remove all occurences of spaces in an expression 
 
 all: simplx_light complx_light 
 
@@ -393,22 +392,22 @@ arch_object:
 
 commit:
 	make fetch_version
-	echo -n `expr $(VN) + 1`$(REMOVE_SPACE) > tag/number 
+	echo -n `expr $(VN) + 1` > tag/number 
 	echo -n $(DATE) > tag/date 
 	make PREF="Not a release" send_caml
 
 major_version: 
 	make fetch_version
-	echo -n `expr $(VERSION) + 1`$(REMOVE_SPACE) > tag/version
-	echo -n `expr $(VN) + 1`$(REMOVE_SPACE)> tag/number 
+	echo -n `expr $(VERSION) + 1` > tag/version
+	echo -n `expr $(VN) + 1`> tag/number 
 	echo -n 1 > tag/release
 	echo -n $(DATE) > tag/date 
 	make PREF="Release " send_caml
 
 release: 
 	make fetch_version
-	echo -n `expr $(RELEASE) + 1`$(REMOVE_SPACE)> tag/release
-	echo -n `expr $(VN) + 1`$(REMOVE_SPACE)> tag/number 
+	echo -n `expr $(RELEASE) + 1`> tag/release
+	echo -n `expr $(VN) + 1`> tag/number 
 	echo -n $(DATE) > tag/date 
 	make PREF="Release " send_caml
 
