@@ -1,8 +1,8 @@
 REMOVE_SPACE =| sed 's/ //g' | sed 's/\n//g'      # to remove all occurences of spaces in an expression 
 PREF?= 
-VN:=$(shell cat tag/number | $(REMOVE_SPACE))       # Git version number for commit tag
-VERSION:=$(shell cat tag/version | $(REMOVE_SPACE)) # Major revision release number
-RELEASE:=$(shell cat tag/release | $(REMOVE_SPACE)) # Release number
+VN:=$(shell "cat tag/number | $(REMOVE_SPACE)")       # Git version number for commit tag
+VERSION:=$(shell "cat tag/version | $(REMOVE_SPACE)") # Major revision release number
+RELEASE:=$(shell "cat tag/release | $(REMOVE_SPACE)") # Release number
 DATE:=`date +'%Y-%m-%d %H:%M:%S'` # date YYYY-MM-DD 
 
 
