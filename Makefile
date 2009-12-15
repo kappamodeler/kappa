@@ -378,13 +378,13 @@ grab_svn_version_number:
 
 
 inc_svn:
-	echo `expr $(VN) + 1`> tag/number 
+	echo -n `expr $(VN) + 1`> tag/number 
 
 inc_version:
-	echo `expr $(VERSION) +1`> tag/version
+	echo -n `expr $(VERSION) +1`> tag/version
 
 inc_release: 
-	echo `expr $(RELEASE) +1`> tag/release
+	echo -n `expr $(RELEASE) +1`> tag/release
 
 fetch_version:
 	cd tag ; git pull 
@@ -393,28 +393,28 @@ arch_object:
 
 commit:
 	make fetch_version
-	echo `expr $(VN) + 1`$(REMOVE_SPACE) > tag/number 
-	echo $(DATE) > tag/date 
+	echo -n `expr $(VN) + 1`$(REMOVE_SPACE) > tag/number 
+	echo -n $(DATE) > tag/date 
 	make PREF="Not a release" send_caml
 
 major_version: 
 	make fetch_version
-	echo `expr $(VERSION) + 1`$(REMOVE_SPACE) > tag/version
-	echo `expr $(VN) + 1`$(REMOVE_SPACE)> tag/number 
-	echo 1 > tag/release
-	echo $(DATE) > tag/date 
+	echo -n `expr $(VERSION) + 1`$(REMOVE_SPACE) > tag/version
+	echo -n `expr $(VN) + 1`$(REMOVE_SPACE)> tag/number 
+	echo -n 1 > tag/release
+	echo -n $(DATE) > tag/date 
 	make PREF="Release " send_caml
 
 release: 
 	make fetch_version
-	echo `expr $(RELEASE) + 1`$(REMOVE_SPACE)> tag/release
-	echo `expr $(VN) + 1`$(REMOVE_SPACE)> tag/number 
-	echo $(DATE) > tag/date 
+	echo -n `expr $(RELEASE) + 1`$(REMOVE_SPACE)> tag/release
+	echo -n `expr $(VN) + 1`$(REMOVE_SPACE)> tag/number 
+	echo -n $(DATE) > tag/date 
 	make PREF="Release " send_caml
 
 send_caml: 
-	echo xxx$(VN)$(RELEASE)$(VERSION)$(DATE)xxx
-	echo let git_commit_version,git_commit_release,git_commit_tag,git_commit_date  = $(VERSION),$(RELEASE),$(VN),\"$(DATE)\" > complx_rep/automatically_generated/git_commit_info.ml 
+	echo -n xxx$(VN)$(RELEASE)$(VERSION)$(DATE)xxx
+	echo -n let git_commit_version,git_commit_release,git_commit_tag,git_commit_date  = $(VERSION),$(RELEASE),$(VN),\"$(DATE)\" > complx_rep/automatically_generated/git_commit_info.ml 
 	git commit -a 
 	git tag -a $(VN)  -m "$(PREF) v$(VERSION).$(RELEASE)...$(VN) $(DATE)"  
 	git push --tags
