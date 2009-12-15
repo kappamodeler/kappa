@@ -1,9 +1,10 @@
 PREF?= 
-VN:=$(shell cat tag/number)     # Version number for commit tag
-VERSION:=$(shell cat tag/version) 
-RELEASE:=$(shell cat tag/release)
-
+VN:=$(shell cat tag/number)       # Git version number for commit tag
+VERSION:=$(shell cat tag/version) # Major revision release number
+RELEASE:=$(shell cat tag/release) # Release number
 DATE:=`date +'%Y-%m-%d %H:%M:%S'` # date YYYY-MM-DD 
+
+REMOVE_SPACE =| sed 's/ //g'      # to remove all occurences of spaces in an expression 
 
 all: simplx_light complx_light 
 
@@ -392,22 +393,22 @@ arch_object:
 
 commit:
 	make fetch_version
-	echo `expr $(VN) + 1`> tag/number 
+	echo `expr $(VN) + 1`$(REMOVE_SPACE) > tag/number 
 	echo $(DATE) > tag/date 
 	make PREF="Not a release" send_caml
 
 major_version: 
 	make fetch_version
-	echo `expr $(VERSION) + 1`> tag/version
-	echo `expr $(VN) + 1`> tag/number 
+	echo `expr $(VERSION) + 1`$(REMOVE_SPACE) > tag/version
+	echo `expr $(VN) + 1`$(REMOVE_SPACE)> tag/number 
 	echo 1 > tag/release
 	echo $(DATE) > tag/date 
 	make PREF="Release " send_caml
 
 release: 
 	make fetch_version
-	echo `expr $(RELEASE) + 1`> tag/release
-	echo `expr $(VN) + 1`> tag/number 
+	echo `expr $(RELEASE) + 1`$(REMOVE_SPACE)> tag/release
+	echo `expr $(VN) + 1`$(REMOVE_SPACE)> tag/number 
 	echo $(DATE) > tag/date 
 	make PREF="Release " send_caml
 
@@ -420,7 +421,7 @@ send_caml:
 
 arch_object:
 	file $(BIN)/complx | perl -pe '$$uname = `uname -s`; chomp($$uname); s/^.*\s([0-9]*-bit).*$$/binaries\/plx_engine\/$$uname-$$1/g' > tag/arch_object
-	
+
 upload:
 	make release
 	make arch_object
