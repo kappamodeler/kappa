@@ -4,7 +4,7 @@ VERSION:=$(shell cat tag/version) # Major revision release number
 RELEASE:=$(shell cat tag/release) # Release number
 DATE:=`date +'%Y-%m-%d %H:%M:%S'` # date YYYY-MM-DD 
 
-REMOVE_SPACE =| sed 's/ //g'      # to remove all occurences of spaces in an expression 
+REMOVE_SPACE =| sed 's/ //g' | sed 's/\n//g'      # to remove all occurences of spaces in an expression 
 
 all: simplx_light complx_light 
 
