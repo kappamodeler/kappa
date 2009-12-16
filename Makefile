@@ -423,7 +423,7 @@ arch_object:
 	file $(BIN)/complx | perl -pe '$$uname = `uname -s`; chomp($$uname); s/^.*\s([0-9]*-bit).*$$/binaries\/plx_engine\/$$uname-$$1/g' > tag/arch_object
 
 upload:
-	make release
+	# make release
 	make arch_object
 	support/s3sync/s3cmd.rb put plectix-deploy:$(shell cat tag/arch_object)/latest tag/number
 	support/s3sync/s3cmd.rb put plectix-deploy:$(shell cat tag/arch_object)/$(VN)/complx bin/complx
