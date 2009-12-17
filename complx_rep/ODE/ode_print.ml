@@ -1040,7 +1040,7 @@ let pprint_ODE_head print print_obs print_activity file_main file file_jac file_
   let _ = pprint_commandsep print_ODE in 
   let _ = pprint_newline print_ODE in 
   let _ = pprint_newline print_ODE in 
-  let _ = pprint_string print_ODE "global perturbation_trigger = [\n" in 
+  let _ = pprint_string print_ODE "global perturbation_trigger \nglobal_perturbation = [\n" in 
   let _ = 
     let rec aux k = 
       if k>n_perturbation then ()
