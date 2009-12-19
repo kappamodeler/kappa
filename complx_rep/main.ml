@@ -286,9 +286,15 @@ let main ()  =
     let _  = methods.print_channel prefix log in  
     let _ = methods.print_errors prefix in 
     let _  = methods.print_footpage prefix log in 
-()  in
-   () 
-  
+      ()
+  in
+  let _ = 
+    match !Error_handler_common.error_list 
+    with 
+        [] -> exit 0 
+      | _ -> exit 1
+  in 
+  ()
 
 
 
