@@ -52,13 +52,19 @@ Line :
 | C EOL {let _ = succ () in Mutt($1)}
 | Ident C EOL {let _ = succ() in Mutt($1^$2)}
 | Comment_rule EOL {let _ = succ () in Rgl($1)}
+| Blankline EOL {let _ = succ in Mutt($1)}
 | EOL {let _ = succ () in Mutt("")}
 
 LastLine :
   D EOF {Decl($1)}
 | C EOF {Mutt($1)}
+| Ident C EOF {Mutt($1^$2)}
 | Comment_rule EOF {Rgl($1)}
+| Blankline EOF {Mutt($1)}
+| EOF {Mutt("")}
 
+Blankline :
+  Ident {$1}
 
 FlagIdent :
   Identf FlagIdent {($1)^($2)}
