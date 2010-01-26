@@ -103,7 +103,7 @@ let enrich_ms a ms =
     a
     ms
     
-let translate_init_elt t interface_map interface_origin (agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel,cpt,contact) messages logn = 
+let translate_init_elt t interface_map interface_marks_map interface_origin marks_origin (agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel,cpt,contact) messages logn = 
   let _ = trace_print "BEGIN_TRANSLATE_INIT\n" in 
   let speciemap = 
     Solution.AA.fold 
@@ -154,9 +154,9 @@ let translate_init_elt t interface_map interface_origin (agents,marks,unmarkable
     in 
       IntMap.add i (t::old) m in
   
-  let interface_map,interface_origin,(test,agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel) = 
+  let interface_map,interface_marks_map,interface_origin,marks_origin,(test,agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel) = 
     Solution.AA.fold 
-      (fun i a (interface_map,interface_origin,(test,agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel)) ->
+      (fun i a (interface_map,interface_marks_map,interface_origin,marks_origin,(test,agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel)) ->
 	 (let ag = 
 	    try 
 	      IntMap.find i speciemap 
@@ -171,31 +171,40 @@ let translate_init_elt t interface_map interface_origin (agents,marks,unmarkable
 		Not_found -> 
 		  IntMap.add i [] test 
 	  in 
-	  let interface,rep = 
+	  let interface,(marked_interface,rep) = 
             Agent.fold_interface  
 	      (fun 
 		 s 
 		 (m1,m2) 
-		 (interface,(test,agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel))->
-		 if s ="_" then (interface,(test,agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel))
+		 (interface,(marked_interface,(test,agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel)))->
+		 if s ="_" then (interface,(marked_interface,(test,agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel)))
                  else 
                    begin 
                      StringSet.add s interface,
-	           let test,marks,unmarkable_sites,markable_sites,mark_site_rel = 
+	           let marked_interface,
+                     test,
+                     marks,
+                     unmarkable_sites,
+                     markable_sites,
+                     mark_site_rel 
+                     = 
 		     match m1 
-		     with Agent.Wildcard -> 
-                       (test,
-                        marks,
-                        fadd i s unmarkable_sites,
-                        markable_sites,
-                        mark_site_rel)
+		     with 
+                         Agent.Wildcard -> 
+                           (marked_interface,
+                            test,
+                            marks,
+                            fadd i s unmarkable_sites,
+                            markable_sites,
+                            mark_site_rel)
 		       | Agent.Marked m -> 
-		           (fadd_test i (Pb_sig.S_mark(s,m)) test,
-			    StringSet.add m marks,
-			    unmarkable_sites,
-                            fadd i s markable_sites,
-			    fadd_mark_site (i,s) m mark_site_rel)
-		       | _ -> (error_frozen "translate translate_init" frozen_exit)
+		           (StringSet.add s marked_interface,
+                           fadd_test i (Pb_sig.S_mark(s,m)) test,
+			   StringSet.add m marks,
+			   unmarkable_sites,
+                           fadd i s markable_sites,
+			   fadd_mark_site (i,s) m mark_site_rel)
+	               | _ -> (error_frozen "translate translate_init" frozen_exit)
 	           in 
 	           let test,linkable_sites = 
 		     match m2 with Agent.Wildcard -> 
@@ -221,9 +230,9 @@ let translate_init_elt t interface_map interface_origin (agents,marks,unmarkable
                          error_frozen ("Agent "^ag^" is introduced with an underscore on the site "^s) frozen_exit 
 		       | _ -> (error_frozen  "translate.95" frozen_exit)
 	           in 
-		     (test,agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel)end)
+		     (marked_interface,(test,agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel))end)
 	      a
-	      (StringSet.empty,(test,StringSet.add (Agent.name a) agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel)) 
+	      (StringSet.empty,(StringSet.empty,(test,StringSet.add (Agent.name a) agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel)))
 	  in 
             (let old = 
                try 
@@ -232,10 +241,18 @@ let translate_init_elt t interface_map interface_origin (agents,marks,unmarkable
                    Not_found -> StringSet.empty 
              in 
                StringMap.add ag (StringSet.union old interface) interface_map),
+          (let old = 
+               try 
+                 StringMap.find ag interface_marks_map
+               with 
+                   Not_found -> StringSet.empty 
+             in 
+               StringMap.add ag (StringSet.union old marked_interface) interface_marks_map),
           add_interface_origin ag (StringSet.elements interface) (Init t) interface_origin,
+          add_interface_origin ag (StringSet.elements marked_interface) (Init t) marks_origin,
           rep))
       t.Solution.agents
-      (interface_map,interface_origin,(IntMap.empty,agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel))
+      (interface_map,interface_marks_map,interface_origin,marks_origin,(IntMap.empty,agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel))
   in 
   let test,contact = 
     Solution.PA.fold 
@@ -262,32 +279,36 @@ let translate_init_elt t interface_map interface_origin (agents,marks,unmarkable
        let ig = IntMap.find i speciemap in 
 	 (ig,s)::l) test []),
   interface_map,
+  interface_marks_map,
   interface_origin,
+  marks_origin,
   (agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel,cpt,contact),
   messages
     
-let translate_init t interface interface_origin sol  messages logn =     
-  let interface,interface_origin,a,b,c= 
+let translate_init t  interface interface_marked interface_origin marks_origin sol  messages logn =     
+  let interface,interface_marked,interface_origin,marks_origin,a,b,c= 
     List.fold_left 
-      (fun (interface,interface_origin,l,sol,messages) (current,n) -> 
-	  if n=0 then interface,interface_origin,l,sol,messages
+      (fun (interface,interface_marked,interface_origin,marks_origin,l,sol,messages) (current,n) -> 
+	  if n=0 then interface,interface_marked,interface_origin,marks_origin,l,sol,messages
 	  else 
-	    let l',interface,interface_origin,sol,messages = 
+	    let l',interface,interface_marked,interface_origin,marks_origin,sol,messages = 
 	      translate_init_elt 
 		current 
 		interface
+                interface_marked
                 interface_origin
+                marks_origin 
 		sol 
 		messages 
 		logn in 
-	      interface,interface_origin,l'@l,sol,messages)
-	    
-  (interface,interface_origin,[],sol,messages) t 
+	      interface,interface_marked,interface_origin,marks_origin,l'@l,sol,messages)
+      
+  (interface,interface_marked,interface_origin,marks_origin,[],sol,messages) t 
   in
-  interface,interface_origin,Some a,b,c
+  interface,interface_marked,interface_origin,marks_origin,Some a,b,c
      
     
-let translate_rule t flags interface_map interface_origin usage_map site_origin fset (agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel,cpt,contact) messages logn = 
+let translate_rule t flags interface_map interface_marks_map interface_origin marks_origin usage_map usage_marks_map site_origin msite_origin fset (agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel,cpt,contact) messages logn = 
   let mods_handler = 
     (Mods2.IntMap.fold,
      Mods2.IntMap.add,
@@ -406,11 +427,11 @@ let translate_rule t flags interface_map interface_origin usage_map site_origin 
 	   cc.Solution.links)
       t.Rule.lhs  (test,IntMap.empty,contact,IntStringSet.empty)
   in
-  let test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,site_origin = 
+  let test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,usage_marks_map,site_origin,msite_origin = 
     Mods2.IntMap.fold 
       (fun _ cc -> 
 	Solution.AA.fold 
-	  (fun i a (test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,site_origin) ->
+	  (fun i a (test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,usage_marks_map,site_origin,msite_origin) ->
 	    let i = sigma i in 
 	    let ig = 
 	      try 
@@ -421,17 +442,20 @@ let translate_rule t flags interface_map interface_origin usage_map site_origin 
 	    in 
 	    let test = (Pb_sig.Is_here(i))::test in 
 	    Agent.fold_interface 
-	      (fun s (m1,m2) (test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,site_origin)-> 
-		 let usage_map,site_origin  = 
+	      (fun s (m1,m2) (test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,usage_marks_map,site_origin,msite_origin)-> 
+		 let usage_map,site_origin = 
 		   if s="_" then usage_map,site_origin
 		   else 
 		     (fadd_site ig s usage_map,
-                      add_site_origin ig s (Rule t) site_origin)
+                      add_site_origin ig s (Rule t) site_origin
+                     )
 		 in 
-		 let test,marks,markable_sites,mark_site_rel = 
-		  match m1 with Agent.Wildcard -> (test,marks,markable_sites,mark_site_rel)
+		 let msite_origin,usage_marks_map,test,marks,markable_sites,mark_site_rel = 
+		  match m1 with Agent.Wildcard -> (msite_origin,usage_marks_map,test,marks,markable_sites,mark_site_rel)
 		  | Agent.Marked m -> 
-		      (Pb_sig.Is_marked((i,s),m)::test,
+		      (add_site_origin ig s (Rule t) msite_origin,
+                       fadd_site ig s usage_marks_map,
+                        Pb_sig.Is_marked((i,s),m)::test,
 		       StringSet.add m marks,
 		       fadd i s markable_sites,
 		       fadd_mark_site (i,s) m mark_site_rel)
@@ -453,12 +477,21 @@ let translate_rule t flags interface_map interface_origin usage_map site_origin 
 			    fadd i s linkable_sites)
 		     | _ -> (print_string "translate.184";print_newline ();raise Exit)
 		 in 
-		   test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,site_origin)
+		   test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,usage_marks_map,site_origin,msite_origin)
 	      a
-	      (test,StringSet.add (Agent.name a) agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,site_origin))
+	      (test,
+               StringSet.add (Agent.name a) agents,
+               marks,
+               markable_sites,
+               linkable_sites,
+               mark_site_rel,
+               usage_map,
+               usage_marks_map,
+               site_origin,
+               msite_origin))
 	  cc.Solution.agents)
       t.Rule.lhs 
-      (test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,site_origin)
+      (test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,usage_marks_map,site_origin,msite_origin)
   in 
   
   let permute (i1,s1) (i2,s2) =
@@ -527,7 +560,7 @@ let translate_rule t flags interface_map interface_origin usage_map site_origin 
   let id,cpt = fresh cpt logn in 
 
     
-  let interface_map,interface_origin,test,control,agents,unmarkable_sites,markable_sites,mark_site_rel,linkable_sites,contact = 
+  let interface_map,interface_marks_map,interface_origin,test,control,agents,unmarkable_sites,markable_sites,mark_site_rel,linkable_sites,contact = 
     let c1,c2 = control in
     let c1 = 
       List.fold_left 
@@ -538,35 +571,38 @@ let translate_rule t flags interface_map interface_origin usage_map site_origin 
             | Rule.NO_POLY -> Pb_sig.No_Pol::c1
 	    | Rule.NO_HELIX -> Pb_sig.No_Helix::c1)
 	c1 t.Rule.constraints in 
-    let (c1,c3),interface_map,interface_origin,agents,cr_agents,unmarkable_sites,ms,mark_site_rel,linkable_sites  = 
+    let (c1,c3),interface_map,interface_marks_map,interface_origin,marks_origin,agents,cr_agents,unmarkable_sites,ms,mark_site_rel,linkable_sites  = 
       Mods2.IntMap.fold
-	(fun i a (((c1:Pb_sig.action list),c3),interface_map,interface_origin,agents,cr_agents,unmarkable_sites,ms,mark_site_rel,linkable_sites) -> 
+	(fun i a (((c1:Pb_sig.action list),c3),interface_map,interface_marks_map,interface_origin,marks_origin,agents,cr_agents,unmarkable_sites,ms,mark_site_rel,linkable_sites) -> 
 	  let i = sigma i in 
 	  let ig = Agent.name a in 
-	  let interface,(unmarkable_sites,a1,mark_site_rel,linkable_sites)  = 
+	  let interface,(interface_marks,(unmarkable_sites,a1,mark_site_rel,linkable_sites))  = 
 	    Agent.fold_interface 
-	       (fun s (m1,m2) (interface,(unmarkable_sites,ms,mark_site_rel,linkable_sites)) ->  
-		 if s = "_" then interface,(unmarkable_sites,ms,mark_site_rel,linkable_sites)
+	       (fun s (m1,m2) (interface,(interface_marks,(unmarkable_sites,ms,mark_site_rel,linkable_sites))) ->  
+		 if s = "_" then interface,(interface_marks,(unmarkable_sites,ms,mark_site_rel,linkable_sites))
 		 else 
-		   StringSet.add s interface,(
+		   StringSet.add s interface,
+                   (
 		   match m1 with 
 		     Agent.Marked x -> 
-		       (unmarkable_sites,
+		       StringSet.add s interface_marks,
+                       (unmarkable_sites,
                         (Pb_sig.Mark((i,s),x))::ms,
-		       fadd_mark_site (i,s) x mark_site_rel,
-		       fadd i s linkable_sites)
+		        fadd_mark_site (i,s) x mark_site_rel,
+		        fadd i s linkable_sites)
 		   | Agent.Wildcard -> 
-                       (print_string s;print_newline (); 
+                       (interface_marks,(
+
                         fadd i s unmarkable_sites,
                        ms,
                        mark_site_rel,
-                       linkable_sites)
-		   | Agent.Bound -> error "BOUND: translate.ml Added complex" (unmarkable_sites,ms,mark_site_rel,linkable_sites)
+                       linkable_sites))
+		   | Agent.Bound -> error "BOUND: translate.ml Added complex" (interface_marks,(unmarkable_sites,ms,mark_site_rel,linkable_sites))
 		   | Agent.Free -> error "BOUND: translate.ml Added complex" 
-			 (unmarkable_sites,ms,mark_site_rel,linkable_sites))
-	       )
+			 (interface_marks,(unmarkable_sites,ms,mark_site_rel,linkable_sites))
+	           ))
 	       a 
-	      (StringSet.empty,(unmarkable_sites,c1,mark_site_rel,linkable_sites ))
+	      (StringSet.empty,(StringSet.empty,(unmarkable_sites,c1,mark_site_rel,linkable_sites )))
 	  in 
 	    (a1, 
 	     IntSet.add i c3),
@@ -578,7 +614,16 @@ let translate_rule t flags interface_map interface_origin usage_map site_origin 
 	     with 
 		 Not_found -> StringMap.add ig interface interface_map
 	   end,
+            begin 
+	     try 
+	       if StringSet.equal interface_marks (StringMap.find ig interface_marks_map)
+	       then interface_marks_map
+	       else error_frozen ("Agent "^ig^" is introduced with distinct sets of sites with internal states") (fun () -> raise Exit)
+	     with 
+		 Not_found -> StringMap.add ig interface_marks interface_marks_map
+	   end,
            add_interface_origin ig (StringSet.elements interface) (Rule t) interface_origin,
+           add_interface_origin ig (StringSet.elements interface_marks) (Rule t) marks_origin,
            StringSet.add ig agents,
 	   IntSet.add i cr_agents,
 	   unmarkable_sites,
@@ -586,7 +631,7 @@ let translate_rule t flags interface_map interface_origin usage_map site_origin 
 	   mark_site_rel,
 	  linkable_sites)
 	t.Rule.add 
-	((c1,IntSet.empty),interface_map,interface_origin,agents,IntSet.empty,unmarkable_sites,markable_sites,mark_site_rel,linkable_sites) in 
+	((c1,IntSet.empty),interface_map,interface_marks_map,interface_origin,marks_origin,agents,IntSet.empty,unmarkable_sites,markable_sites,mark_site_rel,linkable_sites) in 
     let rec aux (bl,wl,sol) = 
       match wl with [] -> sol 
       | t::q -> 
@@ -616,6 +661,7 @@ let translate_rule t flags interface_map interface_origin usage_map site_origin 
 	t.Rule.lhs (c1,close)
     in 
       interface_map,
+    interface_marks_map,
     interface_origin,
     test,
     (control,c2,c3),
@@ -666,7 +712,7 @@ let translate_rule t flags interface_map interface_origin usage_map site_origin 
 	{Pb_sig.cpb_create=ca;
 	 Pb_sig.cpb_update = c;
          Pb_sig.cpb_remove = cr}
-    } ,flags,interface_map,interface_origin,usage_map,site_origin,fset,(agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel,cpt,contact),messages
+    } ,flags,interface_map,interface_marks_map,interface_origin,marks_origin,usage_map,usage_marks_map,site_origin,msite_origin,fset,(agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel,cpt,contact),messages
     
 let clean_rule_system rl linkable_sites =
     List.rev
@@ -696,22 +742,69 @@ let translate_rule_list l init interface  messages =
   let old_messages = messages in 
   let n = List.length l in 
   let interface_map = StringMap.empty in 
+  let interface_marks_map = StringMap.empty in 
   let interface_origin = StringMap.empty in 
+  let marks_origin = StringMap.empty in 
   let usage_map = StringMap.empty in 
+  let usage_marks_map = StringMap.empty in 
   let site_origin = StringMap.empty in 
+  let msite_origin = StringMap.empty in 
   let logn = String.length (string_of_int n) in 
-  let flags,interface_map,interface_origin,usage_map,site_origin,fset,rl,(agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel,cpt,contact),messages,with_dots  = 
+  let flags,
+    interface_map,
+    interface_marks_map,
+    interface_origin,
+    marks_origin,
+    usage_map,
+    usage_marks_map,
+    site_origin,
+    msite_origin,
+    fset,
+    rl,
+    (agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel,cpt,contact),
+    messages,
+    with_dots  
+    = 
     list_fold 
-      (fun a (flags,interface_map,interface_origin,usage_map,site_origin,fset,rl,context,messages,with_dots) -> 
-        let r,flags,interface_map,interface_origin,usage_map,site_origin,fset,context,messages = 
-	  translate_rule  a flags interface_map interface_origin usage_map site_origin fset context messages logn in 
+      (fun a (flags,interface_map,interface_marks_map,interface_origin,marks_origin,usage_map,usage_marks_map,site_origin,msite_origin,fset,rl,context,messages,with_dots) -> 
+         let r,flags,interface_map,interface_marks_map,interface_origin,marks_origin,usage_map,usage_marks_map,site_origin,msite_origin,fset,context,messages = 
+	   translate_rule  
+             a 
+             flags 
+             interface_map 
+             interface_marks_map
+             interface_origin 
+             marks_origin 
+             usage_map 
+             usage_marks_map 
+             site_origin 
+             msite_origin
+            fset 
+            context 
+            messages 
+            logn in 
         let with_dots = with_dots or (not ([]=a.Rule.constraints)) in 
-	(flags,interface_map,interface_origin,usage_map,site_origin,fset,r::rl,context,messages,with_dots))
+	(flags,
+         interface_map,
+         interface_marks_map,
+         interface_origin,
+         marks_origin,
+         usage_map,
+         usage_marks_map,
+         site_origin,msite_origin,fset,r::rl,context,messages,with_dots))
       l
-      (StringMap.empty,interface_map,interface_origin,usage_map,site_origin,StringSet.empty,[],(StringSet.empty,StringSet.empty,StringMap.empty,StringMap.empty,StringMap.empty,String2Map.empty,1,String2Map.empty),messages,false) in 
+      (StringMap.empty,interface_map,interface_marks_map,interface_origin,marks_origin,usage_map,usage_marks_map,site_origin,msite_origin,StringSet.empty,[],(StringSet.empty,StringSet.empty,StringMap.empty,StringMap.empty,StringMap.empty,String2Map.empty,1,String2Map.empty),messages,false) in 
 
-  let interface_map,interface_origin,init,(agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel,cpt,contact),messages = 
-    translate_init init interface_map interface_origin (agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel,cpt,contact) messages logn  in 
+  let interface_map,interface_marks_map,interface_origin,marks_origin,init,(agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel,cpt,contact),messages = 
+    translate_init 
+      init 
+      interface_map 
+      interface_marks_map 
+      interface_origin 
+      marks_origin 
+      (agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel,cpt,contact)
+      messages 
+      logn  in 
   let _ = trace_print "TRANSLATE_INIT DONE\n" in
   let (agents,markable_sites,linkable_sites) = 
     match interface 
@@ -748,7 +841,7 @@ let translate_rule_list l init interface  messages =
 	  StringSet.fold (fun a b -> a::b) 
 	    (try (StringMap.find s linkable_sites) with Not_found -> StringSet.empty) [])::interface))
       species_set ([],[]) in 
-  let messages = 
+(*  let messages = 
     StringMap.fold 
       (fun agent sites messages -> 
          StringSet.fold
@@ -764,7 +857,7 @@ let translate_rule_list l init interface  messages =
            messages)
       unmarkable_sites 
       messages
-  in 
+  in *)
   let messages = 
     StringMap.fold
       (fun ag map messages  -> 
@@ -807,6 +900,50 @@ let translate_rule_list l init interface  messages =
                  ("  Agent "^ag^" is introduced with different interfaces:")
                  liste)::messages)
       interface_origin
+      messages 
+  in
+   let messages = 
+    StringMap.fold
+      (fun ag map messages  -> 
+         let liste = 
+           StringListMap.fold 
+             (fun interface list sol -> (interface,list)::sol)
+             map []
+         in 
+         match liste with [] | [_] -> messages
+           | _ -> 
+               (List.fold_left 
+                 (fun s (interface,list) -> 
+                    let s = s^"\n" in 
+                    let s = s^"    interface {" in 
+                    let s,_ = 
+                      List.fold_left 
+                        (fun (s,b) site -> 
+                           let s = if b then s^"," else s in
+                           let s = s^site in 
+                             (s,true))
+                        (s,false) 
+                        interface
+                    in 
+                    let s = s^"} in " in 
+                    let s,_ = 
+                      OriginSet.fold 
+                        (fun origin (s,b) -> 
+                           let s = if b then s^"," else s in 
+                           let s = s^(match origin 
+                                      with Init _ -> "initial state" 
+                                        | Rule t -> 
+                                            match t.Rule.flag 
+                                            with Some a -> a 
+                                              | None -> "%Auto_"^(string_of_int t.Rule.id)) 
+                           in 
+                             (s,true))
+                        list
+                        (s,false)
+                    in s)
+                 ("  Agent "^ag^" is introduced with different sets of sites with internal states:")
+                 liste)::messages)
+      marks_origin
       messages 
   in
   let messages = 
@@ -877,6 +1014,74 @@ let translate_rule_list l init interface  messages =
       interface_map
       messages 
   in 
+  let messages = 
+    StringMap.fold2
+      (fun ag x m -> m)
+      (fun ag x m -> m)
+      (fun ag x y m -> 
+	 if StringSet.subset x y 
+	 then m 
+	 else 
+           let interface_origin_string,_ = 
+             StringListMap.fold 
+               (fun _ origin (string,b) -> 
+                  OriginSet.fold 
+                    (fun origin (string,b) -> 
+                       string^
+                         (if b 
+                          then "; " 
+                          else "")^
+                         (match origin 
+                          with Init _ -> "initial state" 
+                            | Rule t -> 
+                                match t.Rule.flag 
+                                with Some a -> a 
+                                  | None -> "%Auto_"^(string_of_int t.Rule.id))
+                         ,true)
+                    origin 
+                    (string,b))
+               (try 
+                  StringMap.find ag marks_origin
+                with 
+                    Not_found -> StringListMap.empty)
+               ("declared in ",false)
+           in 
+           let bad_sites = StringSet.diff x y in 
+             StringSet.fold 
+               (fun site m -> 
+                  let origin_string,_ = 
+                    OriginSet.fold 
+                      (fun origin (string,b) -> 
+                         string^
+                           (if b then "; " else "")^
+                           (match origin 
+                            with Init _ -> "initial state" 
+                              | Rule t ->  
+                                  match t.Rule.flag 
+                                  with Some a -> a 
+                                    | None -> "%Auto_"^(string_of_int t.Rule.id)),
+                         true)
+                      (try 
+                         StringMap.find site (StringMap.find ag msite_origin)
+                       with 
+                           Not_found -> print_string "BOUH";print_string ag;print_string site;OriginSet.empty )
+                      ("used in ",false)
+                  in 
+                    (("  Site "^
+                        site^
+                        " has no internal state in the agent "^
+                        ag^
+                        "("^
+                        origin_string^
+                   " / "^
+                        interface_origin_string^
+                        ")")
+                     ::m))
+           bad_sites m)
+      usage_marks_map 
+      interface_marks_map
+      messages 
+  in  
   let b = 
     if (messages:string list) <> old_messages 
     then

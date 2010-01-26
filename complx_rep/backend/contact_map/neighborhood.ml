@@ -17,7 +17,11 @@ let good_vertice file  =
 	     let _ = Data.forward:= tmp_forward in
 	     let _ = Data.compile_mode := tmp_mode in 
 
-	     let bool,cpb,messages = Translate.translate_rule_list (List.rev a) b None [] in 
+	     let bool,cpb,messages = 
+               Translate.translate_rule_list 
+                 (List.rev a) 
+                 b 
+                 None [] in 
 	     let _ = 
                if not bool then 
                unsafe_frozen
