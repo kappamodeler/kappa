@@ -195,7 +195,7 @@ module CBnG =
 		   q [] 
 		   
 	       |  0 -> 
-		    if not bool or (i1,s1)=(i2,s2) or (not (!Config_complx.duplicate_rules_when_sym)) or (ninstructions> !Config_complx.duplicate_threshold) 
+		    if true or not bool or (i1,s1)=(i2,s2) or (not (!Config_complx.duplicate_rules_when_sym)) or (ninstructions> !Config_complx.duplicate_threshold) 
 		    then
 		      list_fold 
 			(fun 
