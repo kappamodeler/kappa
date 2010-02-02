@@ -141,7 +141,7 @@ let ignore_dep = ref false  (*true -> peut abstraire partiellement un site *)
 let enforce_structural_invariants = ref true (*use the structural properties of boolean encoding to restore abstracted constraints*)
     
 let duplicate_rules_when_sym = ref true (*true*)
-let duplicate_threshold = ref 5 
+let duplicate_threshold = ref 10
 let duplicate_rules_when_cycles = ref true (* true *)(* not_implemented yet *)
 let dump_qualitative_compression = ref ""
 let dump_quantitative_compression = ref "" 
