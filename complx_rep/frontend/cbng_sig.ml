@@ -241,7 +241,9 @@ let dump_a_rule channel  r =
                                   false l in 
                            print "\n")
                                   
-      |	Check x -> print "CHECK %d;\n" x
+      
+      |	Check_seq (x1,x2) -> print "CHECK_SEQ  %d,%d;\n" x1 x2 
+      | Check x -> print "CHECK %d;\n" x
       | Release((x,sx),(y,sy)) -> print "RELEASE %d,%s,%d,%s;\n" x sx y sy 
       | Break_half  (x,sx) -> print "Release 1/2 %d,%s" x sx
       | Bind((x,sx),(y,sy)) ->  print "BIND %d,%s,%d,%s;\n" x sx y sy 

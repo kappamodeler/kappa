@@ -218,7 +218,7 @@ let quarkify cpb contact rule =
 			    (QSet.add (QF(aid,s)) mp,mn) l 
 		    | _ -> mp,mn)
 		
-	    | Check _ | Check_choice _  -> (mp,mn))
+	    | Check _ | Check_seq _ | Check_choice _  -> (mp,mn))
 	  (QSet.empty,QSet.empty) control.cpb_update
           in
       let mod_pos,mod_neg = 

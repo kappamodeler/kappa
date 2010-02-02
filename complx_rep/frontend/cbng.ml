@@ -141,7 +141,7 @@ module CBnG =
 	let i1',ig1 = irule.id_mapping i1 in 
 	let i2',ig2 = irule.id_mapping i2 in 
 	  (AL((i1',ig1,s1),(ig2,s2)),false)::(AL((i2',ig2,s2),(ig1,s1)),false)::(l((i1',ig1,s1),(i2',ig2,s2)),false)::(B(i1',ig1,s1),false)::(B(i2',ig2,s2),false)::context_control,uncontext_control
-    | Check_choice _ | Check _ -> context_control,uncontext_control
+    | Check_seq _ | Check_choice _ | Check _ -> context_control,uncontext_control
     | Break_half(i1,s1) -> 
 	let i1,ig1 = irule.id_mapping i1 in 
           (B(i1,ig1,s1),false)::context_control,(i1,ig1,s1)::uncontext_control																				    
@@ -240,7 +240,26 @@ module CBnG =
 		  list_fold 
 		  (fun (id,l) sol -> 
                     (id,list_fold (fun i sol -> (Check(i)::sol)) list l)::sol)
-		  q [])
+		  q []
+            | Check_seq(i1,i2) -> 
+		if bool && (!Config_complx.duplicate_rules_when_sym)  &&  (not (ninstructions> !Config_complx.duplicate_threshold))
+		then 
+		  list_fold 
+		    (fun ((id,b),l) sol -> 
+		      
+		      fst (list_fold 
+			 (fun (i1,i2,i)  (sol,b) -> (
+			   ((if (not b)  
+                             then (id,b) 
+                             else (id^"."^(string_of_int i),true)),((Check i2)::(Check i1)::l))::sol,true))
+			 [i1,i2,1;i2,i1,2]
+			 (sol,b))) q []
+		else 
+		  list_fold 
+		  (fun (id,l) sol -> 
+                    (id,list_fold (fun (i1,i2) sol -> (Check(i2)::Check(i1)::sol)) [i1,i2] l)::sol)
+		    q []
+)
 
 
 	  r.cpb_control.cpb_update  [("",false),[]]  
@@ -326,7 +345,7 @@ module CBnG =
        (List.sort 
 	     (fun a b -> 
 	       match a,b with 
-		 Check i,Check j -> compare i j 
+		 Check i,Check j ->0 (* compare i j*)
 	       | Check i,_ -> -1
 	       | _,Check i -> 1
 	       | _ -> 0) l)  
@@ -365,8 +384,16 @@ module CBnG =
 	with cpb_update = 
 	  list_map (fun x -> 
 	    match x with 
-	      Release((i1,s1),(i2,s2)) -> Release((f i1,s1),(f i2,s2))
-	    | Bind((i1,s1),(i2,s2)) -> Bind((f i1,s1),(f i2,s2))
+	      Release((i1,s1),(i2,s2)) -> 
+                if compare s1 s2 <0 or (s1=s2 && f i1 < f i2)
+                then Release((f i1,s1),(f i2,s2))
+                else Release((f i2,s2),(f i1,s1))
+	    | Bind((i1,s1),(i2,s2)) -> 
+                if compare s1 s2 <0 or (s1=s2 && f i1 < f i2)
+                then 
+                  Bind((f i1,s1),(f i2,s2))
+                else 
+                  Bind((f i2,s2),(f i1,s1))
 	    | Mark((i,s),m) -> Mark((f i,s),m)
 	   | Check(i) -> Check(f i)
 	   | Break_half(i1,s1) -> Break_half(f i1,s1)

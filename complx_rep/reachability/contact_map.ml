@@ -283,7 +283,7 @@ let build_drawer p rules contact =
 		  (try String2Map.find (ag,s) contact
 		  with 
 		     Not_found -> [])
-	    | Check_choice _ | Check _ -> drawer 
+	    | Check_seq _ | Check_choice _ | Check _ -> drawer 
 	    )
 	  drawer
 	  control.cpb_update in

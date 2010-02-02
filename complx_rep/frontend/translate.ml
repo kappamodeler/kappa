@@ -517,9 +517,8 @@ let translate_rule t flags interface_map interface_marks_map interface_origin ma
 		    (let i2 = sigma i2 in 
 		    (
 		    (let a1,a2 = permute (i1,s1) (i2,s2) in 
-		    (Pb_sig.Bind(a1,a2))::
-			    (Pb_sig.Check(i1))::
-			    (Pb_sig.Check(i2))::
+		       (Pb_sig.Bind(a1,a2))::
+			    (Pb_sig.Check_seq(i1,i2))::
 			    control),control_r),agents,m,ms,fadd i1 s1 (fadd i2 s2 ls),
 		     IntSet.add i1 (IntSet.add i2 roots),
 		     fadd_contact (i1,s1) (i2,s2) contact,
