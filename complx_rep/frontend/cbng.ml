@@ -226,7 +226,7 @@ module CBnG =
 		  (fun (id,l) sol -> (id,x::l)::sol)
 		  q [] 
 	    | Check_choice(list) -> 
-		if bool && (!Config_complx.duplicate_rules_when_sym)  &&  (not (ninstructions> !Config_complx.duplicate_threshold))
+		if (*bool &&*) (!Config_complx.duplicate_rules_when_sym)  &&  (not (ninstructions> !Config_complx.duplicate_threshold))
 		then 
 		  list_fold 
 		    (fun ((id,b),l) sol -> 
