@@ -1091,9 +1091,19 @@ module Pipeline =
 	   None -> (pb',(l,m))
 	 | Some pb -> 
 	     let _ = print_option prefix (Some stdout) "Quark computation\n" in
-	     let pb,(l,m),contact = get_best_res_contact_map prefix' pb (l,m) in 
-               match contact with None -> (pb',(l,m))
-                 | Some contact -> 
+	     let pb,(l,m),contact = 
+               let pb,log',contact = get_low_res_contact_map prefix pb (l,m) in
+	         (match contact with 
+	              None -> let _ = warn "line 530"  "contact map cannot be built" "get_best_res_contact_map"  Exit in 
+                        pb,log',None 
+	            | Some a -> pb,log',
+                        (Some (
+                           convert_low_in_high 
+                             (a))))
+             in
+               
+               match contact,pb with None,_ | _,None  -> (pb',(l,m))
+                 | Some contact,Some pb -> 
 	             let pb,(l,m),cpb = get_intermediate_encoding None prefix' pb (l,m) in
 	               
 	             let _ = flush stdout in 

@@ -26,7 +26,7 @@ let error_frozen (*i*) x (*t*) y =
       None (*(Some i)*) 
       y
 
-type bound = UNKNOWN | BOUND | FREE | LINK of (int*string) | NONE
+type bound = UNKNOWN | BOUND | FREE | LINK of (int*string) | NONE | NOT_HERE
   
 
 let upgrade b1 b2 = 
@@ -65,8 +65,15 @@ let quarkify cpb contact rule =
 	    Not_found -> UNKNOWN in
         IntMap.add a (StringMap.add s (upgrade old_site b) old) map  in
       let get (a,s) map = 
-	try StringMap.find s (IntMap.find a map)
-	with Not_found -> UNKNOWN in
+        try 
+	  let ag = IntMap.find a map 
+          in 
+            try StringMap.find s (IntMap.find a map)
+	    with Not_found -> UNKNOWN 
+        with 
+            Not_found -> NOT_HERE 
+      in
+        
       let fadd_mark (a,s) m map = 
 	let old = 
 	  try (IntMap.find a map) with 
