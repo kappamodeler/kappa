@@ -559,7 +559,7 @@ let translate_rule t flags interface_map interface_marks_map interface_origin ma
   let id,cpt = fresh cpt logn in 
 
     
-  let interface_map,interface_marks_map,interface_origin,test,control,agents,unmarkable_sites,markable_sites,mark_site_rel,linkable_sites,contact = 
+  let interface_map,interface_marks_map,interface_origin,marks_origin,test,control,agents,unmarkable_sites,markable_sites,mark_site_rel,linkable_sites,contact = 
     let c1,c2 = control in
     let c1 = 
       List.fold_left 
@@ -609,7 +609,7 @@ let translate_rule t flags interface_map interface_marks_map interface_origin ma
 	     try 
 	       if StringSet.equal interface (StringMap.find ig interface_map)
 	       then interface_map
-	       else error_frozen ("Agent "^ig^" is introduced with distinct interfaces") (fun () -> raise Exit)
+	       else interface_map (*error_frozen ("Agent "^ig^" is introduced with distinct interfaces") (fun () -> raise Exit)*)
 	     with 
 		 Not_found -> StringMap.add ig interface interface_map
 	   end,
@@ -617,7 +617,7 @@ let translate_rule t flags interface_map interface_marks_map interface_origin ma
 	     try 
 	       if StringSet.equal interface_marks (StringMap.find ig interface_marks_map)
 	       then interface_marks_map
-	       else error_frozen ("Agent "^ig^" is introduced with distinct sets of sites with internal states") (fun () -> raise Exit)
+	       else interface_marks_map (*error_frozen ("Agent "^ig^" is introduced with distinct sets of sites with internal states") (fun () -> raise Exit)*)
 	     with 
 		 Not_found -> StringMap.add ig interface_marks interface_marks_map
 	   end,
@@ -662,6 +662,7 @@ let translate_rule t flags interface_map interface_marks_map interface_origin ma
       interface_map,
     interface_marks_map,
     interface_origin,
+    marks_origin,
     test,
     (control,c2,c3),
     agents,
@@ -904,11 +905,15 @@ let translate_rule_list l init interface  messages =
    let messages = 
     StringMap.fold
       (fun ag map messages  -> 
+         print_string "AG:";
+         print_string ag;
+         print_newline ();
          let liste = 
            StringListMap.fold 
              (fun interface list sol -> (interface,list)::sol)
              map []
          in 
+         print_int (List.length liste);
          match liste with [] | [_] -> messages
            | _ -> 
                (List.fold_left 
