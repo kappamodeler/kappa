@@ -329,10 +329,10 @@ module CBnG =
 	 print_newline ())
       end
 
-    let prehash r ir = 
+(*    let prehash r ir = 
       let sol = prehash r ir in 
       let _ = print_prehash sol in 
-        sol
+        sol*)
 
     let compare_id a b = 
       let get_id l = fst(fst l) in 
