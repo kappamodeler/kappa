@@ -286,13 +286,15 @@ module CBnG =
       |	_ ->  error_frozen 260 "Unknown control command in Cbng.gen_order" (fun () -> raise Exit)
       
 	    
-	    
-	    
+   
     let prehash r ir = 
       (List.sort compare (list_map (fun a -> gen_order a ir) r.cpb_control.cpb_update),
        List.sort compare (IntSet.fold  (fun a s -> (snd (ir.id_mapping a))::s) r.cpb_control.cpb_remove []),
        List.sort compare (IntSet.fold  (fun a s -> (snd (ir.id_mapping a))::s) r.cpb_control.cpb_create []))
-    
+   
+   	    
+	    
+ 
     let print_prehash (l,l2,l3) = 
       let print_agent a = print_string a in 
       let print_site (a,s) = print_agent a;print_string ",";print_string s in 
@@ -327,6 +329,11 @@ module CBnG =
 	 print_newline ())
       end
 
+    let prehash r ir = 
+      let sol = prehash r ir in 
+      let _ = print_prehash sol in 
+        sol
+
     let compare_id a b = 
       let get_id l = fst(fst l) in 
       compare (get_id a) (get_id b)
@@ -345,7 +352,7 @@ module CBnG =
        (List.sort 
 	     (fun a b -> 
 	       match a,b with 
-		 Check i,Check j ->0 (* compare i j*)
+		 Check i,Check j ->compare i j
 	       | Check i,_ -> -1
 	       | _,Check i -> 1
 	       | _ -> 0) l)  
