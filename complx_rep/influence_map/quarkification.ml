@@ -154,7 +154,8 @@ let quarkify cpb contact rule =
 	      Bind ((a,s),(a',s')) -> 
 		let aid = specie a in
 		let aid' = specie a' in
-		  (QSet.add (ql(aid,s,aid',s')) mp)
+		  (QSet.add (ql(aid,s,aid',s')) 
+                     (QSet.remove (QF(aid,s)) (QSet.remove (QF(aid',s')) mp)))
 		   ,
 		 let mn' = 
 		   if 
