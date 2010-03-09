@@ -100,7 +100,7 @@ type 'a pipeline = {
     dump_html_output: file_name -> 'a step;
     save_options: 'a step ;
     good_vertice: file_name -> prefix -> output_channel -> StringSet.t option * output_channel ;
-    template: file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> 'a step ;
+    template: file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> 'a step ;
     integrate: file_name -> 'a step;
     dump_potential_cycles: precision -> 'a step;
     refine_system_to_avoid_polymers: 
@@ -1496,7 +1496,7 @@ module Pipeline =
 	           | Some a -> Some pb,(l,m),a 
 	               
      and template = 
-	 (fun file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 file11 file12  file13 file14 file15 file16 file17 file18 file19 file20 file21 file22 prefix pb (l,m) ->
+	 (fun file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 file11 file12  file13 file14 file15 file16 file17 file18 file19 file20 file21 file22 file23 prefix pb (l,m) ->
 	   let prefix' = add_suffix prefix "template" in 
 	   let _ = print_option prefix (Some stdout) "Starting ODE generation\n" in
 	   
@@ -1586,6 +1586,7 @@ module Pipeline =
 			 file20
 			 file21
                          file22 
+                         file23
 		         prefix 
                          pb  
                          (l,m))
@@ -1671,6 +1672,7 @@ module Pipeline =
 				                           file20
 				                           file21
 				                           file22
+                                                           file23 
                                                            {project=A.project;
 				                            export_ae = A.export_ae;
 				                            restore = A.restore_subviews;
@@ -2207,7 +2209,7 @@ module Pipeline =
 	 with 
 	   Exception _ -> None,c);
        template = 
-	   (fun a b c d e f g h i j k l m n o p q r s t u v w -> handle_errors_step (Some "Complx") (Some "template") (template a b c d e f g h i j k l m n o p q r s t u v w));
+	   (fun a b c d e f g h i j k l m n o p q r s t u v w x -> handle_errors_step (Some "Complx") (Some "template") (template a b c d e f g h i j k l m n o p q r s t u v w x));
        find_potential_cycles = (fun a -> handle_errors_step (Some "Complx") (Some "find_potential_cycles") (find_potential_cycles a));
        dump_potential_cycles = (fun a -> handle_errors_step (Some "Complx") (Some "dump_potential_cycles") (dump_potential_cycles a)) ;
        find_connected_components = (fun a -> handle_errors_step (Some "Complx") (Some "find_connected_components") (find_connected_components a));

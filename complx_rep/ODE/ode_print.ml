@@ -823,7 +823,7 @@ let print_mod print bool map x =
 
 
 
-let pprint_ODE_head print print_obs print_activity file_main file file_jac file_size file_activity file_obs perturb map map2  = 
+let pprint_ODE_head print print_obs print_activity print_perturb file_main file file_jac file_size file_activity file_obs file_perturb perturb map map2  = 
   let print_latex = keep_latex print in 
   let print = remove_latex print in 
   let print_main = {print with matlab_aux = None ; matlab_jacobian = None ; matlab_size = None;matlab_activity = None ;matlab_obs = None  } in
@@ -874,6 +874,17 @@ let pprint_ODE_head print print_obs print_activity file_main file file_jac file_
          pprint_string print_aux "end;\n")
       perturb.Experiment.perturbations_unfun
   in 
+  (*TMPCODE for Ty*)
+  let _ =  pprint_string print_perturb (Tools.cut file); (*dump file name*) in 
+  let _ =
+    Mods2.IntMap.iter 
+      (fun i perturb -> 
+         pprint_string print_perturb (string_of_int i); (*dump perturb index*)
+         print_mod print_perturb true map2 perturb.Experiment.modif_unfun_unfun; (*dump perturb expression*) 
+         pprint_string print_perturb "\n")
+      perturb.Experiment.perturbations_unfun
+  in 
+    (*END TMPCODE for TY*)
   let _ = pprint_string print_aux ("\n\ndydt=zeros("^size^",1);\n\n") in 
   let _ = pprint_string print_jac ("function Jac="^(Tools.cut file_jac)^"(t,y)\n\nJac = sparse("^size^","^size^");\n\n\nglobal perturbation_trigger;\nglobal k;\n\nobs_temp="^(Tools.cut file_obs)^"(y);\n\n") in 
   let _ = 

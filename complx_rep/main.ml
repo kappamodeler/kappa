@@ -159,6 +159,7 @@ let main ()  =
     if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
     then 
       methods.template 
+        (!Config_complx.output_ODE_perturbation)
 	(!Config_complx.output_ODE_contact) 
 	(!Config_complx.output_ODE_covering) 
 	(!Config_complx.output_ODE_covering_latex)

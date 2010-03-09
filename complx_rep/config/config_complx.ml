@@ -162,6 +162,7 @@ let skip_a_specie   = ref ""      (*to be printed when an agent can be fully abs
 let ode_memoization_level = ref 1
 let output_latex_rule_system = ref ""
 let output_latex_sty = ref ""
+let output_ODE_perturbation = ref ""
 let output_ODE_xml = ref "" 
 let output_ODE_latex = ref ""
 let output_ODE_obs_head = ref ""
@@ -392,6 +393,7 @@ let options = List.rev
 "--output-ODE-latex","_plx_ODE_system.tex";
 "--output-ODE-contact","_plx_ODE_contact.dot";
 (*"--output-ODE-mathematica","_plx_ODE_system.nb";*)
+"--output-ODE-perturbation","_plx_ODE_system_perturbation.m";
 "--output-ODE-octave-aux","_plx_ODE_system_aux.m";
 "--output-ODE-octave-init","_plx_ODE_system_init.m";
 "--output-ODE-octave-size","_plx_ODE_system_size.m";
@@ -482,65 +484,69 @@ let options = List.rev
   String output_gathered_boolean_encoding,
   "write the boolean encoding with isolated rules (gathered)",
   ["2_Output'";"Boolean encoding"],Expert;
+"--output-ODE-perturbation",
+  String output_ODE_perturbation,
+  "write the octave/matlab code for perturbations",
+  ["2_Output'";"ODE_output"],Normal;
 "--output-ODE-contact",
   String output_ODE_contact,
   "write the annotated(for ODE) contact map in a dot file",
-  ["2_Output'";"ODE"],Normal;
+  ["2_Output'";"ODE_output"],Normal;
 "--output-ODE-mathematica",
   String output_ODE_mathematica,
   "write the ODE system in a mathematica file",
-  ["2_Output'";"ODE"],Normal;
+  ["2_Output'";"ODE_output"],Normal;
 "--output-ODE-octave",
   String output_ODE_octave,
   "write the ODE system in a octave file",
-  ["2_Output'";"ODE"],Normal;
+  ["2_Output'";"ODE_output"],Normal;
 "--output-ODE-octave-activity",
   String output_ODE_octave_activity,
   "write the activity of rules in a octave file",
-  ["2_Output'";"ODE"],Normal;
+  ["2_Output'";"ODE_output"],Normal;
 "--output-ODE-octave-init",
   String output_ODE_octave_init,
   "write the initial concentration of fragments in a octave file",
-  ["2_Output'";"ODE"],Normal;    
+  ["2_Output'";"ODE_output"],Normal;    
 "--output-ODE-octave-obs",
   String output_ODE_octave_obs,
   "write the activity of observables in a octave file",
-  ["2_Output'";"ODE"],Normal;
+  ["2_Output'";"ODE_output"],Normal;
 
 "--output-ODE-octave-aux",
   String output_ODE_octave_aux,
   "write the ODE auxilliary functions in a octave file",
-      ["2_Output'";"ODE"],Normal;
+      ["2_Output'";"ODE_output"],Normal;
 "--output-ODE-octave-jacobian",
       String output_ODE_octave_jacobian,
       "write the ODE jacobian  in a octave file",
-      ["2_Output'";"ODE"],Normal;
+      ["2_Output'";"ODE_output"],Normal;
 "--output-ODE-octave-size",
   String output_ODE_octave_size,
   "write the dimmension of the ODE in a octave file",
-  ["2_Output'";"ODE"],Normal;
+  ["2_Output'";"ODE_output"],Normal;
 "--output-ODE-latex",
   String output_ODE_latex,
   "write the ODE in latex mode",
-  ["2_Output'";"ODE";"LATEX"],Normal;
+  ["2_Output'";"ODE_output";"LATEX"],Normal;
 "--output-ODE-gplot",
       String output_ODE_gplot,
       "write the ODE gplot script",
-      ["2_Output'";"ODE"],Normal;
+      ["2_Output'";"ODE_output"],Normal;
 "--output-ODE-png",
       String output_ODE_png,
       "write the ODE graphs",
-      ["2_Output'";"ODE"],Normal;
+      ["2_Output'";"ODE_output"],Normal;
 
 "--output-ODE-script",
       String output_ODE_script,
       "write a script to (re)grenerate the plot",
-      ["2_Output'";"ODE"],Normal;
+      ["2_Output'";"ODE_output"],Normal;
 
 "--output-ODE-obs-latex",
   String output_ODE_obs_latex,
   "write the observable in latex mode",
-  ["2_Output'";"ODE";"LATEX"],Normal;
+  ["2_Output'";"ODE_output";"LATEX"],Normal;
 "--output-latex-sty",
   String output_latex_sty,
   "write the style file for a model",
@@ -548,29 +554,29 @@ let options = List.rev
 "--output-ODE-alphabet",
   String output_ODE_alphabet,
   "write the ODE alphabet",
-  ["2_Output'";"ODE"],Normal;
+  ["2_Output'";"ODE_output"],Normal;
 "--output-ODE-covering",
   String output_ODE_covering,
   "dump the covering classes for each agent type",
-  ["2_Output'";"ODE"],Normal;
+  ["2_Output'";"ODE_output"],Normal;
 "--output-ODE-covering-latex",
   String output_ODE_covering_latex,
   "dump the covering classes for each agent type",
-  ["2_Output'";"ODE";"LATEX"],Normal;
+  ["2_Output'";"ODE_output";"LATEX"],Normal;
 "--output-ODE-obs",
   String output_ODE_obs,
   "write the set of obervables tracked in the ODE",
-  ["2_Output'";"ODE"],Normal;
+  ["2_Output'";"ODE_output"],Normal;
 "--output-ODE-obs-head",
   String output_ODE_obs_head,
   "write the preamble of the data file",
-  ["2_Output'";"ODE"],Normal;
+  ["2_Output'";"ODE_output"],Normal;
 "--output-ODE-data",  String output_ODE_data,
   "write plots coordinate",
-  ["2_Output'";"ODE"],Normal;
+  ["2_Output'";"ODE_output"],Normal;
 "--output-ODE-xml", String output_ODE_xml,
   "write datas in an XML output",
-  ["2_Output'";"ODE"],Normal;
+  ["2_Output'";"ODE_output"],Normal;
 "--output-pack-constraints",
  String output_pack_value_file,
  "dump contraints among sites in a file",["2_Output'";"Reachability analysis"],Normal;

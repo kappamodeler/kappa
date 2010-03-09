@@ -147,7 +147,7 @@ let print_log s =
 
 
 
-let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_matlab_act file_ODE_matlab_obs file_ODE_matlab_init file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_ODE_data_head file_data_foot file_ODE_data file_ODE_gplot file_ODE_png file_ODE_script file_XML ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs  exp (l,m) = 
+let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_matlab_act file_ODE_matlab_obs file_ODE_matlab_init file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_ODE_data_head file_data_foot file_ODE_data file_ODE_gplot file_ODE_png file_ODE_script file_XML ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs  exp (l,m) = 
   
  
   let n_perturbation = 
@@ -189,7 +189,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
     else None in
 (*  let set_print = f in *)
     
- 
+  let print_ODE_perturbation  = f MATLAB file_ODE_perturbation in 
   let print_data = f DATA file_ODE_data_head  in 
   let print_matlab = f MATLAB file_ODE_matlab in
   let print_matlab_aux = f MATLAB file_ODE_matlab_aux in 
@@ -228,6 +228,20 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       StringMap.find x cpb.Pb_sig.cpb_interface_of_agent 
     with 
       Not_found -> error 202 in 
+  let print_ODE_perturbation = 
+     {dump = None;
+     data = None;
+     txt = None;
+     kappa = None;
+     mathematica = None;
+     latex = None;
+     matlab = print_ODE_perturbation;
+     matlab_aux = None;
+     matlab_jacobian = None;
+     matlab_size = None ;
+     matlab_activity = None;
+     matlab_obs = None ;
+     matlab_init = None } in
 
   let print_ODE_jacobian = 
     {dump = None;
@@ -624,7 +638,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
   in 
 
  
-  let _ = pprint_ODE_head print_ODE print_ODE_matlab_obs print_ODE_matlab_activity file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_jacobian file_ODE_matlab_size file_ODE_matlab_act file_ODE_matlab_obs exp obs_map_inv flag_map_inv in 
+  let _ = pprint_ODE_head print_ODE print_ODE_matlab_obs print_ODE_matlab_activity print_ODE_perturbation file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_jacobian file_ODE_matlab_size file_ODE_matlab_act file_ODE_matlab_obs file_ODE_perturbation exp obs_map_inv flag_map_inv in 
 
         
   let _ = print_log "COMPUTE ANNOTATED CONTACT MAP" in
@@ -3890,7 +3904,7 @@ let compute_ode  file_ODE_contact file_ODE_covering file_ODE_covering_latex file
       List.fold_left
 	(fun set x -> channel_set x set)
 	CSet.empty
-	[print_ODE_matlab;print_ODE_matlab_aux;print_ODE_matlab_activity;print_ODE_matlab_init;print_ODE_matlab_obs;print_ODE_matlab_aux;print_ODE;print_obs;print_debug;print_obs_latex] in 
+	[print_ODE_matlab;print_ODE_matlab_aux;print_ODE_matlab_activity;print_ODE_matlab_init;print_ODE_matlab_obs;print_ODE_matlab_aux;print_ODE;print_obs;print_debug;print_obs_latex;print_ODE_perturbation] in 
     let chanset = 
       CSet.remove stdout chanset in 
     let _ = CSet.iter  close_out chanset in

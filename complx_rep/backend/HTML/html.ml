@@ -182,6 +182,17 @@ let print_ODE_system_octave_data pb channel =
   else 
     null 
 
+let print_ODE_system_octave_perturbation pb channel = 
+  if (!Config_complx.do_ODE) or (!Config_complx.integrate_ODE)
+  then 
+    precomputed_data 
+      channel 
+      (!Config_complx.output_ODE_perturbation)
+      "Perturbation (octave)"
+  else 
+    null 
+
+
 let print_dag_refinement pb channel = 
   if is_dag_refinement_relation_jpg pb (!Config_complx.output_dag_ref_jpg)
   then 
@@ -451,6 +462,7 @@ let dump_html pb channel (l,m)  =
 	print_ODE_system_octave_activity pb channel;
 	print_ODE_system_octave_obs pb channel;
 	print_ODE_system_octave_init pb channel;
+        print_ODE_system_octave_perturbation pb channel;
 	print_ODE_system_octave_size pb channel]
       else 
 	[]))
