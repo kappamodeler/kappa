@@ -910,7 +910,6 @@ let translate_rule_list l init interface  messages =
              (fun interface list sol -> (interface,list)::sol)
              map []
          in 
-         print_int (List.length liste);
          match liste with [] | [_] -> messages
            | _ -> 
                (List.fold_left 
