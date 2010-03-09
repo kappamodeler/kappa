@@ -465,25 +465,25 @@ let options = List.rev
 "--output-low-res-contact-map-jpg",String output_low_res_contact_jpg_file,
     "write the low resolution contact map with a .jpg format",["2_Output";"Contact map"],Normal;
 "--output-low-res-contact-map-txt",String output_low_res_contact_txt_file,
-    "write the low resolution contact map with a .txt format",["2_Output'";"Contact map"],Normal;
+    "write the low resolution contact map with a .txt format",["2_Output";"Contact map"],Normal;
 "--output-high-res-contact-map-dot",String output_high_res_contact_dot_file,
-    "write the high resolution contact map with a .dot format",["2_Output'";"Contact map"],Normal;
+    "write the high resolution contact map with a .dot format",["2_Output";"Contact map"],Normal;
 "--output-high-res-contact-map-ps",String output_high_res_contact_ps_file,
-    "write the high resolution contact map with a .ps format",["2_Output'";"Contact map"],Normal;
+    "write the high resolution contact map with a .ps format",["2_Output";"Contact map"],Normal;
 "--output-high-res-contact-map-jpg",String output_high_res_contact_jpg_file,
-    "write the high resolution contact map with a .jpg format",["2_Output'";"Contact map"],Normal;
+    "write the high resolution contact map with a .jpg format",["2_Output";"Contact map"],Normal;
 "--output-high-res-contact-map-txt",String output_high_res_contact_txt_file,
-    "write the high resolution contact map with a .txt format",["2_Output'";"Contact map"],Normal;
+    "write the high resolution contact map with a .txt format",["2_Output";"Contact map"],Normal;
 "--output-intermediate-encoding",String output_cbng,
     "write the intermediate encoding", ["2_Output'";"Intermediar encoding"],Expert;
 "--output-gathered-intermediate-encoding",String output_gathered_cbng,
-    "write the intermediate endoding (gathered)",["2_Output'";"Intermediar encoding"],Expert;
+    "write the intermediate endoding (gathered)",["2_Output";"Intermediar encoding"],Expert;
 "--output-boolean-encoding",String output_boolean_encoding,
-    "write the boolean encoding with isolated rules",["2_Output'";"Boolean encoding"],Expert;
+    "write the boolean encoding with isolated rules",["2_Output";"Boolean encoding"],Expert;
 "--output-gathered-boolean-encoding",
   String output_gathered_boolean_encoding,
   "write the boolean encoding with isolated rules (gathered)",
-  ["2_Output'";"Boolean encoding"],Expert;
+  ["2_Output";"Boolean encoding"],Expert;
 "--output-ODE-perturbation",
   String output_ODE_perturbation,
   "write the octave/matlab code for perturbations",
@@ -581,45 +581,45 @@ let options = List.rev
  String output_pack_value_file,
  "dump contraints among sites in a file",["2_Output'";"Reachability analysis"],Normal;
 "--output-reachable-complexes",String output_reachable_complexes,
-  "write the reachable species (or just their number)  in a file",["2_Output'";"Concretization";"Reachability analysis"],Normal;
+  "write the reachable species (or just their number)  in a file",["2_Output''";"Concretization";"Reachability analysis"],Normal;
 "--output-specie-map",String output_specie_map,
-  "write the specie map in a file",["2_Output'";"Reachability analysis"],Normal;
+  "write the specie map in a file",["2_Output''";"Reachability analysis"],Normal;
 "--output_dag_ref_dot",String output_dag_ref_dot,
 "dump the dag-like refinement relation in a dot file",
-["2_Output'";"Refinement detection"],Normal;
+["2_Output''";"Refinement detection"],Normal;
 "--output_dag_ref_jpg",String output_dag_ref_jpg,
 "dump the dag-like refinement relation in a jpg file",
-["2_Output'";"Refinement detection"],Normal;
+["2_Output''";"Refinement detection"],Normal;
 "--output_maximal_ref_dot",String output_maximal_ref_dot,
 "dump the maximal refinement relation in a dot file",
-["2_Output'";"Refinement detection"],Normal;
+["2_Output''";"Refinement detection"],Normal;
 "--output_maximal_ref_jpg",String output_maximal_ref_jpg,
 "dump the maximal refinement relation in a jpg file",
-["2_Output'";"Refinement detection"],Normal;
+["2_Output''";"Refinement detection"],Normal;
 "--output-latex-rule-system",String output_latex_rule_system,
 "dump the rules in latex format",
-["2_Output'";"LATEX"],Normal;
+["2_Output''";"LATEX"],Normal;
 "--output-latex-version",String output_latex_version,
 "dump the version information in latex format",
-["2_Output'";"LATEX"],Normal;
+["2_Output''";"LATEX"],Normal;
 "--output-latex-stat",String output_latex_stat,
 "dump the computation stat in latex format",
-["2_Output'";"LATEX"],Normal;
+["2_Output''";"LATEX"],Normal;
 "--output-latex-fragment",String output_latex_fragment,
 "dump the number of fragments in latex format",
-["2_Output'";"LATEX"],Normal;
+["2_Output''";"LATEX"],Normal;
 "--output-latex-rules",String output_latex_rules,
 "dump the number of rules in latex format",
-["2_Output'";"LATEX"],Normal;
+["2_Output''";"LATEX"],Normal;
 "--output-latex-species",String output_latex_species,
 "dump the number of species in latex format",
-["2_Output'";"LATEX"],Normal;
+["2_Output''";"LATEX"],Normal;
 "--output-xml",String output_xml,
-    "write an xml file",["2_Output'";"XML"],Normal;
+    "write an xml file",["2_Output''";"XML"],Normal;
 "--output-html",String output_html,
-    "write an html file",["2_Output'";"HTML"],Normal;
+    "write an html file",["2_Output''";"HTML"],Normal;
 "--output-marshalling",String output_marshalling,
-    "marshallize the computation state",["2_Output'";"Marshalling"],Normal;
+    "marshallize the computation state",["2_Output''";"Marshalling"],Normal;
 
 "--truc3",Void,"",["Compression";"Contact map";"Intermediar encoding";"Boolean encoding";"Reachability analysis";"Marshalling";"Influence map"],Normal;
 
