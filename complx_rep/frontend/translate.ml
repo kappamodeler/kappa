@@ -905,9 +905,6 @@ let translate_rule_list l init interface  messages =
    let messages = 
     StringMap.fold
       (fun ag map messages  -> 
-         print_string "AG:";
-         print_string ag;
-         print_newline ();
          let liste = 
            StringListMap.fold 
              (fun interface list sol -> (interface,list)::sol)
