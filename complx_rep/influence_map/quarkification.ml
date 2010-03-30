@@ -66,7 +66,7 @@ let quarkify cpb contact rule =
         IntMap.add a (StringMap.add s (upgrade old_site b) old) map  in
       let get (a,s) map = 
         try 
-	  let ag = IntMap.find a map 
+	  let _ = IntMap.find a map 
           in 
             try StringMap.find s (IntMap.find a map)
 	    with Not_found -> UNKNOWN 
