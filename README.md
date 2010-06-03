@@ -42,5 +42,5 @@ If you do not have local root privileges, you may use the following:
 
 For more information, see:
 
-[http://github.com/kappamodeler/kappa/raw/master/doc/Complx_API.pdf] (Complex API pdf)
+[http://github.com/kappamodeler/kappa/raw/master/doc/Complx_API.pdf](Complex API pdf)
 
