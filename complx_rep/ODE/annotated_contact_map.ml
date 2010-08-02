@@ -656,7 +656,7 @@ let compute_annotated_contact_map_in_compression_mode system cpb contact_map  =
                           match x 
                           with 
                               L((_,b,c),(_,e,f)),true
-                            |AL((_,b,c),(e,f)),true 
+(*                            |AL((_,b,c),(e,f)),true : JF:08/02/2010: Binding type do not cause information leakage!!! *)
                                 -> String22Set.add ((b,c),(e,f)) solid_edges
                             | _ -> solid_edges)
                        solid_edges guard.injective_guard)
