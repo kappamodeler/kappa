@@ -1214,7 +1214,7 @@ module Pipeline =
 				                              IntMap.iter 
 				                                (fun a b -> 
 				                                   (IntSet.iter 
-					                              (fun b -> Printf.fprintf x "\"%s\"-|\"%s\" [color=red] \n" 
+					                              (fun b -> Printf.fprintf x "\"%s\"->\"%s\" [color=red arrowhead=tee] \n" 
 					                                 (name_of_rule (f a)) 
 					                                 (name_of_rule (f b)))
 					                              b)) (snd rep)
