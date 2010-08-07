@@ -1,8 +1,9 @@
 (* 13/04/2007 *)
-(* Static analysis of BNG systems*)
-(* Jerome Feret pour PlectiX *)
+(* Static analysis of Kappa systems*)
+(* Jerome Feret for openKappa *)
 (* Complexes enmeration *)
 (* concretization.ml *)
+(* Last mod: 2010/08/07*)
 
 open Tools
 open Data_structures 
@@ -139,9 +140,14 @@ let test sol spec =
       if path = [] 
       then true 
       else 
-	let add path succ succ'= 
-	  match path with t::q  when t=succ' -> q
-	  | _ -> succ::path in 
+	let add path succ = 
+	  match path with 
+	    | [] -> [succ]
+	    | t::q  -> 
+		if succ = StringListMap.find path map3 
+		then q 
+		else succ::path
+	in 
 	let rec check p p' old = 
 	  let ag = try (StringListMap.find p map1) with Not_found -> (raise Exit) in 
 	  begin 
@@ -153,7 +159,7 @@ let test sol spec =
 		| a::q -> 
 		    begin
 		      let a' = StringListMap.find (a::p) map3 in 
-		      let r = check (a::p) (add p' a a') (Some a') in  
+		      let r = check (a::p) (add p' a) (Some a') in  
 		      if r=0 
 		      then 
 			aux q 
