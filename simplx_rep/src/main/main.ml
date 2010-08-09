@@ -8,7 +8,7 @@ open Key
 open Error_handler 
 
 let usage_msg = "SimPlx "^version^": \n"^"Usage is simplx --[sim|compile|cflow] file.ka "
-let version_msg = "SIMulator by PLectiX: "^version^"\n"^key_version
+let version_msg = "simplx : "^version^"\n"^key_version^"\nAuthors: Jean Krivine (CNRS) \n\nIf you use these programs in your work, please cite: \n\n* V. Danos, J. Feret, W. Fontana and J. Krivine, \"Scalable simulation of cellular signalling networks\", Lecture Notes in Computer Science 4807:139--157 (2007)"
 
 let main =
   let options = [ 

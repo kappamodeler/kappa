@@ -293,10 +293,11 @@ let node_shape n =
   | _ -> "octagon"
 
 
-let simplxname = "SIMulator by PLectiX:  simplx "^Data.version
-let complxname = "COMpressor by PLectiX: complx "^version 
+let simplxname = "simplx "^Data.version
+let complxname = "complx "^version 
 let sepname = "\n"
-let headline = ["This file has been automatically computed by the PLECTIX Compressor prototype.";simplxname;complxname;"Git commit date is "^date_commit]
+let authors = "Authors: Jerome Feret (INRIA) and Jean Krivine (CNRS)\nIf you use these programs in your work, please cite:\n\n* V. Danos, J. Feret, W. Fontana and J. Krivine, \"Scalable simulation of cellular signalling networks\", Lecture Notes in Computer Science 4807:139--157 (2007)\n\n* V. Danos, J. Feret, W. Fontana and J. Krivine, \"Abstract interpretation of cellular signalling networks\", Lecture Notes in Computer Science, 4905:83--97 (2008)"
+let headline = ["This file has been automatically computed by complx.";simplxname;complxname;"Git commit date is "^date_commit; " " ; authors ]
 
 let head = ref ("\n\n ******************************************************************************************\n 
 "^(List.fold_right (fun a b -> a^"\n"^b) headline "")^
