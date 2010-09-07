@@ -234,15 +234,15 @@ let dump_a_rule channel  r =
       |	Mark((x,s),m) -> print "MARK %d,%s,%s;\n" x s m
       | Check_choice l -> (print "CHECK_CHOICE:";
                           let _ = List.fold_left 
-			     (fun bool a -> 
+			     (fun bool (a,i) -> 
 				  ((if bool then print ",");
-                                   print "%d" a;
+                                   print "%d(%d)" a i;
                                    true))
                                   false l in 
                            print "\n")
                                   
       
-      |	Check_seq (x1,x2) -> print "CHECK_SEQ  %d,%d;\n" x1 x2 
+      |	Check_seq ((x1,i1),(x2,i2)) -> print "CHECK_SEQ  %d(%d),%d(%d);\n" x1 i1 x2 i2 
       | Check x -> print "CHECK %d;\n" x
       | Release((x,sx),(y,sy)) -> print "RELEASE %d,%s,%d,%s;\n" x sx y sy 
       | Break_half  (x,sx) -> print "Release 1/2 %d,%s" x sx

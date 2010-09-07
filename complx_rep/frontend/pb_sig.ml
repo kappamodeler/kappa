@@ -199,8 +199,8 @@ type action =
   | Mark of (id*cpb_site)*mark
   | Release of (id*cpb_site)*(id*cpb_site)
   | Break_half of (id*cpb_site)
-  | Check_choice of id list 
-  | Check_seq of id*id 
+  | Check_choice of (id*int) list 
+  | Check_seq of (id*int)*(id*int) 
   | Check of id 
   | No_Helix
   | No_Pol

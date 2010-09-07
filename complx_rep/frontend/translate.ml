@@ -102,7 +102,9 @@ let enrich_ms a ms =
 	  )
     a
     ms
-    
+
+
+       
 let translate_init_elt t interface_map interface_marks_map interface_origin marks_origin (agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel,cpt,contact) messages logn = 
   let _ = trace_print "BEGIN_TRANSLATE_INIT\n" in 
   let speciemap = 
@@ -306,8 +308,7 @@ let translate_init t  interface interface_marked interface_origin marks_origin s
   (interface,interface_marked,interface_origin,marks_origin,[],sol,messages) t 
   in
   interface,interface_marked,interface_origin,marks_origin,Some a,b,c
-     
-    
+
 let translate_rule t flags interface_map interface_marks_map interface_origin marks_origin usage_map usage_marks_map site_origin msite_origin fset (agents,marks,unmarkable_sites,markable_sites,linkable_sites,mark_site_rel,cpt,contact) messages logn = 
   let mods_handler = 
     (Mods2.IntMap.fold,
@@ -410,28 +411,37 @@ let translate_rule t flags interface_map interface_marks_map interface_origin ma
       StringMap.add a (StringSet.add x old) map 
   in 
   let test=[] in 
-  let test,graph,contact,bs = 
+  let get_size_of i size_of = 
+    try (IntMap.find i size_of) 
+      with Not_found -> 0 
+  in 
+  let inc_size_of i size_of = 
+      IntMap.add i ((get_size_of i size_of)+1) size_of 
+  in 
+  let test,graph,contact,bs,size_of = 
     Mods2.IntMap.fold
       (fun _ cc -> 
 	 Solution.PA.fold 
-	   (fun (i1,s1) (i2,s2) (test,g,c,bs) ->
+	   (fun (i1,s1) (i2,s2) (test,g,c,bs,size_of) ->
 	     let i1 = sigma i1 in
 	     let i2 = sigma i2 in 
+	     let size_of = inc_size_of i1 (inc_size_of i2 size_of) in 
 	      (if compare (i1,s1) (i2,s2) < 0 then 
 		 (Pb_sig.Is_related((i1,s1),(i2,s2))::test,
 		  fadd_g i1 i2 g,
 		  fadd_contact (i1,s1) (i2,s2) c,
-		  IntStringSet.add (i1,s1) (IntStringSet.add (i2,s2) bs))
+		  IntStringSet.add (i1,s1) (IntStringSet.add (i2,s2) bs),
+		  size_of)
 	       else 
-		 (test,g,c,bs)))
+		 (test,g,c,bs,size_of)))
 	   cc.Solution.links)
-      t.Rule.lhs  (test,IntMap.empty,contact,IntStringSet.empty)
+      t.Rule.lhs  (test,IntMap.empty,contact,IntStringSet.empty,IntMap.empty)
   in
-  let test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,usage_marks_map,site_origin,msite_origin = 
+  let test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,usage_marks_map,site_origin,msite_origin,size_of = 
     Mods2.IntMap.fold 
       (fun _ cc -> 
 	Solution.AA.fold 
-	  (fun i a (test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,usage_marks_map,site_origin,msite_origin) ->
+	  (fun i a (test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,usage_marks_map,site_origin,msite_origin,size_of) ->
 	    let i = sigma i in 
 	    let ig = 
 	      try 
@@ -441,8 +451,9 @@ let translate_rule t flags interface_map interface_marks_map interface_origin ma
 		    error_frozen "translate_rule" (fun () -> raise Exit) 
 	    in 
 	    let test = (Pb_sig.Is_here(i))::test in 
+	    let size_of = inc_size_of i size_of in 
 	    Agent.fold_interface 
-	      (fun s (m1,m2) (test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,usage_marks_map,site_origin,msite_origin)-> 
+	      (fun s (m1,m2) (test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,usage_marks_map,site_origin,msite_origin,size_of)-> 
 		 let usage_map,site_origin = 
 		   if s="_" then usage_map,site_origin
 		   else 
@@ -450,34 +461,39 @@ let translate_rule t flags interface_map interface_marks_map interface_origin ma
                       add_site_origin ig s (Rule t) site_origin
                      )
 		 in 
-		 let msite_origin,usage_marks_map,test,marks,markable_sites,mark_site_rel = 
-		  match m1 with Agent.Wildcard -> (msite_origin,usage_marks_map,test,marks,markable_sites,mark_site_rel)
+		 let msite_origin,usage_marks_map,test,marks,markable_sites,mark_site_rel,size_of = 
+		  match m1 with Agent.Wildcard -> (msite_origin,usage_marks_map,test,marks,markable_sites,mark_site_rel,size_of)
 		  | Agent.Marked m -> 
 		      (add_site_origin ig s (Rule t) msite_origin,
                        fadd_site ig s usage_marks_map,
                         Pb_sig.Is_marked((i,s),m)::test,
 		       StringSet.add m marks,
 		       fadd i s markable_sites,
-		       fadd_mark_site (i,s) m mark_site_rel)
+		       fadd_mark_site (i,s) m mark_site_rel,
+		       inc_size_of i size_of )
 		  | _ -> (print_string "translate";print_newline ();raise Exit)
 		 in 
-		 let test,linkable_sites = 
-		   match m2 with Agent.Wildcard -> test,linkable_sites
+		 let test,linkable_sites,size_of = 
+		   match m2 with Agent.Wildcard -> test,linkable_sites,size_of
 		     | Agent.Free -> 
 			 if s="_" 
-			 then (test,linkable_sites) 
+			 then (test,linkable_sites,size_of) 
 			 else 
 			   ((Pb_sig.Is_free (i,s)):: test,
-                            fadd i s linkable_sites)
+                            fadd i s linkable_sites,
+			    inc_size_of i size_of)
 		     | Agent.Bound ->  
 			 if IntStringSet.mem (i,s) bs
-		      then (test,fadd i s linkable_sites)
+			 then (test,fadd i s linkable_sites,inc_size_of i size_of)
 			 else 
 			   ((Pb_sig.Is_bound (i,s))::test,
-			    fadd i s linkable_sites)
-		     | _ -> (print_string "translate.184";print_newline ();raise Exit)
+			    fadd i s linkable_sites,
+			    inc_size_of i size_of)
+		     | _ -> (print_string "translate.184";
+			     print_newline ();
+			     raise Exit)
 		 in 
-		   test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,usage_marks_map,site_origin,msite_origin)
+		   test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,usage_marks_map,site_origin,msite_origin,size_of)
 	      a
 	      (test,
                StringSet.add (Agent.name a) agents,
@@ -488,10 +504,11 @@ let translate_rule t flags interface_map interface_marks_map interface_origin ma
                usage_map,
                usage_marks_map,
                site_origin,
-               msite_origin))
+               msite_origin,
+	       size_of))
 	  cc.Solution.agents)
       t.Rule.lhs 
-      (test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,usage_marks_map,site_origin,msite_origin)
+      (test,agents,marks,markable_sites,linkable_sites,mark_site_rel,usage_map,usage_marks_map,site_origin,msite_origin,size_of)
   in 
   
   let permute (i1,s1) (i2,s2) =
@@ -509,24 +526,30 @@ let translate_rule t flags interface_map interface_marks_map interface_origin ma
   let control,agents,marks,markable_sites,linkable_sites,roots,contact,mark_site_rel  = 
     Mods2.IntMap.fold
       (fun i1 a ((control,control_r),agents,m,ms,ls,roots,contact,mark_site_tel) -> 
-	let i1 = sigma i1 in 
-	 list_fold 
-	   (fun (a,_) ((control,control_r),agents,m,ms,ls,roots,contact,mark_site_rel) -> 
-	      match a with 
-		  Solution.Bind(s1,i2,s2) -> 
-		    (let i2 = sigma i2 in 
-		    (
-		    (let a1,a2 = permute (i1,s1) (i2,s2) in 
-		       (Pb_sig.Bind(a1,a2))::
-			    (Pb_sig.Check_seq(i1,i2))::
-			    control),control_r),agents,m,ms,fadd i1 s1 (fadd i2 s2 ls),
+         let i1 = sigma i1 in 
+	 let size1 = get_size_of i1 size_of in 
+	   list_fold 
+	     (fun (a,_) ((control,control_r),agents,m,ms,ls,roots,contact,mark_site_rel) -> 
+		match a with 
+		    Solution.Bind(s1,i2,s2) -> 
+		      (let i2 = sigma i2 in 
+		       let size2 = get_size_of i2 size_of in 
+		       let a1,a2 = permute (i1,s1) (i2,s2) in 
+			 (((Pb_sig.Bind(a1,a2))::
+			   (if size1<size2 then 
+			      Pb_sig.Check_seq((i2,size2),(i1,size1))
+			    else 
+			      Pb_sig.Check_seq((i1,size1),(i2,size2)))::
+			   control),control_r),agents,m,ms,fadd i1 s1 (fadd i2 s2 ls),
 		     IntSet.add i1 (IntSet.add i2 roots),
 		     fadd_contact (i1,s1) (i2,s2) contact,
 		     mark_site_rel)
 		| Solution.Break(s1,i2,s2) ->
 
-		    let i2 = sigma i2 in 
-		    (((Pb_sig.Check_choice [i1;i2])::(Pb_sig.Release((i1,s1),(i2,s2)))::control,
+		    let i2 = sigma i2 in
+		    let size2 = get_size_of i2 size_of in 
+		    (((Pb_sig.Check_choice (List.sort 
+					      (fun (a,b) (c,d) -> if b<d then 1 else -1) [(i1,size1);(i2,size2)]))::(Pb_sig.Release((i1,s1),(i2,s2)))::control,
 		      control_r),agents,m,ms,fadd i1 s1 (fadd i2 s2 ls),
 		     IntSet.add i1 (IntSet.add i1  roots),
 		     fadd_contact (i1,s1) (i2,s2) contact,
@@ -654,7 +677,16 @@ let translate_rule t flags interface_map interface_marks_map interface_origin ma
 	      then control,close
 	      else (
 		let new_comp = aux (IntSet.singleton i,[i],IntSet.singleton i) in 
-		((Pb_sig.Check_choice(IntSet.elements new_comp)::control),
+		let comp_list = IntSet.elements new_comp in 
+		let comp_annotated_list = 
+		  List.map (fun x -> x,get_size_of x size_of) comp_list
+		in
+		let ordered_list = 
+		  List.sort 
+		    (fun (_,a) (_,b) -> if a<b then 1 else -1)
+		    comp_annotated_list
+		in 
+		((Pb_sig.Check_choice(ordered_list)::control),
 		 IntSet.union close new_comp)))
 	    cc.Solution.agents (control,close))
 	t.Rule.lhs (c1,close)
@@ -690,7 +722,10 @@ let translate_rule t flags interface_map interface_marks_map interface_origin ma
 	list_fold 
 	  (fun b (c,s) -> 
 	    match b with Pb_sig.Is_related((i1,s1),(i2,s2)) when i1=i or i2 =i -> 
-	      (Pb_sig.Check_choice([i1;i2]))::
+	      let size1 = get_size_of i1 size_of in 
+	      let size2 = get_size_of i2 size_of in 
+	      (if size2>size1 then Pb_sig.Check_choice([(i2,size2);(i1,size1)])
+	       else Pb_sig.Check_choice([(i1,size1);(i2,size2)]))::
 	      Pb_sig.Release((i1,s1),(i2,s2))::c,fadd i1 s1 (fadd i2 s2 s)
 	    | _ -> (c,s))
 	  test (c,ls))

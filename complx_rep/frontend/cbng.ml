@@ -232,16 +232,16 @@ module CBnG =
 		    (fun ((id,b),l) sol -> 
 		      
 		      fst (list_fold 
-			 (fun i (sol,b) -> (
+			 (fun (i,_) (sol,b) -> (
 			   ((if (not b)  then (id,b) else (id^"."^(string_of_int i),true)),((Check i))::l)::sol,true))
 			 list 
 			 (sol,b))) q []
 		else 
 		  list_fold 
 		  (fun (id,l) sol -> 
-                    (id,list_fold (fun i sol -> (Check(i)::sol)) list l)::sol)
+                    (id,list_fold (fun (i,_) sol -> (Check(i)::sol)) list l)::sol)
 		  q []
-            | Check_seq(i1,i2) -> 
+            | Check_seq((i1,_),(i2,_)) -> 
 		if bool && (!Config_complx.duplicate_rules_when_sym)  &&  (not (ninstructions> !Config_complx.duplicate_threshold))
 		then 
 		  list_fold 
