@@ -239,8 +239,10 @@ module Pipeline =
        and dump_version prefix (l,m) =
 	 if !Config_complx.dump_version 
 	 then 
-	   (let rep = complxname^sepname^simplxname^"\n"^Key.key_version^"\n"^Config_complx.authors
-	   in (print_string rep;(l,rep::m)))
+	   (let rep = complxname^sepname^simplxname^"\n"^Key.key_version^"\n"
+
+	   in (print_string rep;
+	       List.iter (fun x -> print_string x;print_string "\n") Config_complx.authors;(l,rep::m)))
 	 else (l,m)
        and empty_channel = chrono 
 	   empty_prefix 
