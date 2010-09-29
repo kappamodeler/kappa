@@ -1,6 +1,6 @@
-(* 29/10/2009 *)
+(* 29/09/2010 *)
 (* ODE generation *)
-(* Jerome Feret pour PlectiX *)
+(* Jerome Feret pour OpenKappa *)
 (* ode_computation.ml *)
 
 open Data_structures
@@ -258,20 +258,6 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
      matlab_obs = None ;
      matlab_init = None } in
 
-(* let print_ODE_size = 
-    {dump = None;
-     data = None;
-     txt = None;
-     kappa = None;
-     mathematica = None;
-     latex = None;
-     matlab = None;
-     matlab_aux = None;
-     matlab_size= print_matlab_size;
-     matlab_jacobian= None;
-     matlab_activity = None;
-     matlab_obs = None ;
-     matlab_init = None} in*)
 
  let print_ODE_act = 
     {dump = None;
@@ -1165,16 +1151,13 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
       |	Some a -> a in 
   
 
-    let mainprod = IntSet.empty in 
-    let jacobian = Int2Set.empty in 
     let activity_map = IntMap.empty in 
     let rate_map = IntMap.empty in 
    let system = if compression_mode = Stoc then [] else system in 
     let activity = 
       List.fold_left  
-	(fun ((mainprod:IntSet.t),
-	      (jacobian:Int2Set.t),
-	      (activity_map:expr IntMap.t),
+	(fun (
+	   (activity_map:expr IntMap.t),
 	      (rate_map:float IntMap.t),
 	      (flag_map:int StringMap.t * string IntMap.t )) 
 	   x -> 
@@ -1231,7 +1214,7 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
 	      Not_found -> 
 		y in
 	  if rule_id = "EMPTY" 
-	  then mainprod,jacobian,activity_map,rate_map,flag_map
+	  then activity_map,rate_map,flag_map
 	  else 
 	    let _ = pprint_string print_ODE_latex "\\odegroup{" in 
 	    let _ = pprint_string print_ODE_latex "\\oderulename{" in 
@@ -1448,63 +1431,75 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
 	       let rate_map = 
 		 IntMap.add rule_key rate rate_map 
 	       in 
-	       let x = 
-		 Intmap.fold 
-		 (fun i l (mainprod,jacobian) ->
-		   let l = 
-		     simplify_expr 
-		       (List.fold_left 
-			  (fun a (i,j) -> 
-			    Plus(a,(Mult(Const i,j))))
-			  (Const 0) l)
-		   in 
-(*		   let funname = ((prefix_output_file^(string_of_intermediar_var flag (string_of_int i)))^".m") in *)
-		   let print_ODE = print_ODE_aux in 
-		   let _ = 
-		     match print_ODE.matlab with 
-		       None -> () 
-		     |	Some a -> 
-			 a.print_string "function z = " in 
-		   let _ = pprint_string print_ODE_latex "\\odeequ{" in
-		   
-		   let _ = print_intermediar_var {print_ODE with matlab_aux = None} flag (string_of_int i)   in
-		   let _ = 
-		     match print_ODE.matlab with 
-		       None -> ()
-		     |	Some a -> 
-			 a.print_string "(y) \n  z "
-		   in
-		   let _ = 
-		     match print_ODE.matlab_aux with 
-			 None -> () 
-		       | Some a -> 
-			   a.print_string ("dydt("^(string_of_int i)^")=dydt("^(string_of_int i)^")+")
-		   in 
-		   let _ = pprint_vart print_ODE in 
-		   let _ = pprint_assign_plus {print_ODE with matlab_aux = None} in 
-		   let _ = print_expr print_ODE true true true l in 
-		   let grad = grad l in 
-		   let jacobian = 
-		     IntMap.fold 
-		       (fun j expr jacobian -> 
+	       let _ = 
+		 Intmap.iter 
+		   (fun i l -> 
+		      let l = 
+			simplify_expr 
+			  (List.fold_left 
+			     (fun a (i,j) -> 
+				Plus(a,(Mult(Const i,j))))
+			     (Const 0) l)
+		      in 
+		      let print_ODE = print_ODE_aux in 
+		      let _ = 
+			match print_ODE.matlab with 
+			    None -> () 
+			  |	Some a -> 
+				  a.print_string "function z = " in 
+		      let _ = pprint_string print_ODE_latex "\\odeequ{" in
+			
+		      let _ = print_intermediar_var {print_ODE with matlab_aux = None} flag (string_of_int i)   in
+		      let _ = 
+			match print_ODE.matlab with 
+			    None -> ()
+			  |	Some a -> 
+				  a.print_string "(y) \n  z "
+		      in
+		      let _ = 
+			match print_ODE.matlab_aux with 
+			    None -> () 
+			  | Some a -> 
+			      a.print_string ("dydt("^(string_of_int i)^")=dydt("^(string_of_int i)^")+")
+		      in 
+		      let _ = pprint_vart print_ODE in 
+		      let _ = pprint_assign_plus {print_ODE with matlab_aux = None} in 
+		      let _ = print_expr print_ODE true true true l in 
+			(*let grad = grad l in 
+			  let jacobian = 
+			  IntMap.fold 
+			  (fun j expr jacobian -> 
 			  let _ = print_diff 
-                            print_ODE_jacobian 
-                            (Int2Set.mem (i,j) jacobian) 
-                            i 
-                            j 
-                            flag 
-                            expr in 
-			    Int2Set.add (i,j) jacobian)
-		       grad jacobian 
-		   in 
-		   let _ = pprint_commandsep print_ODE in 
-		   let _ = pprint_string print_ODE_latex "}" in 
-		   let _ = pprint_newline print_ODE in
-		   let mainprod = IntSet.add i mainprod in 
-		     (mainprod,jacobian))
+                          print_ODE_jacobian 
+                          (Int2Set.mem (i,j) jacobian) 
+                          i 
+                          j 
+                          flag 
+                          expr in 
+			  Int2Set.add (i,j) jacobian)
+			  grad jacobian 
+		   in*)
+		      let grad = grad_linear l in 
+		      let _  = 
+			List.iter
+			  (fun  (j,expr) ->
+			     let _ = 
+			       print_diff 
+				 print_ODE_jacobian 
+				 true 
+				 i
+				 j
+				 flag
+				 expr
+			     in ())
+			  grad in 
+		      let _ = pprint_commandsep print_ODE in 
+		      let _ = pprint_string print_ODE_latex "}" in 
+		      let _ = pprint_newline print_ODE in
+			())
 		 prod  
-		 (mainprod,jacobian)  in 
-	       let _ = pprint_string print_ODE_latex "}\n" in (fst x,snd x,activity_map,rate_map,flag_map) 
+	       in 
+	       let _ = pprint_string print_ODE_latex "}\n" in (activity_map,rate_map,flag_map) 
 	     end
 	   else
 	     begin 
@@ -1969,10 +1964,9 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
 	       
 	      
 	       let _ = dump_line 1686 in 
-	       let mainprod,jacobian,activity_map,rate_map = 
+	       let activity_map,rate_map = 
 		 List.fold_left  
-		   (fun (mainprod,jacobian,activity_map,
-			 (rate_map:float IntMap.t)) x -> 
+		   (fun (activity_map,rate_map) x -> 
 		     let _ = dump_line 1691 in
 		     let prod = Intmap.empty in 
 		     let rate_kin_map = (*map each connected component to the contribution in the kinetic rate *)
@@ -2948,11 +2942,7 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
       					 let product = 
 					   apply_blist_with_species ode_handler views_data_structures keep_this_link rule_id consumed_species' context_update free_sites  in 
 					 let _ = if debug then 
-					 (*  let pkey = hash_subspecies product in *)
 					   let _ = print_string "PRODUCT " in
-	(*				   let _ = print_int (fst pkey) in *)
-(*					   let _ = print_string "#" in*)
-					 (*  let _ = print_int (snd pkey) in *)
 					   let _ = print_newline () in 
 					   
 					   let _ = print_species product in 
@@ -3408,17 +3398,15 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
 			   prod 
 			   p_list 
 		       in 
-		       let x = 
-			 Intmap.fold 
-			   (fun i l 
-			      (mainprod,jacobian) ->
+		       let _  = 
+			 Intmap.iter
+			   (fun i l ->
 			      let l = 
 				List.fold_left 
 				  (fun a (i,j) -> 
 				     Plus(a,Mult(Const i,j)))
 				  (Const 0)
 				  l in 
-(*			      let funname = ((prefix_output_file^(string_of_intermediar_var flag (string_of_int i)))^".m") in *)
 			      let print_ODE = print_ODE_aux in 
 			      let _ = 
 				match print_ODE.matlab with 
@@ -3426,7 +3414,6 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
 				  |	Some a -> 
 					  a.print_string "function z = " in 
 			      let _ = pprint_string print_ODE_latex "\\odeequ{" in
-				
 			      let _ = print_intermediar_var {print_ODE with matlab_aux = None} flag (string_of_int i)   in
 			      let _ = 
 				match print_ODE.matlab with 
@@ -3444,35 +3431,48 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
 			      let _ = pprint_assign_plus {print_ODE with matlab_aux = None} in 
 			      let expr = simplify_expr l in 
 			      let _ = print_expr print_ODE true true true expr in 
-			      let grad = grad expr in 
+				(*			      let grad = grad expr in *)
+			      let grad = grad_linear l in 
 			      let _ = pprint_commandsep print_ODE in 
 			      let _ = pprint_string print_ODE_latex "}"in 
 			      let _ = pprint_newline print_ODE in
-			      let mainprod = IntSet.add i mainprod in 
-			      let jacobian = 
+			      let _ =  
+				List.iter 
+				  (fun (j,expr) ->
+				     let _ = 
+				       print_diff 
+					 print_ODE_jacobian 
+					 true 
+					 i
+					 j
+					 flag
+					 expr
+				     in ())
+				  grad in 
+				(*
+				  let jacobian = 
 				IntMap.fold 
 				  (fun j expr jacobian -> 
-				     let _ = print_diff print_ODE_jacobian  (Int2Set.mem (i,j) jacobian) i j flag expr in 
-				       Int2Set.add (i,j)  jacobian)
+				  let _ = print_diff print_ODE_jacobian  (Int2Set.mem (i,j) jacobian) i j flag expr in 
+				  Int2Set.add (i,j)  jacobian)
 				  grad jacobian 
-			      in 
-			      let jacobian = jacobian in 
-				(mainprod,jacobian))
+				  in *)
+				())
 			   prod  
-			   (mainprod,jacobian) 
+
 		       in 
 		       let _ = pprint_string print_ODE_latex "}\n" in 
-			 fst x,snd x,activity_map,rate_map 
+			 activity_map,rate_map 
 		   )
-		   (mainprod,jacobian,activity_map,rate_map)   
+		   (activity_map,rate_map)   
 		   classes
 	       in 
-		 (mainprod,jacobian,activity_map,rate_map,flag_map) 
+		 (activity_map,rate_map,flag_map) 
 	     end)
-	(mainprod,jacobian,activity_map,rate_map,flag_map) 
+	(activity_map,rate_map,flag_map) 
 	system in 
 
-    let merge_prod,jacobian,activity_map,rate_map,flag_map  = activity in 
+    let activity_map,rate_map,flag_map  = activity in 
     
     let nobs = IntMap.fold (fun _ _ i -> i+1) pb_obs 0 in 
     let proj_solution solution = 
@@ -3812,7 +3812,7 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
       dump 
 	views_data_structures 
 	ode_handler 
-(*	views_data_structures.interface_map *) in
+    in
   
     let obs = 
        Arraymap.fold
@@ -3852,7 +3852,6 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
              
     let _ = 
       dump_prod 
-	(merge_prod,jacobian) 
 	(Arraymap.fold2 
 	   (fun i a sol -> Arraymap.add i (Const a,"") sol )
 	   (fun i a sol -> Arraymap.add i (Const 0,a) sol)

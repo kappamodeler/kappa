@@ -1,3 +1,8 @@
+(* 29/09/2010 *)
+(* ODE generation *)
+(* Jerome Feret pour OpenKappa *)
+(* arithmetics.ml *)
+
 open Data_structures 
 open Ode_print_sig 
 
@@ -251,8 +256,25 @@ let diff expr v =
   in
     simplify_expr (aux expr) 
 
-let grad expr = 
+let grad expr = (*cost is quadratic in |vars|*)
   let vars = var_of_expr expr in 
     IntMap.mapi 
       (fun v i -> diff expr v)
       vars 
+
+let grad_linear expr = (*cost in linear in |vars|*)
+  let rec aux to_do res = 
+    match to_do with 
+	[] -> res 
+      | (expr,factor)::q -> 
+	  begin
+	    match expr with 
+		Var i -> aux q ((i,simplify_expr factor)::res)
+	      | Letter _ | VarInit _ | Vark _ | Vari _ | Eps | Const _ | Constf _ | Shortcut _ -> aux q res
+	      | Mult(a,b) -> aux ((a,Mult(b,factor))::(b,Mult(a,factor))::q) res
+	      | Plus(a,b) -> aux ((a,factor)::(b,factor)::q) res
+	      | Div _ | Vardi _ -> raise Exit 
+	  end
+  in 
+  let liste = aux [expr,Const 1] [] in 
+    liste 

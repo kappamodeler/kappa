@@ -101,7 +101,7 @@ let memory_limit = ref 0
 let hashinit= ref 20000
 let hash_cons = ref true
 let memoisation = ref true
-let local_memoisation = ref false 
+let local_memoisation = ref false
 let flat_ode = ref false 
 let stoc_ode = ref false 
 
