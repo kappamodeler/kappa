@@ -17,6 +17,19 @@ What you need to compile Kappa
 [http://www.graphviz.org/](graphviz.org)
 
 
+On Windows
+---------------------------------------
+You will also need Cygwin for make and gcc, FlexDll for linking, and ActiveTcl for the graphical interface.
+
+[http://www.cygwin.com/](Cygwin)
+* make sure you install gcc v. 3. You may need to rename c:/cygwin/bin/gcc-3.exe to c:/cygwin/bin/gcc.exe
+
+[http://alain.frisch.fr/flexdll.html](FlexDll)
+
+[http://www.activestate.com/activetcl/downloads](ActiveTcl)
+* make sure to install version 8.4
+
+
 How to compile Kappa
 -----------------------------
 
