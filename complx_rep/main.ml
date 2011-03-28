@@ -156,7 +156,7 @@ let main ()  =
   let pb,log = methods.save_options prefix pb log in 
   
   let pb,log = 
-    if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
+    if !Config_complx.do_ODE or !Config_complx.integrate_ODE or !Config_complx.do_ODE_matlab
     then 
       methods.template 
         (!Config_complx.output_ODE_perturbation)
@@ -189,7 +189,7 @@ let main ()  =
     else 
       pb,log in 
   let pb,log = 
-    if (!Config_complx.do_ODE or !Config_complx.integrate_ODE ) && (!Config_complx.output_ODE_matlab <> "" && !Config_complx.do_ODE_matlab) 
+    if (!Config_complx.output_ODE_matlab <> "" && !Config_complx.do_ODE_matlab) 
     then 
       methods.dump_ODE_matlab
 	(!Config_complx.output_ODE_matlab) 
