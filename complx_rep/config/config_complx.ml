@@ -36,6 +36,10 @@ let key = ref "0000000000000000"
 
 (*External applications *)
 let html_browser = ref Config.browser_command
+let dot_command = ref Config.dot_command 
+let neato_command = ref Config.neato_command 
+let gnuplot_image_terminal = ref Config.gnuplot_image_terminal 
+let dot_image_format = ref Config.dot_image_format
 
 (* Trace *)
 let dump_chrono = ref true 
@@ -66,6 +70,7 @@ let trace_abstract_rules = ref true   (* print compressed rules *)
 
 let complex_limit = ref 10000
 let do_ODE = ref false
+let do_ODE_matlab = ref false 
 let integrate_ODE = ref false 
 let do_XML_session = ref true
 let do_HTML_session = ref true
@@ -185,6 +190,7 @@ let output_ODE_gplot = ref ""
 let output_ODE_png = ref "" 
 let output_ODE_data = ref "" 
 let output_ODE_script = ref "" 
+let output_ODE_matlab = ref "" 
 let output_influence_map_dot_file = ref "" 
 let output_influence_map_jpg_file = ref "" 
 let output_marshalling = ref ""
@@ -325,6 +331,7 @@ let options = List.rev
 	  "--do-marshalling";
 	  "--do-LATEX";
 	  "--generate-ODE";
+	  "--do-ODE-matlab";
 	  "--integrate-ODE";
 	  "--do-HTML";
 	  "--do-XML";
@@ -346,6 +353,7 @@ let options = List.rev
 	"--no-do-HTML";
 	"--no-do-XML";
 	"--no-generate-ODE";
+	"--no-do-ODE-matlab";
 	"--no-integrate-ODE";
 	"--no-do-refine-to-force-cycles";
 	"--no-do-compute-dag-refinement-relation";
@@ -363,6 +371,7 @@ let options = List.rev
   "--do-LATEX",Bool do_dump_latex,"dump the LaTeX style file and the LaTeX document for the list of rules",["0_Actions";"LATEX"],Normal;
   "--do-ODE",Bool do_ODE,"compute the ODE system",["0_Actions";"ODE"],Hidden;
   "--generate-ODE",Bool do_ODE,"compute the ODE system",["0_Actions";"ODE"],Normal;
+  "--do-ODE-matlab",Bool do_ODE_matlab,"Compute the ODE system in a single matlab file",["0_Actions";"ODE"],Normal;
   "--integrate-ODE",Bool integrate_ODE,"integrate the ODE_system",["0_Actions";"ODE"],Normal;
   "--do-refine-to-force-cycles",Bool force_cycle,"Refine the system to avoid polymere formation",["0_Actions";"Polymers prevention"],Normal;
   "--do-compute-dag-refinement-relation",Bool do_dag_refinement,"compute the DAG for the refinement relation",["0_Actions";"Refinement detection"],Normal; 
@@ -403,6 +412,7 @@ let options = List.rev
 "--output-ODE-octave-activity","_kappa_ODE_system_activity.m";
 "--output-ODE-octave-obs","_kappa_ODE_system_obs.m";
 "--output-ODE-octave","_kappa_ODE_system.m";
+"--output-ODE-matlab","_kappa_ODE_single_file.m";
 "--output-ODE-alphabet","_kappa_ODE_alphabet";
 "--output-ODE-covering","_kappa_ODE_covering";
 "--output-ODE-covering-latex","_kappa_ODE_covering.tex";
@@ -416,7 +426,6 @@ let options = List.rev
 "--output-marshalling","_kappa.marshalling";
 "--output-influence-map-txt","_kappa_influence_map.txt";
 "--output-influence-map-dot","_kappa_influence_map.dot";
-(*"--output-influence-map-jpg","_kappa_influence_map.jpg";*)
 "--output-quantitative-compression","_kappa_compressed_quantitative.ka";
 "--output-qualitative-compression","_kappa_compressed_qualitative.ka";
 "--output-low-res-contact-map-dot","_kappa_low_res_contact.dot";
@@ -498,6 +507,10 @@ let options = List.rev
   String output_ODE_mathematica,
   "write the ODE system in a mathematica file",
   ["2_Output'";"ODE_output"],Normal;
+"--output-ODE-matlab",
+  String output_ODE_matlab,
+  "write the IDE system in a single matlab file", 
+ ["2_Output'";"ODE_output"],Normal;
 "--output-ODE-octave",
   String output_ODE_octave,
   "write the ODE system in a octave file",
@@ -659,7 +672,13 @@ let options = List.rev
 
 (*External applications*)
   "--html-browser",String html_browser,"comand line for launching an html browser",["External applications";"HTML"],Normal;
-
+  "--dot_command",String dot_command,"Command line for launching dot", 
+["External applications";"Graphviz"], Normal;
+"--neato_command",String dot_command,"Command line for launching neato", 
+["External applications";"Graphviz"], Normal;
+"--dot_image_format",String dot_image_format,"Output format for graphviz", 
+["External applications";"Graphviz"], Normal;
+"--gnuplot_image_terminal",String gnuplot_image_terminal,"terminal mode for gnuplot",  ["External applications";"Gnuplot"], Normal;
 
 (*Influence map*)
   "--wake-up-map",Bool wake_up,"build wake up relations",["Influence map"],Normal;  

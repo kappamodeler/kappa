@@ -189,6 +189,16 @@ let main ()  =
     else 
       pb,log in 
   let pb,log = 
+    if (!Config_complx.do_ODE or !Config_complx.integrate_ODE ) && (!Config_complx.output_ODE_matlab <> "" && !Config_complx.do_ODE_matlab) 
+    then 
+      methods.dump_ODE_matlab
+	(!Config_complx.output_ODE_matlab) 
+	prefix 
+	pb 
+	log 
+    else pb,log
+  in 
+  let pb,log = 
     if !Config_complx.integrate_ODE 
     then 
       methods.integrate (!Config_complx.output_ODE_script) prefix pb log 
@@ -270,6 +280,7 @@ let main ()  =
    
     let _ = 
      methods.dump_latex_species_number (!Config_complx.output_latex_species) prefix pb log in 
+
   let pb,log  = 
     if !Config_complx.do_XML_session
     then methods.dump_session  (!Config_complx.output_xml) prefix pb  log 

@@ -686,3 +686,14 @@ let keep_second s =
 (*    let middle3 = vide_space (middle2+1) in *)
             (String.sub s beg 1)^(String.sub s (middle2+1) (size-1-middle2))
   with _ -> ""
+
+let copy log file = 
+  let a = open_in file in 
+  let rec read () = 
+    try 
+      let s = input_line a in 
+      let _ = output_string log s in 
+      let _ = output_string log "\n" in 
+      read ()
+    with End_of_file -> close_in a 
+  in read ()

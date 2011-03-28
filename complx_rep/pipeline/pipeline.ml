@@ -121,7 +121,8 @@ compute_refinement_relation_dag: 'a step;
     dump_latex_stat:file_name -> 'a step;
     dump_latex_species_number:file_name -> 'a step;
     dump_latex_fragments_number:file_name -> 'a step;
-      dump_latex_rules_number:file_name -> 'a step} 
+      dump_latex_rules_number:file_name -> 'a step;
+      dump_ODE_matlab:file_name -> 'a step} 
 
 
       
@@ -1064,7 +1065,7 @@ module Pipeline =
 	     else (!Config_complx.output_low_res_contact_dot_file)
 	     with None,_,_ | _,"",_ | _,_,"" -> (pb,(l,m))
        | Some a,b,c-> 
-	   let _ = Sys.command ("dot -Tps "^c^" -o "^b) in 
+	   let _ = Sys.command (!Config_complx.dot_command^" -Tps "^c^" -o "^b) in 
 	   (pb,(chrono prefix   
 		  (if res = Low 
 		  then "Low resolution contact_map (ps)"
@@ -1081,7 +1082,7 @@ module Pipeline =
 	     else (!Config_complx.output_low_res_contact_dot_file)
 	     with None,_,_ | _,"",_ | _,_,"" -> (pb,(l,m))
 	   | Some a,b,c-> 
-	       let _ = Sys.command ("dot -Tjpg "^c^" -o "^b) in 
+	       let _ = Sys.command (!Config_complx.dot_command^" -Tjpg "^c^" -o "^b) in 
 	       (pb,(chrono prefix  (if res = Low 
 	       then "Low resolution contact_map (jpg)" 
 	       else "High resolution contact map (jpg)") l ,m))
@@ -1228,7 +1229,7 @@ module Pipeline =
 			                               if file2="" or file3 = "" 
 			                               then ()
 			                               else 
-			                                 let _ = Sys.command ("dot -Tjpg "^file2^" -o "^file3) in 
+			                                 let _ = Sys.command (!Config_complx.dot_command^" -T"^(!Config_complx.dot_image_format)^" "^file2^" -o "^file3) in 
                                                            () 
                                                      in 
                                                      let l=chrono prefix "Influence map" l 
@@ -1591,7 +1592,7 @@ module Pipeline =
                          file23
 		         prefix 
                          pb  
-                         (l,m))
+                         log)
 
 	       else (
 		 match pb with 
@@ -2159,7 +2160,59 @@ module Pipeline =
 	   dump_latex_rules_number file prefix pb log = 
 	 let _ = Latex.dump_nrule file pb in 
 	 pb,log
-       in
+       and dump_ODE_matlab file prefix pb log = 
+	   let list_mandatory = 
+	     [!Config_complx.output_ODE_octave ;
+	      !Config_complx.output_ODE_octave_aux ;
+	      !Config_complx.output_ODE_octave_obs ;
+	      !Config_complx.output_ODE_octave_init
+	     ]
+	   in 
+	   let list_optional = 
+	     [!Config_complx.output_ODE_octave_jacobian ; 
+	     ]
+	   in 
+	   let bool_mandatory = 
+	     List.for_all  
+	       Sys.file_exists 
+	       list_mandatory
+	   in 
+	   let list_optional =  
+	     List.filter  
+	       Sys.file_exists 
+	       list_optional
+	   in 
+	     if bool_mandatory
+	     then 
+	       let out = open_out file in 
+	       let _ = output_string out "function main=main()\n" in 
+	       let _ = 
+		   List.iter 
+                     (fun x -> Tools.copy out x ; 
+		           output_string out "end\n\n" )
+		     list_mandatory
+	       in 
+	       let _ = 
+		 List.iter 
+                   (fun x -> Tools.copy out x ; 
+		           output_string out "end\n\n" )
+		   list_optional
+	       in
+	       let _ = close_out out in 
+		 pb,log
+	     else 
+	      let _ = 
+                add_error 
+                  {application=Some "Complx";
+                   method_name=Some "dump_ODE_matlab";
+                   file_name=Some "pipeline.ml";
+                   function_name=None;
+                   calling_stack=None;
+                   message=Some "Missing output files";
+                   key=None ;
+                   exception_=Exit}
+              in pb,log 
+	   in
        {
        
        reset=handle_errors_step (Some "Complx") (Some "reset") reset;
@@ -2247,6 +2300,8 @@ module Pipeline =
        export_refinement_relation_maximal_and_automorphism_number = 
               handle_errors_def (Some "Complx") (Some "compute_both_refinement_relation_and_automorphism_numbers")  export_refinement_relation_and_automorphisms  None ;
        print_errors = print_error ;
+       dump_ODE_matlab = 
+	   (fun file -> handle_errors_step (Some "Complx") (Some "dump_ODE_matlab") (dump_ODE_matlab file)); 
        dump_latex_rule_system = 
        (fun file -> handle_errors_step (Some "Complx") (Some "dump_latex_rule_system") (dump_latex_rule_system file));
        dump_latex_version =  (fun file -> handle_errors_step (Some "Complx") (Some "dump_latex_version") (dump_latex_version file));

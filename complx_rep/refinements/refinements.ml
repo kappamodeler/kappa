@@ -310,7 +310,7 @@ let dump_refinement file file2 rules rel =
       let _ = 
 	if file2 <> "" 
 	then 
-	  let _ = Sys.command ("dot -Tjpg "^file^" -o "^file2) in () in 
+	  let _ = Sys.command (!Config_complx.dot_command^" -T"^(!Config_complx.dot_image_format)^" "^file^" -o "^file2) in () in 
       ()
     end
 
