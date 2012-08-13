@@ -633,13 +633,13 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
   (* WE FETCH THE CONTACT MAP *)
   (****************************)
 
-  let contact =
+  let contact_internal,contact =
     match pb.Pb_sig.contact_map 
     with 
       None -> error 352 
     | Some a -> 
     begin 
-      (fun x -> 
+      a,(fun x -> 
 	try 
 	  String2Map.find x a.Pb_sig.link_of_site
 	with
@@ -659,7 +659,7 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
 	Flat -> upgrade (compute_annotated_contact_map_in_flat_mode system cpb contact ) cpb
       |	Compressed -> compute_annotated_contact_map_in_compression_mode system cpb contact 
       |	Approximated -> upgrade(compute_annotated_contact_map_in_approximated_mode system cpb contact ) cpb
-      | Stoc -> Annotated_contact_map_stoc.compute_annotated_contact_map_in_stoc_mode system cpb contact
+      | Stoc -> Annotated_contact_map_stoc.compute_annotated_contact_map_in_stoc_mode system cpb contact_internal
     in 
   
 
