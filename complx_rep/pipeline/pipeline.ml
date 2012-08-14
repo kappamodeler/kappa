@@ -100,7 +100,7 @@ type 'a pipeline = {
     dump_html_output: file_name -> 'a step;
     save_options: 'a step ;
     good_vertice: file_name -> prefix -> output_channel -> StringSet.t option * output_channel ;
-    template: file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> 'a step ;
+    template: file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> 'a step ;
     integrate: file_name -> 'a step;
     dump_potential_cycles: precision -> 'a step;
     refine_system_to_avoid_polymers: 
@@ -121,8 +121,8 @@ compute_refinement_relation_dag: 'a step;
     dump_latex_stat:file_name -> 'a step;
     dump_latex_species_number:file_name -> 'a step;
     dump_latex_fragments_number:file_name -> 'a step;
-      dump_latex_rules_number:file_name -> 'a step;
-      dump_ODE_matlab:file_name -> 'a step} 
+    dump_latex_rules_number:file_name -> 'a step;
+    dump_ODE_matlab:file_name -> 'a step} 
 
 
       
@@ -1055,21 +1055,32 @@ module Pipeline =
 		     (pb,(chrono  prefix  "High resolution contact (dot)" l,m))
 	   end
        and 
-	   dump_contact_map_ps res file prefix pb (l,m) =
-	 if not (is_contact_map res pb) 
-	 then pb,(l,m)
-	 else 
+           dump_stoc_contact_map_ps file pb log = 
+           let c = file in 
+           let b = !Config_complx.output_stoc_contact in 
+           let _ = Sys.command (!Config_complx.dot_command^" -Tps "^b^" -o "^c) in 
+	   (pb,log)
+       and  dump_stoc_contact_map_jpg file pb log = 
+           let c = file in 
+           let b = !Config_complx.output_stoc_contact in 
+           let _ = Sys.command (!Config_complx.dot_command^" -Tjpg "^b^" -o "^c) in 
+	   (pb,log)
+             
+       and 
+           dump_contact_map_ps res file prefix pb (l,m) = 
+	 if not (is_contact_map res pb)
+	 then pb,(l,m) 
+	 else
 	   begin
 	     match pb,file,if res = High 
 	     then (!Config_complx.output_high_res_contact_dot_file)
 	     else (!Config_complx.output_low_res_contact_dot_file)
 	     with None,_,_ | _,"",_ | _,_,"" -> (pb,(l,m))
-       | Some a,b,c-> 
-	   let _ = Sys.command (!Config_complx.dot_command^" -Tps "^c^" -o "^b) in 
-	   (pb,(chrono prefix   
-		  (if res = Low 
-		  then "Low resolution contact_map (ps)"
-		  else "High resolution contact map (ps)") l ,m))
+	   | Some a,b,c-> 
+	       let _ = Sys.command (!Config_complx.dot_command^" -Tps "^c^" -o "^b) in 
+	       (pb,(chrono prefix  (if res = Low 
+	       then "Low resolution contact_map (ps)" 
+	       else "High resolution contact map (ps)") l ,m))
 	   end
        and 
            dump_contact_map_jpg res file prefix pb (l,m) = 
@@ -1499,7 +1510,7 @@ module Pipeline =
 	           | Some a -> Some pb,(l,m),a 
 	               
      and template = 
-	 (fun file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 file11 file12  file13 file14 file15 file16 file17 file18 file19 file20 file21 file22 file23 prefix pb (l,m) ->
+	 (fun file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 file11 file12  file13 file14 file15 file16 file17 file18 file19 file20 file21 file22 file23 file24 prefix pb (l,m) ->
 	   let prefix' = add_suffix prefix "template" in 
 	   let _ = print_option prefix (Some stdout) "Starting ODE generation\n" in
 	   
@@ -1565,7 +1576,8 @@ module Pipeline =
 	       if not (is_views rep)
 	       then (
 		     let pb,log = reachability_analysis prefix' rep  (l,m) in
-		       template 
+                     let pb,log = 
+                       template 
 			 file0 
 			 file1 
 			 file2 
@@ -1590,10 +1602,23 @@ module Pipeline =
 			 file21
                          file22 
                          file23
+                         file24
 		         prefix 
                          pb  
-                         log)
-
+                         log in 
+                     if 
+                       !Config_complx.stoc_ode 
+                     then 
+                       let _,log = 
+                         dump_stoc_contact_map_jpg 
+                           (!Config_complx.output_stoc_contact_map_jpg_file) 
+                           rep' 
+                           log
+                       in 
+                       let _,log = dump_stoc_contact_map_ps (!Config_complx.output_stoc_contact_map_ps_file) rep' log in 
+                       pb,log
+                     else 
+                       pb,log)
 	       else (
 		 match pb with 
 		   None -> pb,(l,m) 
@@ -1676,6 +1701,7 @@ module Pipeline =
 				                           file21
 				                           file22
                                                            file23 
+                                                           file24
                                                            {project=A.project;
 				                            export_ae = A.export_ae;
 				                            restore = A.restore_subviews;
@@ -1690,7 +1716,7 @@ module Pipeline =
 				                            expr_true = A.ae_true}
 				                           Ode_print_sig.MATLAB
 				                           prefix 
-				                           (Some stdout)
+				                           (Some (stdout:out_channel))
 				                           a 
 				                           boolean 
 				                           sub
@@ -1707,8 +1733,25 @@ module Pipeline =
 			                                 match opt with None -> None 
 			                                   | Some(_,_,n) -> Some n 
 			                               in 
-			                               let l = chrono prefix "dumping fragments" l in 
-			                                 Some {pb with nfrag = nfrag},(l,m))
+			                               let pb = {pb with nfrag=nfrag} in 
+                                                       let l = chrono prefix "dumping fragments" l in 
+			                               let log = (l,m) in 
+                                                       let pb,log = 
+                                                         if 
+                                                           !Config_complx.stoc_ode 
+                                                         then 
+                                                           let pb,log = 
+                                                             dump_stoc_contact_map_jpg 
+                                                               (!Config_complx.output_stoc_contact_map_jpg_file) 
+                                                               pb 
+                                                               log 
+                                                           in 
+                                                           let pb,log = dump_stoc_contact_map_ps (!Config_complx.output_stoc_contact_map_ps_file) pb log in 
+                                                           pb,log
+                                                         else 
+                                                           pb,log
+                                                       in 
+                                                       Some {pb with nfrag = nfrag},(l,m))
 				     
 	       ))
 	   
@@ -2264,7 +2307,7 @@ module Pipeline =
 	 with 
 	   Exception _ -> None,c);
        template = 
-	   (fun a b c d e f g h i j k l m n o p q r s t u v w x -> handle_errors_step (Some "Complx") (Some "template") (template a b c d e f g h i j k l m n o p q r s t u v w x));
+	   (fun a b c d e f g h i j k l m n o p q r s t u v w x y -> handle_errors_step (Some "Complx") (Some "template") (template a b c d e f g h i j k l m n o p q r s t u v w x y));
        find_potential_cycles = (fun a -> handle_errors_step (Some "Complx") (Some "find_potential_cycles") (find_potential_cycles a));
        dump_potential_cycles = (fun a -> handle_errors_step (Some "Complx") (Some "dump_potential_cycles") (dump_potential_cycles a)) ;
        find_connected_components = (fun a -> handle_errors_step (Some "Complx") (Some "find_connected_components") (find_connected_components a));

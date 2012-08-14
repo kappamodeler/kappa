@@ -162,6 +162,11 @@ let print_contact_map res pb channel =
        "Contact map (Low resolution)"
       else null
 
+let print_contact_map_stoc pb channel = 
+  precomputed_data channel 
+    (!Config_complx.output_stoc_contact_map_jpg_file) 
+    "Contact map (Stochastic fragmentation)"
+    
 let print_ODE_plot pb channel = 
   if (!Config_complx.integrate_ODE)
   then 
@@ -408,6 +413,7 @@ let dump_html pb channel (l,m)  =
       menutitle channel "Plot and Drawings";
       print_contact_map Low pb channel ;
       print_contact_map High pb channel;
+      print_contact_map_stoc pb channel;
       print_influence_map pb channel; 
       print_ODE_plot pb channel;
 
@@ -420,6 +426,7 @@ let dump_html pb channel (l,m)  =
       menutitle channel "Analysis result";
       print_contact_map Low pb channel ;
       print_contact_map High pb channel;
+      print_contact_map_stoc pb channel;
       print_pack pb channel ;
       print_species_map pb channel; 
       print_reachables pb channel]@
@@ -445,7 +452,7 @@ let dump_html pb channel (l,m)  =
 	       (!Config_complx.output_without_polymere)
 	       "Refinement"]
      else [])@
-     (if !Config_complx.do_ODE or !Config_complx.integrate_ODE 
+     (if (!Config_complx.do_ODE or !Config_complx.integrate_ODE) && (not !Config_complx.stoc_ode)
      then 
        [menutitle channel "Ordinary differential equations";
         output_ODE_xml pb channel;

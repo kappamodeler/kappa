@@ -147,7 +147,7 @@ let print_log s =
 
 
 
-let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_matlab_act file_ODE_matlab_obs file_ODE_matlab_init file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_ODE_data_head file_data_foot file_ODE_data file_ODE_gplot file_ODE_png file_ODE_script file_XML ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs  exp (l,m) = 
+let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_matlab_act file_ODE_matlab_obs file_ODE_matlab_init file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_ODE_data_head file_data_foot file_ODE_data file_ODE_gplot file_ODE_png file_ODE_script file_XML ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs  exp (l,m) = 
   
  
   let n_perturbation = 
@@ -187,7 +187,6 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
 	      print_newline = (fun () -> Printf.fprintf chan "\n")}
 	end
     else None in
-(*  let set_print = f in *)
     
   let print_ODE_perturbation  = f MATLAB file_ODE_perturbation in 
   let print_data = f DATA file_ODE_data_head  in 
@@ -213,11 +212,6 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
 
   let _ = (match print_data with None -> () | Some a -> 
     (a.print_string "#t ")) in 
-(*  let prefix_output_file = 
-    let a,_ = compute_prefix file_ODE_matlab in 
-    List.fold_left
-      (fun s a -> s^a)
-      "" a   in *)
 
   let cpb = match pb.Pb_sig.intermediate_encoding with 
     Some cpb -> cpb
@@ -684,24 +678,37 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
 	(fst pre_annotated_contact_map) ;
       solid_edges = snd pre_annotated_contact_map}
   in 
-
-
-  
   (************************************************************)
   (* WE GENERATE THE DOT OUTPUT FOR THE ANNOTATED CONTACT MAP *)
   (************************************************************)
 
   let _ = 
-    dump_contact_map_in_dot 
-      cpb.cpb_interface
-      (match pb.contact_map
-       with Some l -> (Some l.live_agents)
-	 | None -> None)
-      (match pb.contact_map 
-      with Some l -> l.relation_list
-      | None -> [])
-      (fun a b -> not (String22Set.mem (a,b) annotated_contact_map.solid_edges))
-      file_ODE_contact
+    match compression_mode 
+    with 	
+      | Flat | Compressed | Approximated ->
+        dump_contact_map_in_dot 
+          cpb.cpb_interface
+          (match pb.contact_map
+           with Some l -> (Some l.live_agents)
+	     | None -> None)
+          (match pb.contact_map 
+           with Some l -> l.relation_list
+             | None -> [])
+          (fun a b -> not (String22Set.mem (a,b) annotated_contact_map.solid_edges))
+          file_ODE_contact
+      | Stoc -> 
+        dump_stoc_contact_map_in_dot 
+          cpb.cpb_interface
+          (match pb.contact_map
+           with Some l -> (Some l.live_agents)
+	     | None -> None)
+          (match pb.contact_map 
+           with Some l -> l.relation_list
+             | None -> [])
+          (fun a b -> 
+            not (String22Set.mem (a,b) annotated_contact_map.solid_edges))
+          (StringMap.map (List.map (fun x -> x.kept_sites)) annotated_contact_map.subviews )
+          file_stoc_contact
   in 
 
   (***************************************)
@@ -709,7 +716,7 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
   (***************************************)
   
   let _ = 
-    if file_ODE_covering <> "" 
+    if file_ODE_covering <> "" && compression_mode<>Stoc
     then 
       let chan = open_out file_ODE_covering in 
       let print_string x = Printf.fprintf chan "%s" x in
@@ -735,13 +742,16 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
       let _ = close_out chan in 
       () in
   
+
+
   (***************************************)
   (* WE DUMP THE COVERINGS IN LATEX FORMAT *)
   (***************************************)
   
 
+
     let _ = 
-    if file_ODE_covering_latex <> "" 
+    if file_ODE_covering_latex <> "" && compression_mode <> Stoc
     then 
       let chan = open_out file_ODE_covering_latex in 
       let print_string x = Printf.fprintf chan "%s" x in
@@ -772,11 +782,14 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
       let _ = close_out chan in 
       () in
 
-	
-  let _ = print_log "COMPUTE FRAGMENTS" in
-  let _ = 
-    if debug   then dump_template print_debug annotated_contact_map in 
-  
+    match compression_mode 
+    with Stoc -> None,(l,m)
+      | _ -> 
+        begin 
+          let _ = print_log "COMPUTE FRAGMENTS" in
+          let _ = 
+            if debug   then dump_template print_debug annotated_contact_map in 
+          
   
   (************************************)
   (* WE CREATE THE LIST OF (SUB)VIEWS *)
@@ -1153,7 +1166,7 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
 
     let activity_map = IntMap.empty in 
     let rate_map = IntMap.empty in 
-   let system = if compression_mode = Stoc then [] else system in 
+    let system = if compression_mode = Stoc then [] else system in 
     let activity = 
       List.fold_left  
 	(fun (
@@ -4019,8 +4032,7 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_ODE_covering file_O
         in vide 1
     in
     let _ = List.iter close_out  (match print with None -> [] | Some a -> a.chan) in 
-     
-  
-	 Some (annotated_contact_map,activity,size ()),(l,m)
+    Some (annotated_contact_map,activity,size ()),(l,m)
       
       
+             end 

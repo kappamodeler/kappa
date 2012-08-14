@@ -76,29 +76,29 @@ let dump_contact_map_in_dot interface active contact dotted fic =
 	     let _ = print "subgraph cluster" in 
 	     let _ = print "%s" a in 
 	     let _ = print " {\n" in 
-	  let _ = 
-	    StringSet.iter 
-	      (fun s -> 
-		 let _ = print "%s" a in 
-		 let _ = print "_" in
-		 let _ = print "%s" s in 
-		 let color = 
-			match StringSet.mem s m1,StringSet.mem s m2 
-			with true,false -> !Config_complx.boolean_site_color
-			| true,true  -> !Config_complx.both_site_color
-			| false,true -> !Config_complx.boundable_site_color
-			| false,false -> raise Exit in 	
-		 let _ = print " [style = filled label = \"%s\"] [shape = %s] [size = %s] [fixedsize = true ] [color = %s]\n" s Config_complx.site_shape  (string_of_int Config_complx.site_size) color in 
+	     let _ = 
+	       StringSet.iter 
+	         (fun s -> 
+		   let _ = print "%s" a in 
+		   let _ = print "_" in
+		   let _ = print "%s" s in 
+		   let color = 
+		     match StringSet.mem s m1,StringSet.mem s m2 
+		     with true,false -> !Config_complx.boolean_site_color
+		       | true,true  -> !Config_complx.both_site_color
+		       | false,true -> !Config_complx.boundable_site_color
+		       | false,false -> raise Exit in 	
+		   let _ = print " [style = filled label = \"%s\"] [shape = %s] [size = %s] [fixedsize = true ] [color = %s]\n" s Config_complx.site_shape  (string_of_int Config_complx.site_size) color in 
 		   ())
-	      mall 
-	  in 
-	  let size = StringSet.cardinal  mall in 
-	  let _ = print "style = filled ; label =  \"%s\"; " a in 
-	  let _ = print " shape = %s;" (Config_complx.node_shape size) in 
-	  let color = Config_complx.node_color size in 
-	  let _ = print " color = %s };\n" color in 
-	  ()
-	      )
+	         mall 
+	     in 
+	     let size = StringSet.cardinal  mall in 
+	     let _ = print "style = filled ; label =  \"%s\"; " a in 
+	     let _ = print " shape = %s;" (Config_complx.node_shape size) in 
+	     let color = Config_complx.node_color size in 
+	     let _ = print " color = %s };\n" color in 
+	     ()
+	   )
 	interface
     in 
     let _ = 
@@ -234,3 +234,72 @@ let print_contact_map_in_dot res  pb =
 end end )
 
   	      
+let dump_stoc_contact_map_in_dot interface active contact dotted subviews fic = 
+  if fic = "" or (contact = [] && interface = []  )
+  then (print_string "EMPTY")
+  else
+    let output=open_out fic in 
+    let print s = Printf.fprintf output s in 
+    let _ = print "Graph G {\n" in 
+    let _ =
+      List.fold_left
+	(fun n (a,b,c) ->
+	  if 
+            begin
+              match 
+	        active
+	      with 
+		  None -> true 
+	        | Some set -> 
+		  StringSet.mem a set
+            end
+	  then 
+            let subviews = StringMap.find a subviews in 
+            let m1 = list_fold StringSet.add b StringSet.empty in 
+	    let m2 = list_fold StringSet.add c StringSet.empty in 
+            let size = List.length subviews in 
+            List.fold_left
+              (fun n mall -> 
+                let a' = 
+                  if size > 1 
+                  then StringSet.fold (fun site s -> s^"."^site) mall (a^".") 
+                  else a
+                in 
+            	let _ = print "subgraph cluster" in 
+	        let _ = print "%s" (string_of_int n) in 
+	        let _ = print " {\n" in 
+	        let _ = 
+	          List.iter 
+	            (fun s -> 
+		        let _ = print "%s" a in 
+		        let _ = print "_" in
+		        let _ = print "%s" s in 
+		        let color = 
+		          match StringSet.mem s m1,StringSet.mem s m2 
+		          with true,false -> !Config_complx.boolean_site_color
+		            | true,true  -> !Config_complx.both_site_color
+		            | false,true -> !Config_complx.boundable_site_color
+		            | false,false -> raise Exit in 	
+		        let _ = print " [style = filled label = \"%s\"] [shape = %s] [size = %s] [fixedsize = true ] [color = %s]\n" s Config_complx.site_shape  (string_of_int Config_complx.site_size) color in 
+		        ())
+	            (List.rev (StringSet.elements mall))
+	        in 
+	        let size = StringSet.cardinal  mall in 
+	          let _ = print "style = filled ; label =  \"%s\"; " a' in 
+	          let _ = print " shape = %s;" (Config_complx.node_shape size) in 
+	          let color = Config_complx.node_color size in 
+	          let _ = print " color = %s };\n" color in 
+	          (n+1))
+              n
+              subviews
+          else n)
+	1 interface
+    in 
+    let _ = 
+      List.iter 
+        (fun ((a,b),(c,d)) ->
+          print "%s" a;print "_";print "%s" b;print " -- ";print "%s" c;print "_";print "%s" d;(if dotted (a,b) (c,d) then print "[style = dotted]");print ";\n") 
+	contact in
+    let _ = print "};" in 		  
+    let _ = close_out output in 	
+    ()

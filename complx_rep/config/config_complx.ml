@@ -176,6 +176,7 @@ let output_ODE_obs_latex = ref ""
 let output_ODE_covering = ref ""
 let output_ODE_covering_latex = ref "" 
 let output_ODE_contact = ref ""
+let output_stoc_contact = ref "" 
 let output_ODE_mathematica = ref ""
 let output_ODE_octave_size = ref "" 
 let output_ODE_octave = ref "" 
@@ -193,6 +194,8 @@ let output_ODE_script = ref ""
 let output_ODE_matlab = ref "" 
 let output_influence_map_dot_file = ref "" 
 let output_influence_map_jpg_file = ref "" 
+let output_stoc_contact_map_ps_file = ref ""
+let output_stoc_contact_map_jpg_file = ref "" 
 let output_marshalling = ref ""
 let output_influence_map_txt_file = ref ""
 let output_low_res_contact_dot_file = ref "" 
@@ -403,7 +406,9 @@ let options = List.rev
 "--output-ODE-obs-latex","_kappa_ODE_obs.tex";
 "--output-ODE-latex","_kappa_ODE_system.tex";
 "--output-ODE-contact","_kappa_ODE_contact.dot";
-(*"--output-ODE-mathematica","_kappa_ODE_system.nb";*)
+"--output-stoc-contact","_kappa_stoc_contact.dot";
+"--output-stoc-contact-map-ps-file","_kappa_stoc_contact.ps";
+"--output-stoc-contact-map-jpg-file","_kappa_stoc_contact.jpg";
 "--output-ODE-perturbation","_kappa_ODE_system_perturbation.m";
 "--output-ODE-octave-aux","_kappa_ODE_system_aux.m";
 "--output-ODE-octave-init","_kappa_ODE_system_init.m";
@@ -599,6 +604,12 @@ let options = List.rev
   "write the reachable species (or just their number)  in a file",["2_Output''";"Concretization";"Reachability analysis"],Normal;
 "--output-specie-map",String output_specie_map,
   "write the specie map in a file",["2_Output''";"Reachability analysis"],Normal;
+"--output-stoc-contact",String output_stoc_contact,
+  "dump the contact map for stochastic fragments in a dot file",["2_Output''";"Contact map";"Stochastic fragments"],Normal;
+"--output-stoc-contact-map-jpg-file",String output_stoc_contact_map_jpg_file,
+  "dump the contact map for stochastic fragments in a jpg file",["2_Output''";"Contact map";"Stochastic fragments"],Normal;
+"--output-stoc-contact-map-ps-file",String output_stoc_contact_map_ps_file,
+  "dump the contact map for stochastic fragments in a ps file",["2_Output''";"Contact map";"Stochastic fragments"],Normal;
 "--output_dag_ref_dot",String output_dag_ref_dot,
 "dump the dag-like refinement relation in a dot file",
 ["2_Output''";"Refinement detection"],Normal;
@@ -694,7 +705,7 @@ let options = List.rev
   "--final-time",Float ode_final_time,"final time for ODE integration",["ODE"],Normal;
   "--initial-step",Float ode_init_step,"initial time step for ODE integration",["ODE"],Normal;
   "--flat-ode",Bool flat_ode,"Compute the ODE for the flat system",["ODE"],Normal;
-  "--stoc-ode",Bool stoc_ode,"Compute fragmentation for the stochastic semantics",["ODE"],Hidden;
+  "--stoc-ode",Bool stoc_ode,"Compute fragmentation for the stochastic semantics",["Stochastic fragments"],Normal;
   "--plots",Int ode_points,"number of plots in the data file",["ODE"],Normal;
   "--ode-memoization-level",Int ode_memoization_level,
  "tune the level of memoization \n     0 -- no memoization \n     1 -- few memoization \n     2 -- much memoization",["ODE"],Expert;
