@@ -316,6 +316,14 @@ let compute_annotated_contact_map_in_stoc_mode system cpb contact_map  =
       end
     in 
     StringSet.equal (StringSet.singleton b) s
+      && 
+      (try 
+         match cpb.Pb_sig.cpb_mark_site 
+         with 
+           | None -> false
+           | Some map -> 
+         String2Map.find (a,b) map=[]
+       with Not_found -> true)
   in 
   let _ = Printf.fprintf stdout "TEST SOLID_EDGE\n" in 
    let solid_edges = 
@@ -323,7 +331,7 @@ let compute_annotated_contact_map_in_stoc_mode system cpb contact_map  =
       (fun (a,b) l  y -> 
         List.fold_right
           (fun (_,c,d) y -> 
-            if singleton (a,b) or singleton (c,d) 
+            if (singleton (a,b) or singleton (c,d)) or (compare (a,b) (c,d) <=0)
             then y 
             else 
               String22Set.add ((a,b),(c,d)) y)
