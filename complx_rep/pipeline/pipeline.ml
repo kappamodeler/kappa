@@ -1058,12 +1058,16 @@ module Pipeline =
            dump_stoc_contact_map_ps file pb log = 
            let c = file in 
            let b = !Config_complx.output_stoc_contact in 
+           if b="" or c="" then pb,log
+           else 
            let _ = Sys.command (!Config_complx.dot_command^" -Tps "^b^" -o "^c) in 
 	   (pb,log)
        and  dump_stoc_contact_map_jpg file pb log = 
            let c = file in 
            let b = !Config_complx.output_stoc_contact in 
-           let _ = Sys.command (!Config_complx.dot_command^" -Tjpg "^b^" -o "^c) in 
+           if b="" or c="" then pb,log 
+           else 
+             let _ = Sys.command (!Config_complx.dot_command^" -Tjpg "^b^" -o "^c) in 
 	   (pb,log)
              
        and 
@@ -1605,7 +1609,8 @@ module Pipeline =
                          file24
 		         prefix 
                          pb  
-                         log in 
+                         log 
+                     in 
                      if 
                        !Config_complx.stoc_ode 
                      then 
@@ -1728,7 +1733,12 @@ module Pipeline =
 				                              | _ -> Annotated_contact_map.Compressed)
 				                           obs_map
                                                            exp
-				                           (l,m) in  
+				                           A.K.E.V.var_of_b
+                                                           A.K.E.V.varset_empty
+		                                           A.K.E.V.varset_add
+		                                           A.K.build_kleenean_rule_system
+                                                           A.K.print_kleenean_system
+                                                           (l,m) in  
 			                               let nfrag = 
 			                                 match opt with None -> None 
 			                                   | Some(_,_,n) -> Some n 

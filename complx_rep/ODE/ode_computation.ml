@@ -147,7 +147,7 @@ let print_log s =
 
 
 
-let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_matlab_act file_ODE_matlab_obs file_ODE_matlab_init file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_ODE_data_head file_data_foot file_ODE_data file_ODE_gplot file_ODE_png file_ODE_script file_XML ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs  exp (l,m) = 
+let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_matlab_act file_ODE_matlab_obs file_ODE_matlab_init file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_ODE_data_head file_data_foot file_ODE_data file_ODE_gplot file_ODE_png file_ODE_script file_XML ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs  exp var_of_b  varset_empty varset_add build_kleenean print_kleenean (l,m) = 
   
  
   let n_perturbation = 
@@ -653,7 +653,7 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_O
 	Flat -> upgrade (compute_annotated_contact_map_in_flat_mode system cpb contact ) cpb
       |	Compressed -> compute_annotated_contact_map_in_compression_mode system cpb contact 
       |	Approximated -> upgrade(compute_annotated_contact_map_in_approximated_mode system cpb contact ) cpb
-      | Stoc -> Annotated_contact_map_stoc.compute_annotated_contact_map_in_stoc_mode system cpb contact_internal
+      | Stoc -> Annotated_contact_map_stoc.compute_annotated_contact_map_in_stoc_mode system pb cpb contact_internal
     in 
   
 
@@ -697,18 +697,32 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_O
           (fun a b -> not (String22Set.mem (a,b) annotated_contact_map.solid_edges))
           file_ODE_contact
       | Stoc -> 
-        dump_stoc_contact_map_in_dot 
-          cpb.cpb_interface
-          (match pb.contact_map
-           with Some l -> (Some l.live_agents)
-	     | None -> None)
-          (match pb.contact_map 
-           with Some l -> l.relation_list
-             | None -> [])
-          (fun a b -> 
-            not (String22Set.mem (a,b) annotated_contact_map.solid_edges))
-          (StringMap.map (List.map (fun x -> x.kept_sites)) annotated_contact_map.subviews )
-          file_stoc_contact
+        let _ = 
+           Annotated_contact_map_stoc.output_renamed "" 
+             pb 
+             annotated_contact_map
+             var_of_b 
+             varset_empty 
+             varset_add 
+             build_kleenean 
+             print_kleenean 
+        in 
+        let _ = 
+          dump_stoc_contact_map_in_dot 
+            cpb.cpb_interface
+            (match pb.contact_map
+             with Some l -> (Some l.live_agents)
+	       | None -> None)
+            (match pb.contact_map 
+             with Some l -> l.relation_list
+               | None -> [])
+            (fun a b -> 
+              not (String22Set.mem (a,b) annotated_contact_map.solid_edges))
+            (StringMap.map (List.map (fun x -> x.kept_sites)) annotated_contact_map.subviews )
+            file_stoc_contact
+        in 
+        let _ = Annotated_contact_map_stoc.output_renamed "" pb annotated_contact_map in 
+        ()
   in 
 
   (***************************************)

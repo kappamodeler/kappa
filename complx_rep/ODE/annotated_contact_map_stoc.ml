@@ -1,11 +1,18 @@
+open Printf
+open Config_complx
+open Tools
 open Data_structures
-open Pb_sig 
+open Pb_sig
+open Kleenean_expr
+open Abstract_expr_sig
+open Comment_sig  
 open Tools 
 open Output_contact_map 
 open Ode_print_sig
 open Ode_print 
 open Error_handler 
 open Annotated_contact_map 
+
 
 let debug = false
 
@@ -14,6 +21,270 @@ let debug = false
 let error i = 
   unsafe_frozen None (Some "Complx") (Some "Annotated_contact_map.ml") None (Some ("line "^(string_of_int i))) (fun () -> raise Exit)
 
+
+let succ x = 
+  match 
+    x
+  with 
+    | None -> None 
+    | Some x -> Some (x+1)
+
+let output_renamed file pb local_map var_of_b varset_empty varset_add build_kleenean print_kleenean = 
+  let local_map = local_map.subviews in 
+  let channel = 
+    if file = ""
+    then 
+      stdout
+    else 
+      open_out file 
+  in 
+  let cpb = 
+    match pb.intermediate_encoding 
+    with None -> error 6 
+    | Some a -> a 
+  in
+  let boolean_encoding = 
+    match pb.boolean_encoding 
+    with None -> error 7 
+    | Some boolean_encoding -> boolean_encoding 
+  in
+  let rule_system = boolean_encoding.system in 
+  let agent,sites = 
+    let agent,sites = 
+      StringMap.fold 
+        (fun a l (agent,sites) -> 
+          let size = List.length l in 
+          let agent,sites,_ = 
+            List.fold_left 
+              (fun (agent,sites,bool) mall-> 
+                let mall = mall.kept_sites  in 
+                let a' = 
+                  if size > 1 
+                  then StringSet.fold (fun site s -> s^"."^site) mall (a^".") 
+                  else a
+                in 
+                let agent = 
+                  if bool 
+                  then 
+                    StringMap.add a a' agent
+                  else 
+                    agent
+                in 
+                let sites = 
+                  StringSet.fold 
+                    (fun s -> String2Map.add (a,s) a')
+                    mall sites 
+                in 
+                agent,sites,false)
+              (agent,sites,true)
+              l
+          in 
+          agent,sites)
+        local_map
+        (StringMap.empty,String2Map.empty) 
+    in 
+    (fun a -> 
+      try StringMap.find a agent
+      with Not_found -> ""),
+    (fun s -> 
+      try String2Map.find s sites
+      with Not_found -> "")
+  in 
+  let _ = 
+    List.iter 
+      (fun rule_class -> 
+        let inj = rule_class.rules in 
+        List.iter 
+          (fun rule -> 
+            begin 
+              let see (a,x) map = 
+                try 
+                  let _ = StringMap.find a map in map
+                with
+                  | Not_found -> StringMap.add a (sites (a,x)) map
+              in 
+              let get a map =
+                try
+                  StringMap.find a map
+                with 
+                  | Not_found -> agent a 
+              in 
+              let site_of_agent_type = 
+                List.fold_left 
+                  (fun map (b,bool) -> 
+                    match 
+                      b 
+                    with 
+                      | L((_,a,s),(_,a',s')) -> see (a,s) (see (a',s') map)
+                      | B(_,a,s) | AL((_,a,s),_) | M((_,a,s),_) -> see (a,s) map
+                      | _ -> map)
+                  StringMap.empty 
+                  rule.injective_guard 
+              in 
+              let labels,control,guard = 
+                rule.labels,
+                rule_class.control,
+                rule.injective_guard 
+              in
+              let rename_agent = 
+                (fun a -> 
+                  try
+                    StringMap.find a site_of_agent_type
+                  with 
+                      Not_found -> agent a)
+              in 
+              let original_string_of_id = 
+                List.fold_left 
+                  (fun map (pred,_) -> 
+                      match pred 
+                      with 
+                        | L((a,a',_),(b,b',_)) -> 
+                          StringMap.add a a' (StringMap.add b b' map)
+                        | B(a,a',_) 
+                        | M((a,a',_),_) 
+                        | H(a,a') -> 
+                          StringMap.add a a' map
+                        | _ -> map)
+                  StringMap.empty 
+                  guard
+              in 
+              let guard = 
+                List.map 
+                  (fun (pred,bool) -> 
+                    match pred 
+                    with 
+                    | L((a,a',s),(b,b',s')) -> L((a,rename_agent a',s),(b,rename_agent b',s')),bool
+                    | B(a,a',s) -> B(a,rename_agent a',s),bool
+                    | M((a,a',s),m) -> M((a,rename_agent a',s),m),bool
+                    | H(a,a') -> H(a,rename_agent a'),bool
+                    | _ -> pred,bool)
+                  guard 
+              in 
+              let control = 
+                {control 
+                 with 
+                   uncontext_update=
+                    List.map (fun (a,a',s) -> a,rename_agent a',s) control.uncontext_update ;
+                  context_update=
+                    List.map (fun (b,bool) -> 
+                      match b with 
+                            | L((a,a',s),(b,b',s')) -> L((a,rename_agent a',s),(b,rename_agent b',s')),bool
+                    | B(a,a',s) -> B(a,rename_agent a',s),bool
+                    | M((a,a',s),m) -> M((a,rename_agent a',s),m),bool
+                    | H(a,a') -> H(a,rename_agent a'),bool
+                    | _ -> b,bool)
+                      control.context_update}
+              in 
+              let string_of_id = 
+                List.fold_left 
+                  (fun map (pred,_) -> 
+                      match pred 
+                      with 
+                        | L((a,a',_),(b,b',_)) -> 
+                          StringMap.add a a' (StringMap.add b b' map)
+                        | B(a,a',_) 
+                        | M((a,a',_),_) 
+                        | H(a,a') -> 
+                          StringMap.add a a' map
+                        | _ -> map)
+                  StringMap.empty 
+                  guard
+              in 
+              let string_of_id,guard,remove,l,_ = 
+                List.fold_left
+                  (fun (string_of_id,g,remove,l,n) id -> 
+                      let a = StringMap.find id original_string_of_id in 
+                      let a' = StringMap.find id string_of_id in 
+                      let list = StringMap.find a local_map in 
+                      if List.length list > 1 
+                      then 
+                        List.fold_left 
+                          (fun (string_of_id,g,remove,l,n) s -> 
+                            let mall = s.kept_sites  in 
+                            let a'' = 
+                              StringSet.fold (fun site s -> s^"."^site) mall (a^".") in 
+                            if a''=a'
+                            then (string_of_id,g,remove,l,n)
+                            else 
+                              let id = a^"%%"^(string_of_int n) in 
+                              (StringMap.add id a'' string_of_id,
+                               ((H(id,a'')),true)::g,
+                               id::remove,
+                               a''::l,
+                               n+1)
+                          )
+                          (string_of_id,g,remove,l,n) list
+                      else 
+                        (string_of_id,g,remove,l,n))
+                  (string_of_id,guard,control.remove,[],1)
+                  control.remove 
+              in 
+              let control = {control with remove = remove} in 
+              let guard = 
+                List.map (fun (pred,bool) -> var_of_b pred,bool) guard 
+              in 
+              let string_of_id a = 
+                try 
+                  StringMap.find a string_of_id 
+                with 
+                  | Not_found -> a
+              in 
+              let rs = [labels,control,guard] in 
+              let vars = 
+                List.fold_left 
+                  (fun sol (_,_,b) -> 
+	            List.fold_left 
+	              (fun sol (a,_) -> varset_add a sol)
+	              sol b)
+                  varset_empty 
+                  rs in
+              let s = build_kleenean rs vars in 
+              let s = 
+                 print_kleenean 
+                   string_txt
+                   (fun x->true) 
+                   (fun x -> 
+	             (match x.r_simplx.Rule.flag 
+	              with None -> x.r_id 
+	                | Some a -> a))
+                   (fun x -> 3) (IntSet.empty) 
+                   s 
+                   (Some "()") 
+                   (fun x->x) 
+                   string_of_id 
+                   true 
+                   None 
+                   None in 
+               let _ = 
+                 List.iter 
+                   (fun (a,b) -> 
+	             match a with 
+	                 [r] -> let rid = r.Pb_sig.r_id in 
+	                        let old = name_of_rule r in 
+		                let flag = if string_prefix old rid then rid else old in
+		                if r.Pb_sig.r_clone  then () else 
+		                  let _ = print_string "'" in
+		                  let _ = print_string flag in
+		                  let _ = print_string "' " in
+		                  let _ = List.iter print_string (List.rev b) in
+		   (* let _ = print_string " @ " in
+		      let _ = print_string (Printf.sprintf  "%f" kynetic) in*)
+		                  let _ = print_newline () in 
+		                  ()
+	               | _ -> error 947 ) 
+                   s
+               in 
+               ()
+            end 
+          )
+          inj
+      )
+      (List.rev rule_system)
+  in 
+  if file = ""
+  then ()
+  else 
+    close_out channel
 
 let keep_this_link (a,b) (c,d) skeleton = 
   (String22Set.mem ((a,b),(c,d))  skeleton.solid_edges 
@@ -85,7 +356,7 @@ let compute_annotated_contact_map_init cpb  =
     (StringMap.empty,StringMap.empty)
     cpb.Pb_sig.cpb_interface 
 
-let compute_annotated_contact_map_in_stoc_mode system cpb contact_map  =
+let compute_annotated_contact_map_in_stoc_mode system pb cpb contact_map  =
   let local_map,site_map  = compute_annotated_contact_map_init cpb in
   let classes = 
     StringMap.map 
@@ -325,8 +596,7 @@ let compute_annotated_contact_map_in_stoc_mode system cpb contact_map  =
          String2Map.find (a,b) map=[]
        with Not_found -> true)
   in 
-  let _ = Printf.fprintf stdout "TEST SOLID_EDGE\n" in 
-   let solid_edges = 
+  let solid_edges = 
     String2Map.fold
       (fun (a,b) l  y -> 
         List.fold_right
@@ -352,22 +622,3 @@ let compute_annotated_contact_map_in_stoc_mode system cpb contact_map  =
   in 
   (local_map,solid_edges) 
 
-
-(*let upgrade (x,y) cpb = 
-  (x,
-   String2Map.fold
-     (fun (a,b) l sol -> 
-       List.fold_left
-	 (fun sol (c,d) -> 
-	   if String2Set.mem (a,b) y
-	       && String2Set.mem (c,d) y 
-	   then 
-	     String22Set.add ((a,b),(c,d)) sol
-	   else 
-	     sol) 
-	 sol l) 
-     (match cpb.cpb_contact 
-     with None -> error 1327
-     | Some a -> a) 
-     String22Set.empty )
-*)  
