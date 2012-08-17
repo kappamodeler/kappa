@@ -90,12 +90,12 @@ let output_renamed file pb local_map var_of_b varset_empty varset_add build_klee
       try String2Map.find s sites
       with Not_found -> "")
   in 
-  let _ = 
-    List.iter 
-      (fun rule_class -> 
+  let rule_map,l = 
+    List.fold_left 
+      (fun (rule_map,list_rule) rule_class -> 
         let inj = rule_class.rules in 
-        List.iter 
-          (fun rule -> 
+        List.fold_left 
+          (fun (rule_map,list_rule) rule -> 
             begin 
               let see (a,x) map = 
                 try 
@@ -247,40 +247,142 @@ let output_renamed file pb local_map var_of_b varset_empty varset_add build_klee
 	             (match x.r_simplx.Rule.flag 
 	              with None -> x.r_id 
 	                | Some a -> a))
-                   (fun x -> 3) (IntSet.empty) 
+                   (fun x -> 3) 
+                   (IntSet.empty) 
                    s 
                    (Some "()") 
                    (fun x->x) 
                    string_of_id 
                    true 
                    None 
-                   None in 
-               let _ = 
-                 List.iter 
-                   (fun (a,b) -> 
+                   None 
+              in 
+                 List.fold_left  
+                   (fun (rule_map,l) (a,b) -> 
 	             match a with 
 	                 [r] -> let rid = r.Pb_sig.r_id in 
 	                        let old = name_of_rule r in 
 		                let flag = if string_prefix old rid then rid else old in
-		                if r.Pb_sig.r_clone  then () else 
-		                  let _ = print_string "'" in
-		                  let _ = print_string flag in
-		                  let _ = print_string "' " in
-		                  let _ = List.iter print_string (List.rev b) in
-		   (* let _ = print_string " @ " in
-		      let _ = print_string (Printf.sprintf  "%f" kynetic) in*)
-		                  let _ = print_newline () in 
-		                  ()
+                                  if r.Pb_sig.r_clone  then rule_map,l else 
+		                
+                 		    IntMap.add r.r_simplx.Rule.id (a,b) rule_map , r::list_rule
 	               | _ -> error 947 ) 
+                   (rule_map,list_rule) 
                    s
-               in 
-               ()
             end 
           )
+          (rule_map,list_rule) 
           inj
       )
-      (List.rev rule_system)
+      (IntMap.empty,[]) 
+      rule_system
   in 
+   let print s = Printf.fprintf channel s in 
+   let print_opt = print  "%s" in 
+   let rec aux cl lid = 
+     match cl with 
+         [] -> ()
+       | (Decl a)::q -> 
+         (
+          (* print "%s" a;
+           print "\n";*)
+           aux q lid )
+       | (Mutt a)::q -> 
+         (print_opt a;print_opt "\n";aux q  lid)
+       | (Rgl a)::q -> (
+         let name = 
+           try ( 
+             let id = List.hd l in 
+             let list = IntMap.find (id.Pb_sig.r_simplx.Rule.id) rule_map in 
+	     List.fold_left 
+              (fun s rid -> 
+			       if s = "" 
+			       then 
+				 "'"^(name_of_rule rid)^"'"
+			       else 
+				 "'"^(name_of_rule rid)^"',"^s)
+			     "" (fst list))
+		     with _ -> "" in 
+	let nspace = 
+	  let rec aux k = 
+	    try (match String.get  a.lhs k with 
+		' ' -> aux (k+1)
+	      | _ -> k)
+	    with _ -> k in aux 0 in 
+	print_opt !Config_complx.comment;
+	print_opt "former rule:";
+	print_opt "\n";
+	let oldflaglength = 
+	  1+(if nspace = 0 then 1 else nspace)
+	  + (max 1 (match a.flag with None -> 0
+	    | Some s -> 2+(String.length (s))))
+		       + String.length a.pref 
+		   in 
+		   let new_flaglength = String.length name + 1 in 
+		   let _ = print_opt a.pref in 
+		   let _ = 
+		     try (print_opt 
+		       (String.make 
+			  (new_flaglength - oldflaglength)
+			  (String.get !Config_complx.comment 0)))
+		     with _ -> () in 
+		   let _ = print_opt !Config_complx.comment in 
+		   let _ = 
+		     match a.flag with 
+		       None -> (print_opt !Config_complx.comment)
+		     | Some s -> (print_opt "'";
+				  print_opt s;
+				  print_opt "'") in 
+		   let _ = (if nspace=0 then print_opt " ") in 
+		   let _ = print_opt  a.lhs in 
+		   let _ = print_opt  (a.arrow) in 
+		   let _ = print_opt  a.rhs in 
+		   let _ = print_opt  a.comments in 
+		   let _ = print_opt "\n" in 
+		   let rule=a in 
+		   try (
+		     let f lid ext = 
+		       try ( 
+			 
+			 let id,lid = match lid with t::q -> t,q | [] -> raise Exit in 
+                         let id = id.Pb_sig.r_simplx.Rule.id in 
+			 let (a,b) = 
+			   try IntMap.find id rule_map 
+                           with Not_found -> error 865  in 
+			 print_opt !Config_complx.comment;
+			 print_opt "simplified  rule:";
+			 print_opt "\n";
+			 let pref1  = "" in 
+			 let pref2  = "" in 
+			 let s = Tools.concat_list_string (List.rev b) in 
+			 let _  = 
+			     (print "%s%s%s" pref1 pref2 s)
+			 in 
+			 print_opt " ";
+			 print_opt !Config_complx.comment;
+                           (*			   print_opt id.r_id;*)
+			 print "\n";lid) 
+		       with Not_found -> (print_opt "Cannot be applied \n";
+                                          let id,lid = List.hd lid,List.tl lid in   lid) in 
+		       ((let lid = 
+			   if a.dir = 1 then f lid "" else 
+			     (let lid = f lid "" in f lid "_op") in aux q lid)))
+		   with _ -> 
+		     error_frozen "431" (fun () -> raise Exit)
+		 )
+		   
+	     in 
+	     let cl =  
+	       match pb.txt_lines with 
+	           Some l -> l 
+	         | None -> [] in
+	       
+	     let _ = aux 
+               cl 
+               l 
+               
+             in 
+	     let _ = print_opt "\n" in 
   if file = ""
   then ()
   else 
