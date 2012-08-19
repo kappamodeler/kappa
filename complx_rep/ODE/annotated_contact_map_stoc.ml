@@ -398,7 +398,7 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
                   let s,_,n =
                     List.fold_left 
                       (fun (s,bool,n) (a,k) -> 
-                          ("["^s^"()]"^(if bool then "*" else "")^a,true,n*(facto k))
+                          ("["^a^"()]"^(if bool then "*" else "")^s,true,n*(facto k))
                       )
                       ("",false,1)
                       l 
