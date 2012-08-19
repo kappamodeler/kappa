@@ -1,8 +1,10 @@
 open Comment_sig
 type token =
   | Comment
-	| Percent
-	| Sharp 
+  | Init
+  | Obs
+  | Percent
+  | Sharp 
   | Single_rule
   | Double_rule
   | EOL

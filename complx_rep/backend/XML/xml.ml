@@ -594,7 +594,7 @@ let print_refinement_relation channel pb =
       match pb.simplx_encoding 
       with 
 	None -> ()  
-      | Some (rules,_,_,_) -> 
+      | Some (rules,_,_,_,_) -> 
 	  let _ = 
 	    match pb.refinement_relation_dag with 
 	      None -> ()
@@ -616,7 +616,7 @@ let print_automorphisms channel pb =
       match pb.simplx_encoding 
       with 
 	None -> ()  
-      | Some (rules,_,_,_) -> 
+      | Some (rules,_,_,_,_) -> 
 	  let _ = 
 	    match pb.automorphisms with 
 	      None -> ()

@@ -11,6 +11,8 @@ rule token = parse
 | "->" {Direct}
 | "<->" {Bi}
 | '\n' |  "\r\n" | "\n\r" {EOL}
+| "%init:" {Init}
+| "%obs:" {Obs}
 | '%' {Percent}
 | '\'' {Flag}
 | _ {IDENT(lexeme lexbuf)}

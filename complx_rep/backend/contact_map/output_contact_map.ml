@@ -262,7 +262,7 @@ let dump_stoc_contact_map_in_dot interface active contact dotted subviews fic =
               (fun n mall -> 
                 let a' = 
                   if size > 1 
-                  then StringSet.fold (fun site s -> s^"."^site) mall (a^".") 
+                  then StringSet.fold (fun site s -> s^"_"^site) mall (a^"_") 
                   else a
                 in 
             	let _ = print "subgraph cluster" in 

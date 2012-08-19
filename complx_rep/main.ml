@@ -162,6 +162,7 @@ let main ()  =
         (!Config_complx.output_ODE_perturbation)
 	(!Config_complx.output_ODE_contact) 
         (!Config_complx.output_stoc_contact)
+        (!Config_complx.output_stoc_rules)
 	(!Config_complx.output_ODE_covering) 
 	(!Config_complx.output_ODE_covering_latex)
 	(!Config_complx.output_ODE_latex) 
@@ -225,10 +226,10 @@ let main ()  =
 	    if s = "" 
 	    then None,log
 	    else 
-	      let (a,b,c,d) = Kappa_lex.compile s  in 
+	      let (a,b,b2,c,d) = Kappa_lex.compile s  in 
 	      (*let b = !Data.pairs in*) (*Correction JK*)
 	      let _ = trace_print "COMPILATION DONE" in
-	      Some (Some(a,b,!Data.obs_l,Experiment.unfun !Data.exp)),log 
+	      Some (Some(a,b,!Data.init_l,!Data.obs_l,Experiment.unfun !Data.exp)),log 
 		
 	  in simplx,log 
       in

@@ -596,7 +596,7 @@ let concretize sim_data abs_pos_map abs_neg_map log =
     (pos_map,neg_map,log)
 
 (*sim_data initialisation*)
-let init log (rules,init,sol_init,obs_l,exp) =
+let init log (rules,init,init_l,sol_init,obs_l,exp) =
   if !load_sim_data then
     try 
       let log = Session.add_log_entry 0 
@@ -715,6 +715,7 @@ let init log (rules,init,sol_init,obs_l,exp) =
     let (cplx_simplx:Pipeline.simplx_encoding) = 
       Some (fake_rules@rules,
 	    init (*JK: list of pairs (sol,n) where n is the multiplication coef of sol*),
+            init_l,
 	    []   (*obs for ODE*)
               ,
             Experiment.unfun Experiment.empty
@@ -767,7 +768,7 @@ let init log (rules,init,sol_init,obs_l,exp) =
 
     (*computing refinement quotient and automorphisms for real rules*)
     let (cplx_simplx:Pipeline.simplx_encoding) = 
-      Some (rules,init,[],Experiment.unfun Experiment.empty)  
+      Some (rules,init,init_l,[],Experiment.unfun Experiment.empty)  
     in
     let pb = pipeline_methods.Pipeline.build_pb cplx_simplx (add_suffix (add_suffix Tools.empty_prefix "") "")  
     in 
@@ -793,7 +794,7 @@ let init log (rules,init,sol_init,obs_l,exp) =
 
     (*computing automorphism for observables (fake rules)*)
     let (cplx_simplx:Pipeline.simplx_encoding) = 
-      Some (fake_rules,init,[],Experiment.unfun Experiment.empty)
+      Some (fake_rules,init,init_l,[],Experiment.unfun Experiment.empty)
     in
     let pb = pipeline_methods.Pipeline.build_pb cplx_simplx (add_suffix (add_suffix Tools.empty_prefix "") "")  
     in 

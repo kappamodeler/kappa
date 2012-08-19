@@ -16,7 +16,12 @@ open Annotated_contact_map
 
 let debug = false
 
-
+let facto n = 
+  let rec aux k output = 
+    if k>n then output
+    else aux (k+1) (output*k)
+  in aux 1 1 
+  
 
 let error i = 
   unsafe_frozen None (Some "Complx") (Some "Annotated_contact_map.ml") None (Some ("line "^(string_of_int i))) (fun () -> raise Exit)
@@ -29,7 +34,7 @@ let succ x =
     | None -> None 
     | Some x -> Some (x+1)
 
-let output_renamed file pb local_map var_of_b varset_empty varset_add build_kleenean print_kleenean = 
+let output_renamed file handler empty pb local_map var_of_b varset_empty varset_add build_kleenean print_kleenean = 
   let local_map = local_map.subviews in 
   let channel = 
     if file = ""
@@ -43,6 +48,7 @@ let output_renamed file pb local_map var_of_b varset_empty varset_add build_klee
     with None -> error 6 
     | Some a -> a 
   in
+  
   let boolean_encoding = 
     match pb.boolean_encoding 
     with None -> error 7 
@@ -60,7 +66,7 @@ let output_renamed file pb local_map var_of_b varset_empty varset_add build_klee
                 let mall = mall.kept_sites  in 
                 let a' = 
                   if size > 1 
-                  then StringSet.fold (fun site s -> s^"."^site) mall (a^".") 
+                  then StringSet.fold (fun site s -> s^"_"^site) mall (a^"_") 
                   else a
                 in 
                 let agent = 
@@ -89,6 +95,155 @@ let output_renamed file pb local_map var_of_b varset_empty varset_add build_klee
     (fun s -> 
       try String2Map.find s sites
       with Not_found -> "")
+  in 
+  let proj_solution solution = 
+    let specie_map = 
+      Solution.AA.fold 
+	(fun i a  -> IntMap.add i (Agent.name a))  
+	solution.Solution.agents 
+	IntMap.empty 
+    in 
+    let tuple_map = 
+      Solution.AA.fold 
+	(fun i a tuple_map -> 
+	  let ag = IntMap.find i specie_map in
+          let tuple_map' = 
+            Agent.fold_interface  
+	      (fun s (m1,m2) tuple_map -> 
+                if s="_" 
+                then 
+                  tuple_map 
+                else 
+                  let ag = sites(ag,s) in 
+                  let tuple = 
+                    try (StringMap.find ag tuple_map)
+                    with 
+                        Not_found -> StringMap.empty 
+                  in 
+                  let tup = 
+                    try 
+                      (StringMap.find s tuple)
+                    with Not_found -> tuple_bot
+                  in 
+	          let tup = 
+		    match m1 
+		    with Agent.Wildcard -> tup
+		      | Agent.Marked m -> 
+		        {tup with mark = Init m}
+		      | _ -> error 2431 
+	          in 
+	          let tup = 
+		    match m2 with Agent.Wildcard -> tup
+		      | Agent.Free -> 
+		    {tup with is_bound = Init false}
+		      | Agent.Bound -> tup
+		      | _ -> error 2439 
+	          in 
+	          StringMap.add ag (StringMap.add s tup tuple) tuple_map)
+              a tuple_map 
+          in 
+          if tuple_map == tuple_map' 
+          then 
+            let ag = agent ag in 
+            StringMap.add ag StringMap.empty tuple_map
+          else
+            tuple_map')
+	solution.Solution.agents StringMap.empty 
+    in 
+    let tuple_map,_ =
+	  Solution.PA.fold
+	    (fun (i,s) (i',s') (tuple_map,n) -> 
+	      let ag = IntMap.find i specie_map in 
+              let ag = sites (ag,s) in 
+	      let ag'= IntMap.find i' specie_map in 
+              let ag' = sites (ag',s') in 
+              let tuple = 
+                try 
+                  StringMap.find ag tuple_map
+                with 
+                  | Not_found -> StringMap.empty
+              in 
+              let tup = 
+                try 
+                  StringMap.find s tuple 
+                with 
+                  | Not_found -> tuple_bot 
+              in 
+              let tuple_map = StringMap.add ag (StringMap.add s {tup with link = Init (bound_of_number n)} tuple) tuple_map 
+              in 
+              let tuple' = 
+                try 
+                  StringMap.find ag' tuple_map
+                with 
+                  | Not_found -> StringMap.empty
+              in 
+              let tup' = 
+                try 
+                  StringMap.find s' tuple'
+                with Not_found -> tuple_bot 
+              in 
+              let tuple_map = StringMap.add ag' (StringMap.add s' {tup' with link = Init (bound_of_number n)} tuple') tuple_map 
+              in 
+              tuple_map,n+1)
+	    solution.Solution.links 
+            (tuple_map,0)
+    in
+    tuple_map 
+  in 
+  let init = 
+    (match pb.Pb_sig.simplx_encoding with Some (a,b,b2,c,d) -> List.rev b2
+      | None -> error 2809 )
+  in 
+  let obs = 
+     (match pb.Pb_sig.simplx_encoding with Some (a,b,b2,c,d) -> List.rev c
+      | None -> error 2809 )
+  in 
+  let l_obs = 
+    List.fold_left 
+      (fun list obs -> 
+          match 
+            obs
+          with
+            | Solution.Concentration (s,t) -> t::list
+            | _ -> list)
+      [] 
+      (List.rev obs)
+  in 
+  let print_solution a = 
+     let tuple_map = 
+       proj_solution a
+     in 
+     StringMap.fold
+       (fun ag tuple bool -> 
+         let pretty = StringMap.add ag  tuple StringMap.empty in 
+	 let l = 
+	   print_pretty 
+	     handler 
+	     ag
+	     (fun x->true)
+	     ((pretty,pretty),0)
+	     tuple_known
+	     empty
+	     (if bool then handler.agent_separator () else "")
+	     (fun x->x) 
+	     (fun x->x) 
+	     None 
+	     None in 
+	 let _ = 
+	   List.iter 
+	     (Printf.fprintf channel "%s")
+	     (List.rev 
+	        ((fun (_,a,_) -> a) 
+	            l)) in
+	      true 
+	    )
+            tuple_map false
+  in 
+  let print_init (a,k) =
+    let _ = Printf.fprintf channel "%sinit:" "%" in 
+    let _ = if k<>1 then Printf.fprintf channel "%i * " k in 
+    let _ = print_solution a in 
+    let _ = Printf.fprintf channel "\n" in () 
   in 
   let rule_map,l = 
     List.fold_left 
@@ -202,7 +357,7 @@ let output_renamed file pb local_map var_of_b varset_empty varset_add build_klee
                           (fun (string_of_id,g,remove,l,n) s -> 
                             let mall = s.kept_sites  in 
                             let a'' = 
-                              StringSet.fold (fun site s -> s^"."^site) mall (a^".") in 
+                              StringSet.fold (fun site s -> s^"_"^site) mall (a^"_") in 
                             if a''=a'
                             then (string_of_id,g,remove,l,n)
                             else 
@@ -219,6 +374,42 @@ let output_renamed file pb local_map var_of_b varset_empty varset_add build_klee
                   (string_of_id,guard,control.remove,[],1)
                   control.remove 
               in 
+              let l = List.sort compare l in 
+              let smash l = 
+                let rec aux l counter old output = 
+                  match 
+                    l
+                  with
+                    | t::q when t=old -> aux q (counter+1) old output
+                    | t::q -> aux q 1 t ((old,counter)::output)
+                    | []  -> (old,counter)::output
+                in 
+                begin 
+                  match l 
+                  with 
+                    | []  -> []
+                    | t::q -> aux q 1 t []
+                end 
+              in 
+              let l = smash (List.rev l)  in 
+              let comment_rule = 
+                if l = [] then "" 
+                else 
+                  let s,_,n =
+                    List.fold_left 
+                      (fun (s,bool,n) (a,k) -> 
+                          ("["^s^"()]"^(if bool then "*" else "")^a,true,n*(facto k))
+                      )
+                      ("",false,1)
+                      l 
+                  in 
+                  if n=1 
+                  then 
+                    "the rate should be divided by "^s
+                  else 
+                    "the rate should be divided by "^s^" and multiplied by "^(string_of_int n)
+              in 
+            
               let control = {control with remove = remove} in 
               let guard = 
                 List.map (fun (pred,bool) -> var_of_b pred,bool) guard 
@@ -265,7 +456,7 @@ let output_renamed file pb local_map var_of_b varset_empty varset_add build_klee
 		                let flag = if string_prefix old rid then rid else old in
                                   if r.Pb_sig.r_clone  then rule_map,l else 
 		                
-                 		    IntMap.add r.r_simplx.Rule.id (a,b) rule_map , r::list_rule
+                 		    IntMap.add r.r_simplx.Rule.id (a,b,comment_rule) rule_map , r::list_rule
 	               | _ -> error 947 ) 
                    (rule_map,list_rule) 
                    s
@@ -277,32 +468,49 @@ let output_renamed file pb local_map var_of_b varset_empty varset_add build_klee
       (IntMap.empty,[]) 
       rule_system
   in 
-   let print s = Printf.fprintf channel s in 
-   let print_opt = print  "%s" in 
-   let rec aux cl lid = 
-     match cl with 
-         [] -> ()
-       | (Decl a)::q -> 
-         (
-          (* print "%s" a;
-           print "\n";*)
-           aux q lid )
-       | (Mutt a)::q -> 
-         (print_opt a;print_opt "\n";aux q  lid)
-       | (Rgl a)::q -> (
-         let name = 
-           try ( 
-             let id = List.hd l in 
-             let list = IntMap.find (id.Pb_sig.r_simplx.Rule.id) rule_map in 
-	     List.fold_left 
+  let print s = Printf.fprintf channel s in 
+  let print_opt = print  "%s" in 
+  let rec aux cl l_rule l_init l_obs  = 
+    match cl with 
+        [] -> ()
+      | (Decl a)::q -> 
+        (
+          print "%s" a;
+          print "\n";
+          aux q l_rule l_init l_obs)
+      | (Mutt a)::q -> 
+        (print_opt a;print_opt "\n";aux q  l_rule l_init l_obs)
+      | (Init_line a)::q -> 
+        let _ = print_opt !Config_complx.comment in 
+        let _ = print_opt a in 
+        let _ = print_opt "\n" in 
+        let sol = List.hd l_init in 
+        let _ = print_init sol in 
+        aux q l_rule (List.tl l_init) l_obs
+      | (Obs_line a)::q -> 
+        let _ = print_opt !Config_complx.comment in 
+        let _ = print_opt a in 
+        let _ = print_opt "\n" in 
+        let sol = List.hd l_obs in
+        let _ = print "%sobs: " "%" in 
+        let _ = print_solution sol in 
+        let _ = print "\n" in 
+        aux q l_rule l_init (List.tl l_obs)
+      | (Rgl a)::q -> (
+        let name = 
+          try ( 
+            let id = List.hd l_rule in 
+            let list = IntMap.find (id.Pb_sig.r_simplx.Rule.id) rule_map in 
+            let (l1,l2,l3) = list in 
+            List.fold_left 
               (fun s rid -> 
-			       if s = "" 
-			       then 
-				 "'"^(name_of_rule rid)^"'"
-			       else 
-				 "'"^(name_of_rule rid)^"',"^s)
-			     "" (fst list))
-		     with _ -> "" in 
+		if s = "" 
+		then 
+		  "'"^(name_of_rule rid)^"'"
+		else 
+		  "'"^(name_of_rule rid)^"',"^s)
+	      "" l1)
+	  with _ -> "" in 
 	let nspace = 
 	  let rec aux k = 
 	    try (match String.get  a.lhs k with 
@@ -316,77 +524,84 @@ let output_renamed file pb local_map var_of_b varset_empty varset_add build_klee
 	  1+(if nspace = 0 then 1 else nspace)
 	  + (max 1 (match a.flag with None -> 0
 	    | Some s -> 2+(String.length (s))))
-		       + String.length a.pref 
-		   in 
-		   let new_flaglength = String.length name + 1 in 
-		   let _ = print_opt a.pref in 
-		   let _ = 
-		     try (print_opt 
-		       (String.make 
-			  (new_flaglength - oldflaglength)
-			  (String.get !Config_complx.comment 0)))
-		     with _ -> () in 
-		   let _ = print_opt !Config_complx.comment in 
-		   let _ = 
-		     match a.flag with 
-		       None -> (print_opt !Config_complx.comment)
-		     | Some s -> (print_opt "'";
-				  print_opt s;
-				  print_opt "'") in 
-		   let _ = (if nspace=0 then print_opt " ") in 
-		   let _ = print_opt  a.lhs in 
-		   let _ = print_opt  (a.arrow) in 
-		   let _ = print_opt  a.rhs in 
-		   let _ = print_opt  a.comments in 
-		   let _ = print_opt "\n" in 
-		   let rule=a in 
-		   try (
-		     let f lid ext = 
-		       try ( 
+	  + String.length a.pref 
+	in 
+	let _ = print_opt a.pref in 
+	let _ = print_opt !Config_complx.comment in 
+	let _ = 
+	  match a.flag with 
+	      None -> (print_opt !Config_complx.comment)
+	    | Some s -> (print_opt "'";
+			 print_opt s;
+			 print_opt "'") in 
+	let _ = (if nspace=0 then print_opt " ") in 
+	let _ = print_opt  a.lhs in 
+	let _ = print_opt  (a.arrow) in 
+	let _ = print_opt  a.rhs in 
+	let _ = print_opt  a.comments in 
+	let _ = print_opt "\n" in 
+	let rule=a in 
+	try (
+	  let f lid ext = 
+	    try ( 
 			 
-			 let id,lid = match lid with t::q -> t,q | [] -> raise Exit in 
-                         let id = id.Pb_sig.r_simplx.Rule.id in 
-			 let (a,b) = 
-			   try IntMap.find id rule_map 
-                           with Not_found -> error 865  in 
-			 print_opt !Config_complx.comment;
-			 print_opt "simplified  rule:";
-			 print_opt "\n";
-			 let pref1  = "" in 
-			 let pref2  = "" in 
-			 let s = Tools.concat_list_string (List.rev b) in 
-			 let _  = 
-			     (print "%s%s%s" pref1 pref2 s)
-			 in 
-			 print_opt " ";
-			 print_opt !Config_complx.comment;
-                           (*			   print_opt id.r_id;*)
-			 print "\n";lid) 
-		       with Not_found -> (print_opt "Cannot be applied \n";
-                                          let id,lid = List.hd lid,List.tl lid in   lid) in 
-		       ((let lid = 
-			   if a.dir = 1 then f lid "" else 
-			     (let lid = f lid "" in f lid "_op") in aux q lid)))
-		   with _ -> 
-		     error_frozen "431" (fun () -> raise Exit)
-		 )
-		   
-	     in 
-	     let cl =  
-	       match pb.txt_lines with 
-	           Some l -> l 
-	         | None -> [] in
-	       
-	     let _ = aux 
-               cl 
-               l 
-               
-             in 
-	     let _ = print_opt "\n" in 
+	      let id,lid = match lid with t::q -> t,q | [] -> raise Exit in 
+              let id = id.Pb_sig.r_simplx.Rule.id in 
+	      let (a,b,c) = 
+		try IntMap.find id rule_map 
+                with Not_found -> error 865  in 
+	      print_opt !Config_complx.comment;
+	      print_opt " rule on fragments:";
+	      print_opt "\n";
+	      let pref1  = "" in 
+	      let pref2  = "" in 
+              let _ = 
+	        match rule.flag with 
+	            None -> (print_opt !Config_complx.comment)
+	          | Some s -> (print_opt "'";
+			       print_opt s;
+			       print_opt "' ") 
+              in
+	      let s = Tools.concat_list_string (List.rev b) in 
+	      let _  = 
+		(print "%s%s%s" pref1 pref2 s)
+	      in 
+	      print_opt " ";
+	      let _ = 
+                if c="" then 
+                  ()
+                else 
+                  (print_opt !Config_complx.comment;print_opt c)
+              in 
+              
+                         (*			   print_opt id.r_id;*)
+	      print "\n";lid) 
+	    with Not_found -> (print_opt "Cannot be applied \n";
+                               let id,lid = List.hd l_rule,List.tl l_rule in   lid) in 
+	  ((let l_rule = 
+	      if a.dir = 1 then f l_rule "" else 
+		(let lid = f l_rule "" in f lid "_op") in aux q l_rule l_init l_obs)))
+	with _ -> 
+	  error_frozen "431" (fun () -> raise Exit)
+      )
+	
+  in 
+  let cl =  
+    match pb.txt_lines with 
+	Some l -> l 
+      | None -> [] in
+  
+  let _ = aux 
+    cl 
+    l 
+    init
+    l_obs 
+  in 
+  let _ = print_opt "\n" in 
   if file = ""
-  then ()
-  else 
-    close_out channel
+             then ()
+             else 
+               close_out channel
 
 let keep_this_link (a,b) (c,d) skeleton = 
   (String22Set.mem ((a,b),(c,d))  skeleton.solid_edges 

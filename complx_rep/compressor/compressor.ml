@@ -811,7 +811,7 @@ module Compressor =
 	     let rec aux cl lid messages = 
                match cl with 
 		 [] -> ()
-	       | (Decl a)::q -> 
+	       | (Decl a)::q | (Init_line a)::q | (Obs_line a)::q -> 
 		   (
 		   print "%s" a;
 		   print "\n";aux q lid messages )

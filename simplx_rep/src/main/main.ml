@@ -190,21 +190,21 @@ let main =
 
     let _ = 
       try 
-	let log,warn,rules,init,sol_init,obs_l,exp =
+	let log,warn,rules,init,init_l,sol_init,obs_l,exp =
 	  let log,t_compil = (Session.add_log_entry 0 "-Compilation..." log, Mods2.gettime()) 
 	  in
 	    (*compute rules,sol_init,obs_l and exp from a kappa file*)
 	    try
-	      let (r,i,o,e) = Kappa_lex.compile (!fic) in
+	      let (r,i,il,o,e) = Kappa_lex.compile (!fic) in
 	      let s = Solution.sol_of_init !compile_mode i in
 	      let log = 
 		Session.add_log_entry 0 (sprintf "-Compilation: %f sec. CPU" (Mods2.gettime()-.t_compil)) log 
 	      in
-		(log,0,r,i,s,o,e)
+		(log,0,r,i,il,s,o,e)
 	    with
 		Error.Syntax (msg,line) -> 
 		  let log = Session.add_log_entry 2 msg ~line:line log in
-		    (log,2,[],[],Solution.empty(),[],Experiment.empty)
+		    (log,2,[],[],[],Solution.empty(),[],Experiment.empty)
 	in
 	  if (warn > 1) or (!compile_mode) then 
 	    begin
@@ -249,7 +249,7 @@ let main =
 	    
 	    let log = Session.add_log_entry 0 "--Computing initial state" log 
 	    in
-	      Simulation2.init log (rules,init,sol_init,obs_l,exp)  
+	      Simulation2.init log (rules,init,init_l,sol_init,obs_l,exp)  
 	  in
 	  let sd = 
 	    if !story_mode then (*adding constraints to stories*)
@@ -335,7 +335,7 @@ let main =
 			    | Some serialized_sim_data ->
 				let log = Session.add_log_entry 4 ("-Loading initial state from "^serialized_sim_data^"...") log in
 				  compilation_opt := 0 ; load_sim_data := true;
-				  let _,_,_,exp = Kappa_lex.compile !fic in
+				  let _,_,_,_,exp = Kappa_lex.compile !fic in
 				  let task_list = 
 				    IntMap.fold (fun i t task_list -> 
 						   let t = if t<0. then c.t0 else t in

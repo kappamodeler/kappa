@@ -39,7 +39,7 @@ type prefix = string * string list
 let extend_prefix x = x^"-"
 
 type file_name = string
-type simplx_encoding = (Rule.t list * (Solution.t*int)list * Solution.observation list * Experiment.t_unfun) option
+type simplx_encoding = (Rule.t list * (Solution.t*int)list * (Solution.t*int) list * Solution.observation list * Experiment.t_unfun) option
 type 'a intermediate_encoding = 'a Pb_sig.cpb option
 type 'a boolean_encoding = 'a Pb_sig.boolean_encoding option 
 type 'a internal_encoding = 'a Pb_sig.pb option 
@@ -100,7 +100,7 @@ type 'a pipeline = {
     dump_html_output: file_name -> 'a step;
     save_options: 'a step ;
     good_vertice: file_name -> prefix -> output_channel -> StringSet.t option * output_channel ;
-    template: file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> 'a step ;
+    template: file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> 'a step ;
     integrate: file_name -> 'a step;
     dump_potential_cycles: precision -> 'a step;
     refine_system_to_avoid_polymers: 
@@ -332,7 +332,7 @@ module Pipeline =
 	 end 
        and build_obs a prefix n = 
 	 match a with None -> None,IntMap.empty,Experiment.unfun Experiment.empty
-	   | Some (a,b,c,d) -> 
+	   | Some (a,b,b2,c,d) -> 
 	       let fake_rules,obs,_  = 
 		 List.fold_right 
 		   (fun obs (cont,obs',fresh_id) ->
@@ -375,7 +375,7 @@ module Pipeline =
 
 	       in
 		 Some {pb_init 
-                       with simplx_encoding =  Some (fake_rules,b,c,d)},
+                       with simplx_encoding =  Some (fake_rules,b,b2,c,d)},
                obs,
                d
 		       
@@ -390,8 +390,9 @@ module Pipeline =
 	   else 
 	     let _ = print_option prefix (Some stdout) "Compilation(simplx)\n" in 
 	     let _ = add_suffix prefix "Compilation(simplx)\n" in
-	     let (a,b,c,d) = Kappa_lex.compile s  in 
+	     let (a,b,b2,c,d) = Kappa_lex.compile s  in 
 	     let b = !Data.init in
+             let b2 = !Data.init_l in 
 	     let obs = !Data.obs_l in 
              let exp = Experiment.unfun !Data.exp in 
 	     let _ = trace_print "COMPILATION DONE" in
@@ -400,7 +401,7 @@ module Pipeline =
 		 "Compilation(simplx)" 
 		 l in 
 	     (Some {pb_init 
-		   with simplx_encoding = (Some (a,b,obs,exp))}
+		   with simplx_encoding = (Some (a,b,b2,obs,exp))}
 		,(l,m))
 	       
 	 in 
@@ -415,7 +416,7 @@ module Pipeline =
 	 | Some a -> 
 	     (match a.simplx_encoding with 
 	       None -> None,(l,m)
-	     | Some(a,_,_,_) -> 
+	     | Some(a,_,_,_,_) -> 
 		 Some (List.fold_left 
 			 (fun set rule -> 
 			   Mods2.IntMap.fold 
@@ -439,7 +440,7 @@ module Pipeline =
 	 |Some rep ->
 	     match rep.first_encoding, rep.simplx_encoding  with 
 	       Some _,_ | _,None -> input,(l,m)
-	     | _,Some (a,b,c,_) -> 
+	     | _,Some (a,b,_,c,_) -> 
 		 (
 		 let _ = add_suffix prefix  "Translation(simplx->ckappa) \n" in
 		 let _ = print_option prefix (Some stdout) "Translation(simplx->ckappa)\n" in 
@@ -1514,7 +1515,7 @@ module Pipeline =
 	           | Some a -> Some pb,(l,m),a 
 	               
      and template = 
-	 (fun file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 file11 file12  file13 file14 file15 file16 file17 file18 file19 file20 file21 file22 file23 file24 prefix pb (l,m) ->
+	 (fun file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 file11 file12  file13 file14 file15 file16 file17 file18 file19 file20 file21 file22 file23 file24 file25 prefix pb (l,m) ->
 	   let prefix' = add_suffix prefix "template" in 
 	   let _ = print_option prefix (Some stdout) "Starting ODE generation\n" in
 	   
@@ -1607,6 +1608,7 @@ module Pipeline =
                          file22 
                          file23
                          file24
+                         file25
 		         prefix 
                          pb  
                          log 
@@ -1707,6 +1709,7 @@ module Pipeline =
 				                           file22
                                                            file23 
                                                            file24
+                                                           file25
                                                            {project=A.project;
 				                            export_ae = A.export_ae;
 				                            restore = A.restore_subviews;
@@ -1902,7 +1905,7 @@ module Pipeline =
 	       let rules = 
 		 match a.simplx_encoding with 
 		   None -> frozen_error "line 1340" "" "" (fun () -> raise Exit)
-		 | Some (a,_,_,_) -> a in 
+		 | Some (a,_,_,_,_) -> a in 
 	       let rep = 
 		 List.fold_left 
 		   (fun a b -> 
@@ -1970,7 +1973,7 @@ module Pipeline =
 	       let rules = 
 		 match a.simplx_encoding with 
 		   None -> frozen_error "line 1340" "" "" (fun () -> raise Exit)
-		 | Some (a,_,_,_) -> a in 
+		 | Some (a,_,_,_,_) -> a in 
 	       let rules = 
 		 List.map 
 		   (fun r -> 
@@ -2035,7 +2038,7 @@ module Pipeline =
 	       let rules = 
 		 match a.simplx_encoding with 
 		   None -> frozen_error "line 1340" "" "" (fun () -> raise Exit)
-		 | Some (a,_,_,_) -> a in 
+		 | Some (a,_,_,_,_) -> a in 
 	       let rep = 
 		 List.fold_left 
 		   (fun a b -> 
@@ -2124,7 +2127,7 @@ module Pipeline =
 		   let rules = 
 		     match a.simplx_encoding with 
 		       None -> frozen_error "line 1422" "" "" (fun () -> raise Exit)
-		     | Some (a,_,_,_) -> a in 
+		     | Some (a,_,_,_,_) -> a in 
 		   match get a with 
 		     Some a -> 
 		       let _ = 
@@ -2317,7 +2320,7 @@ module Pipeline =
 	 with 
 	   Exception _ -> None,c);
        template = 
-	   (fun a b c d e f g h i j k l m n o p q r s t u v w x y -> handle_errors_step (Some "Complx") (Some "template") (template a b c d e f g h i j k l m n o p q r s t u v w x y));
+	   (fun a b c d e f g h i j k l m n o p q r s t u v w x y z -> handle_errors_step (Some "Complx") (Some "template") (template a b c d e f g h i j k l m n o p q r s t u v w x y z));
        find_potential_cycles = (fun a -> handle_errors_step (Some "Complx") (Some "find_potential_cycles") (find_potential_cycles a));
        dump_potential_cycles = (fun a -> handle_errors_step (Some "Complx") (Some "dump_potential_cycles") (dump_potential_cycles a)) ;
        find_connected_components = (fun a -> handle_errors_step (Some "Complx") (Some "find_connected_components") (find_connected_components a));

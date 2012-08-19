@@ -147,7 +147,7 @@ let print_log s =
 
 
 
-let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_matlab_act file_ODE_matlab_obs file_ODE_matlab_init file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_ODE_data_head file_data_foot file_ODE_data file_ODE_gplot file_ODE_png file_ODE_script file_XML ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs  exp var_of_b  varset_empty varset_add build_kleenean print_kleenean (l,m) = 
+let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_stoc_rules file_ODE_covering file_ODE_covering_latex file_ODE_latex file_ODE_matlab file_ODE_matlab_aux file_ODE_matlab_size file_ODE_matlab_jacobian file_ODE_matlab_act file_ODE_matlab_obs file_ODE_matlab_init file_ODE_mathematica file_ODE_txt  file_alphabet file_obs file_obs_latex file_ODE_data_head file_data_foot file_ODE_data file_ODE_gplot file_ODE_png file_ODE_script file_XML ode_handler output_mode  prefix log pb pb_boolean_encoding subviews  auto compression_mode pb_obs  exp var_of_b  varset_empty varset_add build_kleenean print_kleenean (l,m) = 
   
  
   let n_perturbation = 
@@ -698,7 +698,10 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_O
           file_ODE_contact
       | Stoc -> 
         let _ = 
-           Annotated_contact_map_stoc.output_renamed "" 
+           Annotated_contact_map_stoc.output_renamed 
+             file_stoc_rules
+             Tools.string_txt
+             (Some "()")
              pb 
              annotated_contact_map
              var_of_b 
@@ -721,7 +724,6 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_O
             (StringMap.map (List.map (fun x -> x.kept_sites)) annotated_contact_map.subviews )
             file_stoc_contact
         in 
-        let _ = Annotated_contact_map_stoc.output_renamed "" pb annotated_contact_map in 
         ()
   in 
 
@@ -3817,7 +3819,7 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_O
 	 Arraymap.create 0,
 	 Arraymap.create "",
 	 1) 
-	 (match pb.Pb_sig.simplx_encoding with Some (a,b,c,d) -> b 
+	 (match pb.Pb_sig.simplx_encoding with Some (a,b,b2,c,d) -> b 
 	 | None -> error 2809 )
     in
     let (init:expr Arraymap.t) = 

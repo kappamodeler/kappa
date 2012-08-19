@@ -472,7 +472,16 @@ let dump_html pb channel (l,m)  =
         print_ODE_system_octave_perturbation pb channel;
 	print_ODE_system_octave_size pb channel]
       else 
-	[]))
+	[]))@
+        (if !Config_complx.stoc_ode
+         then 
+            [menutitle channel "Stochastic fragmentation"; 
+             print_contact_map_stoc pb channel;
+             precomputed_data channel (!Config_complx.output_stoc_rules) "rules"
+            ]
+         else 
+	    [])
+      
   in 
 
       

@@ -14,7 +14,7 @@ let succ () = (Data_structures.parser_line:=(!Data_structures.parser_line)+1)
 
 /* lexer tokens */
 
-%token Comment Percent Sharp Single_rule Double_rule EOL EOF Direct Bi Flag NextLine
+%token Comment Init Obs Percent Sharp Single_rule Double_rule EOL EOF Direct Bi Flag NextLine
 %token < string > IDENT   
 %start main                   /* the entry point */
 %type <commented_line list> main
@@ -49,6 +49,8 @@ Comment_rule :
 
 Line :
   D EOL {let _ = succ () in Decl($1)}
+| init EOL {let _ = succ () in Init_line($1)}
+| obs EOL {let _ = succ () in Obs_line($1)}
 | C EOL {let _ = succ () in Mutt($1)}
 | Ident C EOL {let _ = succ() in Mutt($1^$2)}
 | Comment_rule EOL {let _ = succ () in Rgl($1)}
@@ -57,6 +59,8 @@ Line :
 
 LastLine :
   D EOF {Decl($1)}
+| init EOF {Init_line($1)}
+| obs EOF {Obs_line($1)}
 | C EOF {Mutt($1)}
 | Ident C EOF {Mutt($1^$2)}
 | Comment_rule EOF {Rgl($1)}
@@ -100,6 +104,14 @@ Comment_char :
 D : 
   D Comment_char {$1^$2}
 | Percent {"%"} 
+
+init:
+  init Comment_char {$1^$2}
+| Init {"%init:"}
+
+obs:
+  obs Comment_char {$1^$2}
+| Obs {"%obs:"}
 
 main :
   EOF {[]}

@@ -200,6 +200,7 @@ let (obs_l:Solution.observation list ref) = ref []
 
 (**Initial solution*)
 let (init:(Solution.t*int) list ref) = ref [] 
+let (init_l:(Solution.t*int) list ref) = ref []
 
 (**Do we take into account coefficients in initial states [JF]*)
 let parse_coef = ref true

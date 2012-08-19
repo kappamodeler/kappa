@@ -180,17 +180,18 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
 				     exn -> 
 				       let s = (Printf.sprintf "Lexer.compile: could not load %s (returned %s)" !serialized_rule_file (Printexc.to_string exn)) in
 					 Error.runtime (None,None,None) s
-			   and init =
-			     if (!compilation_opt land _PARSE_INIT) = _PARSE_INIT then !init
+			   and init,init_l =
+			     if (!compilation_opt land _PARSE_INIT) = _PARSE_INIT then !init,!init_l
 			     else 
-			       if !load_sim_data or !map_mode or !compile_mode then []
+			       if !load_sim_data or !map_mode or !compile_mode then [],[]
 			       else
 				 if Sys.file_exists !serialized_mixture_file then
 				   let d = open_in_bin !serialized_mixture_file in
 				   let f_init = (Marshal.from_channel d:(Solution.marshalized_t * int) list) in
 				     print_string ("-Reading initial mixture from "^(!serialized_mixture_file)^"...") ;
 				     close_in d;
-				     List.map (fun (f_sol,n) -> (Solution.unmarshal f_sol,n)) f_init
+				     let a=List.map (fun (f_sol,n) -> (Solution.unmarshal f_sol,n)) f_init
+                                     in a,a
 				 else Error.runtime (None,None,None) ("Cannot find "^(!serialized_mixture_file))
 			   and obs_l = if !load_sim_data then [] else !obs_l
 			   in
@@ -201,7 +202,7 @@ let internal_state = '~' (['0'-'9' 'a'-'z' 'A'-'Z']+)
 				 Marshal.to_channel d (List.map (fun r -> Rule.marshal r) rules) [];
 				 close_out d
 			   in
-			     (rules,init,obs_l,!exp)
+			     (rules,init,init_l,obs_l,!exp)
 			  )
     
   let make_rule rule_str = 

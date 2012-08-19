@@ -8,4 +8,8 @@ type commented_rule =
       comments:string}
 
 type commented_line = 
-    Mutt of string | Rgl of commented_rule | Decl of string
+  | Mutt of string 
+  | Rgl of commented_rule 
+  | Decl of string
+  | Init_line of string
+  | Obs_line of string 

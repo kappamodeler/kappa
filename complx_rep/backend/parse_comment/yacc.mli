@@ -1,5 +1,7 @@
 type token =
   | Comment
+  | Init
+  | Obs
   | Percent
   | Sharp
   | Single_rule
