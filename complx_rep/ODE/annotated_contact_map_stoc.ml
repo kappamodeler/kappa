@@ -557,7 +557,7 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
 	      let pref2  = "" in 
               let _ = 
 	        match rule.flag with 
-	            None -> (print_opt !Config_complx.comment)
+	            None -> ()
 	          | Some s -> (print_opt "'";
 			       print_opt s;
 			       print_opt "' ") 
