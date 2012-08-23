@@ -103,7 +103,8 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
   let proj_solution solution = 
     let specie_map = 
       Solution.AA.fold 
-	(fun i a  -> IntMap.add i (Agent.name a))  
+	(fun i a  -> 
+          IntMap.add i (Agent.name a))
 	solution.Solution.agents 
 	IntMap.empty 
     in 
@@ -120,7 +121,7 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
                 else 
                   let ag = sites(ag,s) in 
                   let tuple = 
-                    try (StringMap.find ag tuple_map)
+                    try (IntMap.find i tuple_map)
                     with 
                         Not_found -> StringMap.empty 
                   in 
@@ -143,16 +144,15 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
 		      | Agent.Bound -> tup
 		      | _ -> error 2439 
 	          in 
-	          StringMap.add ag (StringMap.add s tup tuple) tuple_map)
+	          IntMap.add i (StringMap.add s tup tuple) tuple_map)
               a tuple_map 
           in 
           if tuple_map == tuple_map' 
           then 
-            let ag = agent ag in 
-            StringMap.add ag StringMap.empty tuple_map
+            IntMap.add i StringMap.empty tuple_map
           else
             tuple_map')
-	solution.Solution.agents StringMap.empty 
+	solution.Solution.agents IntMap.empty
     in 
     let tuple_map,_ =
 	  Solution.PA.fold
@@ -163,7 +163,7 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
               let ag' = sites (ag',s') in 
               let tuple = 
                 try 
-                  StringMap.find ag tuple_map
+                  IntMap.find i tuple_map
                 with 
                   | Not_found -> StringMap.empty
               in 
@@ -173,11 +173,11 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
                 with 
                   | Not_found -> tuple_bot 
               in 
-              let tuple_map = StringMap.add ag (StringMap.add s {tup with link = Init (bound_of_number n)} tuple) tuple_map 
+              let tuple_map = IntMap.add i (StringMap.add s {tup with link = Init (bound_of_number n)} tuple) tuple_map 
               in 
               let tuple' = 
                 try 
-                  StringMap.find ag' tuple_map
+                  IntMap.find i' tuple_map
                 with 
                   | Not_found -> StringMap.empty
               in 
@@ -186,13 +186,13 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
                   StringMap.find s' tuple'
                 with Not_found -> tuple_bot 
               in 
-              let tuple_map = StringMap.add ag' (StringMap.add s' {tup' with link = Init (bound_of_number n)} tuple') tuple_map 
+              let tuple_map = IntMap.add i' (StringMap.add s' {tup' with link = Init (bound_of_number n)} tuple') tuple_map 
               in 
               tuple_map,n+1)
 	    solution.Solution.links 
             (tuple_map,0)
     in
-    tuple_map 
+    tuple_map,specie_map
   in 
   let init = 
     (match pb.Pb_sig.simplx_encoding with Some (a,b,b2,c,d) -> List.rev b2
@@ -214,11 +214,12 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
       (List.rev obs)
   in 
   let print_solution a = 
-     let tuple_map = 
+     let tuple_map,specie_map = 
        proj_solution a
      in 
-     StringMap.fold
-       (fun ag tuple bool -> 
+     IntMap.fold
+       (fun i tuple bool -> 
+         let ag = IntMap.find i specie_map in 
          let pretty = StringMap.add ag  tuple StringMap.empty in 
 	 let l = 
 	   print_pretty 

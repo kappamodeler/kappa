@@ -1,1 +1,1 @@
-let git_commit_version,git_commit_release,git_commit_tag,git_commit_date = 4,326,10566,"2012-08-23 16:56:10"
+let git_commit_version,git_commit_release,git_commit_tag,git_commit_date = 4,326,10567,"2012-08-23 17:23:47"
