@@ -189,9 +189,9 @@ let print_contact_map_in_dot res  pb =
 			    let _ = 
 			      StringSet.iter 
 				(fun s -> 
-				  let _ = print "%s" a in 
+				  let _ = print "<%s" a in 
 				  let _ = print "_" in
-				  let _ = print "%s" s in 
+				  let _ = print "%s>" s in 
 				  let color = 
 				    match StringSet.mem s m1,StringSet.mem s m2 
 				    with true,false -> !Config_complx.boolean_site_color
@@ -225,7 +225,7 @@ let print_contact_map_in_dot res  pb =
 			l String4Set.empty in
 		    let _ = String4Set.iter 
 		      (fun ((a,b),(c,d)) -> 
-			print "%s" a;print "_";print "%s" b;print " -- ";print "%s" c;print "_";print "%s" d;print ";\n") 
+			print "<%s" a;print "_";print "%s>" b;print " -- ";print "<%s" c;print "_";print "%s>" d;print ";\n") 
 			   set  
 		    in
 		    let _ = print "};" in 		  
@@ -271,9 +271,9 @@ let dump_stoc_contact_map_in_dot interface active contact dotted subviews fic =
 	        let _ = 
 	          List.iter 
 	            (fun s -> 
-		        let _ = print "%s" a in 
+		        let _ = print "<%s" a in 
 		        let _ = print "_" in
-		        let _ = print "%s" s in 
+		        let _ = print "%s>" s in 
 		        let color = 
 		          match StringSet.mem s m1,StringSet.mem s m2 
 		          with true,false -> !Config_complx.boolean_site_color
@@ -298,7 +298,7 @@ let dump_stoc_contact_map_in_dot interface active contact dotted subviews fic =
     let _ = 
       List.iter 
         (fun ((a,b),(c,d)) ->
-          print "%s" a;print "_";print "%s" b;print " -- ";print "%s" c;print "_";print "%s" d;(if dotted (a,b) (c,d) then print "[style = dotted]");print ";\n") 
+          print "<%s" a;print "_";print "%s>" b;print " -- ";print "<%s" c;print "_";print "%s>" d;(if dotted (a,b) (c,d) then print "[style = dotted]");print ";\n") 
 	contact in
     let _ = print "};" in 		  
     let _ = close_out output in 	
