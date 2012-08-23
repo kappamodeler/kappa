@@ -48,7 +48,11 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
     with None -> error 6 
     | Some a -> a 
   in
-  
+  let is_access = 
+    match pb.unreachable_rules with 
+	None -> (fun x -> true)
+      | Some a -> (fun x -> not (RuleIdSet.mem x a)) 
+  in 
   let boolean_encoding = 
     match pb.boolean_encoding 
     with None -> error 7 
@@ -544,40 +548,52 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
 	try (
 	  let f lid ext = 
 	    try ( 
-			 
 	      let id,lid = match lid with t::q -> t,q | [] -> raise Exit in 
-              let id = id.Pb_sig.r_simplx.Rule.id in 
-	      let (a,b,c) = 
-		try IntMap.find id rule_map 
-                with Not_found -> error 865  in 
-	      print_opt !Config_complx.comment;
-	      print_opt " rule on fragments:";
-	      print_opt "\n";
-	      let pref1  = "" in 
-	      let pref2  = "" in 
-              let _ = 
-	        match rule.flag with 
-	            None -> ()
-	          | Some s -> (print_opt "'";
-			       print_opt s;
-			       print_opt "' ") 
-              in
-	      let s = Tools.concat_list_string (List.rev b) in 
-	      let _  = 
-		(print "%s%s%s" pref1 pref2 s)
-	      in 
-	      print_opt " ";
-	      let _ = 
-                if c="" then 
-                  ()
-                else 
-                  (print_opt !Config_complx.comment;print_opt c)
-              in 
+              if is_access id 
+              then 
+                begin 
+                  let id = id.Pb_sig.r_simplx.Rule.id in 
+            	  let (a,b,c) = 
+		    try IntMap.find id rule_map 
+                    with Not_found -> error 865  
+                  in 
+	          let _ = print_opt !Config_complx.comment in 
+	          let _ = print_opt " rule on fragments:" in 
+	          let _ = print_opt "\n" in 
+	          let pref1  = "" in 
+	          let pref2  = "" in 
+                  let _ = 
+	            match rule.flag with 
+	                None -> ()
+	              | Some s -> (print_opt "'";
+			           print_opt s;
+			           print_opt "' ") 
+                  in
+	          let s = Tools.concat_list_string (List.rev b) in 
+	          let _  = 
+		    (print "%s%s%s" pref1 pref2 s)
+	          in 
+	          print_opt " ";
+	          let _ = 
+                    if c="" then 
+                      ()
+                    else 
+                      (print_opt !Config_complx.comment;print_opt c)
+                  in 
+                  
+              (*			   print_opt id.r_id;*)
+	          print "\n";lid
+                end 
+              else 
+                let _ = print_opt !Config_complx.comment in 
+                let _ = print_opt "The rule is ignored because it cannot be applied.\n" in 
               
-                         (*			   print_opt id.r_id;*)
-	      print "\n";lid) 
-	    with Not_found -> (print_opt "Cannot be applied \n";
-                               let id,lid = List.hd l_rule,List.tl l_rule in   lid) in 
+                lid)
+              
+	    with Not_found -> (
+              let _ = print_opt !Config_complx.comment in 
+              let _ = print_opt "The rule is ignored because it cannot be applied.\n" in 
+              let id,lid = List.hd l_rule,List.tl l_rule in   lid) in 
 	  ((let l_rule = 
 	      if a.dir = 1 then f l_rule "" else 
 		(let lid = f l_rule "" in f lid "_op") in aux q l_rule l_init l_obs)))
@@ -724,7 +740,7 @@ let compute_annotated_contact_map_in_stoc_mode system pb cpb contact_map  =
 		match a with
 		    H _,_  -> modif
 		  | Connected _,_ -> modif 
-		  |  B(a,a',b),_ ->  fadd a b modif
+		  |  B(a,a',b),_ ->  fadd a' b modif
 		  | AL((a,a',b),_),_ -> fadd a' b modif
 		  | L((a,a',b),(c,c',d)),_ -> fadd a' b (fadd c d modif)
 		  | M((a,a',b),c),_ -> fadd a' b modif
@@ -767,7 +783,9 @@ let compute_annotated_contact_map_in_stoc_mode system pb cpb contact_map  =
 				      (StringMap.add x' StringSet.empty sol))
 			   | H _,_ -> sol
 			   | Connected _,_ -> sol
-			   | B(a,a',b),_  ->  fadd a' b sol
+			   | B(a,a',b),_  ->  
+                             let _ = Printf.fprintf stdout "%s %s %s \n" a a' b in 
+                             fadd a' b sol
 			   | AL((a,a',b),_),_-> fadd a' b sol
 			   | L((a,a',b),(c,c',d)),_ -> fadd a' b (fadd c' d sol)
 			   | M((a,a',b),c),_ -> fadd a' b sol
