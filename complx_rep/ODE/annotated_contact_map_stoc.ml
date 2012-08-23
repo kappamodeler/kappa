@@ -95,10 +95,10 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
     in 
     (fun a -> 
       try StringMap.find a agent
-      with Not_found -> ""),
+      with Not_found -> a),
     (fun s -> 
       try String2Map.find s sites
-      with Not_found -> "")
+      with Not_found -> (fst s))
   in 
   let proj_solution solution = 
     let specie_map = 
@@ -121,7 +121,7 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
                 else 
                   let ag = sites(ag,s) in 
                   let tuple = 
-                    try (IntMap.find i tuple_map)
+                    try (IntStringMap.find (i,ag) tuple_map)
                     with 
                         Not_found -> StringMap.empty 
                   in 
@@ -144,15 +144,15 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
 		      | Agent.Bound -> tup
 		      | _ -> error 2439 
 	          in 
-	          IntMap.add i (StringMap.add s tup tuple) tuple_map)
+	          IntStringMap.add (i,ag) (StringMap.add s tup tuple) tuple_map)
               a tuple_map 
           in 
           if tuple_map == tuple_map' 
           then 
-            IntMap.add i StringMap.empty tuple_map
+            IntStringMap.add (i,ag) StringMap.empty tuple_map
           else
             tuple_map')
-	solution.Solution.agents IntMap.empty
+	solution.Solution.agents IntStringMap.empty
     in 
     let tuple_map,_ =
 	  Solution.PA.fold
@@ -163,7 +163,7 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
               let ag' = sites (ag',s') in 
               let tuple = 
                 try 
-                  IntMap.find i tuple_map
+                  IntStringMap.find (i,ag) tuple_map
                 with 
                   | Not_found -> StringMap.empty
               in 
@@ -173,11 +173,11 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
                 with 
                   | Not_found -> tuple_bot 
               in 
-              let tuple_map = IntMap.add i (StringMap.add s {tup with link = Init (bound_of_number n)} tuple) tuple_map 
+              let tuple_map = IntStringMap.add (i,ag) (StringMap.add s {tup with link = Init (bound_of_number n)} tuple) tuple_map 
               in 
               let tuple' = 
                 try 
-                  IntMap.find i' tuple_map
+                  IntStringMap.find (i',ag') tuple_map
                 with 
                   | Not_found -> StringMap.empty
               in 
@@ -186,7 +186,7 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
                   StringMap.find s' tuple'
                 with Not_found -> tuple_bot 
               in 
-              let tuple_map = IntMap.add i' (StringMap.add s' {tup' with link = Init (bound_of_number n)} tuple') tuple_map 
+              let tuple_map = IntStringMap.add (i',ag') (StringMap.add s' {tup' with link = Init (bound_of_number n)} tuple') tuple_map 
               in 
               tuple_map,n+1)
 	    solution.Solution.links 
@@ -202,13 +202,18 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
      (match pb.Pb_sig.simplx_encoding with Some (a,b,b2,c,d) -> List.rev c
       | None -> error 2809 )
   in 
+  let sub s = 
+    let n = String.length s in 
+    let s = String.sub s 1 (n-2) in 
+    s
+  in 
   let l_obs = 
     List.fold_left 
       (fun list obs -> 
           match 
             obs
           with
-            | Solution.Concentration (s,t) -> t::list
+            | Solution.Concentration (s,t) -> (sub s,t)::list
             | _ -> list)
       [] 
       (List.rev obs)
@@ -217,9 +222,8 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
      let tuple_map,specie_map = 
        proj_solution a
      in 
-     IntMap.fold
-       (fun i tuple bool -> 
-         let ag = IntMap.find i specie_map in 
+     IntStringMap.fold
+       (fun (_,ag) tuple bool -> 
          let pretty = StringMap.add ag  tuple StringMap.empty in 
 	 let l = 
 	   print_pretty 
@@ -496,8 +500,8 @@ let output_renamed file handler empty pb local_map var_of_b varset_empty varset_
         let _ = print_opt !Config_complx.comment in 
         let _ = print_opt a in 
         let _ = print_opt "\n" in 
-        let sol = List.hd l_obs in
-        let _ = print "%sobs: " "%" in 
+        let s,sol = List.hd l_obs in
+        let _ = print "%sobs: '%s' " "%" s in 
         let _ = print_solution sol in 
         let _ = print "\n" in 
         aux q l_rule l_init (List.tl l_obs)
