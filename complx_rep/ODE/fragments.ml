@@ -572,7 +572,9 @@ let get_denum_with_recursive_memoization
     else 
       let fetch = if level = 2 then fetch else compute in 
       let black = inc_black a black in 
-      let ag1,s1,ag2,s2 = (a,s,a',s') in 
+      let ag1,s1,ag2,s2 = (a,s,a',s') in
+      let ag_ref = ag1 in 
+      let s_ref = s1 in 
       let _ = 
 	if get_denum_debug 
 	then 
@@ -645,7 +647,7 @@ let get_denum_with_recursive_memoization
 		 let pending_bonds = 
 		   String4Set.fold 
 		     (fun ((ag1,s1),(ag2,s2)) pending_bonds -> 
-			if ag2 = a' && s'=s2  
+			if ag1 = ag_ref && s1=s_ref  
 			then pending_bonds 
 			else (
 			  let _ = 
