@@ -1,6 +1,6 @@
 (**EDIT THIS PART AT WILL**)
 
-let browser_command = "firefox"
+let browser_command = "xdg-open" (* use "open" under MacOs, "xdg-open" under unix*)
 let dot_command = "/usr/bin/dot"
 let neato_command = "/usr/bin/neato"
 let gnuplot_image_terminal = "png"
