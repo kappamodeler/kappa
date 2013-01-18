@@ -163,10 +163,14 @@ let print_contact_map res pb channel =
       else null
 
 let print_contact_map_stoc pb channel = 
-  precomputed_data channel 
-    (!Config_complx.output_stoc_contact_map_jpg_file) 
-    "Contact map (Stochastic fragmentation)"
-    
+  if !Config_complx.stoc_ode 
+  then 
+    precomputed_data channel 
+      (!Config_complx.output_stoc_contact_map_jpg_file) 
+      "Contact map (Stochastic fragmentation)"
+  else 
+    null
+
 let print_ODE_plot pb channel = 
   if (!Config_complx.integrate_ODE)
   then 
