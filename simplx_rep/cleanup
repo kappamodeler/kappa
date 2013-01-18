@@ -10,4 +10,4 @@ clean:
 	cd src/data_structures ; rm -f *.cm* *.o *~ 
 	cd src/main ; rm -f *.cm* *.o *~ 
 	cd src/stories ; rm -f *.cm* *.o *~ 
-	cd lib ; rm -f *
+	rm -f lib/*
