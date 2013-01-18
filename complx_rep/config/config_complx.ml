@@ -368,20 +368,20 @@ let options = List.rev
   "--compute-local-views",Bool do_local_views,"compute reachability analysis",["0_Actions";"Reachability analysis"],Normal;
   "--enumerate-complexes",Bool do_enumeration,"enumerate complexes",["0_Actions";"Concretization"],Normal;
   "--build-influence-map",Bool do_influence,"construct influence maps",["0_Actions";"Influence map"],Normal;
-  "--do-low-res-contact-map", Bool do_low_res_contact_map,"construct the low resolution contact map",["0_Actions";"Contact map"],Normal;
+  "--do-low-res-contact-map", Bool do_low_res_contact_map,"construct the low resolution contact map",["0_Actions";"Contact map"],Expert;
   "--do-high-res-contact-map", Bool do_high_res_contact_map,"constrauct the high resolution contact map",["0_Actions";"Contact map"],Normal;  
  "--compute-qualitative-compression",Bool do_qualitative_compression,"simplify the rules",["0_Actions";"Compression"],Normal;
   "--compute-quantitative-compression",Bool do_quantitative_compression,"simplify the rules",["0_Actions";"Compression"],Normal;
-  "--do-LATEX",Bool do_dump_latex,"dump the LaTeX style file and the LaTeX document for the list of rules",["0_Actions";"LATEX"],Normal;
+  "--do-LATEX",Bool do_dump_latex,"dump the LaTeX style file and the LaTeX document for the list of rules",["0_Actions";"LATEX"],Expert;
   "--do-ODE",Bool do_ODE,"compute the ODE system",["0_Actions";"ODE"],Hidden;
   "--generate-ODE",Bool do_ODE,"compute the ODE system",["0_Actions";"ODE"],Normal;
-  "--do-ODE-matlab",Bool do_ODE_matlab,"Compute the ODE system in a single matlab file",["0_Actions";"ODE"],Normal;
+  "--do-ODE-matlab",Bool do_ODE_matlab,"Compute the ODE system in a single matlab file",["0_Actions";"ODE"],Expert;
   "--integrate-ODE",Bool integrate_ODE,"integrate the ODE_system",["0_Actions";"ODE"],Normal;
   "--do-refine-to-force-cycles",Bool force_cycle,"Refine the system to avoid polymere formation",["0_Actions";"Polymers prevention"],Normal;
   "--do-compute-dag-refinement-relation",Bool do_dag_refinement,"compute the DAG for the refinement relation",["0_Actions";"Refinement detection"],Normal; 
 "--do-compute-maximal-refinement-relation",Bool do_maximal_refinement,"compute the most abstract refinement of each rule",["0_Actions";"Refinement detection"],Normal;
 
-"--do-marshalling",Bool do_marshalling,"Dump mashallization",["0_Actions";"Marshalling"],Normal;
+"--do-marshalling",Bool do_marshalling,"Dump mashallization",["0_Actions";"Marshalling"],Expert;
  "--do-HTML",Bool do_HTML_session,"Launch HTML desktop",["0_Actions";"HTML"],Normal;
  "--do-XML",Bool do_XML_session,"dump XML session",["0_Actions";"XML"],Normal;
  "--stochastic-fragments",Bool stoc_ode,"Compute stochastic fragments (and disable ode fragmentation)",["Stochastic fragments"],Normal;
@@ -573,7 +573,7 @@ let options = List.rev
 "--output-latex-sty",
   String output_latex_sty,
   "write the style file for a model",
-  ["2_Output'";"LATEX"],Normal;
+  ["2_Output''";"LATEX"],Normal;
 "--output-ODE-alphabet",
   String output_ODE_alphabet,
   "write the ODE alphabet",
@@ -602,13 +602,13 @@ let options = List.rev
   ["2_Output'";"ODE_output"],Normal;
 "--output-pack-constraints",
  String output_pack_value_file,
- "dump contraints among sites in a file",["2_Output'";"Reachability analysis"],Normal;
+ "dump contraints among sites in a file",["2_Output''";"Reachability analysis"],Normal;
 "--output-reachable-complexes",String output_reachable_complexes,
   "write the reachable species (or just their number)  in a file",["2_Output''";"Concretization";"Reachability analysis"],Normal;
 "--output-specie-map",String output_specie_map,
   "write the specie map in a file",["2_Output''";"Reachability analysis"],Normal;
 "--output-stoc-rules", String output_stoc_rules,
-  "dump the reduced models with stochastic fragments in a file",["2_Ouput''";"Stochastic fragments"],Normal;
+  "dump the reduced models with stochastic fragments in a file",["2_Output''";"Stochastic fragments"],Normal;
 "--output-stoc-contact",String output_stoc_contact,
   "dump the contact map for stochastic fragments in a dot file",["2_Output''";"Contact map";"Stochastic fragments"],Normal;
 "--output-stoc-contact-map-jpg-file",String output_stoc_contact_map_jpg_file,
@@ -778,13 +778,13 @@ let options = List.rev
 
 "--truc",Void,"",["Contact map"],Normal;
 
-"--boolean-site-color",String boolean_site_color,"color of sites that cannot be bound",["Contact map"],Normal;
-"--boundable-site-color",String boundable_site_color,"color of sites that cannot be marked",["Contact map"],Normal;
-"--both-site-color",String both_site_color,"color of sites that can be both marked and bound",["Contact map"],Normal;
-"--agent0",String agent0,"color of agent that have no site",["Contact map"],Normal;
-"--agent1",String agent1,"color of agent that have one site",["Contact map"],Normal;
-"--agent2",String agent2,"color of agent that have two sites",["Contact map"],Normal;
-"--agent3",String agent3,"color of agent that have three sites",["Contact map"],Normal;
-"--agentn",String agentn,"color of agent that have many sites",["Contact map"],Normal;
+"--boolean-site-color",String boolean_site_color,"color of sites that cannot be bound",["Contact map style"],Normal;
+"--boundable-site-color",String boundable_site_color,"color of sites that cannot be marked",["Contact map style"],Normal;
+"--both-site-color",String both_site_color,"color of sites that can be both marked and bound",["Contact map style"],Normal;
+"--agent0",String agent0,"color of agent that have no site",["Contact map style"],Normal;
+"--agent1",String agent1,"color of agent that have one site",["Contact map style"],Normal;
+"--agent2",String agent2,"color of agent that have two sites",["Contact map style"],Normal;
+"--agent3",String agent3,"color of agent that have three sites",["Contact map style"],Normal;
+"--agentn",String agentn,"color of agent that have many sites",["Contact map style"],Normal;
     ] 
 

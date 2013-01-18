@@ -14,14 +14,13 @@ let fmap = ref StringMap.empty  (* key => frame widget *)
 let set_visibility (a:t) =
   List.iter 
     (fun (key,_,_,_,lvl) ->
-      print_string key;
       try
 	let f = StringMap.find key !fmap in
 	if show_level lvl
 	then 
-          (print_string "YES\n";List.iter (fun f -> pack ~side:`Top ~anchor:`W [coe f]) f)
-	else (print_string "NO\n";List.iter (fun f -> Pack.forget [coe f]) f)
-      with Not_found -> (print_string "Not_found\n")
+          (List.iter (fun f -> pack ~side:`Top ~anchor:`W [coe f]) f)
+	else (List.iter (fun f -> Pack.forget [coe f]) f)
+      with Not_found -> ()
     ) a
 
 
@@ -387,7 +386,7 @@ exception Exit of string list
 let gui (a:t) (args:string list) : string list =
 
   let top = openTk () in
-  appname_set "The PLECTIX Static Analyzer";
+  appname_set "Kappa Static Analyzer";
   Balloon.init ();
   (* option list *)
   let up = Frame.create top in
