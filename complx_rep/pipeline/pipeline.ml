@@ -2221,6 +2221,7 @@ module Pipeline =
 	     [!Config_complx.output_ODE_octave ;
 	      !Config_complx.output_ODE_octave_aux ;
 	      !Config_complx.output_ODE_octave_obs ;
+              !Config_complx.output_ODE_octave_size ; 
 	      !Config_complx.output_ODE_octave_init
 	     ]
 	   in 
