@@ -222,7 +222,7 @@ let print_contact_map_in_dot res  pb =
 				  String4Set.add k sol end
 			      )
 			    sol l)
-			l String4Set.empty in
+			binding String4Set.empty in
 		    let _ = String4Set.iter 
 		      (fun ((a,b),(c,d)) -> 
 			print "<%s" a;print "_";print "%s>" b;print " -- ";print "<%s" c;print "_";print "%s>" d;print ";\n") 
