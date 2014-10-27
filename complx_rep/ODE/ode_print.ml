@@ -18,7 +18,7 @@ let error x i =
   unsafe_frozen (Some x) (Some "Complx") (Some "Ode_print.ml") None (Some ("line  "^(string_of_int i))) (fun () -> raise Exit)
 
 
-let all_fields x  = [x.dump;x.matlab;x.mathematica;x.latex;x.matlab_aux;x.data;x.kappa;x.txt;x.matlab_jacobian;x.matlab_size;x.matlab_activity;x.matlab_obs;x.matlab_init]
+let all_fields x  = [x.dump;x.matlab;x.mathematica;x.latex;x.matlab_aux;x.data;x.kappa;x.txt;x.matlab_jacobian;x.matlab_size;x.matlab_activity;x.matlab_obs;x.matlab_init;x.reactions]
 
       
 module CSet = Set.Make (struct type t = out_channel let compare = compare end)
@@ -45,7 +45,8 @@ let print_none =
      matlab_jacobian= None;
      matlab_activity = None;
      matlab_obs = None;
-     matlab_init = None } 
+     matlab_init = None;
+     reactions = None} 
 
 let print_intermediar_var print var rule  =
   let _ = 

@@ -235,7 +235,8 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_s
      matlab_size = None ;
      matlab_activity = None;
      matlab_obs = None ;
-     matlab_init = None } in
+     matlab_init = None ;
+     reactions = None} in
 
   let print_ODE_jacobian = 
     {dump = None;
@@ -250,7 +251,8 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_s
      matlab_size = None ;
      matlab_activity = None;
      matlab_obs = None ;
-     matlab_init = None } in
+     matlab_init = None ;
+     reactions = None } in
 
 
  let print_ODE_act = 
@@ -266,7 +268,8 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_s
      matlab_jacobian= None;
      matlab_activity = print_matlab_activity;
      matlab_obs = None;
-     matlab_init = None} in
+     matlab_init = None;
+     reactions = None } in
    
  let print_ODE_matlab_activity = print_ODE_act in 
 
@@ -283,7 +286,8 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_s
      matlab_jacobian= None;
      matlab_activity = None;
      matlab_obs = print_matlab_obs;
-     matlab_init = None} in
+     matlab_init = None;
+     reactions = None } in
 		 
   let print_ODE = 
      {dump = None ;
@@ -298,7 +302,8 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_s
      matlab_size = print_matlab_size;
      matlab_activity = None;
      matlab_obs = None;
-     matlab_init = None}
+     matlab_init = None;
+     reactions = None }
   in
   let print_ODE_main = 
     {dump = None ;
@@ -313,7 +318,8 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_s
      matlab_size = None;
      matlab_activity = None;
      matlab_obs = None;
-     matlab_init = None}
+     matlab_init = None;
+     reactions = None}
   in
 
   let print_ODE_aux = 
@@ -335,7 +341,8 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_s
       matlab_size = None;
       matlab_activity = None;
       matlab_obs = None;
-      matlab_init = None } in
+      matlab_init = None;
+      reactions = None} in
 
   let print_ODE_matlab = 
     {dump = None;
@@ -350,7 +357,8 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_s
       matlab_size = None;
       matlab_activity = None;
       matlab_obs = None;
-      matlab_init = None } in
+      matlab_init = None;
+      reactions = None} in
 
   let print_ODE_matlab_aux = 
     {dump = None;
@@ -365,7 +373,8 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_s
       matlab_size = None;
       matlab_activity = None;
       matlab_obs = None;
-      matlab_init = None } in
+      matlab_init = None;
+      reactions = None} in
  
  let print_ODE_matlab_size = 
     {dump = None;
@@ -380,7 +389,8 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_s
       matlab_size = print_matlab_size;
       matlab_activity = None;
       matlab_obs = None;
-      matlab_init = None } in
+      matlab_init = None;
+      reactions = None } in
 
  
 
@@ -397,7 +407,8 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_s
       matlab_size = None;
       matlab_activity = None;
       matlab_obs = None;
-      matlab_init = None } in 
+      matlab_init = None;
+      reactions = None} in 
 
   let print_debug = 
     {dump = Some stdprint ;
@@ -412,7 +423,8 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_s
      matlab_size = None;
      matlab_activity = None;
      matlab_obs = None;
-     matlab_init = None } 
+     matlab_init = None;
+     reactions = None} 
   in
   let print_obs = 
     { dump = None ;
@@ -427,7 +439,8 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_s
       matlab_size = None ;
       matlab_obs = None ;
       matlab_activity = None ;
-      matlab_init = None } 
+      matlab_init = None;
+      reactions = None }
 
   in 
   let print_obs_latex = 
@@ -443,7 +456,8 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_s
       matlab_size = None ;
       matlab_obs = None ;
       matlab_activity = None;
-      matlab_init = None }
+      matlab_init = None;
+      reactions = None}
   in
   let print_ODE_matlab_init = 
      { dump = None;
@@ -458,7 +472,8 @@ let compute_ode  file_ODE_perturbation file_ODE_contact file_stoc_contact file_s
       matlab_size = None ;
       matlab_obs = None ;
       matlab_activity = None;
-      matlab_init = print_matlab_init }
+      matlab_init = print_matlab_init;
+      reactions = None}
   in
 
   let _ = dump_line 429 in  

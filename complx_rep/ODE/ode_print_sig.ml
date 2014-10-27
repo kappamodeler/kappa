@@ -1,5 +1,5 @@
 type ouput_mode  = 
-    MATLAB | MATHEMATICA | LATEX | TXT | DUMP | DATA
+    MATLAB | MATHEMATICA | LATEX | TXT | DUMP | DATA | REACTIONS
 
 
 type print = 
@@ -18,6 +18,7 @@ type print_desc =
      matlab: print option;
      matlab_aux: print option;
      mathematica: print option;
+     reactions: print option;
      latex: print option;
      matlab_jacobian: print option;
      matlab_size: print option;

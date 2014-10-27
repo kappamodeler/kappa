@@ -69,6 +69,7 @@ let trace_concrete_rules = ref true    (* compression: print concrete rules *)
 let trace_abstract_rules = ref true   (* print compressed rules *)
 
 let complex_limit = ref 10000
+let do_reaction = ref false
 let do_ODE = ref false
 let do_ODE_matlab = ref false 
 let integrate_ODE = ref false 
@@ -165,6 +166,7 @@ let empty_interface = ref "(Any)" (*to be printed when we have no information at
 let skip_a_specie   = ref ""      (*to be printed when an agent can be fully abstracted *)
 
 let ode_memoization_level = ref 1
+let output_reactions = ref "" 
 let output_latex_rule_system = ref ""
 let output_latex_sty = ref ""
 let output_ODE_perturbation = ref ""
@@ -398,6 +400,7 @@ let options = List.rev
 (*2_Output*)
 
 									"--output-scheme",MultiExt [
+"--output-reactions","_kappa_reactions.txt";
 "--output-latex-version","_kappa_version.tex";
 "--output-latex-stat","_kappa_stat.tex";
 "--output-latex-species","_kappa_species.tex";
@@ -605,6 +608,8 @@ let options = List.rev
  "dump contraints among sites in a file",["2_Output''";"Reachability analysis"],Normal;
 "--output-reachable-complexes",String output_reachable_complexes,
   "write the reachable species (or just their number)  in a file",["2_Output''";"Concretization";"Reachability analysis"],Normal;
+"--output-reactions",String output_reactions,
+  "write the reaction nework",["2_Output''"],Normal;
 "--output-specie-map",String output_specie_map,
   "write the specie map in a file",["2_Output''";"Reachability analysis"],Normal;
 "--output-stoc-rules", String output_stoc_rules,
@@ -726,7 +731,7 @@ let options = List.rev
 	"to abstract away information about phosphorilation",["Reachability analysis"],Normal;
 
 (*Refinment*)
-
+  "--do-reactions",Bool do_reaction,"Generate networks",["ODES"],Normal;
   "--cycles-depth",Int cycle_depth,"Define the neighbourhood in which an agent can test for cycles",["Contact map";"Polymers prevention"],Normal; 
   "--cycle-detection-mode",Bool only_detect_cycles,"Show warning, but do not refine rules",["Polymers prevention"],Normal;
   "--use-constraints-to-refine",Bool only_closing_rules,"Only dump the rules that close a cyclical complex",["Polymers prevention"],Normal;

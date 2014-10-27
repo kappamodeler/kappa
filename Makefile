@@ -209,6 +209,7 @@ OBJS = 	./$(COMPLXREP)/automatically_generated/git_commit_info.cmo  \
 	./$(COMPLXREP)/ODE/fragments_sig.cmo \
 	./$(COMPLXREP)/ODE/fragments.cmo \
 	./$(COMPLXREP)/ODE/ode_computation.cmo \
+	./$(COMPLXREP)/ODE/reaction_computation.cmo \
 	./$(COMPLXREP)/backend/contact_map/find_cycles.cmo \
 	./$(COMPLXREP)/backend/contact_map/connected_components.cmo \
 	./$(COMPLXREP)/pipeline/pipeline.cmo \

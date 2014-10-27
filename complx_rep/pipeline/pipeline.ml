@@ -101,6 +101,7 @@ type 'a pipeline = {
     save_options: 'a step ;
     good_vertice: file_name -> prefix -> output_channel -> StringSet.t option * output_channel ;
     template: file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> 'a step ;
+    template_bis: file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> file_name -> 'a step ;
     integrate: file_name -> 'a step;
     dump_potential_cycles: precision -> 'a step;
     refine_system_to_avoid_polymers: 
@@ -1767,7 +1768,265 @@ module Pipeline =
                                                        Some {pb with nfrag = nfrag},(l,m))
 				     
 	       ))
+
+ and template_bis = 
+	 (fun file0 file1 file2 file3 file4 file5 file6 file7 file8 file9 file10 file11 file12  file13 file14 file15 file16 file17 file18 file19 file20 file21 file22 file23 file24 file25 file26 prefix pb (l,m) ->
+	   let prefix' = add_suffix prefix "template_bis" in 
+	   let _ = print_option prefix (Some stdout) "Starting network generation\n" in
 	   
+	   let print_sb  sb pb (log:out_channel option) = 
+	     let hash = Hashtbl.create 13  in
+	     let nlink = ref 0 in
+	     let _ = 
+	       StringMap.fold 
+		 (fun a b  bool ->
+		   let _ = if bool then print_option empty_prefix  log "," in
+		   let _ = 
+		     A.print_reachable_states2 
+		       string_txt 
+		       (A.reachable_states_of_abstract_expr b)  
+		       (fun x -> x) 
+		       pb 
+		       (Some "()")
+		       (hash,nlink,(fun _ _ -> true))
+		       log in 
+		   true
+		     )
+		 sb false in
+	     let _ = 
+	       Hashtbl.iter 
+		 (fun ((a,x),(a',x')) n -> 
+		   let s = ","^a'^"("^x'^"!"^(string_of_int n)^")" in 
+		   let _ = print_option empty_prefix  log s in 
+		   ())
+		 hash 
+	     in () 
+	   in  
+	   let print_sb_latex x sb pb (log:out_channel option) = 
+	     let hash = Hashtbl.create 13  in
+	     let nlink = ref 0 in
+	     let _ = 
+	       StringMap.fold 
+		 (fun a b  bool ->
+		   let _ = if bool then print_option empty_prefix  log Latex.agent_sep  in
+		   let _ = 
+		     A.print_reachable_states2 
+		       string_latex
+		       (A.reachable_states_of_abstract_expr b)  
+		       (fun x -> x) (*Latex.string_of_agent_name x)*) 
+		       pb 
+		       (Some "()")
+		       (hash,nlink,x)
+		       log in 
+		   true
+		     )
+		 sb false in
+	     let _ = 
+	       Hashtbl.iter 
+		 (fun ((a,x),(a',x')) n -> 
+		   let s = Latex.agent_sep^(Latex.string_of_agent_name a')^"{"^(Latex.string_of_site_name x')^"{}{"^(string_of_int n)^"}}" in 
+		   let _ = print_option empty_prefix  log s in 
+		   ())
+		 hash 
+	     in () 
+	   in  
+	   let rep = pb in 
+	   match rep  with None -> (rep,(l,m))
+	   | Some rep' -> 
+	       if not (is_views rep)
+	       then (
+		     let pb,log = reachability_analysis prefix' rep  (l,m) in
+                     let pb,log = 
+                       template_bis 
+			 file0 
+			 file1 
+			 file2 
+			 file3 
+			 file4 
+			 file5 
+			 file6 
+			 file7 
+			 file8 
+			 file9 
+			 file10 
+			 file11 
+			 file12 
+			 file13 
+			 file14
+			 file15
+			 file16	
+			 file17
+			 file18 
+			 file19
+			 file20
+			 file21
+                         file22 
+                         file23
+                         file24
+                         file25
+			 file26
+		         prefix 
+                         pb  
+                         log 
+                     in 
+                     if 
+                       !Config_complx.stoc_ode 
+                     then 
+                       let _,log = 
+                         dump_stoc_contact_map_jpg 
+                           (!Config_complx.output_stoc_contact_map_jpg_file) 
+                           rep' 
+                           log
+                       in 
+                       let _,log = dump_stoc_contact_map_ps (!Config_complx.output_stoc_contact_map_ps_file) rep' log in 
+                       pb,log
+                     else 
+                       pb,log)
+	       else (
+		 match pb with 
+		   None -> pb,(l,m) 
+		 | Some a -> 
+		     let pb,(l,m),boolean = get_boolean_encoding None prefix' a (l,m) in 
+		     let pb,(l,m),cpb = get_intermediate_encoding None  prefix' a (l,m) in 
+		     match pb,cpb,boolean with 
+                         None,_,_|_,None,_|_,_,None -> pb,(l,m)
+                       | Some pb,Some cpb,Some boolean  -> 
+                           let pb,(l,m),auto = get_auto prefix' (Some pb) (l,m) in 
+		           match pb with None -> pb,(l,m)
+                             | Some pb -> 
+                                 let pb,(l,m),contact = get_best_res_contact_map prefix pb (l,m) in 
+                             	   (match pb.bdd_sub_views with None -> Some pb,(l,m)
+		                      | Some sub ->
+			                  let nrule = List.length boolean.system in 
+			                  let pb',obs_map,exp  = build_obs pb.simplx_encoding  prefix' nrule  in 
+			                    match pb' with 
+			                        None -> pb',(l,m)
+			                      |Some a' -> 
+                                                 let pb',(l,m),boolean_obs = get_boolean_encoding None prefix' a' (l,m) in 
+				                 match pb',boolean_obs with 
+                                                     None,_|_,None -> Some pb,(l,m)
+                                                   | Some pb',Some boolean_obs -> 
+                                                       let purge,obs_map,(l,m) = 
+				                         let list,obs_map,(l,m) =
+				                           List.fold_left
+				                             (fun (list,obs_map,(l,m)) r -> 
+					                        let b,(l,m) = 
+					                          purge (cpb.Pb_sig.cpb_species,
+						                         (match cpb.Pb_sig.cpb_contact with None -> String2Map.empty | Some a -> a),
+						                         (match cpb.Pb_sig.cpb_mark_site with None -> String2Map.empty | Some a -> a),
+						                         match cpb.Pb_sig.cpb_sites with None -> Pb_sig.String2Set.empty | Some a->a) 
+					                            r (l,m)
+					                        in
+					                          if b then (r::list),obs_map,(l,m)
+					                          else 
+					                            begin 
+	                                                              (*				         let key = (List.hd (List.hd r.Pb_sig.rules).Pb_sig.labels).Pb_sig.r_simplx.Rule.id in *)
+						                      (r::list,(*IntMap.remove key Bug FIX ENG-268: Now  obs are dumped even if they are not defined*) obs_map,(l,m))
+					                            end)
+				                             ([],obs_map,(l,m))
+				                             boolean_obs.system 
+				                         in List.rev list,obs_map,(l,m)
+				                       in
+				                       let pb' = 
+				                         {pb' 
+				                          with 
+				                            boolean_encoding =
+				                             (match pb.boolean_encoding 
+				                              with None -> None
+					                        | Some a -> Some {a with system = purge})}
+				                       in 
+				                       let pb',(l,m),obs_auto = get_auto prefix' (Some pb') (l,m) in 
+				                       let auto = IntMap.fold IntMap.add obs_auto auto in 
+				                       let boolean = {boolean with system = (List.rev boolean.system)@(List.rev purge)} in 
+				                       let opt,(l,m)  = 
+				                         Reaction_computation.compute_ode
+				                           file0 
+				                           file1 
+				                           file2
+				                           file3
+				                           file4 
+				                           file5
+				                           file6 
+				                           file7 
+				                           file8
+				                           file9 
+				                           file10 
+				                           file11
+				                           file12 
+				                           file13
+				                           file14
+				                           file15
+				                           file16 
+				                           file17
+				                           file18 
+				                           file19
+				                           file20
+				                           file21
+				                           file22
+                                                           file23 
+                                                           file24
+                                                           file25
+							   file26
+                                                           {project=A.project;
+				                            export_ae = A.export_ae;
+				                            restore = A.restore_subviews;
+				                            b_of_var = A.K.E.V.b_of_var ;
+				                            var_of_b = A.K.E.V.var_of_b ;
+				                            print_sb = print_sb;
+				                            print_sb_latex = print_sb_latex;
+				                            fnd_of_bdd = A.fnd_of_bdd;
+				                            conj = A.conj ;
+				                            atom_pos = A.atom_pos ;
+				                            atom_neg = A.atom_neg ; 
+				                            expr_true = A.ae_true}
+				                           Ode_print_sig.MATLAB
+				                           prefix 
+				                           (Some (stdout:out_channel))
+				                           a 
+				                           boolean 
+				                           sub
+				                           auto 
+				                           (match !Config_complx.stoc_ode,!Config_complx.flat_ode 
+				                            with 
+					                        _,true -> Annotated_contact_map.Flat
+                                                              |true,_ -> Annotated_contact_map.Stoc
+				                              | _ -> Annotated_contact_map.Compressed)
+				                           obs_map
+                                                           exp
+				                           A.K.E.V.var_of_b
+                                                           A.K.E.V.varset_empty
+		                                           A.K.E.V.varset_add
+		                                           A.K.build_kleenean_rule_system
+                                                           A.K.print_kleenean_system
+                                                           (l,m) in  
+			                               let nfrag = 
+			                                 match opt with None -> None 
+			                                   | Some(_,_,n) -> Some n 
+			                               in 
+			                               let pb = {pb with nfrag=nfrag} in 
+                                                       let l = chrono prefix "dumping fragments" l in 
+			                               let log = (l,m) in 
+                                                       let pb,log = 
+                                                         if 
+                                                           !Config_complx.stoc_ode 
+                                                         then 
+                                                           let pb,log = 
+                                                             dump_stoc_contact_map_jpg 
+                                                               (!Config_complx.output_stoc_contact_map_jpg_file) 
+                                                               pb 
+                                                               log 
+                                                           in 
+                                                           let pb,log = dump_stoc_contact_map_ps (!Config_complx.output_stoc_contact_map_ps_file) pb log in 
+                                                           pb,log
+                                                         else 
+                                                           pb,log
+                                                       in 
+                                                       Some {pb with nfrag = nfrag},(l,m))
+				     
+	       ))
+	   
+	   
+
      and 
 	 integrate = 
 	   (fun file prefix pb (l,m) -> 
@@ -2322,6 +2581,8 @@ module Pipeline =
 	   Exception _ -> None,c);
        template = 
 	   (fun a b c d e f g h i j k l m n o p q r s t u v w x y z -> handle_errors_step (Some "Complx") (Some "template") (template a b c d e f g h i j k l m n o p q r s t u v w x y z));
+       template_bis = 
+	   (fun aa a b c d e f g h i j k l m n o p q r s t u v w x y z -> handle_errors_step (Some "Complx") (Some "template_bis") (template_bis aa a b c d e f g h i j k l m n o p q r s t u v w x y z));
        find_potential_cycles = (fun a -> handle_errors_step (Some "Complx") (Some "find_potential_cycles") (find_potential_cycles a));
        dump_potential_cycles = (fun a -> handle_errors_step (Some "Complx") (Some "dump_potential_cycles") (dump_potential_cycles a)) ;
        find_connected_components = (fun a -> handle_errors_step (Some "Complx") (Some "find_connected_components") (find_connected_components a));

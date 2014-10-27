@@ -156,6 +156,42 @@ let main ()  =
   let pb,log = methods.save_options prefix pb log in 
   
   let pb,log = 
+    if !Config_complx.do_reaction 
+    then 
+       methods.template_bis 
+	(!Config_complx.output_reactions)
+        (!Config_complx.output_ODE_perturbation)
+	(!Config_complx.output_ODE_contact) 
+        (!Config_complx.output_stoc_contact)
+        (!Config_complx.output_stoc_rules)
+	(!Config_complx.output_ODE_covering) 
+	(!Config_complx.output_ODE_covering_latex)
+	(!Config_complx.output_ODE_latex) 
+	(!Config_complx.output_ODE_octave)  
+	(!Config_complx.output_ODE_octave_aux) 
+	(!Config_complx.output_ODE_octave_size)
+	(!Config_complx.output_ODE_octave_jacobian)
+	(!Config_complx.output_ODE_octave_activity)
+	(!Config_complx.output_ODE_octave_obs)
+	(!Config_complx.output_ODE_octave_init)
+	(!Config_complx.output_ODE_mathematica) 
+	"" 
+	(!Config_complx.output_ODE_alphabet) 
+	(!Config_complx.output_ODE_obs) 
+	(!Config_complx.output_ODE_obs_latex)  
+	(!Config_complx.output_ODE_obs_head) 
+	""
+	(!Config_complx.output_ODE_data)
+	(!Config_complx.output_ODE_gplot)
+	(!Config_complx.output_ODE_png)
+	(!Config_complx.output_ODE_script)
+        (!Config_complx.output_ODE_xml)
+	prefix 
+	pb 
+	log 
+    else 
+      pb,log in 
+  let pb,log = 
     if !Config_complx.do_ODE or !Config_complx.integrate_ODE or !Config_complx.do_ODE_matlab or !Config_complx.stoc_ode 
     then 
       methods.template 
