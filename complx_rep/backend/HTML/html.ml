@@ -426,7 +426,13 @@ let dump_html pb channel (l,m)  =
       print_ckappa Unsmashed pb channel ;
       print_ckappa Smashed pb channel ;
       print_boolean_encoding Unsmashed pb channel ;
-      print_boolean_encoding Smashed pb channel ;
+      print_boolean_encoding Smashed pb channel ]
+@(if !Config_complx.do_reaction && !Config_complx.output_reactions <> "" 
+  then 
+    [menutitle channel "Reactions";
+    precomputed_data channel  (!Config_complx.output_reactions) "Network of reactions"]
+  else [])
+@[
       menutitle channel "Analysis result";
       print_contact_map Low pb channel ;
       print_contact_map High pb channel;
