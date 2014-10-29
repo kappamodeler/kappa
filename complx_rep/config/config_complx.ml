@@ -189,6 +189,7 @@ let output_ODE_octave_activity = ref ""
 let output_ODE_octave_obs = ref "" 
 let output_ODE_octave_init = ref ""
 let output_ODE_alphabet = ref "" 
+let output_reactions_alphabet = ref "" 
 let output_ODE_obs = ref ""
 let output_ODE_gplot = ref "" 
 let output_ODE_png = ref "" 
@@ -401,6 +402,7 @@ let options = List.rev
 
 									"--output-scheme",MultiExt [
 "--output-reactions","_kappa_reactions.txt";
+"--output-reactions-alphabet","_kappa_reactions_alphabet.txt";
 "--output-latex-version","_kappa_version.tex";
 "--output-latex-stat","_kappa_stat.tex";
 "--output-latex-species","_kappa_species.tex";
@@ -610,6 +612,8 @@ let options = List.rev
   "write the reachable species (or just their number)  in a file",["2_Output''";"Concretization";"Reachability analysis"],Normal;
 "--output-reactions",String output_reactions,
   "write the reaction nework",["2_Output''"],Normal;
+"--output-reactions-alphabet",String output_reactions_alphabet,
+  "write the table of species",["2_Output''"],Normal;
 "--output-specie-map",String output_specie_map,
   "write the specie map in a file",["2_Output''";"Reachability analysis"],Normal;
 "--output-stoc-rules", String output_stoc_rules,

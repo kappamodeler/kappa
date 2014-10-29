@@ -180,6 +180,8 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
 	      chan = [];
 	      print_newline = (fun _ -> ())}
 	  else 
+	    let _ = print_string file in 
+	    let _ = print_newline () in 
 	    let chan = open_out file  in
 	    {print_string = Printf.fprintf chan "%s"  ;
 	      print_float = (fun x -> Printf.fprintf chan "%s" (Float_pretty_printing.exact_string_of_float x)) ;
@@ -190,30 +192,10 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
     else None in
 
   let print_reaction = f REACTIONS file_reaction in 
-  let print_ODE_perturbation  = f MATLAB file_ODE_perturbation in 
-  let print_data = f DATA file_ODE_data_head  in 
-  let print_matlab = f MATLAB file_ODE_matlab in
-  let print_matlab_aux = f MATLAB file_ODE_matlab_aux in 
-  let print_matlab_jacobian = f MATLAB file_ODE_matlab_jacobian in 
-  let print_matlab_size = f MATLAB file_ODE_matlab_size in 
-  let print_matlab_activity = f MATLAB file_ODE_matlab_act in 
-  let print_matlab_obs = f MATLAB file_ODE_matlab_obs in 
-  let print_latex = f LATEX file_ODE_latex in
   let print_latex_obs = f LATEX file_obs_latex in 
-  let print_matlab_init = f MATLAB file_ODE_matlab_init in 
-  let print_mathematica = 
-    let rep = f MATHEMATICA file_ODE_mathematica in 
-    match rep with None -> None 
-    |	Some rep -> 
-	Some 
-	  {rep 	    
-	  with print_float = (fun x -> rep.print_string (Tools.print_long_float x))}
-  in
-  let print_txt = f MATHEMATICA file_alphabet  in 
-  let print_kappa = f MATHEMATICA file_obs in 
+  let print_txt = f REACTIONS file_alphabet  in 
+  let print_kappa = f REACTIONS file_obs in 
 
-  let _ = (match print_data with None -> () | Some a -> 
-    (a.print_string "#t ")) in 
 
   let cpb = match pb.Pb_sig.intermediate_encoding with 
     Some cpb -> cpb
@@ -231,7 +213,7 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
      kappa = None;
      mathematica = None;
      latex = None;
-     matlab = print_ODE_perturbation;
+     matlab = None; 
      matlab_aux = None;
      matlab_jacobian = None;
      matlab_size = None ;
@@ -250,7 +232,7 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
      latex = None;
      matlab = None;
      matlab_aux = None;
-     matlab_jacobian = print_matlab_jacobian;
+     matlab_jacobian = None; 
      matlab_size = None ;
      matlab_activity = None;
      matlab_obs = None ;
@@ -270,7 +252,7 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
      matlab_aux = None;
      matlab_size= None;
      matlab_jacobian= None;
-     matlab_activity = print_matlab_activity;
+     matlab_activity = None; 
      matlab_obs = None;
      matlab_init = None ;
      reactions = None } 
@@ -290,7 +272,7 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
      matlab_size= None;
      matlab_jacobian= None;
      matlab_activity = None;
-     matlab_obs = print_matlab_obs;
+     matlab_obs = None;
      matlab_init = None ;
      reactions = None
     } 
@@ -301,12 +283,12 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
      txt = None ;
      data = None; 
      kappa = None ;
-     mathematica = print_mathematica;
-     latex = print_latex;
-     matlab = print_matlab;
-     matlab_aux = print_matlab_aux;
-     matlab_jacobian = print_matlab_jacobian ;
-     matlab_size = print_matlab_size;
+     mathematica = None;
+     latex = None;
+     matlab = None;
+     matlab_aux = None;
+     matlab_jacobian = None;
+     matlab_size = None;
      matlab_activity = None;
      matlab_obs = None;
      matlab_init = None;
@@ -318,9 +300,9 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
      txt = None ;
      data = None; 
      kappa = None ;
-     mathematica = print_mathematica;
-     latex = print_latex;
-     matlab = print_matlab;
+     mathematica = None;
+     latex = None;
+     matlab = None;
      matlab_aux = None;
      matlab_jacobian = None;
      matlab_size = None;
@@ -332,7 +314,7 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
   in
 
   let print_ODE_aux = 
-    {print_ODE with matlab_size = None ; matlab_jacobian = None ; matlab = None ; matlab_aux = print_matlab_aux ; matlab_init = None } in
+    {print_ODE with matlab_size = None ; matlab_jacobian = None ; matlab = None ; matlab_aux = None ; matlab_init = None } in
 
   let print_ODE_mathematica = 
     {print_ODE_main with matlab = None} in 
@@ -343,7 +325,7 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
       data = None;
       kappa = None;
       mathematica = None;
-      latex = print_latex;
+      latex = None;
       matlab = None;
       matlab_aux = None;
       matlab_jacobian = None;
@@ -360,7 +342,7 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
       kappa = None;
       mathematica = None;
       latex = None;
-      matlab = print_matlab;
+      matlab = None;
       matlab_aux = None;
       matlab_jacobian = None;
       matlab_size = None;
@@ -375,13 +357,14 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
       kappa = None;
       mathematica = None;
       latex = None;
-      matlab_aux = print_matlab_aux;
+      matlab_aux = None;
       matlab = None;
       matlab_jacobian = None ;
       matlab_size = None;
       matlab_activity = None;
       matlab_obs = None;
-      matlab_init = None;reactions=None } in
+      matlab_init = None;
+      reactions=None } in
  
  let print_ODE_matlab_size = 
     {dump = None;
@@ -393,7 +376,7 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
       matlab_aux = None;
       matlab = None;
       matlab_jacobian = None ;
-      matlab_size = print_matlab_size;
+      matlab_size = None;
       matlab_activity = None;
       matlab_obs = None;
       matlab_init = None;reactions=None } in
@@ -403,7 +386,7 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
   let print_only_data = 
     {dump = None;
       txt = None;
-      data = print_data;
+      data = None;
       kappa = None;
       mathematica = None;
       latex = None;
@@ -432,7 +415,7 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
   in
   let print_obs = 
     { dump = None ;
-      data = print_data;
+      data = None ;
       kappa = print_kappa ;
       mathematica = None;
       latex = None;
@@ -474,7 +457,8 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
       matlab_size = None ;
       matlab_obs = None ;
       matlab_activity = None;
-      matlab_init = print_matlab_init;reactions=None }
+      matlab_init = None;
+      reactions=None }
   in
   let print_reactions = 
      { dump = None;
@@ -969,7 +953,7 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
 	       in
 	       let print_obs = {print_obs with data = None} in 
 	       let _ = 
-		 pprint_obs 
+		 pprint_obs_in_reaction 
 		   print_obs 
 		   (f print_obs) 
 		   n
@@ -994,7 +978,7 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
                   ):unit) 
 	       in
 	       let _ = 
-		 pprint_obs 
+		 pprint_obs_in_reaction  
 		   print_only_data
 		   (f print_only_data) 
 		   n
@@ -2376,7 +2360,11 @@ let compute_ode file_reaction file_ODE_perturbation file_ODE_contact file_stoc_c
 	system in 
 
     let activity_map,rate_map,flag_map  = activity in 
-   
+    let _ = 
+      dump 
+	views_data_structures 
+	ode_handler 
+    in
     let lchan =  all_fields print_reactions in 
     let _ = 
       List.iter (fun chan -> 

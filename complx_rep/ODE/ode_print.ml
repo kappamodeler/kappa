@@ -1125,6 +1125,60 @@ let pprint_ODE_head print print_obs print_activity print_perturb file_main file 
      in 
      ( ) 
 
+ let pprint_obs_in_reaction print print_sb n expr pb = 
+    let _ = 
+      match print.dump with 
+	None -> ()
+      |	Some print -> 
+	  print.print_string  ((string_of_int n)^" := ");
+    in 
+     let _ = 
+      match print.txt with 
+	None -> ()
+      |	Some print -> 
+	  print.print_string  ((string_of_int n)^" := ");
+     in 
+     let _ = 
+       match print.kappa  with 
+	 None -> ()
+       |	Some print -> 
+	   print.print_string "%obs:";
+     in 
+     let _ = 
+       match print.data with 
+	 None -> ()
+       | Some print -> 
+	   print.print_string "[";
+     in 
+     let _ = print_sb expr in 
+     let _ = 
+       match print.dump with 
+	 None -> ()
+       |	Some print -> print.print_newline ()
+     in 
+     let _ = 
+       match print.txt with 
+	 None -> ()
+       |	Some print -> 
+	   print.print_newline () 
+     in 
+     let _ = 
+       match print.kappa  with 
+	 None -> ()
+       |	Some print -> 
+	   print.print_newline () 
+     in 
+     let _ = 
+       match print.data with 
+	 None -> ()
+       | Some print -> 
+	   begin 
+	     print.print_string "]";
+	     print.print_string " " 
+	   end
+     in 
+     ( ) 
+
 
 let print_diff print_ODE bool i j flag expr = 
   match print_ODE.matlab_jacobian with None -> () 

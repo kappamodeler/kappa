@@ -430,7 +430,8 @@ let dump_html pb channel (l,m)  =
 @(if !Config_complx.do_reaction && !Config_complx.output_reactions <> "" 
   then 
     [menutitle channel "Reactions";
-    precomputed_data channel  (!Config_complx.output_reactions) "Network of reactions"]
+    precomputed_data channel  (!Config_complx.output_reactions) "Network of reactions"; 
+    precomputed_data channel  (!Config_complx.output_reactions_alphabet) "Table of species"]
   else [])
 @[
       menutitle channel "Analysis result";

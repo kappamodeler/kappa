@@ -176,7 +176,7 @@ let main ()  =
 	(!Config_complx.output_ODE_octave_init)
 	(!Config_complx.output_ODE_mathematica) 
 	"" 
-	(!Config_complx.output_ODE_alphabet) 
+	(!Config_complx.output_reactions_alphabet) 
 	(!Config_complx.output_ODE_obs) 
 	(!Config_complx.output_ODE_obs_latex)  
 	(!Config_complx.output_ODE_obs_head) 
