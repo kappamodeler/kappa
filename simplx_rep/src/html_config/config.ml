@@ -1,8 +1,8 @@
 (**EDIT THIS PART AT WILL**)
 
-let browser_command = "xdg-open" (* use "open" under MacOs, "xdg-open" under unix*)
-let dot_command = "/usr/bin/dot"
-let neato_command = "/usr/bin/neato"
+let browser_command = "open" (* use "open" under MacOs, "xdg-open" under unix*)
+let dot_command = "/opt/homebrew/bin/dot"
+let neato_command = "/opt/homebrew/bin/neato"
 let gnuplot_image_terminal = "png"
 let gnuplot_window_terminal = "X11"
 let gnuplot_activity_style = "points"
@@ -21,5 +21,5 @@ let auto_launch_browser = true (*set to false if you find it annoying*)
 
 (*COMMAND LINE DEFAULT VALUES*)
 (*DO NOT EDIT*)
-let auto_plot = ref false 
+let auto_plot = ref false
 let build_rules = ref true
